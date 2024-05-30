@@ -179,7 +179,7 @@
 
 <div class="form-group">
     <label for="first-choice-date">第1希望日</label>
-    <input v-model="datepicker1" placeholder="クリックして日時を入力" type="text" id="first-choice-date" placeholder="クリックして日時を入力">
+    <input v-model="datepicker1" type="text" id="first-choice-date" placeholder="クリックして日時を入力">
 </div>
 
             <div class="form-group">
@@ -268,6 +268,12 @@ async function updateAvailability(year, month) {
 }
 
 flatpickr("#first-choice-date", {
+  dateFormat: "Y年m月d日",  // 日付のフォーマットを設定
+  disable: [
+    function(date) {
+      return (date.getDay() === 0);  // 日曜日を無効化
+    }
+  ],
   onMonthChange: function(selectedDates, dateStr, instance) {
     const year = instance.currentYear;
     const month = instance.currentMonth;
@@ -285,6 +291,7 @@ flatpickr("#first-choice-date", {
   },
   onChange: function(selectedDates) {
     app.datepicker1 = selectedDates[0];
+    console.log("Selected date: ", selectedDates[0]);
   }
 });
 
@@ -308,6 +315,8 @@ const app = createApp({
     methods: {
         async done() {
             console.log("Sending message...");
+            console.log("datepicker1: ", this.datepicker1);
+
             var date1 = new Date(this.datepicker1);
             var date2 = new Date(this.datepicker2);
             var date3 = new Date(this.datepicker3);
