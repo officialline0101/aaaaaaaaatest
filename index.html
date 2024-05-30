@@ -199,42 +199,45 @@
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
-    async function updateAvailability(year, month) {
-      const response = await fetch(`https://script.google.com/macros/s/AKfycbxwD4_SFJl4lJq5K3uJi9XSKKXTrgLiDYgCmUwxSmbZMkKtLi4_mmXUnRxXo65iDuR2dw/exec?year=${year}&month=${month}`);
-      const availability = await response.json();
-      
-      document.querySelectorAll('.flatpickr-day').forEach(function(dayElem) {
-        const date = dayElem.dateObj;
-        const dateString = date.toISOString().split('T')[0];
-        if (availability[dateString]) {
-          const badge = document.createElement('div');
-          badge.className = 'availability-badge';
-          badge.textContent = availability[dateString];
-          dayElem.appendChild(badge);
+    document.addEventListener('DOMContentLoaded', function() {
+      async function updateAvailability(year, month) {
+        const response = await fetch(`YOUR_APPS_SCRIPT_DEPLOY_URL?year=${year}&month=${month}`);
+        const availability = await response.json();
+        
+        document.querySelectorAll('.flatpickr-day').forEach(function(dayElem) {
+          const date = dayElem.dateObj;
+          const dateString = date.toISOString().split('T')[0];
+          if (availability[dateString]) {
+            const badge = document.createElement('div');
+            badge.className = 'availability-badge';
+            badge.textContent = availability[dateString];
+            dayElem.appendChild(badge);
+          }
+        });
+      }
+
+      flatpickr("#first-choice-date", {
+        onMonthChange: function(selectedDates, dateStr, instance) {
+          const year = instance.currentYear;
+          const month = instance.currentMonth;
+          updateAvailability(year, month);
+        },
+        onYearChange: function(selectedDates, dateStr, instance) {
+          const year = instance.currentYear;
+          const month = instance.currentMonth;
+          updateAvailability(year, month);
+        },
+        onReady: function(selectedDates, dateStr, instance) {
+          const year = instance.currentYear;
+          const month = instance.currentMonth;
+          updateAvailability(year, month);
         }
       });
-    }
-
-    flatpickr("#first-choice-date", {
-      onMonthChange: function(selectedDates, dateStr, instance) {
-        const year = instance.currentYear;
-        const month = instance.currentMonth;
-        updateAvailability(year, month);
-      },
-      onYearChange: function(selectedDates, dateStr, instance) {
-        const year = instance.currentYear;
-        const month = instance.currentMonth;
-        updateAvailability(year, month);
-      },
-      onReady: function(selectedDates, dateStr, instance) {
-        const year = instance.currentYear;
-        const month = instance.currentMonth;
-        updateAvailability(year, month);
-      }
     });
   </script>
 </body>
 </html>
+
 
                 <label>第1希望日</label>
                 <div class="form-group">
