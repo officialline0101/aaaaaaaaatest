@@ -249,7 +249,7 @@ createApp({
                 thirdDate: this.thirdDate,
                 bikou: this.bikou
             };
-            
+
             axios.post('/api/submit', data)
                 .then(response => {
                     alert('予約が成功しました。');
@@ -258,8 +258,19 @@ createApp({
                     alert('予約に失敗しました。');
                 });
         }
+    },
+    mounted() {
+        // LIFF IDを入力
+        const liffId = "2005254357-zKma9BZk";
+        liff.init({ liffId })
+            .then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                }
+            })
+            .catch(err => {
+                console.error('LIFF初期化に失敗しました', err);
+            });
     }
 }).mount('#app');
 </script>
-</body>
-</html>
