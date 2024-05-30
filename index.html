@@ -163,8 +163,8 @@
                     <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'ぎっくり腰・慢性腰痛' ? 'check' : ''" for="five">
                         <input name="place" value="ぎっくり腰・慢性腰痛" type="radio" required v-model="syoujou" id="five">ぎっくり腰・慢性腰痛
                     </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '寝違い・むち打ち等首の症状' ? 'check' : ''" for="six">
-                        <input name="place" value="寝違い・むち打ち等首の症状" type="radio" required v-model="syoujou" id="six">寝違い・むち打ち等首の症状
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '骨盤矯正' ? 'check' : ''" for="six">
+                        <input name="place" value="骨盤矯正" type="radio" required v-model="syoujou" id="six">骨盤矯正
                     </label>
                     <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'スポーツによる障害・外傷' ? 'check' : ''" for="seven">
                         <input name="place" value="スポーツによる障害・外傷" type="radio" required v-model="syoujou" id="seven">スポーツによる障害・外傷
@@ -302,12 +302,13 @@ createApp({
         }
     },
     methods: {
-        done() {
+        async done() {
+            console.log("Sending message...");
             var date1 = new Date(this.datepicker1);
             var date2 = new Date(this.datepicker2);
             var date3 = new Date(this.datepicker3);
 
-            var datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
+            var datetime1 = date1.getFullYear() + "/" + (date1.getMonth() + 1) + "/" + date1.getDate() + "/ " + this.datepicker1time;
             var datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
             var datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
 
@@ -323,33 +324,35 @@ createApp({
                 date = date + "\n" +  datetime3
             }
 
-            liff.sendMessages([
-                {
-                    type: "text",
-                    text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
-                },
-            ])
-            .then(() => {
-                console.log("message sent");
-            })
-            .catch((err) => {
-                alert("error", err);
-            })
-            .finally(()=>{
+            try {
+                await liff.sendMessages([
+                    {
+                        type: "text",
+                        text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
+                    },
+                ]);
+                console.log("Message sent successfully");
+            } catch (err) {
+                console.error("Error sending message:", err);
+                alert("Error sending message");
+            } finally {
                 liff.closeWindow();
-            });
+            }
         }
     },
-    mounted: async function(){
-        await liff.init({
-            liffId: "2005254357-zKma9BZk"
-        }).then(()=>{
+    async mounted() {
+        try {
+            await liff.init({
+                liffId: "2005254357-zKma9BZk"
+            });
             if (liff.isLoggedIn()) {
-                console.log("ログイン済");
+                console.log("Logged in");
             } else {
                 liff.login();
             }
-        });
+        } catch (err) {
+            console.error("LIFF init error:", err);
+        }
     }
 }).mount('#app');
 </script>
