@@ -198,10 +198,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxU8Iy_29vzleTtyaN1cHZsGlf_A-4OcI0XkmvhX8e2G-5ArN2OtQJBv1CfCwou-4aYag/exec'; // ここにデプロイしたURLを記入
+
     async function updateAvailability(year, month) {
-      const availability = await new Promise((resolve) => {
-        google.script.run.withSuccessHandler(resolve).getMonthlyAvailability(year, month);
-      });
+      const response = await fetch(`${APPS_SCRIPT_URL}?year=${year}&month=${month}`);
+      const availability = await response.json();
       
       document.querySelectorAll('.flatpickr-day').forEach(function(dayElem) {
         const date = dayElem.dateObj;
