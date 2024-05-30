@@ -30,9 +30,8 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script>
     async function updateAvailability(year, month) {
-      const availability = await new Promise((resolve) => {
-        google.script.run.withSuccessHandler(resolve).getMonthlyAvailability(year, month);
-      });
+      const response = await fetch(`https://script.google.com/macros/s/AKfycbzVfRf-rtuI-vLvGoycPKYlLpTHyqDIfn-e6hUCYBEuQ94zWNP2ljEgAJVOdf0stk1CBA/exec?year=${year}&month=${month}`);
+      const availability = await response.json();
       
       document.querySelectorAll('.flatpickr-day').forEach(function(dayElem) {
         const date = dayElem.dateObj;
