@@ -8,11 +8,9 @@
   <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue@3.2/dist/vue.global.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-  <!-- vue 3 Datapicker css -->
   <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
-
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
     .dp__button {
         display: none;
@@ -98,81 +96,6 @@
     input[type=radio] {
         display: none;
     }
-</style>
-</head>
-<body>
-<header>
-	<h2>予約フォーム</h2>
-</header>
-<section id="app">
-	<div class="container" id="bring">
-        <!-- <form id="apply"> -->
-
-            <!-- customer_name -->  
-            <div class="form-group">
-                <label>お客様名（カタカナ）</label>
-                <input v-model="name" type="text" name="customer_name" class="form-control" required>
-            </div>
-
-            <div class="form-group">
-                <label>電話番号</label>
-                <input v-model="tel" type="text" name="customer_tel" class="form-control" required>
-            </div>
-
-            <!-- place -->
-            <div class="form-group">
-                <label>ご来店回数</label>
-                <div class="btn-group" style="width:100%;">
-                    <label class="btn btn-info" style="width: 49%;" for="first" :class="number === '初めて' ? 'check' : ''">
-                        <input value="初めて" type="radio" v-model="number" id="first">初めて
-                    </label>
-                    <label class="btn btn-info" style="width: 49%;" for="second" :class="number === '2回目以降' ? 'check' : ''">
-                        <input value="2回目以降" type="radio" v-model="number" id="second">2回目以降
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>症状</label>
-                <div class="btn-group" style="width:100%;">
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '頭痛・偏頭痛' ? 'check' : ''" for="one">
-                        <input name="place" value="頭痛・偏頭痛" type="radio" required v-model="syoujou" id="one">頭痛・偏頭痛
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '交通事故施術' ? 'check' : ''" for="two">
-                        <input name="place" value="交通事故施術" type="radio" required v-model="syoujou" id="two">交通事故施術
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '肩こり・腕のしびれ' ? 'check' : ''" for="three">
-                        <input name="place" value="肩こり・腕のしびれ" type="radio" required v-model="syoujou" id="three">肩こり・腕のしびれ
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '臀部・下肢の痛みや痺れ' ? 'check' : ''" for="four">
-                        <input name="place" value="臀部・下肢の痛みや痺れ" type="radio" required v-model="syoujou" id="four">臀部・下肢の痛みや痺れ
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'ぎっくり腰・慢性腰痛' ? 'check' : ''" for="five">
-                        <input name="place" value="ぎっくり腰・慢性腰痛" type="radio" required v-model="syoujou" id="five">ぎっくり腰・慢性腰痛
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '寝違い・むち打ち等首の症状' ? 'check' : ''" for="six">
-                        <input name="place" value="寝違い・むち打ち等首の症状" type="radio" required v-model="syoujou" id="six">寝違い・むち打ち等首の症状
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'EMS(電気的筋肉刺激装置)トレーニング' ? 'check' : ''" for="six">
-                        <input name="place" value="EMS(電気的筋肉刺激装置)トレーニング" type="radio" required v-model="syoujou" id="six">EMS(電気的筋肉刺激装置)トレーニング
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '健康保険の施術' ? 'check' : ''" for="six">
-                        <input name="place" value="健康保険の施術" type="radio" required v-model="syoujou" id="six">健康保険の施術
-                    </label>
-                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'その他' ? 'check' : ''" for="seven">
-                        <input name="place" value="その他" type="radio" required v-model="syoujou" id="seven">その他
-                    </label>
-                </div>
-            </div>
-
-            <!-- date -->
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>カレンダー予約状況</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <style>
     .flatpickr-day {
       position: relative;
     }
@@ -187,249 +110,216 @@
       line-height: 1;
       color: #000;
     }
-  </style>
+</style>
 </head>
 <body>
-  <div id="app">
+<header>
+	<h2>予約フォーム</h2>
+</header>
+<section id="app" class="container">
     <div class="form-group">
-      <label>第1希望日</label>
-      <div class="form-group">
-        <input type="text" v-model="datepicker1" id="first-choice-date" placeholder="クリックして日時を入力">
-      </div>
+        <label for="name">お客様名</label>
+        <input class="form-control" type="text" id="name" v-model="name">
     </div>
-  </div>
+    <div class="form-group">
+        <label for="tel">電話番号</label>
+        <input class="form-control" type="tel" id="tel" v-model="tel">
+    </div>
+    <div class="form-group">
+        <label for="number">来店回数</label>
+        <div class="btn-group">
+            <label class="btn btn-info use-span" :class="{'check':number == '初めて'}">
+                <input type="radio" value="初めて" v-model="number">
+                初めて
+            </label>
+            <label class="btn btn-info use-span" :class="{'check':number == '2回目以降'}">
+                <input type="radio" value="2回目以降" v-model="number">
+                2回目以降
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="syoujou">症状</label>
+        <div class="btn-group-vertical">
+            <label class="btn btn-info use-span" :class="{'check':syoujou == '肩こり'}">
+                <input type="radio" value="肩こり" v-model="syoujou">
+                肩こり
+            </label>
+            <label class="btn btn-info use-span" :class="{'check':syoujou == '腰痛'}">
+                <input type="radio" value="腰痛" v-model="syoujou">
+                腰痛
+            </label>
+            <label class="btn btn-info use-span" :class="{'check':syoujou == '頭痛'}">
+                <input type="radio" value="頭痛" v-model="syoujou">
+                頭痛
+            </label>
+            <label class="btn btn-info use-span" :class="{'check':syoujou == '手足のしびれ'}">
+                <input type="radio" value="手足のしびれ" v-model="syoujou">
+                手足のしびれ
+            </label>
+            <label class="btn btn-info use-span" :class="{'check':syoujou == '股関節の痛み'}">
+                <input type="radio" value="股関節の痛み" v-model="syoujou">
+                股関節の痛み
+            </label>
+            <label class="btn btn-info use-span" :class="{'check':syoujou == 'その他'}">
+                <input type="radio" value="その他" v-model="syoujou">
+                その他
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>第1希望日</label>
+        <div class="form-group">
+            <input type="text" v-model="datepicker1" id="first-choice-date" placeholder="クリックして日時を入力">
+        </div>
+    </div>
+    <div class="form-group">
+        <label>第2希望日</label>
+        <div class="form-group">
+            <Datepicker v-model="datepicker2" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
+        </div>
+        <select class="form-control" v-model="datepicker2time">
+            <option value="08:30">08:30</option>
+            <option value="09:00">09:00</option>
+            <option value="09:30">09:30</option>
+            <option value="10:00">10:00</option>
+            <option value="10:30">10:30</option>
+            <option value="11:00">11:00</option>
+            <option value="11:30">11:30</option>
+            <option value="12:00">12:00</option>
+            <option value="15:00">15:00</option>
+            <option value="15:30">15:30</option>
+            <option value="16:00">16:00</option>
+            <option value="16:30">16:30</option>
+            <option value="17:00">17:00</option>
+            <option value="17:30">17:30</option>
+            <option value="18:00">18:00</option>
+            <option value="18:30">18:30</option>
+            <option value="19:00">19:00</option>
+            <option value="19:30">19:30</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>第3希望日</label>
+        <div class="form-group">
+            <Datepicker v-model="datepicker3" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
+        </div>
+        <select class="form-control" v-model="datepicker3time">
+            <option value="08:30">08:30</option>
+            <option value="09:00">09:00</option>
+            <option value="09:30">09:30</option>
+            <option value="10:00">10:00</option>
+            <option value="10:30">10:30</option>
+            <option value="11:00">11:00</option>
+            <option value="11:30">11:30</option>
+            <option value="12:00">12:00</option>
+            <option value="15:00">15:00</option>
+            <option value="15:30">15:30</option>
+            <option value="16:00">16:00</option>
+            <option value="16:30">16:30</option>
+            <option value="17:00">17:00</option>
+            <option value="17:30">17:30</option>
+            <option value="18:00">18:00</option>
+            <option value="18:30">18:30</option>
+            <option value="19:00">19:00</option>
+            <option value="19:30">19:30</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="message">ご要望など</label>
+        <textarea class="form-control" id="message" v-model="message"></textarea>
+    </div>
+    <button type="button" class="btn regist" @click="done()">送信</button>
+</section>
+<script>
+const { createApp } = Vue;
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        datepicker1: ''
-      },
-      mounted() {
-        const updateAvailability = async (year, month) => {
-          const response = await fetch(`YOUR_APPS_SCRIPT_DEPLOY_URL?year=${year}&month=${month}`);
-          const availability = await response.json();
-          
-          document.querySelectorAll('.flatpickr-day').forEach(function(dayElem) {
+createApp({
+    data(){
+        return{
+            name: '',
+            tel: '',
+            number: '',
+            syoujou: '',
+            datepicker1: '',
+            datepicker1time: '08:30',
+            datepicker2: '',
+            datepicker2time: '08:30',
+            datepicker3: '',
+            datepicker3time: '08:30',
+            message: ''
+        }
+    },
+    components: {
+        Datepicker,
+    },
+    methods: {
+        get(){
+            let params = {};
+            let pr = location.search.substring(1).split('&');
+            for(let i=0;pr[i];i++) {
+                let kv = pr[i].split('=');
+                params[kv[0]]=kv[1];
+            }
+            return params;
+        },
+        done(){
+            liff.sendMessages([
+            {
+                type: 'text',
+                text: `お客様名: ${this.name}\n電話番号: ${this.tel}\n来店回数: ${this.number}\n症状: ${this.syoujou}\n第1希望日: ${this.datepicker1} ${this.datepicker1time}\n第2希望日: ${this.datepicker2} ${this.datepicker2time}\n第3希望日: ${this.datepicker3} ${this.datepicker3time}\nご要望など: ${this.message}\n`
+            }
+            ]).then(() => {
+                liff.closeWindow();
+            }).catch((err) => {
+                window.alert(`Error sending message: ${err}`);
+            });
+        },
+    },
+    mounted() {
+        liff.init({
+            liffId: "2004727608-aZejr9x5"
+        }).then(()=>{
+            if (liff.isLoggedIn()) {
+                console.log("ログイン済");
+            } else {
+                liff.login();
+            }
+        });
+
+    const updateAvailability = async (year, month) => {
+        const response = await fetch(`YOUR_APPS_SCRIPT_DEPLOY_URL?year=${year}&month=${month}`);
+        const availability = await response.json();
+        
+        document.querySelectorAll('.flatpickr-day').forEach(function(dayElem) {
             const date = dayElem.dateObj;
             const dateString = date.toISOString().split('T')[0];
             if (availability[dateString]) {
-              const badge = document.createElement('div');
-              badge.className = 'availability-badge';
-              badge.textContent = availability[dateString];
-              dayElem.appendChild(badge);
+                const badge = document.createElement('div');
+                badge.className = 'availability-badge';
+                badge.textContent = availability[dateString];
+                dayElem.appendChild(badge);
             }
-          });
-        };
-
-        flatpickr("#first-choice-date", {
-          onMonthChange: function(selectedDates, dateStr, instance) {
-            const year = instance.currentYear;
-            const month = instance.currentMonth;
-            updateAvailability(year, month);
-          },
-          onYearChange: function(selectedDates, dateStr, instance) {
-            const year = instance.currentYear;
-            const month = instance.currentMonth;
-            updateAvailability(year, month);
-          },
-          onReady: function(selectedDates, dateStr, instance) {
-            const year = instance.currentYear;
-            const month = instance.currentMonth;
-            updateAvailability(year, month);
-          }
         });
-      }
-    });
-  </script>
-</body>
-</html>
+    };
 
-                </div>
-                <select class="form-control" v-model="datepicker1time">
-                    <option value="08:30">08:30</option>
-                    <option value="09:00">09:00</option>
-                    <option value="09:30">09:30</option>
-                    <option value="10:00">10:00</option>
-                    <option value="10:30">10:30</option>
-                    <option value="11:00">11:00</option>
-                    <option value="11:30">11:30</option>
-                    <option value="12:00">12:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="15:30">15:30</option>
-                    <option value="16:00">16:00</option>
-                    <option value="16:30">16:30</option>
-                    <option value="17:00">17:00</option>
-                    <option value="17:30">17:30</option>
-                    <option value="18:00">18:00</option>
-                    <option value="18:30">18:30</option>
-                    <option value="19:00">19:00</option>
-                    <option value="19:30">19:30</option>
-                </select>
-            </div>
-            <!-- date -->
-            <div class="form-group">
-                <label>第2希望日</label>
-                <div class="form-group">
-                    <Datepicker v-model="datepicker2" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
-                </div>
-                <select class="form-control" v-model="datepicker2time">
-                    <option value="08:30">08:30</option>
-                    <option value="09:00">09:00</option>
-                    <option value="09:30">09:30</option>
-                    <option value="10:00">10:00</option>
-                    <option value="10:30">10:30</option>
-                    <option value="11:00">11:00</option>
-                    <option value="11:30">11:30</option>
-                    <option value="12:00">12:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="15:30">15:30</option>
-                    <option value="16:00">16:00</option>
-                    <option value="16:30">16:30</option>
-                    <option value="17:00">17:00</option>
-                    <option value="17:30">17:30</option>
-                    <option value="18:00">18:00</option>
-                    <option value="18:30">18:30</option>
-                    <option value="19:00">19:00</option>
-                    <option value="19:30">19:30</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>第3希望日</label>
-                <div class="form-group">
-                    <Datepicker v-model="datepicker3" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
-                </div>
-                <select class="form-control" v-model="datepicker3time">
-                    <option value="08:30">08:30</option>
-                    <option value="09:00">09:00</option>
-                    <option value="09:30">09:30</option>
-                    <option value="10:00">10:00</option>
-                    <option value="10:30">10:30</option>
-                    <option value="11:00">11:00</option>
-                    <option value="11:30">11:30</option>
-                    <option value="12:00">12:00</option>
-                    <option value="15:00">15:00</option>
-                    <option value="15:30">15:30</option>
-                    <option value="16:00">16:00</option>
-                    <option value="16:30">16:30</option>
-                    <option value="17:00">17:00</option>
-                    <option value="17:30">17:30</option>
-                    <option value="18:00">18:00</option>
-                    <option value="18:30">18:30</option>
-                    <option value="19:00">19:00</option>
-                    <option value="19:30">19:30</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>メッセージ<small>（質問等お気軽にご記入ください）</small></label>
-                <textarea v-model="message" name="customer_message" class="form-control" required rows="6"></textarea>
-            </div>
-
-            <button type="submit" class="btn regist" v-on:click="done()" :disabled="name == '' || syoujou == '' || number == '' || tel == '' ">予約を行う</button>
-        <!-- </form> -->
-	</div>
-</section>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<!-- vue 3 Datapicker js -->
-<script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
-<script>
-  liff.init(
-    data => {
-      var userId = data.context.userId;
-      console.log(userId);
-    });
-</script>
-
-<script>
-    const app = {
-        data() {
-            return {
-                datepicker1: '',
-                datepicker2: '',
-                datepicker3: '',
-                datepicker1time: '',
-                datepicker2time: '',
-                datepicker3time: '',
-                name: "",
-                syoujou: "",
-                number: "",
-                tel: "",
-                message: ""
-            }
+    flatpickr("#first-choice-date", {
+        onMonthChange: function(selectedDates, dateStr, instance) {
+            const year = instance.currentYear;
+            const month = instance.currentMonth;
+            updateAvailability(year, month);
         },
-        components: {
-            Datepicker: VueDatePicker
+        onYearChange: function(selectedDates, dateStr, instance) {
+            const year = instance.currentYear;
+            const month = instance.currentMonth;
+            updateAvailability(year, month);
         },
-        methods: {
-            get () {
-                let url = new URL(window.location.href);
-                let params = url.searchParams;
-
-                let syoujou = params.get('name');
-                this.syoujou = syoujou;
-            },
-            done () {
-                var date1 = new Date(this.datepicker1);
-                var date2 = new Date(this.datepicker2);
-                var date3 = new Date(this.datepicker3);
-
-                var datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
-                var datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
-                var datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
-
-                var date = "";
-
-                if (this.datepicker1 !== "" && this.datepicker1time !== ""){
-                    date = date + "\n" +  datetime1 
-                }
-                if (this.datepicker2 !== "" && this.datepicker2time !== ""){
-                    date = date + "\n" +  datetime2
-                }
-                if (this.datepicker3 !== "" && this.datepicker3time !== ""){
-                    date = date + "\n" +  datetime3
-                }
-
-               liff.sendMessages([
-    {
-      type: "text",
-      text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
-    },
-  ])
-  .then(() => {
-    console.log("message sent");
-  })
-  .catch((err) => {
-    alert("error", err);
-  })
-  .finally(()=>{
-    liff.closeWindow();
-  });
-            },
-        },
-        mounted: async function(){
-            await liff.init({
-                liffId: "2004727608-aZejr9x5"
-            }).then(()=>{
-                if (liff.isLoggedIn()) {
-                    console.log("ログイン済");
-                } else {
-                    liff.login();
-                }
-            });
-        },
-        created() {
-            this.get();
-        },
-        computed: {
+        onReady: function(selectedDates, dateStr, instance) {
+            const year = instance.currentYear;
+            const month = instance.currentMonth;
+            updateAvailability(year, month);
         }
-    }
-    Vue.createApp(app).mount('#bring')
-</script>
-
-</body>
-</html>
+    });
+}
