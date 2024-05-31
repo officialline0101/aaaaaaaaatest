@@ -306,47 +306,47 @@ const app = createApp({
             message: ""
         }
     },
-    methods: {
-        async done() {
-            console.log("Sending message...");
-            console.log("datepicker1: ", this.datepicker1);
+methods: {
+    async done() {
+        console.log("Sending message...");
+        console.log("datepicker1: ", this.datepicker1);
 
-            var date1 = new Date(this.datepicker1);
-            var date2 = new Date(this.datepicker2);
-            var date3 = new Date(this.datepicker3);
+        var date1 = new Date(this.datepicker1);
+        var date2 = new Date(this.datepicker2);
+        var date3 = new Date(this.datepicker3);
 
-            var datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
-            var datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
-            var datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
+        var datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
+        var datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
+        var datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
 
-            var date = "";
+        var date = "";
 
-            if (this.datepicker1 !== "" && this.datepicker1time !== ""){
-                date = date + "\n" +  datetime1 
-            }
-            if (this.datepicker2 !== "" && this.datepicker2time !== ""){
-                date = date + "\n" +  datetime2
-            }
-            if (this.datepicker3 !== "" && this.datepicker3time !== ""){
-                date = date + "\n" +  datetime3
-            }
-
-            try {
-                await liff.sendMessages([
-                    {
-                        type: "text",
-                        text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
-                    },
-                ]);
-                console.log("Message sent successfully");
-            } catch (err) {
-                console.error("Error sending message:", err);
-                alert("Error sending message");
-            } finally {
-                liff.closeWindow();
-            }
+        if (this.datepicker1 !== "" && this.datepicker1time !== ""){
+            date = datetime1;
         }
-    },
+        if (this.datepicker2 !== "" && this.datepicker2time !== ""){
+            date += "\n" +  datetime2;
+        }
+        if (this.datepicker3 !== "" && this.datepicker3time !== ""){
+            date += "\n" +  datetime3;
+        }
+
+        try {
+            await liff.sendMessages([
+                {
+                    type: "text",
+                    text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
+                },
+            ]);
+            console.log("Message sent successfully");
+        } catch (err) {
+            console.error("Error sending message:", err);
+            alert("Error sending message");
+        } finally {
+            liff.closeWindow();
+        }
+    }
+},
     async mounted() {
         try {
             await liff.init({
