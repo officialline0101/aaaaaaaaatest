@@ -4,208 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>予約フォーム</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
-    <style>
-        body {
-            font-family: "游ゴシック Medium", YuGothic, YuGothicM, "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, sans-serif;
-            margin: 0;
-        }
-        header {
-            padding: 5px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-        }
-        .container {
-            margin: 40px auto;
-            width: 90%;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .btn-group>.btn, .btn-group-vertical>.btn {
-            display: inline-block;
-        }
-        .btn-info {
-            color: #fff;
-            background-color: #333;
-            border-color: #fff;
-        }
-        .btn-info:focus, .btn-info:active, .btn-info.active, .open>.dropdown-toggle.btn-info, .check {
-            color: #333;
-            background-color: #fff;
-            border: solid 2px #333;
-        }
-        .btn-info.check {
-            color: #333;
-            background-color: #fff;
-        }
-        .regist {
-            background: red;
-            border-color: red;
-            width: 100%;
-            padding: 20px 0;
-            margin: 20px 0;
-            color: #fff;
-        }
-        .dp__input {
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h2>予約フォーム</h2>
-    </header>
-    <div id="app" class="container">
-        <form @submit.prevent="submitForm">
+    <div class="container">
+        <h1>予約フォーム</h1>
+        <form>
             <div class="form-group">
-                <label>お客様名（カタカナ）</label>
-                <input type="text" v-model="name" class="form-control" required>
+                <label for="name">お客様名（カタカナ）</label>
+                <input type="text" id="name" name="name" required>
             </div>
             <div class="form-group">
-                <label>電話番号</label>
-                <input type="text" v-model="tel" class="form-control" required>
+                <label for="phone">電話番号</label>
+                <input type="tel" id="phone" name="phone" required>
             </div>
             <div class="form-group">
                 <label>ご来店回数</label>
-                <div class="btn-group" style="width:100%;">
-                    <label class="btn btn-info" style="width: 49%;" :class="{check: number === '初めて'}">
-                        <input type="radio" v-model="number" value="初めて">初めて
-                    </label>
-                    <label class="btn btn-info" style="width: 49%;" :class="{check: number === '2回目以降'}">
-                        <input type="radio" v-model="number" value="2回目以降">2回目以降
-                    </label>
+                <div class="radio-group">
+                    <input type="radio" id="first-time" name="visit-count" value="初めて" required>
+                    <label for="first-time">初めて</label>
+                    <input type="radio" id="repeat" name="visit-count" value="2回目以降" required>
+                    <label for="repeat">2回目以降</label>
                 </div>
             </div>
             <div class="form-group">
                 <label>症状</label>
-                <div class="btn-group" style="width:100%;">
-                    <label class="btn btn-info" style="width: 100%;" v-for="symptom in symptoms" :key="symptom" :class="{check: syoujou === symptom}">
-                        <input type="radio" v-model="syoujou" :value="symptom">{{ symptom }}
-                    </label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="symptom1" name="symptom" value="頭痛・偏頭痛">
+                    <label for="symptom1">頭痛・偏頭痛</label>
+                    <input type="checkbox" id="symptom2" name="symptom" value="交通事故施術">
+                    <label for="symptom2">交通事故施術</label>
+                    <input type="checkbox" id="symptom3" name="symptom" value="肩こり・腕のしびれ">
+                    <label for="symptom3">肩こり・腕のしびれ</label>
+                    <input type="checkbox" id="symptom4" name="symptom" value="臀部・下肢の痛みや痒れ">
+                    <label for="symptom4">臀部・下肢の痛みや痒れ</label>
+                    <input type="checkbox" id="symptom5" name="symptom" value="ぎっくり腰・慢性腰痛">
+                    <label for="symptom5">ぎっくり腰・慢性腰痛</label>
+                    <input type="checkbox" id="symptom6" name="symptom" value="寝違い・むち打ち等首の症状">
+                    <label for="symptom6">寝違い・むち打ち等首の症状</label>
+                    <input type="checkbox" id="symptom7" name="symptom" value="EMS(電気的筋肉刺激装置)トレーニング">
+                    <label for="symptom7">EMS(電気的筋肉刺激装置)トレーニング</label>
+                    <input type="checkbox" id="symptom8" name="symptom" value="健康保険の施術">
+                    <label for="symptom8">健康保険の施術</label>
+                    <input type="checkbox" id="symptom9" name="symptom" value="その他">
+                    <label for="symptom9">その他</label>
                 </div>
             </div>
             <div class="form-group">
-                <label>第1希望日</label>
-                <Datepicker v-model="datepicker1" placeholder="クリックして日時を入力" locale="jp" :disabled-week-days="[0]"></Datepicker>
-                <select class="form-control" v-model="datepicker1time">
-                    <option v-for="time in times" :key="time" :value="time">{{ time }}</option>
-                </select>
+                <label for="date1">第1希望日</label>
+                <input type="datetime-local" id="date1" name="date1" required>
             </div>
             <div class="form-group">
-                <label>第2希望日</label>
-                <Datepicker v-model="datepicker2" placeholder="クリックして日時を入力" locale="jp" :disabled-week-days="[0]"></Datepicker>
-                <select class="form-control" v-model="datepicker2time">
-                    <option v-for="time in times" :key="time" :value="time">{{ time }}</option>
-                </select>
+                <label for="date2">第2希望日</label>
+                <input type="datetime-local" id="date2" name="date2" required>
             </div>
             <div class="form-group">
-                <label>第3希望日</label>
-                <Datepicker v-model="datepicker3" placeholder="クリックして日時を入力" locale="jp" :disabled-week-days="[0]"></Datepicker>
-                <select class="form-control" v-model="datepicker3time">
-                    <option v-for="time in times" :key="time" :value="time">{{ time }}</option>
-                </select>
+                <label for="date3">第3希望日</label>
+                <input type="datetime-local" id="date3" name="date3" required>
             </div>
             <div class="form-group">
-                <label>メッセージ<small>（質問等お気軽にご記入ください）</small></label>
-                <textarea v-model="message" class="form-control" rows="6" required></textarea>
+                <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
+                <textarea id="message" name="message"></textarea>
             </div>
-            <button type="submit" class="btn regist" :disabled="isSubmitDisabled">予約を行う</button>
+            <button type="submit">予約を行う</button>
         </form>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script>
-        const liffId = "2004727608-aZejr9x5";
-
-        liff.init({ liffId })
-            .then(() => {
-                console.log('LIFF initialized');
-            })
-            .catch(err => {
-                console.error('LIFF initialization failed', err);
-            });
-
-        const { createApp } = Vue;
-        const { VueDatePicker } = window['@vuepic/vue-datepicker'];
-
-        createApp({
-            components: {
-                Datepicker: VueDatePicker
-            },
-            data() {
-                return {
-                    name: '',
-                    tel: '',
-                    number: '',
-                    syoujou: '',
-                    datepicker1: '',
-                    datepicker2: '',
-                    datepicker3: '',
-                    datepicker1time: '',
-                    datepicker2time: '',
-                    datepicker3time: '',
-                    message: '',
-                    symptoms: [
-                        '頭痛・偏頭痛', '交通事故施術', '肩こり・腕のしびれ', '臀部・下肢の痛みや痺れ', 'ぎっくり腰・慢性腰痛',
-                        '寝違い・むち打ち等首の症状', 'EMS(電気的筋肉刺激装置)トレーニング', '健康保険の施術', 'その他'
-                    ],
-                    times: [
-                        '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '15:00', '15:30',
-                        '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'
-                    ]
-                };
-            },
-            computed: {
-                isSubmitDisabled() {
-                    return !this.name || !this.tel || !this.number || !this.syoujou || !this.datepicker1 || !this.datepicker1time;
-                }
-            },
-            methods: {
-                submitForm() {
-                    const formattedDate1 = this.formatDate(this.datepicker1, this.datepicker1time);
-                    const formattedDate2 = this.formatDate(this.datepicker2, this.datepicker2time);
-                    const formattedDate3 = this.formatDate(this.datepicker3, this.datepicker3time);
-
-                    const message = `【予約フォーム】
-お名前：${this.name}
-電話番号：${this.tel}
-症状：${this.syoujou}
-来院有無：${this.number}
-希望日時：
-${formattedDate1}
-${formattedDate2}
-${formattedDate3}
-メッセージ：${this.message}`;
-
-                    liff.sendMessages([{
-                        type: 'text',
-                        text: message
-                    }]).then(() => {
-                        console.log('message sent');
-                    }).catch((err) => {
-                        console.error('error', err);
-                    });
-                },
-                formatDate(date, time) {
-                    const [year, month, day] = date.split('-');
-                    return `${year}年${month}月${day}日 ${time}`;
-                }
-            }
-        }).mount('#app');
-    </script>
 </body>
 </html>
