@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <form>
+        <form id="reservation-form">
             <div class="form-group">
                 <label for="name">お客様名（カタカナ）</label>
                 <input type="text" id="name" name="name" required>
@@ -69,5 +69,48 @@
             <button type="submit">予約を行う</button>
         </form>
     </div>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            liff.init({ liffId: "2004727608-aZejr9x5" }).then(() => {
+                document.getElementById("reservation-form").addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById("name").value;
+                    const phone = document.getElementById("phone").value;
+                    const visitCount = document.querySelector('input[name="visit-count"]:checked').value;
+                    const symptoms = Array.from(document.querySelectorAll('input[name="symptom"]:checked')).map(el => el.value).join(', ');
+                    const date1 = document.getElementById("date1").value;
+                    const date2 = document.getElementById("date2").value;
+                    const date3 = document.getElementById("date3").value;
+                    const message = document.getElementById("message").value;
+
+                    const reservationDetails = `
+                        お客様名（カタカナ）: ${name}\n
+                        電話番号: ${phone}\n
+                        ご来店回数: ${visitCount}\n
+                        症状: ${symptoms}\n
+                        第1希望日: ${date1}\n
+                        第2希望日: ${date2}\n
+                        第3希望日: ${date3}\n
+                        メッセージ: ${message}
+                    `;
+
+                    liff.sendMessages([{
+                        type: 'text',
+                        text: reservationDetails
+                    }]).then(() => {
+                        alert("予約内容が送信されました！");
+                        liff.closeWindow();
+                    }).catch((err) => {
+                        console.error("Error sending message: ", err);
+                        alert("メッセージの送信に失敗しました。");
+                    });
+                });
+            }).catch((err) => {
+                console.error("LIFF initialization failed ", err);
+            });
+        });
+    </script>
 </body>
 </html>
