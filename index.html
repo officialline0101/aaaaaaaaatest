@@ -1,147 +1,235 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予約フォーム</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .form-container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-        .form-container h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .form-container label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-container input[type="text"],
-        .form-container input[type="tel"],
-        .form-container textarea {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-container input[type="text"]:focus,
-        .form-container input[type="tel"]:focus,
-        .form-container textarea:focus {
-            border-color: #333;
-        }
-        .radio-group {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .radio-group label {
-            width: 48%;
-            text-align: center;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .radio-group input[type="radio"] {
-            display: none;
-        }
-        .radio-group input[type="radio"]:checked + label {
-            background-color: #333;
-            color: white;
-        }
-        .checkbox-group label {
-            display: block;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 10px;
-        }
-        .form-container .date-picker {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-        .form-container .message {
-            margin-bottom: 20px;
-        }
-        .form-container button {
-            width: calc(100% - 20px);
-            padding: 10px;
-            background-color: #ff5c5c;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .form-container button:hover {
-            background-color: #ff3333;
-        }
-    </style>
+<base target="_top">
+<meta http-equiv="content-type" charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.2/dist/vue.global.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+<style>
+    .dp__button {
+        display: none;
+    }
+    * {
+    	font-family:"游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN","Hiragino Kaku Gothic Pro",メイリオ,Meiryo,sans-serif;
+    }
+    body {
+    	margin:0;
+    }
+    header {
+    	padding: 5px;
+    	background-color: #333;
+    	position: relative;
+    }
+    h2 {
+    	text-align:center;
+    	color: #fff;
+    	margin: 10px;
+    }
+    .btn-group>.btn, .btn-group-vertical>.btn {
+        float: none;
+        display: inline-block;
+    }
+    .btn-info {
+        color: #fff;
+        background-color: #333;
+        border-color: #FFF;
+    }
+    .btn-info:focus, .btn-info:active, .btn-info.active, .open>.dropdown-toggle.btn-info, .check {
+        color: #333;
+        background-color: #fff;
+        border: solid 2px #333;
+    }
+    .container {
+    	margin: 40px 0;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .use-span {
+    	width: 25%;
+    	font-size: 12px;
+    	padding: 6px;
+    	text-align: center;
+    }
+    .regist {
+    	background:red;
+    	border-color:red;
+    	width: 100%;
+    	padding: 20px 0;
+    	margin: 20px 0;
+    	color: #FFFFFF;
+    }
+    #error{
+        display:none;
+    }
+    #section { display: none; }
+    #family_count { display: none; }
+    .dp__input {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        padding-left: 24px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+    .dp__action_buttons {
+        flex:auto;
+    }
+    input[type=radio] {
+        display: none;
+    }
+</style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>予約フォーム</h1>
-        <form>
-            <label for="name">お客様名（カタカナ）</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="phone">電話番号</label>
-            <input type="tel" id="phone" name="phone" required>
-
-            <div class="radio-group">
-                <input type="radio" id="first-time" name="visit" value="初めて" required>
-                <label for="first-time">初めて</label>
-                <input type="radio" id="returning" name="visit" value="2回目以降">
-                <label for="returning">2回目以降</label>
+<header>
+	<h2>予約フォーム</h2>
+</header>
+<section id="app">
+	<div class="container" id="bring">
+        <div class="form-group">
+            <label>お客様名（カタカナ）</label>
+            <input v-model="name" type="text" name="customer_name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>電話番号</label>
+            <input v-model="tel" type="text" name="customer_tel" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>ご来店回数</label>
+            <div class="btn-group" style="width:100%;">
+                <label class="btn btn-info" style="width: 49%;" for="first" :class="number === '初めて' ? 'check' : ''">
+                    <input value="初めて" type="radio" v-model="number" id="first">初めて
+                </label>
+                <label class="btn btn-info" style="width: 49%;" for="second" :class="number === '2回目以降' ? 'check' : ''">
+                    <input value="2回目以降" type="radio" v-model="number" id="second">2回目以降
+                </label>
             </div>
-
-            <div class="checkbox-group">
-                <label><input type="checkbox" name="symptoms" value="頭痛・偏頭痛"> 頭痛・偏頭痛</label>
-                <label><input type="checkbox" name="symptoms" value="交通事故施術"> 交通事故施術</label>
-                <label><input type="checkbox" name="symptoms" value="肩こり・腕のしびれ"> 肩こり・腕のしびれ</label>
-                <label><input type="checkbox" name="symptoms" value="臀部・下肢の痛みや痒れ"> 臀部・下肢の痛みや痒れ</label>
-                <label><input type="checkbox" name="symptoms" value="ぎっくり腰・慢性腰痛"> ぎっくり腰・慢性腰痛</label>
-                <label><input type="checkbox" name="symptoms" value="寝違い・むち打ち等首の症状"> 寝違い・むち打ち等首の症状</label>
-                <label><input type="checkbox" name="symptoms" value="EMS(電気的筋肉刺激装置)トレーニング"> EMS(電気的筋肉刺激装置)トレーニング</label>
-                <label><input type="checkbox" name="symptoms" value="健康保険の施術"> 健康保険の施術</label>
-                <label><input type="checkbox" name="symptoms" value="その他"> その他</label>
+        </div>
+        <div class="form-group">
+            <label>症状</label>
+            <div class="btn-group" style="width:100%;">
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '頭痛・偏頭痛' ? 'check' : ''" for="one">
+                    <input name="place" value="頭痛・偏頭痛" type="radio" required v-model="syoujou" id="one">頭痛・偏頭痛
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '交通事故施術' ? 'check' : ''" for="two">
+                    <input name="place" value="交通事故施術" type="radio" required v-model="syoujou" id="two">交通事故施術
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '肩こり・腕のしびれ' ? 'check' : ''" for="three">
+                    <input name="place" value="肩こり・腕のしびれ" type="radio" required v-model="syoujou" id="three">肩こり・腕のしびれ
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '臀部・下肢の痛みや痺れ' ? 'check' : ''" for="four">
+                    <input name="place" value="臀部・下肢の痛みや痺れ" type="radio" required v-model="syoujou" id="four">臀部・下肢の痛みや痺れ
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'ぎっくり腰・慢性腰痛' ? 'check' : ''" for="five">
+                    <input name="place" value="ぎっくり腰・慢性腰痛" type="radio" required v-model="syoujou" id="five">ぎっくり腰・慢性腰痛
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '寝違い・むち打ち等首の症状' ? 'check' : ''" for="six">
+                    <input name="place" value="寝違い・むち打ち等首の症状" type="radio" required v-model="syoujou" id="six">寝違い・むち打ち等首の症状
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'EMS(電気的筋肉刺激装置)トレーニング' ? 'check' : ''" for="seven">
+                    <input name="place" value="EMS(電気的筋肉刺激装置)トレーニング" type="radio" required v-model="syoujou" id="seven">EMS(電気的筋肉刺激装置)トレーニング
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '健康保険の施術' ? 'check' : ''" for="eight">
+                    <input name="place" value="健康保険の施術" type="radio" required v-model="syoujou" id="eight">健康保険の施術
+                </label>
+                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'その他' ? 'check' : ''" for="nine">
+                    <input name="place" value="その他" type="radio" required v-model="syoujou" id="nine">その他
+                </label>
             </div>
-
-            <label for="date1">第1希望日</label>
-            <input type="text" id="date1" name="date1" class="date-picker" required>
-
-            <label for="date2">第2希望日</label>
-            <input type="text" id="date2" name="date2" class="date-picker">
-
-            <label for="date3">第3希望日</label>
-            <input type="text" id="date3" name="date3" class="date-picker">
-
-            <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
-            <textarea id="message" name="message" rows="4"></textarea>
-
-            <button type="submit">予約を行う</button>
-        </form>
+        </div>
+        <div class="form-group">
+            <label>第1希望日</label>
+            <div class="form-group">
+                <Datepicker v-model="datepicker1" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-dates="{'to': new Date()}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>第2希望日</label>
+            <div class="form-group">
+                <Datepicker v-model="datepicker2" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-dates="{'to': new Date()}" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>第3希望日</label>
+            <div class="form-group">
+                <Datepicker v-model="datepicker3" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-dates="{'to': new Date()}" />
+            </div>
+        </div>
+		<div class="form-group">
+			<label>診察券番号</label>
+			<input v-model="num" type="text" name="num" class="form-control">
+		</div>
+		<div class="form-group">
+			<label>その他・お問い合わせ</label>
+			<textarea v-model="question" name="question" class="form-control" rows="3"></textarea>
+		</div>
+		<div v-if="formError" id="error">
+            <p>入力内容をご確認ください。</p>
+        </div>
+		<div id="cstm-btn" style="text-align:center;">
+			<button v-on:click="submitForm" class="btn btn-danger regist">予約を送信する</button>
+		</div>
     </div>
+</section>
 </body>
+<script src="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.min.js"></script>
+<script>
+    const { createApp, ref } = Vue;
+    const app = createApp({
+        components: {
+            Datepicker: VueDatePicker,
+        },
+        setup() {
+            const name = ref('');
+            const tel = ref('');
+            const number = ref('');
+            const syoujou = ref('');
+            const datepicker1 = ref(null);
+            const datepicker2 = ref(null);
+            const datepicker3 = ref(null);
+            const num = ref('');
+            const question = ref('');
+            const formError = ref(false);
+            const submitForm = () => {
+                if (name.value && tel.value && number.value && syoujou.value && datepicker1.value) {
+                    axios.post('/send', {
+                        name: name.value,
+                        tel: tel.value,
+                        number: number.value,
+                        syoujou: syoujou.value,
+                        datepicker1: datepicker1.value,
+                        datepicker2: datepicker2.value,
+                        datepicker3: datepicker3.value,
+                        num: num.value,
+                        question: question.value
+                    }).then((response) => {
+                        alert('予約を受け付けました。');
+                    }).catch((error) => {
+                        console.error(error);
+                        alert('エラーが発生しました。');
+                    });
+                } else {
+                    formError.value = true;
+                }
+            };
+            return {
+                name, tel, number, syoujou, datepicker1, datepicker2, datepicker3, num, question, formError, submitForm
+            };
+        },
+    });
+    app.mount('#app');
+</script>
 </html>
