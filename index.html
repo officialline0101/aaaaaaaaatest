@@ -27,14 +27,22 @@
 
         function sendMessage() {
             const message = document.getElementById('message').value;
+            if (message.trim() === "") {
+                alert("メッセージを入力してください。");
+                return;
+            }
+
             if (liff.isInClient()) {
                 liff.sendMessages([{
                     type: 'text',
                     text: message
-                }]).then(() => {
+                }])
+                .then(() => {
                     alert('メッセージが送信されました');
-                }).catch((err) => {
+                })
+                .catch((err) => {
                     console.error('メッセージ送信失敗:', err);
+                    alert('メッセージ送信に失敗しました。');
                 });
             } else {
                 alert('LIFFアプリの外部ではメッセージを送信できません');
