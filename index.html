@@ -315,34 +315,20 @@ methods: {
         var date2 = new Date(this.datepicker2);
         var date3 = new Date(this.datepicker3);
 
-        // 第1希望日と時間のフォーマットを修正
-        var datetime1 = "";
-        if (this.datepicker1 && this.datepicker1time) {
-            datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
-        }
-
-        // 第2希望日と時間のフォーマットを修正
-        var datetime2 = "";
-        if (this.datepicker2 && this.datepicker2time) {
-            datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
-        }
-
-        // 第3希望日と時間のフォーマットを修正
-        var datetime3 = "";
-        if (this.datepicker3 && this.datepicker3time) {
-            datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
-        }
+        var datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
+        var datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
+        var datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
 
         var date = "";
 
-        if (datetime1) {
-            date += "\n第1希望日：" + datetime1;
+        if (this.datepicker1 !== "" && this.datepicker1time !== ""){
+            date = datetime1;
         }
-        if (datetime2) {
-            date += "\n第2希望日：" + datetime2;
+        if (this.datepicker2 !== "" && this.datepicker2time !== ""){
+            date += "\n" +  datetime2;
         }
-        if (datetime3) {
-            date += "\n第3希望日：" + datetime3;
+        if (this.datepicker3 !== "" && this.datepicker3time !== ""){
+            date += "\n" +  datetime3;
         }
 
         try {
@@ -361,7 +347,6 @@ methods: {
         }
     }
 }
-    },
     async mounted() {
         try {
             await liff.init({
