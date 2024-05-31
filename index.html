@@ -179,74 +179,73 @@
 
 <div class="form-group">
     <label for="first-choice-date">第1希望日</label>
-    <input v-model="datepicker1" type="text" id="first-choice-date" placeholder="クリックして日時を入力">
+    <input v-model="datepicker1" type="text" id="first-choice-date"  format="yyyy年MM月dd日" placeholder="クリックして日時を入力">
 </div>
 
-<div class="form-group">
-    <label>第1希望時間</label>
-    <select v-model="datepicker1time" class="form-control">
-        <option disabled value="">選択してください</option>
-        <option>9:00</option>
-        <option>10:00</option>
-        <option>11:00</option>
-        <option>12:00</option>
-        <option>13:00</option>
-        <option>14:00</option>
-        <option>15:00</option>
-        <option>16:00</option>
-        <option>17:00</option>
-    </select>
-</div>
+            <div class="form-group">
+                <label>第1希望時間</label>
+                <select v-model="datepicker1time" class="form-control">
+                    <option disabled value="">選択してください</option>
+                    <option>9:00</option>
+                    <option>10:00</option>
+                    <option>11:00</option>
+                    <option>12:00</option>
+                    <option>13:00</option>
+                    <option>14:00</option>
+                    <option>15:00</option>
+                    <option>16:00</option>
+                    <option>17:00</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label>第2希望日</label>
-    <Datepicker v-model="datepicker2" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
-</div>
+            <div class="form-group">
+                <label>第2希望日</label>
+                <Datepicker v-model="datepicker2" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
+            </div>
 
-<div class="form-group">
-    <label>第2希望時間</label>
-    <select v-model="datepicker2time" class="form-control">
-        <option disabled value="">選択してください</option>
-        <option>9:00</option>
-        <option>10:00</option>
-        <option>11:00</option>
-        <option>12:00</option>
-        <option>13:00</option>
-        <option>14:00</option>
-        <option>15:00</option>
-        <option>16:00</option>
-        <option>17:00</option>
-    </select>
-</div>
+            <div class="form-group">
+                <label>第2希望時間</label>
+                <select v-model="datepicker2time" class="form-control">
+                    <option disabled value="">選択してください</option>
+                    <option>9:00</option>
+                    <option>10:00</option>
+                    <option>11:00</option>
+                    <option>12:00</option>
+                    <option>13:00</option>
+                    <option>14:00</option>
+                    <option>15:00</option>
+                    <option>16:00</option>
+                    <option>17:00</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label>第3希望日</label>
-    <Datepicker v-model="datepicker3" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
-</div>
+            <div class="form-group">
+                <label>第3希望日</label>
+                <Datepicker v-model="datepicker3" placeholder="クリックして日時を入力" locale="jp" select-text="選択する" cancel-text="キャンセル" format="yyyy年MM月dd日" :disabled-week-days="[0]"></Datepicker>
+            </div>
 
-<div class="form-group">
-    <label>第3希望時間</label>
-    <select v-model="datepicker3time" class="form-control">
-        <option disabled value="">選択してください</option>
-        <option>9:00</option>
-        <option>10:00</option>
-        <option>11:00</option>
-        <option>12:00</option>
-        <option>13:00</option>
-        <option>14:00</option>
-        <option>15:00</option>
-        <option>16:00</option>
-        <option>17:00</option>
-    </select>
-</div>
+            <div class="form-group">
+                <label>第3希望時間</label>
+                <select v-model="datepicker3time" class="form-control">
+                    <option disabled value="">選択してください</option>
+                    <option>9:00</option>
+                    <option>10:00</option>
+                    <option>11:00</option>
+                    <option>12:00</option>
+                    <option>13:00</option>
+                    <option>14:00</option>
+                    <option>15:00</option>
+                    <option>16:00</option>
+                    <option>17:00</option>
+                </select>
+            </div>
 
-<div class="form-group">
-    <label>メッセージ</label>
-    <textarea v-model="message" name="customer_message" class="form-control" required rows="6"></textarea>
-</div>
+            <div class="form-group">
+                <label>メッセージ</label>
+                <textarea v-model="message" name="customer_message" class="form-control" required rows="6"></textarea>
+            </div>
 
-<input type="button" @click="done()" value="予約内容を送信する" class="btn btn-primary regist">
-
+            <input type="button" @click="done()" value="予約内容を送信する" class="btn btn-primary regist">
         <!-- </form> -->
     </div>
 </section>
@@ -269,7 +268,6 @@ async function updateAvailability(year, month) {
 }
 
 flatpickr("#first-choice-date", {
-  dateFormat: "Y年m月d日",
   onMonthChange: function(selectedDates, dateStr, instance) {
     const year = instance.currentYear;
     const month = instance.currentMonth;
@@ -308,46 +306,61 @@ const app = createApp({
             message: ""
         }
     },
-    methods: {
-        async done() {
-            console.log("Sending message...");
-            console.log("datepicker1: ", this.datepicker1);
+methods: {
+    async done() {
+        console.log("Sending message...");
+        console.log("datepicker1: ", this.datepicker1);
 
-            var date1 = new Date(this.datepicker1);
-            var date2 = new Date(this.datepicker2);
-            var date3 = new Date(this.datepicker3);
+        var date1 = new Date(this.datepicker1);
+        var date2 = new Date(this.datepicker2);
+        var date3 = new Date(this.datepicker3);
 
-            var datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
-            var datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
-            var datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
-
-            var date = "";
-
-            if (this.datepicker1 !== "" && this.datepicker1time !== ""){
-                date = date + "\n" +  datetime1 
-            }
-            if (this.datepicker2 !== "" && this.datepicker2time !== ""){
-                date = date + "\n" +  datetime2
-            }
-            if (this.datepicker3 !== "" && this.datepicker3time !== ""){
-                date = date + "\n" +  datetime3
-            }
-
-            try {
-                await liff.sendMessages([
-                    {
-                        type: "text",
-                        text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
-                    },
-                ]);
-                console.log("Message sent successfully");
-            } catch (err) {
-                console.error("Error sending message:", err);
-                alert("Error sending message");
-            } finally {
-                liff.closeWindow();
-            }
+        // 第1希望日と時間のフォーマットを修正
+        var datetime1 = "";
+        if (this.datepicker1 && this.datepicker1time) {
+            datetime1 = date1.getFullYear() + "年" + (date1.getMonth() + 1) + "月" + date1.getDate() + "日 " + this.datepicker1time;
         }
+
+        // 第2希望日と時間のフォーマットを修正
+        var datetime2 = "";
+        if (this.datepicker2 && this.datepicker2time) {
+            datetime2 = date2.getFullYear() + "年" + (date2.getMonth() + 1) + "月" + date2.getDate() + "日 " + this.datepicker2time;
+        }
+
+        // 第3希望日と時間のフォーマットを修正
+        var datetime3 = "";
+        if (this.datepicker3 && this.datepicker3time) {
+            datetime3 = date3.getFullYear() + "年" + (date3.getMonth() + 1) + "月" + date3.getDate() + "日 " + this.datepicker3time;
+        }
+
+        var date = "";
+
+        if (datetime1) {
+            date += "\n第1希望日：" + datetime1;
+        }
+        if (datetime2) {
+            date += "\n第2希望日：" + datetime2;
+        }
+        if (datetime3) {
+            date += "\n第3希望日：" + datetime3;
+        }
+
+        try {
+            await liff.sendMessages([
+                {
+                    type: "text",
+                    text: "【予約フォーム】" + "\n" + "お名前：" + this.name + "\n" + "電話番号：" + this.tel + "\n" + "症状：" + this.syoujou + "\n" + "来院有無：" + this.number  + "\n" + "希望日時：" + date + "\n" + "メッセージ：" + this.message,
+                },
+            ]);
+            console.log("Message sent successfully");
+        } catch (err) {
+            console.error("Error sending message:", err);
+            alert("Error sending message");
+        } finally {
+            liff.closeWindow();
+        }
+    }
+}
     },
     async mounted() {
         try {
