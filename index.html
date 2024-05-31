@@ -1,256 +1,294 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@3.2/dist/vue.global.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <style>
-        .dp__button {
-            display: none;
-        }
-        * {
-            font-family: "游ゴシック Medium", YuGothic, YuGothicM, "Hiragino Kaku Gothic ProN", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, sans-serif;
-        }
-        body {
-            margin: 0;
-        }
-        header {
-            padding: 5px;
-            background-color: #333;
-            position: relative;
-        }
-        h2 {
-            text-align: center;
-            color: #fff;
-            margin: 10px;
-        }
-        .btn-group > .btn, .btn-group-vertical > .btn {
-            float: none;
-            display: inline-block;
-        }
-        .btn-info {
-            color: #fff;
-            background-color: #333;
-            border-color: #FFF;
-        }
-        .btn-info:focus, .btn-info:active, .btn-info.active, .open > .dropdown-toggle.btn-info, .check {
-            color: #333;
-            background-color: #fff;
-            border: solid 2px #333;
-        }
-        .container {
-            margin: 40px 0;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .use-span {
-            width: 25%;
-            font-size: 12px;
-            padding: 6px;
-            text-align: center;
-        }
-        .regist {
-            background: red;
-            border-color: red;
-            width: 100%;
-            padding: 20px 0;
-            margin: 20px 0;
-            color: #FFFFFF;
-        }
-        #error {
-            display: none;
-        }
-        #section {
-            display: none;
-        }
-        #family_count {
-            display: none;
-        }
-        .dp__input {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            padding-left: 24px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-        }
-        .dp__action_buttons {
-            flex: auto;
-        }
-        input[type=radio] {
-            display: none;
-        }
-        .flatpickr-day {
-            position: relative;
-        }
-        .availability-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            padding: 2px 4px;
-            font-size: 10px;
-            line-height: 1;
-            color: #000;
-        }
-    </style>
+<base target="_top">
+<meta http-equiv="content-type" charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@3.2/dist/vue.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<!-- vue 3 Datapicker css -->
+<link rel="stylesheet" href="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.css">
+<!-- flatpickr css -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<!-- LIFF SDK -->
+<script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+<style>
+    .dp__button {
+        display: none;
+    }
+    * {
+    	font-family:"游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN","Hiragino Kaku Gothic Pro",メイリオ,Meiryo,sans-serif;
+    }
+    body {
+    	margin:0;
+    }
+    header {
+    	padding: 5px;
+    	background-color: #333;
+    	position: relative;
+    }
+    h2 {
+    	text-align:center;
+    	color: #fff;
+    	margin: 10px;
+    }
+    .btn-group>.btn, .btn-group-vertical>.btn {
+        float: none;
+        display: inline-block;
+    }
+    .btn-info {
+        color: #fff;
+        background-color: #333;
+        border-color: #FFF;
+    }
+    .btn-info:focus, .btn-info:active, .btn-info.active, .open>.dropdown-toggle.btn-info, .check {
+        color: #333;
+        background-color: #fff;
+        border: solid 2px #333;
+    }
+    .container {
+    	margin: 40px 0;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .use-span {
+    	width: 25%;
+    	font-size: 12px;
+    	padding: 6px;
+    	text-align: center;
+    }
+    .regist {
+    	background:red;
+    	border-color:red;
+    	width: 100%;
+    	padding: 20px 0;
+    	margin: 20px 0;
+    	color: #FFFFFF;
+    }
+    #error{
+        display:none;
+    }
+    #section { display: none; }
+    #family_count { display: none; }
+    .dp__input {
+        display: block;
+        width: 100%;
+        height: 34px;
+        padding: 6px 12px;
+        padding-left: 24px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    }
+    .dp__action_buttons {
+        flex:auto;
+    }
+    input[type=radio] {
+        display: none;
+    }
+    .flatpickr-day {
+      position: relative;
+    }
+    .availability-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      padding: 2px 4px;
+      font-size: 10px;
+      line-height: 1;
+      color: #000;
+    }
+</style>
 </head>
 <body>
 <header>
-    <h2>予約フォーム</h2>
+	<h2>予約フォーム</h2>
 </header>
 <section id="app">
-    <div class="container" id="bring">
-        <div class="form-group">
-            <label>お客様名（カタカナ）</label>
-            <input v-model="name" type="text" name="customer_name" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>電話番号</label>
-            <input v-model="tel" type="text" name="customer_tel" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>ご来店回数</label>
-            <div class="btn-group" style="width: 100%;">
-                <label class="btn btn-info" style="width: 49%;" for="first" :class="number === '初めて' ? 'check' : ''">
-                    <input value="初めて" type="radio" v-model="number" id="first">初めて
-                </label>
-                <label class="btn btn-info" style="width: 49%;" for="second" :class="number === '2回目以降' ? 'check' : ''">
-                    <input value="2回目以降" type="radio" v-model="number" id="second">2回目以降
-                </label>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>症状</label>
-            <div class="btn-group" style="width: 100%;">
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '頭痛・偏頭痛' ? 'check' : ''" for="one">
-                    <input name="place" value="頭痛・偏頭痛" type="radio" required v-model="syoujou" id="one">頭痛・偏頭痛
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '交通事故施術' ? 'check' : ''" for="two">
-                    <input name="place" value="交通事故施術" type="radio" required v-model="syoujou" id="two">交通事故施術
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '肩こり・腕のしびれ' ? 'check' : ''" for="three">
-                    <input name="place" value="肩こり・腕のしびれ" type="radio" required v-model="syoujou" id="three">肩こり・腕のしびれ
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '臀部・下肢の痛みや痺れ' ? 'check' : ''" for="four">
-                    <input name="place" value="臀部・下肢の痛みや痺れ" type="radio" required v-model="syoujou" id="four">臀部・下肢の痛みや痺れ
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'ぎっくり腰・慢性腰痛' ? 'check' : ''" for="five">
-                    <input name="place" value="ぎっくり腰・慢性腰痛" type="radio" required v-model="syoujou" id="five">ぎっくり腰・慢性腰痛
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === '骨盤矯正' ? 'check' : ''" for="six">
-                    <input name="place" value="骨盤矯正" type="radio" required v-model="syoujou" id="six">骨盤矯正
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'スポーツによる障害・外傷' ? 'check' : ''" for="seven">
-                    <input name="place" value="スポーツによる障害・外傷" type="radio" required v-model="syoujou" id="seven">スポーツによる障害・外傷
-                </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'その他' ? 'check' : ''" for="eight">
-                    <input name="place" value="その他" type="radio" required v-model="syoujou" id="eight">その他
-                </label>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>日付</label>
-            <VueDatePicker v-model="selectedDate" :model-config="{ type: 'string' }" :highlighted="highlightedDates"></VueDatePicker>
-        </div>
-        <div class="form-group">
-            <label>時間帯</label>
-            <div class="btn-group" style="width: 100%;">
-                <label class="btn btn-info" style="width: 49%;" for="morning" :class="time === '午前' ? 'check' : ''">
-                    <input value="午前" type="radio" v-model="time" id="morning">午前
-                </label>
-                <label class="btn btn-info" style="width: 49%;" for="afternoon" :class="time === '午後' ? 'check' : ''">
-                    <input value="午後" type="radio" v-model="time" id="afternoon">午後
-                </label>
-            </div>
-        </div>
-        <div id="section">
+	<div class="container" id="bring">
+        <!-- <form id="apply"> -->
+
+            <!-- customer_name -->  
             <div class="form-group">
-                <label>同伴者の人数</label>
-                <input type="number" class="form-control" id="family_count" v-model="familyCount">
+                <label>お客様名（カタカナ）</label>
+                <input v-model="name" type="text" name="customer_name" class="form-control" required>
             </div>
+
             <div class="form-group">
-                <label>同伴者の年齢層（複数選択可）</label>
-                <div class="btn-group" style="width: 100%; display: flex; flex-wrap: wrap;">
-                    <label v-for="(ageGroup, index) in ageGroups" :key="index" class="btn btn-info use-span" :for="'age' + index" :class="checkedAges.includes(ageGroup) ? 'check' : ''">
-                        <input type="checkbox" :id="'age' + index" :value="ageGroup" v-model="checkedAges"> {{ ageGroup }}
+                <label>電話番号</label>
+                <input v-model="tel" type="text" name="customer_tel" class="form-control" required>
+            </div>
+
+            <!-- place -->
+            <div class="form-group">
+                <label>ご来店回数</label>
+                <div class="btn-group" style="width:100%;">
+                    <label class="btn btn-info" style="width: 49%;" for="first" :class="number === '初めて' ? 'check' : ''">
+                        <input value="初めて" type="radio" v-model="number" id="first">初めて
+                    </label>
+                    <label class="btn btn-info" style="width: 49%;" for="second" :class="number === '2回目以降' ? 'check' : ''">
+                        <input value="2回目以降" type="radio" v-model="number" id="second">2回目以降
                     </label>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>その他、特記事項</label>
-            <textarea v-model="remarks" class="form-control"></textarea>
-        </div>
-        <div class="form-group">
-            <button type="button" class="btn btn-danger regist" @click="submitForm">予約する</button>
-        </div>
-        <div id="error">
-            <p>{{ errorMessage }}</p>
-        </div>
+
+            <div class="form-group">
+                <label>症状</label>
+                <div class="btn-group" style="width:100%;">
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '頭痛・偏頭痛' ? 'check' : ''" for="one">
+                        <input name="place" value="頭痛・偏頭痛" type="radio" required v-model="syoujou" id="one">頭痛・偏頭痛
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '交通事故施術' ? 'check' : ''" for="two">
+                        <input name="place" value="交通事故施術" type="radio" required v-model="syoujou" id="two">交通事故施術
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '肩こり・腕のしびれ' ? 'check' : ''" for="three">
+                        <input name="place" value="肩こり・腕のしびれ" type="radio" required v-model="syoujou" id="three">肩こり・腕のしびれ
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '臀部・下肢の痛みや痺れ' ? 'check' : ''" for="four">
+                        <input name="place" value="臀部・下肢の痛みや痺れ" type="radio" required v-model="syoujou" id="four">臀部・下肢の痛みや痺れ
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'ぎっくり腰・慢性腰痛' ? 'check' : ''" for="five">
+                        <input name="place" value="ぎっくり腰・慢性腰痛" type="radio" required v-model="syoujou" id="five">ぎっくり腰・慢性腰痛
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === '骨盤矯正' ? 'check' : ''" for="six">
+                        <input name="place" value="骨盤矯正" type="radio" required v-model="syoujou" id="six">骨盤矯正
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'スポーツによる障害・外傷' ? 'check' : ''" for="seven">
+                        <input name="place" value="スポーツによる障害・外傷" type="radio" required v-model="syoujou" id="seven">スポーツによる障害・外傷
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'インナーマッスル強化' ? 'check' : ''" for="eight">
+                        <input name="place" value="インナーマッスル強化" type="radio" required v-model="syoujou" id="eight">インナーマッスル強化
+                    </label>
+                    <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'その他' ? 'check' : ''" for="nine">
+                        <input name="place" value="その他" type="radio" required v-model="syoujou" id="nine">その他
+                    </label>
+                </div>
+            </div>
+
+            <!-- date -->
+            <div class="form-group">
+                <label>第１希望日</label>
+                <vue-datepicker v-model="datepicker1" :input-props="{'readonly': true}" format="YYYY-MM-DD" />
+            </div>
+            <!-- time -->
+            <div class="form-group">
+                <label>第１希望時間</label>
+                <input v-model="time1" id="time1" type="text" name="希望時間1" class="form-control flatpickr" placeholder="時間を選択してください" required>
+            </div>
+
+            <div class="form-group">
+                <label>第２希望日</label>
+                <vue-datepicker v-model="datepicker2" :input-props="{'readonly': true}" format="YYYY-MM-DD" />
+            </div>
+            <!-- time -->
+            <div class="form-group">
+                <label>第２希望時間</label>
+                <input v-model="time2" id="time2" type="text" name="希望時間2" class="form-control flatpickr" placeholder="時間を選択してください">
+            </div>
+
+            <div class="form-group">
+                <label>第３希望日</label>
+                <vue-datepicker v-model="datepicker3" :input-props="{'readonly': true}" format="YYYY-MM-DD" />
+            </div>
+            <!-- time -->
+            <div class="form-group">
+                <label>第３希望時間</label>
+                <input v-model="time3" id="time3" type="text" name="希望時間3" class="form-control flatpickr" placeholder="時間を選択してください">
+            </div>
+
+            <button class="regist" @click="done">予約</button>
+        <!-- </form> -->
     </div>
 </section>
-<script src="https://unpkg.com/@vuepic/vue-datepicker@latest/dist/main.prod.js"></script>
-<script>
-    const { createApp, ref } = Vue;
-    const { VueDatePicker } = window['@vuepic/vue-datepicker'];
 
-    createApp({
-        components: {
-            VueDatePicker
-        },
-        setup() {
-            const name = ref('');
-            const tel = ref('');
-            const number = ref('');
-            const syoujou = ref('');
-            const selectedDate = ref('');
-            const time = ref('');
-            const familyCount = ref(0);
-            const checkedAges = ref([]);
-            const remarks = ref('');
-            const errorMessage = ref('');
-            const ageGroups = ref(['0～6歳', '小学生', '中学生', '高校生', '大学生', '大人']);
-            const highlightedDates = ref(['2024-04-01', '2024-04-02']);
+<script type="module">
+import VueDatePicker from 'https://cdn.jsdelivr.net/npm/@vuepic/vue-datepicker@latest/dist/main.js'
+import 'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.js'
+import { Japanese } from "https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"
 
-            const submitForm = () => {
-                // Submit logic here
-            };
-
-            return {
-                name,
-                tel,
-                number,
-                syoujou,
-                selectedDate,
-                time,
-                familyCount,
-                checkedAges,
-                remarks,
-                errorMessage,
-                ageGroups,
-                highlightedDates,
-                submitForm
-            };
-        }
-    }).mount('#app');
+const { createApp } = Vue
+createApp({
+  components: {
+    'vue-datepicker': VueDatePicker
+  },
+  data() {
+    return {
+      datepicker1: null,
+      datepicker2: null,
+      datepicker3: null,
+      name: '',
+      tel: '',
+      number: '',
+      syoujou: '',
+      time1: '',
+      time2: '',
+      time3: ''
+    }
+  },
+  mounted() {
+    flatpickr(this.$refs.time1, {
+      locale: Japanese,
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+    flatpickr(this.$refs.time2, {
+      locale: Japanese,
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+    flatpickr(this.$refs.time3, {
+      locale: Japanese,
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      time_24hr: true
+    });
+  },
+  methods: {
+    done() {
+      if (this.datepicker1 && this.time1) {
+        const message = `
+        お客様名（カタカナ）: ${this.name}\n
+        電話番号: ${this.tel}\n
+        ご来店回数: ${this.number}\n
+        症状: ${this.syoujou}\n
+        第1希望日: ${this.datepicker1} ${this.time1}\n
+        第2希望日: ${this.datepicker2} ${this.time2}\n
+        第3希望日: ${this.datepicker3} ${this.time3}\n
+        `;
+        liff.sendMessages([{
+          type: 'text',
+          text: message
+        }]).then(() => {
+          liff.closeWindow();
+        }).catch((error) => {
+          console.error('Error sending message:', error);
+        });
+      } else {
+        alert('第1希望日と第1希望時間を選択してください');
+      }
+    }
+  }
+}).mount('#app')
 </script>
 </body>
 </html>
