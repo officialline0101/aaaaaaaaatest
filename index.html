@@ -127,7 +127,18 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.2/dist/vue.global.js"></script>
     <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script>
+        const liffId = "2004727608-aZejr9x5";
+
+        liff.init({ liffId })
+            .then(() => {
+                console.log('LIFF initialized');
+            })
+            .catch(err => {
+                console.error('LIFF initialization failed', err);
+            });
+
         const { createApp } = Vue;
         const { VueDatePicker } = window['@vuepic/vue-datepicker'];
 
@@ -186,15 +197,12 @@ ${formattedDate3}
                     }]).then(() => {
                         console.log('message sent');
                     }).catch((err) => {
-                        alert('error', err);
-                    }).finally(() => {
-                        liff.closeWindow();
+                        console.error('error', err);
                     });
                 },
                 formatDate(date, time) {
-                    if (!date || !time) return '';
-                    const d = new Date(date);
-                    return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 ${time}`;
+                    const [year, month, day] = date.split('-');
+                    return `${year}年${month}月${day}日 ${time}`;
                 }
             }
         }).mount('#app');
