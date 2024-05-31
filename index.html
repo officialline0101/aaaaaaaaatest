@@ -155,15 +155,12 @@
                 <label class="btn btn-info" style="width: 100%;" :class="syoujou === '健康保険の施術' ? 'check' : ''" for="six">
                     <input name="place" value="健康保険の施術" type="radio" required v-model="syoujou" id="six">健康保険の施術
                 </label>
-                <label class="btn btn-info" style="width: 100%;" :class="syoujou === 'その他' ? 'check' : ''" for="seven">
-                    <input name="place" value="その他" type="radio" required v-model="syoujou" id="seven">その他
-                </label>
             </div>
         </div>
 
         <div class="form-group">
             <label>第１希望日</label>
-            <datepicker v-model="datepicker1" :format="'yyyy-MM-dd'" :monday-first="true"></datepicker>
+            <vue-datepicker v-model="datepicker1" :format="'yyyy-MM-dd'" :monday-first="true"></vue-datepicker>
         </div>
 
         <div class="form-group">
@@ -196,7 +193,7 @@
 
         <div class="form-group">
             <label>第２希望日</label>
-            <datepicker v-model="datepicker2" :format="'yyyy-MM-dd'" :monday-first="true"></datepicker>
+            <vue-datepicker v-model="datepicker2" :format="'yyyy-MM-dd'" :monday-first="true"></vue-datepicker>
         </div>
 
         <div class="form-group">
@@ -229,7 +226,7 @@
 
         <div class="form-group">
             <label>第３希望日</label>
-            <datepicker v-model="datepicker3" :format="'yyyy-MM-dd'" :monday-first="true"></datepicker>
+            <vue-datepicker v-model="datepicker3" :format="'yyyy-MM-dd'" :monday-first="true"></vue-datepicker>
         </div>
 
         <div class="form-group">
@@ -276,48 +273,47 @@
 <script src="https://unpkg.com/@vuepic/vue-datepicker@latest"></script>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
-const { Datepicker } = window.VueDatePicker;
+const { createApp, ref } = Vue;
+const { VueDatePicker } = window.VueDatePicker;
 
 const app = {
-    data() {
-        return {
-            datepicker1: '',
-            datepicker2: '',
-            datepicker3: '',
-            datepicker1time: '',
-            datepicker2time: '',
-            datepicker3time: '',
-            name: "",
-            syoujou: "",
-            number: "",
-            tel: "",
-            message: ""
-        }
-    },
     components: {
-        Datepicker
+        VueDatePicker
     },
-    methods: {
-        get() {
+    setup() {
+        const datepicker1 = ref('');
+        const datepicker2 = ref('');
+        const datepicker3 = ref('');
+        const datepicker1time = ref('');
+        const datepicker2time = ref('');
+        const datepicker3time = ref('');
+        const name = ref('');
+        const syoujou = ref('');
+        const number = ref('');
+        const tel = ref('');
+        const message = ref('');
+
+        const get = () => {
             let url = new URL(window.location.href);
             let params = url.searchParams;
-            let syoujou = params.get('name');
-            this.syoujou = syoujou;
-        },
-        done() {
-            if (this.name && this.tel && this.number && this.syoujou && this.datepicker1 && this.datepicker1time && this.datepicker2 && this.datepicker2time && this.datepicker3 && this.datepicker3time && this.message) {
+            let syoujouParam = params.get('name');
+            syoujou.value = syoujouParam;
+        };
+
+        const done = () => {
+            if (name.value && tel.value && number.value && syoujou.value && datepicker1.value && datepicker1time.value && datepicker2.value && datepicker2time.value && datepicker3.value && datepicker3time.value && message.value) {
                 axios.post('/submit', {
-                    name: this.name,
-                    tel: this.tel,
-                    number: this.number,
-                    syoujou: this.syoujou,
-                    datepicker1: this.datepicker1,
-                    datepicker1time: this.datepicker1time,
-                    datepicker2: this.datepicker2,
-                    datepicker2time: this.datepicker2time,
-                    datepicker3: this.datepicker3,
-                    datepicker3time: this.datepicker3time,
-                    message: this.message
+                    name: name.value,
+                    tel: tel.value,
+                    number: number.value,
+                    syoujou: syoujou.value,
+                    datepicker1: datepicker1.value,
+                    datepicker1time: datepicker1time.value,
+                    datepicker2: datepicker2.value,
+                    datepicker2time: datepicker2time.value,
+                    datepicker3: datepicker3.value,
+                    datepicker3time: datepicker3time.value,
+                    message: message.value
                 })
                 .then(response => {
                     alert('送信が完了しました。');
@@ -328,25 +324,42 @@ const app = {
             } else {
                 document.getElementById('error').style.display = 'block';
             }
-        }
-    },
-    mounted: async function(){
-        await liff.init({
-            liffId: "2004727608-aZejr9x5"
-        }).then(()=>{
-            if (liff.isLoggedIn()) {
-                console.log("ログイン済");
-            } else {
-                liff.login();
-            }
-        });
-    },
-    created() {
-        this.get();
-    }
-}
+        };
 
-Vue.createApp(app).mount('#bring');
+        onMounted(async () => {
+            await liff.init({
+                liffId: "2004727608-aZejr9x5"
+            }).then(() => {
+                if (liff.isLoggedIn()) {
+                    console.log("ログイン済");
+                } else {
+                    liff.login();
+                }
+            });
+        });
+
+        onMounted(() => {
+            get();
+        });
+
+        return {
+            datepicker1,
+            datepicker2,
+            datepicker3,
+            datepicker1time,
+            datepicker2time,
+            datepicker3time,
+            name,
+            syoujou,
+            number,
+            tel,
+            message,
+            done
+        };
+    }
+};
+
+createApp(app).mount('#bring');
 </script>
 </body>
 </html>
