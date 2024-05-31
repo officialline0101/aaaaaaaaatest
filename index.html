@@ -3,114 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予約フォーム</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>LIFF App</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script>
+        function initializeLiff() {
+            liff.init({
+                liffId: "2004727608-aZejr9x5" // ここにあなたのLIFF IDを入力します
+            })
+            .then(() => {
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                } else {
+                    liff.getProfile()
+                        .then(profile => {
+                            document.getElementById('userId').textContent = profile.userId;
+                            document.getElementById('displayName').textContent = profile.displayName;
+                        })
+                        .catch(err => console.error('Error getting profile:', err));
+                }
+            })
+            .catch(err => console.error('LIFF Initialization failed:', err));
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            if (liff.isInClient()) {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: message
+                }]).then(() => {
+                    alert('メッセージが送信されました');
+                }).catch((err) => {
+                    console.error('メッセージ送信失敗:', err);
+                });
+            } else {
+                alert('LIFFアプリの外部ではメッセージを送信できません');
+            }
+        }
+
+        window.onload = function() {
+            initializeLiff();
+        };
+    </script>
 </head>
 <body>
-    <div class="container">
-        <h1>予約フォーム</h1>
-        <form id="reservation-form">
-            <div class="form-group">
-                <label for="name">お客様名（カタカナ）</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">電話番号</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-            <div class="form-group">
-                <label>ご来店回数</label>
-                <div class="radio-group">
-                    <input type="radio" id="first-time" name="visit-count" value="初めて" required>
-                    <label for="first-time">初めて</label>
-                    <input type="radio" id="repeat" name="visit-count" value="2回目以降" required>
-                    <label for="repeat">2回目以降</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>症状</label>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="symptom1" name="symptom" value="頭痛・偏頭痛">
-                    <label for="symptom1">頭痛・偏頭痛</label>
-                    <input type="checkbox" id="symptom2" name="symptom" value="交通事故施術">
-                    <label for="symptom2">交通事故施術</label>
-                    <input type="checkbox" id="symptom3" name="symptom" value="肩こり・腕のしびれ">
-                    <label for="symptom3">肩こり・腕のしびれ</label>
-                    <input type="checkbox" id="symptom4" name="symptom" value="臀部・下肢の痛みや痒れ">
-                    <label for="symptom4">臀部・下肢の痛みや痒れ</label>
-                    <input type="checkbox" id="symptom5" name="symptom" value="ぎっくり腰・慢性腰痛">
-                    <label for="symptom5">ぎっくり腰・慢性腰痛</label>
-                    <input type="checkbox" id="symptom6" name="symptom" value="寝違い・むち打ち等首の症状">
-                    <label for="symptom6">寝違い・むち打ち等首の症状</label>
-                    <input type="checkbox" id="symptom7" name="symptom" value="EMS(電気的筋肉刺激装置)トレーニング">
-                    <label for="symptom7">EMS(電気的筋肉刺激装置)トレーニング</label>
-                    <input type="checkbox" id="symptom8" name="symptom" value="健康保険の施術">
-                    <label for="symptom8">健康保険の施術</label>
-                    <input type="checkbox" id="symptom9" name="symptom" value="その他">
-                    <label for="symptom9">その他</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="date1">第1希望日</label>
-                <input type="datetime-local" id="date1" name="date1" required>
-            </div>
-            <div class="form-group">
-                <label for="date2">第2希望日</label>
-                <input type="datetime-local" id="date2" name="date2" required>
-            </div>
-            <div class="form-group">
-                <label for="date3">第3希望日</label>
-                <input type="datetime-local" id="date3" name="date3" required>
-            </div>
-            <div class="form-group">
-                <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
-                <textarea id="message" name="message"></textarea>
-            </div>
-            <button type="submit">予約を行う</button>
-        </form>
-    </div>
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            liff.init({ liffId: "2004727608-aZejr9x5" }).then(() => {
-                document.getElementById("reservation-form").addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    
-                    const name = document.getElementById("name").value;
-                    const phone = document.getElementById("phone").value;
-                    const visitCount = document.querySelector('input[name="visit-count"]:checked').value;
-                    const symptoms = Array.from(document.querySelectorAll('input[name="symptom"]:checked')).map(el => el.value).join(', ');
-                    const date1 = document.getElementById("date1").value;
-                    const date2 = document.getElementById("date2").value;
-                    const date3 = document.getElementById("date3").value;
-                    const message = document.getElementById("message").value;
-
-                    const reservationDetails = `
-                        お客様名（カタカナ）: ${name}\n
-                        電話番号: ${phone}\n
-                        ご来店回数: ${visitCount}\n
-                        症状: ${symptoms}\n
-                        第1希望日: ${date1}\n
-                        第2希望日: ${date2}\n
-                        第3希望日: ${date3}\n
-                        メッセージ: ${message}
-                    `;
-
-                    liff.sendMessages([{
-                        type: 'text',
-                        text: reservationDetails
-                    }]).then(() => {
-                        alert("予約内容が送信されました！");
-                        liff.closeWindow();
-                    }).catch((err) => {
-                        console.error("Error sending message: ", err);
-                        alert("メッセージの送信に失敗しました。");
-                    });
-                });
-            }).catch((err) => {
-                console.error("LIFF initialization failed ", err);
-            });
-        });
-    </script>
+    <h1>LIFF App</h1>
+    <p>ユーザーID: <span id="userId"></span></p>
+    <p>表示名: <span id="displayName"></span></p>
+    <textarea id="message" placeholder="ここにメッセージを入力"></textarea>
+    <button onclick="sendMessage()">送信</button>
 </body>
 </html>
