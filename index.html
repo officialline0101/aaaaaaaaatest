@@ -158,27 +158,33 @@
             }
         }
 
-        function submitForm() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const date1 = document.getElementById('date1').value;
-            const date2 = document.getElementById('date2').value;
-            const date3 = document.getElementById('date3').value;
-            const message = document.getElementById('message').value;
+function submitForm() {
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const date1 = document.getElementById('date1').value;
+    const date2 = document.getElementById('date2').value;
+    const date3 = document.getElementById('date3').value;
+    const message = document.getElementById('message').value;
 
-            const formData = {
-                name,
-                phone,
-                visitCount,
-                symptoms,
-                dates: [date1, date2, date3],
-                message
-            };
+    const formData = {
+        name,
+        phone,
+        visitCount,
+        symptoms,
+        dates: [date1, date2, date3],
+        message
+    };
 
-            // Simulating sending data to LINE LIFF
-            alert('予約が送信されました: ' + JSON.stringify(formData));
-            // Here you would send formData to your server or LIFF ID
-        }
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `予約が送信されました:\n名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n第1希望日: ${formData.dates[0]}\n第2希望日: ${formData.dates[1]}\n第3希望日: ${formData.dates[2]}\nメッセージ: ${formData.message}`
+    }]).then(() => {
+        alert('予約が送信されました: ' + JSON.stringify(formData));
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
     </script>
 </body>
 </html>
