@@ -123,9 +123,23 @@
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
     </div>
 
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
         let symptoms = [];
+
+        // LIFF初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            liff.init({
+                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+            }).then(() => {
+                // LIFF初期化成功時の処理
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                // LIFF初期化失敗時の処理
+                console.error('LIFF初期化失敗', err);
+            });
+        });
 
         function selectVisit(element) {
             document.getElementById('firstVisit').classList.remove('active');
