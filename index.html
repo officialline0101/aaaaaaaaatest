@@ -86,7 +86,7 @@
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <label for="name">お客様名（カタカナ）</label>
+        <label for="name">お客様名</label>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
         <label for="phone">電話番号</label>
@@ -181,13 +181,14 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `予約が送信されました:\n名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n第1希望日: ${formData.dates[0]}\n第2希望日: ${formData.dates[1]}\n第3希望日: ${formData.dates[2]}\nメッセージ: ${formData.message}`
-            }]).then(() => {
-                alert('予約が送信されました: ' + JSON.stringify(formData));
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+                text: `【予約フォーム】:\nお名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n: ${formData.dates[0]}\n: ${formData.dates[1]}\n: ${formData.dates[2]}\nメッセージ: ${formData.message}`
+    }]).then(() => {
+        // 成功時の処理（メッセージを表示しない）
+    }).catch((err) => {
+        // 失敗時の処理（エラーメッセージを表示しない）
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
     </script>
 </body>
 </html>
