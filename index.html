@@ -86,7 +86,7 @@
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <label for="name">お客様名</label>
+        <label for="name">お客様名（カタカナ）</label>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
         <label for="phone">電話番号</label>
@@ -164,9 +164,9 @@
         function submitForm() {
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
-            const date1 = document.getElementById('date1').value;
-            const date2 = document.getElementById('date2').value;
-            const date3 = document.getElementById('date3').value;
+            const date1 = formatDate(document.getElementById('date1').value);
+            const date2 = formatDate(document.getElementById('date2').value);
+            const date3 = formatDate(document.getElementById('date3').value);
             const message = document.getElementById('message').value;
 
             const formData = {
@@ -181,14 +181,25 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前： ${formData.name}\n電話番号： ${formData.phone}\n訪問回数： ${formData.visitCount}\n症状： ${formData.symptoms.join(', ')}\n希望日時：\n ${formData.dates[0]}\n ${formData.dates[1]}\n ${formData.dates[2]}\nメッセージ: ${formData.message}`
-    }]).then(() => {
-        // 成功時の処理（メッセージを表示しない）
-    }).catch((err) => {
-        // 失敗時の処理（エラーメッセージを表示しない）
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+                text: `予約が送信されました:\n名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n第1希望日: ${formData.dates[0]}\n第2希望日: ${formData.dates[1]}\n第3希望日: ${formData.dates[2]}\nメッセージ: ${formData.message}`
+            }]).then(() => {
+                // 成功時の処理（メッセージを表示しない）
+            }).catch((err) => {
+                // 失敗時の処理（エラーメッセージを表示しない）
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
+
+        function formatDate(datetime) {
+            if (!datetime) return '';
+            const date = new Date(datetime);
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const day = ('0' + date.getDate()).slice(-2);
+            const hours = ('0' + date.getHours()).slice(-2);
+            const minutes = ('0' + date.getMinutes()).slice(-2);
+            return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+        }
     </script>
 </body>
 </html>
