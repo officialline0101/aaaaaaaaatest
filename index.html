@@ -167,12 +167,14 @@
             }
         }
 
-        function checkAvailability(datetime) {
-            google.script.run.withSuccessHandler(updateStatus).getCalendarStatus(datetime);
-        }
-
-        function updateStatus(status) {
-            document.getElementById('status').innerText = `予約状況: ${status}`;
+        function checkAvailability(date) {
+            const url = 'https://script.google.com/macros/s/AKfycbz-pvL5M-I_D1mrFdAGbaC53G2YDCSAUGqJYjHPvjIInwbZCOBwdEUBZ8mnzY_4eZCI/exec' + '?date=' + date; // デプロイしたURLに置き換えてください
+            fetch(url)
+                .then(response => response.text())
+                .then(status => {
+                    document.getElementById('status').innerText = '予約状況: ' + status;
+                })
+                .catch(error => console.error('Error:', error));
         }
 
         function submitForm() {
