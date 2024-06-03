@@ -13,7 +13,7 @@
             align-items: flex-start;
             height: 100vh;
             margin: 0;
-            padding-top: 20px;
+            padding-top: 20px; /* ページのトップに空白を作る */
         }
         .container {
             background-color: #fff;
@@ -81,29 +81,24 @@
             font-size: 18px;
             cursor: pointer;
         }
-        #status {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <label for="name">お客様名※必須</label>
+        <label for="name">お客様名（カタカナ）</label>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <label for="phone">電話番号※必須</label>
+        <label for="phone">電話番号</label>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <label>ご来店回数※必須</label>
+        <label>ご来店回数</label>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <label>症状※必須</label>
+        <label>症状</label>
         <div class="symptoms">
             <button type="button" onclick="selectSymptom(this)">頭痛・偏頭痛</button>
             <button type="button" onclick="selectSymptom(this)">交通事故施術</button>
@@ -116,15 +111,14 @@
             <button type="button" onclick="selectSymptom(this)">その他</button>
         </div>
 
-        <label for="date1">第1希望日※必須</label>
-        <input type="datetime-local" id="date1" onchange="checkAvailability(this.value)">
-        <div id="status"></div>
+        <label for="date1">第1希望日</label>
+        <input type="datetime-local" id="date1">
 
         <label for="date2">第2希望日</label>
-        <input type="datetime-local" id="date2" placeholder="タップして日時を入力">
+        <input type="datetime-local" id="date2">
 
         <label for="date3">第3希望日</label>
-        <input type="datetime-local" id="date3" placeholder="タップして日時を入力">
+        <input type="datetime-local" id="date3">
 
         <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -167,16 +161,6 @@
             }
         }
 
-        function checkAvailability(date) {
-            const url = 'https://script.google.com/macros/s/AKfycbz-pvL5M-I_D1mrFdAGbaC53G2YDCSAUGqJYjHPvjIInwbZCOBwdEUBZ8mnzY_4eZCI/exec' + '?date=' + date; // デプロイしたURLに置き換えてください
-            fetch(url)
-                .then(response => response.text())
-                .then(status => {
-                    document.getElementById('status').innerText = '予約状況: ' + status;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
         function submitForm() {
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
@@ -197,7 +181,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n訪問回数：${formData.visitCount}\n症状：${formData.symptoms.join(', ')}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
+                text: `予約が送信されました:\n名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n第1希望日: ${formData.dates[0]}\n第2希望日: ${formData.dates[1]}\n第3希望日: ${formData.dates[2]}\nメッセージ: ${formData.message}`
             }]).then(() => {
                 // LIFFウィンドウを閉じる
                 liff.closeWindow();
