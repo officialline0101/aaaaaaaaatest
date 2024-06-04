@@ -178,20 +178,18 @@
                 message
             };
 
-    var userConfirmed = confirm('当日キャンセルはしないでください。キャンセル料発生いたします。;
-    if (userConfirmed) {
-        // LINEトークにメッセージを送信
-        liff.sendMessages([{
-            type: 'text',
-            text: `予約が送信されました:\n名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n第1希望日: ${formData.dates[0]}\n第2希望日: ${formData.dates[1]}\n第3希望日: ${formData.dates[2]}\nメッセージ: ${formData.message}`
-        }]).then(() => {
-            alert('予約が送信されました: ' + JSON.stringify(formData));
-            liff.closeWindow();
-        }).catch((err) => {
-            console.error('メッセージの送信に失敗しました', err);
-        });
-    }
-}
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n訪問回数：${formData.visitCount}\n症状：${formData.symptoms.join(', ')}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                // LIFFウィンドウを閉じる
+                liff.closeWindow();
+            }).catch((err) => {
+                // 失敗時の処理（エラーメッセージを表示しない）
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(datetime) {
             if (!datetime) return '';
