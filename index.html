@@ -10,9 +10,10 @@
             background-color: #f7f7f7;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             height: 100vh;
             margin: 0;
+            padding-top: 20px; /* ページのトップに空白を作る */
         }
         .container {
             background-color: #fff;
@@ -55,6 +56,8 @@
             background-color: #f7f7f7;
             cursor: pointer;
             box-sizing: border-box;
+            text-align: center;
+            white-space: nowrap;
         }
         .visit-buttons button.active, .symptoms button.active {
             background-color: #444;
@@ -83,19 +86,19 @@
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <label for="name">お客様名（カタカナ）</label>
+        <label for="name">お客様名※必須</label>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <label for="phone">電話番号</label>
+        <label for="phone">電話番号※必須</label>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <label>ご来店回数</label>
+        <label>ご来店回数※必須</label>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <label>症状</label>
+        <label>症状※必須</label>
         <div class="symptoms">
             <button type="button" onclick="selectSymptom(this)">頭痛・偏頭痛</button>
             <button type="button" onclick="selectSymptom(this)">交通事故施術</button>
@@ -108,14 +111,14 @@
             <button type="button" onclick="selectSymptom(this)">その他</button>
         </div>
 
-        <label for="date1">第1希望日</label>
-        <input type="datetime-local" id="date1">
+        <label for="date1">第1希望日※必須</label>
+        <input type="datetime-local" id="date1" placeholder="タップして日時を入力">
 
         <label for="date2">第2希望日</label>
-        <input type="datetime-local" id="date2">
+        <input type="datetime-local" id="date2" placeholder="タップして日時を入力">
 
         <label for="date3">第3希望日</label>
-        <input type="datetime-local" id="date3">
+        <input type="datetime-local" id="date3" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -131,7 +134,7 @@
         // LIFF初期化
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+                liffId: '2004727608-aZejr9x5' // ここにあなたのLIFF IDを入力
             }).then(() => {
                 // LIFF初期化成功時の処理
                 console.log('LIFF初期化成功');
@@ -158,33 +161,47 @@
             }
         }
 
-function submitForm() {
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-    const date1 = document.getElementById('date1').value;
-    const date2 = document.getElementById('date2').value;
-    const date3 = document.getElementById('date3').value;
-    const message = document.getElementById('message').value;
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const date1 = formatDate(document.getElementById('date1').value);
+            const date2 = formatDate(document.getElementById('date2').value);
+            const date3 = formatDate(document.getElementById('date3').value);
+            const message = document.getElementById('message').value;
 
-    const formData = {
-        name,
-        phone,
-        visitCount,
-        symptoms,
-        dates: [date1, date2, date3],
-        message
-    };
+            const formData = {
+                name,
+                phone,
+                visitCount,
+                symptoms,
+                dates: [date1, date2, date3],
+                message
+            };
 
-    // LINEトークにメッセージを送信
-    liff.sendMessages([{
-        type: 'text',
-        text: `予約が送信されました:\n名前: ${formData.name}\n電話番号: ${formData.phone}\n訪問回数: ${formData.visitCount}\n症状: ${formData.symptoms.join(', ')}\n第1希望日: ${formData.dates[0]}\n第2希望日: ${formData.dates[1]}\n第3希望日: ${formData.dates[2]}\nメッセージ: ${formData.message}`
-    }]).then(() => {
-        alert('予約が送信されました: ' + JSON.stringify(formData));
-    }).catch((err) => {
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+    var userConfirmed = confirm('当日キャンセルはしないでください。キャンセル料発生いたします。: ' + JSON.stringify(formData));
+    if (userConfirmed) {
+        // LINEトークにメッセージを送信
+        liff.sendMessages([{
+            type: 'text',
+            text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n訪問回数：${formData.visitCount}\n症状：${formData.symptoms.join(', ')}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
+        }]).then(() => {
+            // LIFFウィンドウを閉じる
+        }).catch((err) => {
+            // 失敗時の処理（エラーメッセージを表示しない）
+            console.error('メッセージの送信に失敗しました', err);
+            });
+        }
+
+        function formatDate(datetime) {
+            if (!datetime) return '';
+            const date = new Date(datetime);
+            const year = date.getFullYear();
+            const month = ('0' + (date.getMonth() + 1)).slice(-2);
+            const day = ('0' + date.getDate()).slice(-2);
+            const hours = ('0' + date.getHours()).slice(-2);
+            const minutes = ('0' + date.getMinutes()).slice(-2);
+            return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+        }
     </script>
 </body>
 </html>
