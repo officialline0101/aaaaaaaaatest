@@ -89,6 +89,12 @@
         <label for="name">お客様名※必須</label>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
+        <label>どちらを占いますか？※必須</label>
+        <div class="visit-buttons">
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">マヤ暦</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">数秘術</button>
+        </div>
+
         <label for="date1">お誕生日※必須</label>
         <input type="datetime-local" id="date1" placeholder="タップして日時を入力">
 
@@ -135,11 +141,13 @@
 
         function submitForm() {
             const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
             const date1 = formatDate(document.getElementById('date1').value);
             const message = document.getElementById('message').value;
 
             const formData = {
                 name,
+                visitCount,
                 dates: [date1],
                 message
             };
@@ -147,7 +155,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `占い\nお名前：${formData.name}\nお誕生日：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【占いフォーム】\nお名前：${formData.name}\n占い：${formData.visitCount}\nお誕生日：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 // LIFFウィンドウを閉じる
                 liff.closeWindow();
