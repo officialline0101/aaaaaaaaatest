@@ -86,20 +86,8 @@
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <label for="name">お客様名※必須</label>
-        <input type="text" id="name" placeholder="お名前を入力してください">
-
-        <label for="phone">電話番号※必須</label>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください">
-
-        <label for="date1">第1希望日※必須</label>
+        <label for="date1">希望日時※必須</label>
         <input type="datetime-local" id="date1" step="1800" placeholder="タップして日時を入力">
-
-        <label for="date2">第2希望日</label>
-        <input type="datetime-local" id="date2" step="1800" placeholder="タップして日時を入力">
-
-        <label for="date3">第3希望日</label>
-        <input type="datetime-local" id="date3" step="1800" placeholder="タップして日時を入力">
 
         <label>新規orリピーター※必須</label>
         <div class="visit-buttons">
@@ -161,8 +149,6 @@
         }
 
         function submitForm() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
             const date1 = formatDate(document.getElementById('date1').value);
             const date2 = formatDate(document.getElementById('date2').value);
             const date3 = formatDate(document.getElementById('date3').value);
@@ -173,14 +159,14 @@
                 phone,
                 visitCount,
                 selectedSymptom,
-                dates: [date1, date2, date3],
+                dates: [date1],
                 message
             };
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\n新規orリピーター：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n希望日時：\n ${formData.dates[0]}\n新規orリピーター：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。 ' );
                 // LIFFウィンドウを閉じる
