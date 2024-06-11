@@ -92,33 +92,26 @@
         <label for="phone">電話番号※必須</label>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <label for="date1">第1希望日※必須</label>
-        <input type="datetime-local" id="date1" step="1800" placeholder="タップして日時を入力">
-
-        <label for="date2">第2希望日</label>
-        <input type="datetime-local" id="date2" step="1800" placeholder="タップして日時を入力">
-
-        <label for="date3">第3希望日</label>
-        <input type="datetime-local" id="date3" step="1800" placeholder="タップして日時を入力">
-
-        <label>新規orリピーター※必須</label>
+        <label>ご来店回数※必須</label>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <label>メニュー※必須</label>
+        <label>コース※必須</label>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this)">全身デトックスリンパ100分</button>
-            <button type="button" onclick="selectSymptom(this)">全身デトックスリンパ120分</button>
-            <button type="button" onclick="selectSymptom(this)">ブライダルベーシック70分</button>
-            <button type="button" onclick="selectSymptom(this)">首・肩こりコース30分</button>
-            <button type="button" onclick="selectSymptom(this)">セレクトデトックスリンパ70分</button>
-            <button type="button" onclick="selectSymptom(this)">半身デトックスリンパ70分</button>
-            <button type="button" onclick="selectSymptom(this)">ブライダルスタンダード90分</button>
-            <button type="button" onclick="selectSymptom(this)">ブライダルスペシャル120分</button>
-            <button type="button" onclick="selectSymptom(this)">よもぎ蒸し30分</button>
+            <button type="button" onclick="selectSymptom(this)">整体・ボディケア60分</button>
+            <button type="button" onclick="selectSymptom(this)">整体ボディケア＋セルフ整体エクササイズ</button>
         </div>
+
+        <label for="date1">第1希望日※必須</label>
+        <input type="datetime-local" id="date1" placeholder="タップして日時を入力">
+
+        <label for="date2">第2希望日</label>
+        <input type="datetime-local" id="date2" placeholder="タップして日時を入力">
+
+        <label for="date3">第3希望日</label>
+        <input type="datetime-local" id="date3" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -172,7 +165,7 @@
                 name,
                 phone,
                 visitCount,
-                selectedSymptom,
+                symptoms,
                 dates: [date1, date2, date3],
                 message
             };
@@ -180,9 +173,8 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\n新規orリピーター：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n訪問回数：${formData.visitCount}\n症状：${formData.symptoms.join(', ')}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
             }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。 ' );
                 // LIFFウィンドウを閉じる
                 liff.closeWindow();
             }).catch((err) => {
