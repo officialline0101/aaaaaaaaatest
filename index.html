@@ -86,31 +86,42 @@
 <body>
     <div class="container">
         <h1>予約フォーム</h1>
-        <label for="name">お客様名※必須</label>
+        <label for="name">お客様名</label>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <label for="phone">電話番号※必須</label>
+        <label for="phone">電話番号※任意</label>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <label>ご来店回数※必須</label>
+        <label>ご性別</label>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">男性</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">女性</button>
         </div>
 
-        <label>コース※必須とんトン！</label>
+        <label>コース</label>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this)">整体・ボディケア60分</button>
-            <button type="button" onclick="selectSymptom(this)">整体ボディケア＋セルフ整体エクササイズ</button>
+            <button type="button" onclick="selectSymptom(this)">【新規限定】フェイシャル体験４０分</button>
+            <button type="button" onclick="selectSymptom(this)">【新規限定】ボディトリートメント４０分</button>
+            <button type="button" onclick="selectSymptom(this)">オーダーメイドフェイシャル６０分</button>
+            <button type="button" onclick="selectSymptom(this)">ボディトリートメント６０分</button>
+            <button type="button" onclick="selectSymptom(this)">【新規限定】メンズ脱毛全顔</button>
+            <button type="button" onclick="selectSymptom(this)">【新規限定】メンズ脱毛体験１パーツ～</button>
+            <button type="button" onclick="selectSymptom(this)">【新規限定】脱毛１セット体験</button>
+            <button type="button" onclick="selectSymptom(this)">脱毛全身（全顔＋VIOあり）</button>
+            <button type="button" onclick="selectSymptom(this)">脱毛（全顔＋VIOなし）</button>
+            <button type="button" onclick="selectSymptom(this)">脱毛（選べるお好きな5パーツ）</button>
+            <button type="button" onclick="selectSymptom(this)">脱毛（選べるお好きな3パーツ）</button>
+            <button type="button" onclick="selectSymptom(this)">ホワイトニング体験</button>
+            <button type="button" onclick="selectSymptom(this)">ホワイトニング(スタンダード)</button>
         </div>
 
-        <label for="date1">第1希望日※必須</label>
+        <label for="date1">定休日：日曜日<br>営業時間10:00～18:00<br>第1希望日<br>希望時間は00分or30分でお願いします。</label>
         <input type="datetime-local" id="date1" placeholder="タップして日時を入力">
 
-        <label for="date2">第2希望日</label>
+        <label for="date2">第2希望日※任意</label>
         <input type="datetime-local" id="date2" placeholder="タップして日時を入力">
 
-        <label for="date3">第3希望日</label>
+        <label for="date3">第3希望日※任意</label>
         <input type="datetime-local" id="date3" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
@@ -173,9 +184,8 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n訪問回数：${formData.visitCount}\nコース：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご性別：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
             }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。 ' );
                 // LIFFウィンドウを閉じる
                 liff.closeWindow();
             }).catch((err) => {
@@ -197,4 +207,3 @@
     </script>
 </body>
 </html>
-
