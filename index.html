@@ -85,49 +85,33 @@
 </head>
 <body>
     <div class="container">
-        <h1>予約フォーム</h1>
-        <label for="name">お客様名</label>
-        <input type="text" id="name" placeholder="お名前を入力してください">
-
-        <label for="phone">電話番号※任意</label>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください">
-
-        <label>ご性別</label>
+        <h1>占いフォーム</h1>
+        <label>希望占い</label>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">男性</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">女性</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">数秘術占い</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">マヤ暦占い</button>
         </div>
 
-        <label>コース</label>
+        <label>何を占いたいですか？</label>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this)">【新規限定】フェイシャル体験４０分</button>
-            <button type="button" onclick="selectSymptom(this)">【新規限定】ボディトリートメント４０分</button>
-            <button type="button" onclick="selectSymptom(this)">オーダーメイドフェイシャル６０分</button>
-            <button type="button" onclick="selectSymptom(this)">ボディトリートメント６０分</button>
-            <button type="button" onclick="selectSymptom(this)">【新規限定】メンズ脱毛全顔</button>
-            <button type="button" onclick="selectSymptom(this)">【新規限定】メンズ脱毛体験１パーツ～</button>
-            <button type="button" onclick="selectSymptom(this)">【新規限定】脱毛１セット体験</button>
-            <button type="button" onclick="selectSymptom(this)">脱毛全身（全顔＋VIOあり）</button>
-            <button type="button" onclick="selectSymptom(this)">脱毛（全顔＋VIOなし）</button>
-            <button type="button" onclick="selectSymptom(this)">脱毛（選べるお好きな5パーツ）</button>
-            <button type="button" onclick="selectSymptom(this)">脱毛（選べるお好きな3パーツ）</button>
-            <button type="button" onclick="selectSymptom(this)">ホワイトニング体験</button>
-            <button type="button" onclick="selectSymptom(this)">ホワイトニング(スタンダード)</button>
+            <button type="button" onclick="selectSymptom(this)">恋愛</button>
+            <button type="button" onclick="selectSymptom(this)">結婚</button>
+            <button type="button" onclick="selectSymptom(this)">人間関係</button>
+            <button type="button" onclick="selectSymptom(this)">自分の役割</button>
+            <button type="button" onclick="selectSymptom(this)">仕事運</button>
+            <button type="button" onclick="selectSymptom(this)">宿命運</button>
+            <button type="button" onclick="selectSymptom(this)">現在の運命</button>
+            <button type="button" onclick="selectSymptom(this)">使命</button>
+            <button type="button" onclick="selectSymptom(this)">天命</button>
         </div>
 
-        <label for="date1">定休日：日曜日<br>営業時間10:00～18:00<br>第1希望日<br>希望時間は00分or30分でお願いします。</label>
+        <label for="date1">お誕生日（お時間は何時でも可）</label>
         <input type="datetime-local" id="date1" placeholder="タップして日時を入力">
-
-        <label for="date2">第2希望日※任意</label>
-        <input type="datetime-local" id="date2" placeholder="タップして日時を入力">
-
-        <label for="date3">第3希望日※任意</label>
-        <input type="datetime-local" id="date3" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
-        <button class="submit-button" onclick="submitForm()">予約を行う</button>
+        <button class="submit-button" onclick="submitForm()">占いを行う</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -168,25 +152,21 @@
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
             const date1 = formatDate(document.getElementById('date1').value);
-            const date2 = formatDate(document.getElementById('date2').value);
-            const date3 = formatDate(document.getElementById('date3').value);
             const message = document.getElementById('message').value;
 
             const formData = {
-                name,
-                phone,
                 visitCount,
                 selectedSymptom,
-                dates: [date1, date2, date3],
+                dates: [date1],
                 message
             };
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご性別：${formData.visitCount}\nコース：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n希望占い：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。 ' );
+                alert('ご記入いただいた誕生日から占い結果をお伝えしますのでしばらくお待ちください... ' );
                 // LIFFウィンドウを閉じる
                 liff.closeWindow();
             }).catch((err) => {
