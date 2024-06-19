@@ -34,7 +34,7 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
-        input[type="text"], input[type="tel"], textarea {
+        input[type="text"], input[type="date"], textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -62,14 +62,6 @@
         .visit-buttons button.active, .symptoms button.active {
             background-color: #444;
             color: #fff;
-        }
-        .date-inputs input[type="datetime-local"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
         }
         .submit-button {
             width: 100%;
@@ -106,7 +98,7 @@
         </div>
 
         <label for="date1">生年月日（お時間は何時でも可）</label>
-        <input type="datetime-local" id="date1" placeholder="タップして日時を入力">
+        <input type="date" id="date1" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（お悩みなどあればご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -122,7 +114,7 @@
         // LIFF初期化
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+                liffId: 'あなたのLIFF_IDをここに入力' // ここにあなたのLIFF IDを入力
             }).then(() => {
                 // LIFF初期化成功時の処理
                 console.log('LIFF初期化成功');
@@ -173,15 +165,10 @@
             });
         }
 
-        function formatDate(datetime) {
-            if (!datetime) return '';
-            const date = new Date(datetime);
-            const year = date.getFullYear();
-            const month = ('0' + (date.getMonth() + 1)).slice(-2);
-            const day = ('0' + date.getDate()).slice(-2);
-            const hours = ('0' + date.getHours()).slice(-2);
-            const minutes = ('0' + date.getMinutes()).slice(-2);
-            return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+        function formatDate(date) {
+            if (!date) return '';
+            const [year, month, day] = date.split('-');
+            return `${year}年${month}月${day}日`;
         }
     </script>
 </body>
