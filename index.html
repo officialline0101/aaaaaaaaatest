@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>占いフォーム</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -98,7 +99,7 @@
         </div>
 
         <label for="date1">生年月日（お時間は何時でも可）</label>
-        <input type="date" id="date1" placeholder="タップして日時を入力">
+        <input type="text" id="date1" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（お悩みなどあればご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -107,6 +108,7 @@
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
     <script>
         let visitCount = '';
         let selectedSymptom = '';
@@ -122,6 +124,9 @@
                 // LIFF初期化失敗時の処理
                 console.error('LIFF初期化失敗', err);
             });
+
+            // Pikaday初期化
+            new Pikaday({ field: document.getElementById('date1') });
         });
 
         function selectVisit(element) {
@@ -171,9 +176,7 @@
             const year = date.getFullYear();
             const month = ('0' + (date.getMonth() + 1)).slice(-2);
             const day = ('0' + date.getDate()).slice(-2);
-            const hours = ('0' + date.getHours()).slice(-2);
-            const minutes = ('0' + date.getMinutes()).slice(-2);
-            return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+            return `${year}年${month}月${day}日`;
         }
     </script>
 </body>
