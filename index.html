@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>占いフォーム</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +14,7 @@
             align-items: flex-start;
             height: 100vh;
             margin: 0;
-            padding-top: 20px;
+            padding-top: 20px; /* ページのトップに空白を作る */
         }
         .container {
             background-color: #fff;
@@ -100,8 +99,7 @@
         </div>
 
         <label for="date1">生年月日（お時間は何時でも可）</label>
-        <input type="text" id="date1" placeholder="タップして日付を入力">
-        <input type="text" id="time1" placeholder="タップして時間を入力">
+        <input type="text" id="date1" placeholder="タップして日時を入力">
 
         <label for="message">メッセージ（お悩みなどあればご記入ください）</label>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -111,8 +109,6 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <script>
         let visitCount = '';
         let selectedSymptom = '';
@@ -131,19 +127,6 @@
 
             // Pikaday初期化
             new Pikaday({ field: document.getElementById('date1') });
-
-            // Timepicker初期化
-            $('#time1').timepicker({
-                timeFormat: 'HH:mm',
-                interval: 30,
-                minTime: '00:00',
-                maxTime: '23:30',
-                defaultTime: '00:00',
-                startTime: '00:00',
-                dynamic: false,
-                dropdown: true,
-                scrollbar: true
-            });
         });
 
         function selectVisit(element) {
@@ -164,20 +147,19 @@
 
         function submitForm() {
             const date1 = formatDate(document.getElementById('date1').value);
-            const time1 = document.getElementById('time1').value;
             const message = document.getElementById('message').value;
 
             const formData = {
                 visitCount,
                 selectedSymptom,
-                dateTime: `${date1} ${time1}`,
+                dates: [date1],
                 message
             };
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【占いフォーム】\n希望占い：${formData.visitCount}\n何を占いたいですか？：${formData.selectedSymptom}\n生年月日と時間：${formData.dateTime}\nメッセージ：${formData.message}`
+                text: `【占いフォーム】\n希望占い：${formData.visitCount}\n何を占いたいですか？：${formData.selectedSymptom}\n生年月日：${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('ご記入いただいた誕生日から占い結果をお伝えしますのでしばらくお待ちください...');
                 // LIFFウィンドウを閉じる
