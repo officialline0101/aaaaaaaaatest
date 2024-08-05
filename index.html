@@ -13,7 +13,7 @@
             align-items: flex-start;
             height: 100vh;
             margin: 0;
-            padding-top: 20px; /* ページのトップに空白を作る */
+            padding-top: 20px;
         }
         .container {
             background-color: #fff;
@@ -24,67 +24,10 @@
             padding: 20px;
             box-sizing: border-box;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        input[type="text"], input[type="tel"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .visit-buttons, .symptoms {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .visit-buttons button, .symptoms button {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            box-sizing: border-box;
-            text-align: center;
-            white-space: nowrap;
-        }
-        .visit-buttons button.active, .symptoms button.active {
-            background-color: #444;
-            color: #fff;
-        }
-        .date-inputs input[type="datetime-local"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 4px;
-            background-color: #ff4c4c;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-        }
         .calendar-container {
             position: relative;
         }
-        .calendar {
+        .calendar, .time-picker {
             position: absolute;
             top: 100%;
             left: 0;
@@ -93,44 +36,44 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
             display: none;
+            margin-top: 5px;
         }
-        .calendar table {
+        .calendar table, .time-picker {
             width: 100%;
             border-collapse: collapse;
         }
-        .calendar th, .calendar td {
-            width: 14.28%;
-            text-align: center;
+        .calendar th, .calendar td, .time-picker div {
             padding: 10px;
+            text-align: center;
             cursor: pointer;
+            border-bottom: 1px solid #eee;
         }
         .calendar th {
             background-color: #f7f7f7;
         }
-        .calendar td:hover {
+        .calendar td:hover, .time-picker div:hover {
             background-color: #ddd;
         }
-        .calendar td.selected {
+        .calendar td.selected, .time-picker div.selected {
             background-color: #444;
             color: #fff;
         }
-        .time-picker {
-            position: absolute;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .time-picker div {
             padding: 10px;
-            display: none;
-            z-index: 100;
+            border-bottom: 1px solid #eee;
+        }
+        .time-picker div:last-child {
+            border-bottom: none;
+        }
+        .time-picker-container {
+            display: flex;
+            flex-wrap: wrap;
         }
         .time-picker div {
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .time-picker div:hover {
-            background-color: #ddd;
+            width: 50%;
+            box-sizing: border-box;
         }
     </style>
     </style>
@@ -193,7 +136,6 @@
             const date = new Date(year, month);
             const days = ['日', '月', '火', '水', '木', '金', '土'];
 
-            // カレンダーのナビゲーション
             const nav = document.createElement('div');
             nav.style.display = 'flex';
             nav.style.justifyContent = 'space-between';
@@ -210,7 +152,6 @@
             nav.appendChild(nextMonthBtn);
             calendar.appendChild(nav);
 
-            // 曜日ヘッダー
             const table = document.createElement('table');
             const headerRow = document.createElement('tr');
             days.forEach(day => {
