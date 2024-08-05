@@ -85,13 +85,28 @@
             display: flex;
             margin-bottom: 20px;
         }
+        .time-picker {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 80px;
+            margin-right: 10px;
+        }
+        .time-picker div {
+            padding: 10px;
+            text-align: center;
+            background-color: #f7f7f7;
+            cursor: pointer;
+            margin-bottom: 2px;
+        }
+        .time-picker div:hover {
+            background-color: #ddd;
+        }
         .calendar {
             flex: 1;
             background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-right: 10px;
         }
         .calendar table {
             width: 100%;
@@ -112,21 +127,6 @@
         .calendar td.selected {
             background-color: #444;
             color: #fff;
-        }
-        .time-picker {
-            display: flex;
-            flex-direction: column;
-            flex: 0 0 80px;
-        }
-        .time-picker div {
-            padding: 10px;
-            text-align: center;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            margin-bottom: 2px;
-        }
-        .time-picker div:hover {
-            background-color: #ddd;
         }
     </style>
 </head>
@@ -154,8 +154,8 @@
 
         <label for="date1">第1希望日※必須<br>希望時間は00分or30分でお願いします</label>
         <div class="calendar-container">
-            <div id="calendar1" class="calendar"></div>
             <div id="timePicker1" class="time-picker"></div>
+            <div id="calendar1" class="calendar"></div>
         </div>
 
         <label for="date2">第2希望日</label>
@@ -175,12 +175,29 @@
         let visitCount = '';
         let selectedSymptom = '';
         let selectedDate;
+        let selectedTime = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
-            createCalendar('calendar1', now);
             populateTimePicker('timePicker1');
+            createCalendar('calendar1', now);
         });
+
+        function populateTimePicker(timePickerId) {
+            const timePicker = document.getElementById(timePickerId);
+            timePicker.innerHTML = '';
+            for (let hour = 9; hour <= 15; hour++) {
+                ['00', '30'].forEach(minute => {
+                    const timeOption = document.createElement('div');
+                    timeOption.textContent = `${('0' + hour).slice(-2)}:${minute}`;
+                    timeOption.onclick = () => {
+                        selectedTime = timeOption.textContent;
+                        updateDateTime();
+                    };
+                    timePicker.appendChild(timeOption);
+                });
+            }
+        }
 
         function createCalendar(id, startDate) {
             const calendar = document.getElementById(id);
@@ -203,7 +220,10 @@
             for (let i = 0; i < 7; i++) {
                 const cell = document.createElement('td');
                 cell.textContent = `${('0' + (date.getMonth() + 1)).slice(-2)}/${('0' + date.getDate()).slice(-2)}`;
-                cell.onclick = (event) => selectDate(event, id, date);
+                cell.onclick = (event) => {
+                    selectedDate = date.toISOString().split('T')[0];
+                    updateDateTime();
+                };
                 row.appendChild(cell);
                 date.setDate(date.getDate() + 1);
             }
@@ -212,26 +232,11 @@
             calendar.appendChild(table);
         }
 
-        function selectDate(event, id, date) {
-            selectedDate = date.toISOString().split('T')[0];
-        }
-
-        function populateTimePicker(timePickerId) {
-            const timePicker = document.getElementById(timePickerId);
-            timePicker.innerHTML = '';
-            for (let hour = 9; hour <= 15; hour++) {
-                ['00', '30'].forEach(minute => {
-                    const timeOption = document.createElement('div');
-                    timeOption.textContent = `${('0' + hour).slice(-2)}:${minute}`;
-                    timeOption.onclick = () => selectTime(timePickerId, timeOption.textContent);
-                    timePicker.appendChild(timeOption);
-                });
+        function updateDateTime() {
+            if (selectedDate && selectedTime) {
+                const input = document.getElementById('calendar1').parentElement.previousElementSibling;
+                input.value = `${selectedDate} ${selectedTime}`;
             }
-        }
-
-        function selectTime(timePickerId, time) {
-            const input = document.getElementById(timePickerId).parentElement.previousElementSibling;
-            input.value = `${selectedDate} ${time}`;
         }
 
         function selectVisit(element) {
