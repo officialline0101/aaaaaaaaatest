@@ -81,6 +81,40 @@
             font-size: 18px;
             cursor: pointer;
         }
+        .calendar-container {
+            position: relative;
+        }
+        .calendar {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        .calendar table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .calendar th, .calendar td {
+            width: 14.28%;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .calendar th {
+            background-color: #f7f7f7;
+        }
+        .calendar td:hover {
+            background-color: #ddd;
+        }
+        .calendar td.selected {
+            background-color: #444;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -103,11 +137,13 @@
             <button type="button" onclick="selectSymptom(this)">軽症</button>
             <button type="button" onclick="selectSymptom(this)">中等症</button>
             <button type="button" onclick="selectSymptom(this)">重症</button>
-
         </div>
 
         <label for="date1">第1希望日※必須<br>希望時間は00分or30分でお願いします</label>
-        <input type="datetime-local" id="date1" placeholder="タップして日時を入力" value="2023-12-31T12:00">
+        <div class="calendar-container">
+            <input type="text" id="date1" placeholder="タップして日時を入力" readonly onclick="toggleCalendar('calendar1')">
+            <div id="calendar1" class="calendar"></div>
+        </div>
 
         <label for="date2">第2希望日</label>
         <input type="datetime-local" id="date2" placeholder="タップして日時を入力">
@@ -126,18 +162,58 @@
         let visitCount = '';
         let selectedSymptom = '';
 
-        // LIFF初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
-            }).then(() => {
-                // LIFF初期化成功時の処理
-                console.log('LIFF初期化成功');
-            }).catch((err) => {
-                // LIFF初期化失敗時の処理
-                console.error('LIFF初期化失敗', err);
+        // カレンダーを生成する関数
+        function createCalendar(id, year, month) {
+            const calendar = document.getElementById(id);
+            calendar.innerHTML = '';
+            const date = new Date(year, month);
+            const days = ['日', '月', '火', '水', '木', '金', '土'];
+            const table = document.createElement('table');
+            const headerRow = document.createElement('tr');
+            days.forEach(day => {
+                const th = document.createElement('th');
+                th.textContent = day;
+                headerRow.appendChild(th);
             });
-        });
+            table.appendChild(headerRow);
+            calendar.appendChild(table);
+
+            const firstDay = new Date(year, month, 1).getDay();
+            let row = document.createElement('tr');
+            for (let i = 0; i < firstDay; i++) {
+                row.appendChild(document.createElement('td'));
+            }
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                if (row.children.length === 7) {
+                    table.appendChild(row);
+                    row = document.createElement('tr');
+                }
+                const cell = document.createElement('td');
+                cell.textContent = day;
+                cell.onclick = () => selectDate(id, year, month, day);
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+
+        function toggleCalendar(id) {
+            const calendar = document.getElementById(id);
+            if (calendar.style.display === 'none' || !calendar.style.display) {
+                calendar.style.display = 'block';
+                const now = new Date();
+                createCalendar(id, now.getFullYear(), now.getMonth());
+            } else {
+                calendar.style.display = 'none';
+            }
+        }
+
+        function selectDate(id, year, month, day) {
+            const input = document.querySelector(`#${id}`).previousElementSibling;
+            input.value = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+            document.getElementById(id).style.display = 'none';
+        }
 
         function selectVisit(element) {
             document.getElementById('firstVisit').classList.remove('active');
@@ -158,7 +234,7 @@
         function submitForm() {
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
-            const date1 = formatDate(document.getElementById('date1').value);
+            const date1 = document.getElementById('date1').value;
             const date2 = formatDate(document.getElementById('date2').value);
             const date3 = formatDate(document.getElementById('date3').value);
             const message = document.getElementById('message').value;
@@ -172,26 +248,26 @@
                 message
             };
 
-// フォームデータのチェック
-if (!formData.name || !formData.phone || !formData.visitCount) {
-    alert('入力不足です');
-    return;
-}
+            // フォームデータのチェック
+            if (!formData.name || !formData.phone || !formData.visitCount) {
+                alert('入力不足です');
+                return;
+            }
 
-// LINEトークにメッセージを送信
-liff.sendMessages([{
-    type: 'text',
-    text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}${formData.visitCount}${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
-}]).then(() => {
-    /* メッセージ送信成功時の処理 */
-    alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-    /* LIFFウィンドウを閉じる */
-    liff.closeWindow();
-}).catch((err) => {
-    /* メッセージ送信失敗時の処理 */
-    console.error('メッセージの送信に失敗しました', err);
-});
-}
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}${formData.visitCount}${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\n${formData.dates[2]}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(datetime) {
             if (!datetime) return '';
