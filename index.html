@@ -115,6 +115,24 @@
             background-color: #444;
             color: #fff;
         }
+                .time-picker {
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: none;
+            z-index: 100;
+        }
+        .time-picker div {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .time-picker div:hover {
+            background-color: #ddd;
+        }
+    </style>
     </style>
 </head>
 <body>
@@ -143,6 +161,7 @@
         <div class="calendar-container">
             <input type="text" id="date1" placeholder="タップして日時を入力" readonly onclick="toggleCalendar('calendar1')">
             <div id="calendar1" class="calendar"></div>
+            <div id="timePicker1" class="time-picker"></div>
         </div>
 
         <label for="date2">第2希望日</label>
@@ -162,6 +181,7 @@
         let visitCount = '';
         let selectedSymptom = '';
         let currentYear, currentMonth;
+        let selectedDate;
 
         function createCalendar(id, year, month) {
             const calendar = document.getElementById(id);
@@ -215,7 +235,7 @@
                 }
                 const cell = document.createElement('td');
                 cell.textContent = day;
-                cell.onclick = () => selectDate(id, year, month, day);
+                cell.onclick = (event) => selectDate(event, id, year, month, day);
                 row.appendChild(cell);
             }
             table.appendChild(row);
@@ -239,10 +259,33 @@
             createCalendar(id, newYear, month);
         }
 
-        function selectDate(id, year, month, day) {
-            const input = document.querySelector(`#${id}`).previousElementSibling;
-            input.value = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
-            document.getElementById(id).style.display = 'none';
+        function selectDate(event, id, year, month, day) {
+            selectedDate = `${year}-${('0' + (month + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+            const timePicker = document.getElementById(`timePicker${id.charAt(id.length - 1)}`);
+            const rect = event.target.getBoundingClientRect();
+            timePicker.style.left = `${rect.left}px`;
+            timePicker.style.top = `${rect.bottom + window.scrollY}px`;
+            timePicker.style.display = 'block';
+            populateTimePicker(timePicker, id);
+        }
+
+        function populateTimePicker(timePicker, calendarId) {
+            timePicker.innerHTML = '';
+            for (let hour = 9; hour <= 18; hour++) {
+                ['00', '30'].forEach(minute => {
+                    const timeOption = document.createElement('div');
+                    timeOption.textContent = `${('0' + hour).slice(-2)}:${minute}`;
+                    timeOption.onclick = () => selectTime(calendarId, timeOption.textContent);
+                    timePicker.appendChild(timeOption);
+                });
+            }
+        }
+
+        function selectTime(calendarId, time) {
+            const input = document.querySelector(`#${calendarId}`).previousElementSibling;
+            input.value = `${selectedDate} ${time}`;
+            document.getElementById(calendarId).style.display = 'none';
+            document.getElementById(`timePicker${calendarId.charAt(calendarId.length - 1)}`).style.display = 'none';
         }
 
         function selectVisit(element) {
