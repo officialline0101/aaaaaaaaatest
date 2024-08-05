@@ -172,7 +172,6 @@
                             <td>-</td>
                             <td>-</td>
                             <td>-</td>
-                            <td>-</td>
                         </tr>
                         <!-- Add more rows as per the image -->
                     </tbody>
@@ -219,11 +218,21 @@
         element.classList.add('active');
         selectedSymptom = element.innerText;
     }
-    
+
+    function selectDate(element) {
+        const cells = document.querySelectorAll('.calendar td');
+        cells.forEach(cell => {
+            cell.classList.remove('selected');
+        });
+        element.classList.add('selected');
+        selectedTime = element.parentElement.firstChild.textContent;
+        selectedDate = element.cellIndex;
+    }
+
     function submitForm() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
-        const date1 = document.getElementById('date1').value;
+        const date1 = `${selectedDate} ${selectedTime}`;
         const date2 = formatDate(document.getElementById('date2').value);
         const date3 = formatDate(document.getElementById('date3').value);
         const message = document.getElementById('message').value;
@@ -237,7 +246,7 @@
             message
         };
 
-        if (!formData.name || !formData.phone || !formData.visitCount) {
+        if (!formData.name || !formData.phone || !formData.visitCount || !formData.dates[0]) {
             alert('入力不足です');
             return;
         }
@@ -308,6 +317,7 @@
                 });
 
                 cell.textContent = isAvailable ? '◯' : '-';
+                cell.addEventListener('click', () => selectDate(cell)); // セルがクリックされたときにselectDateを呼び出す
                 row.appendChild(cell);
             }
 
@@ -315,4 +325,5 @@
         }
     }
 </script>
-
+</body>
+</html>
