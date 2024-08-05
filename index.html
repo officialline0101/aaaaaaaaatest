@@ -193,73 +193,126 @@
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-        let visitCount = '';
-        let selectedSymptom = '';
-        let selectedDate;
-        let selectedTime = '';
+<script>
+    let visitCount = '';
+    let selectedSymptom = '';
+    let selectedDate;
+    let selectedTime = '';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const now = new Date();
-            // createCalendar('calendar1', now); // This function is no longer necessary
+    document.addEventListener('DOMContentLoaded', () => {
+        const now = new Date();
+        fetchAvailability(now);
+    });
+
+    function selectVisit(element) {
+        document.getElementById('firstVisit').classList.remove('active');
+        document.getElementById('repeatVisit').classList.remove('active');
+        element.classList.add('active');
+        visitCount = element.innerText;
+    }
+
+    function selectSymptom(element) {
+        const allSymptoms = document.querySelectorAll('.symptoms button');
+        allSymptoms.forEach(symptom => {
+            symptom.classList.remove('active');
         });
+        element.classList.add('active');
+        selectedSymptom = element.innerText;
+    }
+    
+    function submitForm() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const date1 = document.getElementById('date1').value;
+        const date2 = formatDate(document.getElementById('date2').value);
+        const date3 = formatDate(document.getElementById('date3').value);
+        const message = document.getElementById('message').value;
 
-        function selectVisit(element) {
-            document.getElementById('firstVisit').classList.remove('active');
-            document.getElementById('repeatVisit').classList.remove('active');
-            element.classList.add('active');
-            visitCount = element.innerText;
+        const formData = {
+            name,
+            phone,
+            visitCount,
+            selectedSymptom,
+            dates: [date1, date2, date3],
+            message
+        };
+
+        if (!formData.name || !formData.phone || !formData.visitCount) {
+            alert('入力不足です');
+            return;
         }
 
-        function selectSymptom(element) {
-            const allSymptoms = document.querySelectorAll('.symptoms button');
-            allSymptoms.forEach(symptom => {
-                symptom.classList.remove('active');
-            });
-            element.classList.add('active');
-            selectedSymptom = element.innerText;
+        liff.sendMessages([{
+            type: 'text',
+            text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates.join('\n ')}\nその他メッセージ：${formData.message}`
+        }]).then(() => {
+            alert('予約が送信されました');
+            liff.closeWindow();
+        }).catch((err) => {
+            console.error(err);
+            alert('メッセージ送信に失敗しました');
+        });
+    }
+
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+    }
+
+    async function fetchAvailability(date) {
+        const startTime = new Date(date);
+        const endTime = new Date(date);
+        endTime.setDate(endTime.getDate() + 7);
+
+        const url = 'https://script.google.com/macros/s/AKfycbx7dKci3ijrMEMOhMXdfHZLDBIrVrL5jEj2qqZ7292QgaeWh83ZciznIEerzu6sdp_FLw/exec' + 
+                    `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            console.log(data);
+            updateCalendar(data);
+        } catch (error) {
+            console.error('Error fetching availability:', error);
         }
-        
-        function submitForm() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const date1 = document.getElementById('date1').value;
-            const date2 = formatDate(document.getElementById('date2').value);
-            const date3 = formatDate(document.getElementById('date3').value);
-            const message = document.getElementById('message').value;
+    }
 
-            const formData = {
-                name,
-                phone,
-                visitCount,
-                selectedSymptom,
-                dates: [date1, date2, date3],
-                message
-            };
+    function updateCalendar(availability) {
+        const calendar = document.getElementById('calendar1');
+        const table = calendar.querySelector('table tbody');
 
-            // フォームデータのチェック
-            if (!formData.name || !formData.phone || !formData.visitCount) {
-                alert('入力不足です');
-                return;
+        table.innerHTML = ''; // 既存のカレンダーをクリア
+
+        const times = [
+            '10:00', '10:30', '11:00', '11:30',
+            '12:00', '12:30', '13:00', '13:30',
+            '14:00', '14:30', '15:00', '15:30',
+            '16:00', '16:30', '17:00', '17:30'
+        ];
+
+        for (const time of times) {
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            timeCell.textContent = time;
+            row.appendChild(timeCell);
+
+            for (let i = 0; i < 7; i++) {
+                const cell = document.createElement('td');
+                const day = new Date();
+                day.setDate(day.getDate() + i);
+
+                const isAvailable = availability.some(slot => {
+                    const slotStart = new Date(slot.startTime);
+                    const slotEnd = new Date(slot.endTime);
+                    return slotStart <= day && day < slotEnd;
+                });
+
+                cell.textContent = isAvailable ? '◯' : '-';
+                row.appendChild(cell);
             }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}${formData.visitCount}${formData.irradiationsCount}\n希望日時：\n ${formData.dates.join('\n ')}\nその他メッセージ：${formData.message}`
-            }]).then(() => {
-                alert('予約が送信されました');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error(err);
-                alert('メッセージ送信に失敗しました');
-            });
+            table.appendChild(row);
         }
+    }
+</script>
 
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
-        }
-    </script>
-</body>
-</html>
