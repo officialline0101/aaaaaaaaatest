@@ -82,15 +82,16 @@
             cursor: pointer;
         }
         .calendar-container {
-            position: relative;
+            display: flex;
             margin-bottom: 20px;
         }
         .calendar {
-            width: 100%;
+            flex: 1;
             background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 10px;
         }
         .calendar table {
             width: 100%;
@@ -115,13 +116,14 @@
         .time-picker {
             display: flex;
             flex-direction: column;
-            margin-top: 10px;
+            flex: 0 0 80px;
         }
         .time-picker div {
             padding: 10px;
             text-align: center;
             background-color: #f7f7f7;
             cursor: pointer;
+            margin-bottom: 2px;
         }
         .time-picker div:hover {
             background-color: #ddd;
@@ -177,6 +179,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
             createCalendar('calendar1', now);
+            populateTimePicker('timePicker1');
         });
 
         function createCalendar(id, startDate) {
@@ -211,24 +214,23 @@
 
         function selectDate(event, id, date) {
             selectedDate = date.toISOString().split('T')[0];
-            populateTimePicker(id);
         }
 
-        function populateTimePicker(calendarId) {
-            const timePicker = document.getElementById(`timePicker${calendarId.charAt(calendarId.length - 1)}`);
+        function populateTimePicker(timePickerId) {
+            const timePicker = document.getElementById(timePickerId);
             timePicker.innerHTML = '';
             for (let hour = 9; hour <= 15; hour++) {
                 ['00', '30'].forEach(minute => {
                     const timeOption = document.createElement('div');
                     timeOption.textContent = `${('0' + hour).slice(-2)}:${minute}`;
-                    timeOption.onclick = () => selectTime(calendarId, timeOption.textContent);
+                    timeOption.onclick = () => selectTime(timePickerId, timeOption.textContent);
                     timePicker.appendChild(timeOption);
                 });
             }
         }
 
-        function selectTime(calendarId, time) {
-            const input = document.getElementById(calendarId).previousElementSibling;
+        function selectTime(timePickerId, time) {
+            const input = document.getElementById(timePickerId).parentElement.previousElementSibling;
             input.value = `${selectedDate} ${time}`;
         }
 
@@ -247,7 +249,7 @@
             element.classList.add('active');
             selectedSymptom = element.innerText;
         }
-
+        
         function submitForm() {
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
