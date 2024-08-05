@@ -85,22 +85,6 @@
             display: flex;
             margin-bottom: 20px;
         }
-        .time-picker {
-            display: flex;
-            flex-direction: column;
-            flex: 0 0 80px;
-            margin-right: 10px;
-        }
-        .time-picker div {
-            padding: 10px;
-            text-align: center;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            margin-bottom: 2px;
-        }
-        .time-picker div:hover {
-            background-color: #ddd;
-        }
         .calendar {
             flex: 1;
             background-color: #fff;
@@ -117,6 +101,7 @@
             text-align: center;
             padding: 10px;
             cursor: pointer;
+            position: relative;
         }
         .calendar th {
             background-color: #f7f7f7;
@@ -127,6 +112,27 @@
         .calendar td.selected {
             background-color: #444;
             color: #fff;
+        }
+        .time-list {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .calendar td:hover .time-list {
+            display: block;
+        }
+        .time-list div {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .time-list div:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
@@ -154,7 +160,6 @@
 
         <label for="date1">第1希望日※必須<br>希望時間は00分or30分でお願いします</label>
         <div class="calendar-container">
-            <div id="timePicker1" class="time-picker"></div>
             <div id="calendar1" class="calendar"></div>
         </div>
 
@@ -179,13 +184,12 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
-            populateTimePicker('timePicker1');
             createCalendar('calendar1', now);
         });
 
-        function populateTimePicker(timePickerId) {
-            const timePicker = document.getElementById(timePickerId);
-            timePicker.innerHTML = '';
+        function populateTimeList() {
+            const timeList = document.createElement('div');
+            timeList.className = 'time-list';
             for (let hour = 9; hour <= 15; hour++) {
                 ['00', '30'].forEach(minute => {
                     const timeOption = document.createElement('div');
@@ -194,9 +198,10 @@
                         selectedTime = timeOption.textContent;
                         updateDateTime();
                     };
-                    timePicker.appendChild(timeOption);
+                    timeList.appendChild(timeOption);
                 });
             }
+            return timeList;
         }
 
         function createCalendar(id, startDate) {
@@ -220,6 +225,7 @@
             for (let i = 0; i < 7; i++) {
                 const cell = document.createElement('td');
                 cell.textContent = `${('0' + (date.getMonth() + 1)).slice(-2)}/${('0' + date.getDate()).slice(-2)}`;
+                cell.appendChild(populateTimeList());
                 cell.onclick = (event) => {
                     selectedDate = date.toISOString().split('T')[0];
                     updateDateTime();
