@@ -320,6 +320,8 @@
                 '16:00', '16:30', '17:00', '17:30'
             ];
 
+            const currentDay = new Date(currentDate); // 基準日をセット
+
             for (const time of times) {
                 const row = document.createElement('tr');
                 const timeCell = document.createElement('td');
@@ -328,8 +330,8 @@
 
                 for (let i = 0; i < 7; i++) {
                     const cell = document.createElement('td');
-                    const day = new Date(currentDate); // カレンダーの基準日から計算
-                    day.setDate(day.getDate() + i);
+                    const day = new Date(currentDay); // カレンダーの基準日から計算
+                    day.setDate(day.getDate() + i); // i日進める
 
                     const count = availability.reduce((acc, slot) => {
                         const slotStart = new Date(slot.startTime);
