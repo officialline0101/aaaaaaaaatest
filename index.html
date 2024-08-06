@@ -121,17 +121,22 @@
         .week-button-container {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
             margin-bottom: 10px;
         }
         .week-button {
-            margin: 0 10px;
             padding: 10px 20px;
             background-color: #444;
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+        }
+        .current-month {
+            font-size: 16px;
+            font-weight: bold;
+            color: #444;
         }
     </style>
 </head>
@@ -161,6 +166,7 @@
         <div class="calendar-container">
             <div class="week-button-container">
                 <button class="week-button" onclick="previousWeek()">前の週</button>
+                <span class="current-month" id="currentMonth">月</span>
                 <button class="week-button" onclick="nextWeek()">翌週</button>
             </div>
             <div id="calendar1" class="calendar">
@@ -381,6 +387,10 @@
                 const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
                 th.textContent = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
             });
+
+            // 現在の月を表示
+            const currentMonthElement = document.getElementById('currentMonth');
+            currentMonthElement.textContent = `${startDate.getFullYear()}年 ${startDate.getMonth() + 1}月`;
         }
 
         function nextWeek() {
