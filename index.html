@@ -202,6 +202,7 @@
         let selectedTime = '';
         let selectedFullDate = '';
         let currentDate = new Date();
+        let availabilityCache = {};
 
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
@@ -243,20 +244,13 @@
         }
 
         function submitForm() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const date1 = selectedFullDate;
-            const date2 = formatDate(document.getElementById('date2').value);
-            const date3 = formatDate(document.getElementById('date3').value);
-            const message = document.getElementById('message').value;
-
             const formData = {
-                name,
-                phone,
-                visitCount,
-                selectedSymptom,
-                dates: [date1, date2, date3],
-                message
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom,
+                dates: [selectedFullDate, formatDate(document.getElementById('date2').value), formatDate(document.getElementById('date3').value)],
+                message: document.getElementById('message').value
             };
 
             if (!formData.name || !formData.phone || !formData.visitCount || !formData.dates[0]) {
@@ -287,6 +281,15 @@
             const endTime = new Date(date);
             endTime.setDate(endTime.getDate() + 7);
 
+            const cacheKey = startTime.toISOString() + endTime.toISOString();
+
+            // キャッシュを確認
+            if (availabilityCache[cacheKey]) {
+                console.log('Using cached data');
+                updateCalendar(availabilityCache[cacheKey]);
+                return;
+            }
+
             const url = 'https://script.google.com/macros/s/AKfycbwJcAUuZYWzIE8OnQoCbJQGDfyRMew1AzQBaZOOXw7_NaHlS9WPHyzCLq5BKqCeoRMRgw/exec' + 
                         `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
@@ -294,6 +297,10 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 console.log(data);
+
+                // データをキャッシュに保存
+                availabilityCache[cacheKey] = data;
+
                 updateCalendar(data);
             } catch (error) {
                 console.error('Error fetching availability:', error);
@@ -304,8 +311,7 @@
             const calendar = document.getElementById('calendar1');
             const table = calendar.querySelector('table tbody');
 
-            table.innerHTML = ''; // 既存のカレンダーをクリア
-
+            // 一度だけ行を作成
             const times = [
                 '10:00', '10:30', '11:00', '11:30',
                 '12:00', '12:30', '13:00', '13:30',
@@ -313,21 +319,33 @@
                 '16:00', '16:30', '17:00', '17:30'
             ];
 
+            if (table.rows.length === 0) {
+                for (const time of times) {
+                    const row = document.createElement('tr');
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = time;
+                    row.appendChild(timeCell);
+
+                    for (let i = 0; i < 7; i++) {
+                        const cell = document.createElement('td');
+                        cell.addEventListener('click', () => selectDate(cell));
+                        row.appendChild(cell);
+                    }
+
+                    table.appendChild(row);
+                }
+            }
+
+            // テーブルのヘッダーを更新
             updateCalendarHeader(currentDate);
 
-            const currentDay = new Date(currentDate);
+            // テーブルの内容を更新
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(currentDate);
+                day.setDate(day.getDate() + i);
 
-            for (const time of times) {
-                const row = document.createElement('tr');
-                const timeCell = document.createElement('td');
-                timeCell.textContent = time;
-                row.appendChild(timeCell);
-
-                for (let i = 0; i < 7; i++) {
-                    const cell = document.createElement('td');
-                    const day = new Date(currentDay);
-                    day.setDate(day.getDate() + i);
-
+                for (let j = 0; j < times.length; j++) {
+                    const cell = table.rows[j].cells[i + 1];
                     const count = availability.reduce((acc, slot) => {
                         const slotStart = new Date(slot.startTime);
                         const slotEnd = new Date(slot.endTime);
@@ -344,12 +362,7 @@
                     } else {
                         cell.textContent = '×';
                     }
-
-                    cell.addEventListener('click', () => selectDate(cell));
-                    row.appendChild(cell);
                 }
-
-                table.appendChild(row);
             }
         }
 
