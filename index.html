@@ -141,6 +141,41 @@
         <div class="calendar-container">
             <div id="calendar1" class="calendar">
                 <table>
+                    <thead>
+                        <tr>
+                            <th>時間</th>
+                            <th>5(月)</th>
+                            <th>6(火)</th>
+                            <th>7(水)</th>
+                            <th>8(木)</th>
+                            <th>9(金)</th>
+                            <th>10(土)</th>
+                            <th>11(日)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>10:00</td>
+                            <td>◯</td>
+                            <td>◯</td>
+                            <td>◯</td>
+                            <td>◯</td>
+                            <td>◯</td>
+                            <td>◯</td>
+                            <td>◯</td>
+                        </tr>
+                        <tr>
+                            <td>10:30</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <!-- Add more rows as per the image -->
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -162,20 +197,21 @@
     let selectedSymptom = '';
     let selectedDate;
     let selectedTime = '';
+    let selectedFullDate = '';
 
-        // LIFF初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
-            }).then(() => {
-                // LIFF初期化成功時の処理
-                console.log('LIFF初期化成功');
-            }).catch((err) => {
-                // LIFF初期化失敗時の処理
-                console.error('LIFF初期化失敗', err);
-            });
+    // LIFF初期化
+    document.addEventListener('DOMContentLoaded', function() {
+        liff.init({
+            liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+        }).then(() => {
+            // LIFF初期化成功時の処理
+            console.log('LIFF初期化成功');
+        }).catch((err) => {
+            // LIFF初期化失敗時の処理
+            console.error('LIFF初期化失敗', err);
         });
-    
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         fetchAvailability(now);
@@ -204,13 +240,16 @@
         });
         element.classList.add('selected');
         selectedTime = element.parentElement.firstChild.textContent;
-        selectedDate = element.cellIndex;
+        selectedDate = new Date();
+        selectedDate.setDate(selectedDate.getDate() + element.cellIndex - 1);
+        selectedFullDate = `${selectedDate.getFullYear()}年${('0' + (selectedDate.getMonth() + 1)).slice(-2)}月${('0' + selectedDate.getDate()).slice(-2)}日 ${selectedTime}`;
+        document.getElementById('selectedDateTime').innerText = selectedFullDate;
     }
 
     function submitForm() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
-        const date1 = `${selectedDate} ${selectedTime}`;
+        const date1 = selectedFullDate;
         const date2 = formatDate(document.getElementById('date2').value);
         const date3 = formatDate(document.getElementById('date3').value);
         const message = document.getElementById('message').value;
@@ -242,6 +281,7 @@
     }
 
     function formatDate(dateStr) {
+        if (!dateStr) return '';
         const date = new Date(dateStr);
         return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)} ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
     }
