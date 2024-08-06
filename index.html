@@ -13,7 +13,7 @@
             align-items: flex-start;
             height: 100vh;
             margin: 0;
-            padding-top: 20px; /* ページのトップに空白を作る */
+            padding-top: 20px;
         }
         .container {
             background-color: #fff;
@@ -83,8 +83,8 @@
         }
         .calendar-container {
             display: flex;
-            flex-direction: column; /* ここを変更 */
-            align-items: center; /* ボタンを中央寄せ */
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 20px;
         }
         .calendar {
@@ -94,7 +94,7 @@
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: auto;
-            position: relative; /* 相対位置を設定 */
+            position: relative;
         }
         .calendar table {
             width: 100%;
@@ -117,7 +117,7 @@
             color: #fff;
         }
         .week-button {
-            margin: 10px; /* ボタンとカレンダーの間にスペースを追加 */
+            margin: 10px;
             padding: 10px 20px;
             background-color: #444;
             color: #fff;
@@ -127,13 +127,13 @@
         }
         .week-button-prev {
             position: absolute;
-            top: -10px; /* カレンダーの上にボタンを表示 */
-            left: -10px; /* カレンダーの左にボタンを表示 */
+            top: -10px;
+            left: -10px;
         }
         .week-button-next {
             position: absolute;
-            top: -10px; /* カレンダーの上にボタンを表示 */
-            right: -10px; /* カレンダーの右にボタンを表示 */
+            top: -10px;
+            right: -10px;
         }
     </style>
 </head>
@@ -164,15 +164,15 @@
             <div id="calendar1" class="calendar">
                 <table>
                     <thead>
-                        <tr>
+                        <tr id="calendar-header">
                             <th>時間</th>
-                            <th>5(月)</th>
-                            <th>6(火)</th>
-                            <th>7(水)</th>
-                            <th>8(木)</th>
-                            <th>9(金)</th>
-                            <th>10(土)</th>
-                            <th>11(日)</th>
+                            <th></th> <!-- Dates will be filled dynamically -->
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -203,22 +203,17 @@
         let selectedDate;
         let selectedTime = '';
         let selectedFullDate = '';
-        let currentDate = new Date(); // 現在のカレンダーの基準日を保持
+        let currentDate = new Date();
 
-        // LIFF初期化
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
-                // LIFF初期化成功時の処理
                 console.log('LIFF初期化成功');
             }).catch((err) => {
-                // LIFF初期化失敗時の処理
                 console.error('LIFF初期化失敗', err);
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
             fetchAvailability(currentDate);
         });
 
@@ -320,7 +315,9 @@
                 '16:00', '16:30', '17:00', '17:30'
             ];
 
-            const currentDay = new Date(currentDate); // 基準日をセット
+            updateCalendarHeader(currentDate);
+
+            const currentDay = new Date(currentDate);
 
             for (const time of times) {
                 const row = document.createElement('tr');
@@ -330,8 +327,8 @@
 
                 for (let i = 0; i < 7; i++) {
                     const cell = document.createElement('td');
-                    const day = new Date(currentDay); // カレンダーの基準日から計算
-                    day.setDate(day.getDate() + i); // i日進める
+                    const day = new Date(currentDay);
+                    day.setDate(day.getDate() + i);
 
                     const count = availability.reduce((acc, slot) => {
                         const slotStart = new Date(slot.startTime);
@@ -350,7 +347,7 @@
                         cell.textContent = '×';
                     }
 
-                    cell.addEventListener('click', () => selectDate(cell)); // セルがクリックされたときにselectDateを呼び出す
+                    cell.addEventListener('click', () => selectDate(cell));
                     row.appendChild(cell);
                 }
 
@@ -358,13 +355,28 @@
             }
         }
 
+        function updateCalendarHeader(date) {
+            const headerRow = document.getElementById('calendar-header');
+            const headers = headerRow.querySelectorAll('th:not(:first-child)');
+
+            const startDate = new Date(date);
+
+            headers.forEach((th, index) => {
+                const day = new Date(startDate);
+                day.setDate(day.getDate() + index);
+
+                const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+                th.textContent = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
+            });
+        }
+
         function nextWeek() {
-            currentDate.setDate(currentDate.getDate() + 7); // 現在のカレンダーの基準日を1週間進める
+            currentDate.setDate(currentDate.getDate() + 7);
             fetchAvailability(currentDate);
         }
 
         function previousWeek() {
-            currentDate.setDate(currentDate.getDate() - 7); // 現在のカレンダーの基準日を1週間戻す
+            currentDate.setDate(currentDate.getDate() - 7);
             fetchAvailability(currentDate);
         }
     </script>
