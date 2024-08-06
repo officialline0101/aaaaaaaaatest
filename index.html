@@ -94,6 +94,7 @@
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: auto;
+            position: relative; /* 相対位置を設定 */
         }
         .calendar table {
             width: 100%;
@@ -123,6 +124,16 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+        }
+        .week-button-prev {
+            position: absolute;
+            top: -10px; /* カレンダーの上にボタンを表示 */
+            left: -10px; /* カレンダーの左にボタンを表示 */
+        }
+        .week-button-next {
+            position: absolute;
+            top: -10px; /* カレンダーの上にボタンを表示 */
+            right: -10px; /* カレンダーの右にボタンを表示 */
         }
     </style>
 </head>
@@ -168,8 +179,9 @@
                         <!-- カレンダーの内容がここに追加される -->
                     </tbody>
                 </table>
+                <button class="week-button week-button-prev" onclick="previousWeek()">前の週</button>
+                <button class="week-button week-button-next" onclick="nextWeek()">翌週</button>
             </div>
-            <button class="week-button" onclick="nextWeek()">翌週</button> <!-- 翌週ボタンを追加 -->
         </div>
 
         <label for="date2">第2希望日</label>
@@ -232,11 +244,9 @@
                 cell.classList.remove('selected');
             });
             element.classList.add('selected');
-            selectedTime = element.parentElement.firstChild.textContent;
-            selectedDate = new Date(currentDate); // カレンダーの基準日から計算
-            selectedDate.setDate(selectedDate.getDate() + element.cellIndex - 1);
-            selectedFullDate = `${selectedDate.getFullYear()}年${('0' + (selectedDate.getMonth() + 1)).slice(-2)}月${('0' + selectedDate.getDate()).slice(-2)}日 ${selectedTime}`;
-            document.getElementById('selectedDateTime').innerText = selectedFullDate;
+            selectedTime = element.parentNode.firstChild.textContent;
+            selectedDate = element.parentNode.parentNode.parentNode.querySelectorAll('th')[element.cellIndex].textContent;
+            selectedFullDate = `${selectedDate} ${selectedTime}`;
         }
 
         function submitForm() {
@@ -348,6 +358,11 @@
 
         function nextWeek() {
             currentDate.setDate(currentDate.getDate() + 7); // 現在のカレンダーの基準日を1週間進める
+            fetchAvailability(currentDate);
+        }
+
+        function previousWeek() {
+            currentDate.setDate(currentDate.getDate() - 7); // 現在のカレンダーの基準日を1週間戻す
             fetchAvailability(currentDate);
         }
     </script>
