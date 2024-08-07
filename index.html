@@ -376,38 +376,39 @@
                 }
             }
 
-    // テーブルの内容を更新
-    for (let i = 0; i < 7; i++) {
-        const day = new Date(currentDate);
-        day.setDate(day.getDate() + i);
+            // テーブルの内容を更新
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(currentDate);
+                day.setDate(day.getDate() + i);
 
-        for (let j = 0; j < times.length; j++) {
-            const cell = table.rows[j].cells[i + 1];
-            const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]));
+                for (let j = 0; j < times.length; j++) {
+                    const cell = table.rows[j].cells[i + 1];
+                    const slotStart = new Date(day);
+                    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]));
 
-            const slotEnd = new Date(slotStart);
-            slotEnd.setMinutes(slotStart.getMinutes() + 30); // ここで30分後にずらす
+                    const slotEnd = new Date(slotStart);
+                    slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
-            const count = availability.reduce((acc, slot) => {
-                const eventStart = new Date(slot.startTime);
-                const eventEnd = new Date(slot.endTime);
+                    const count = availability.reduce((acc, slot) => {
+                        const eventStart = new Date(slot.startTime);
+                        const eventEnd = new Date(slot.endTime);
 
-                if (eventStart < slotEnd && slotStart < eventEnd) {
-                    return acc + 1;
+                        if (eventStart < slotEnd && slotStart < eventEnd) {
+                            return acc + 1;
+                        }
+                        return acc;
+                    }, 0);
+
+                    if (count === 0) {
+                        cell.textContent = '◯';
+                    } else if (count === 1) {
+                        cell.textContent = '△';
+                    } else {
+                        cell.textContent = '×';
+                    }
+
+                    cell.setAttribute('data-date', slotStart.toISOString());
                 }
-                return acc;
-            }, 0);
-
-            if (count === 0) {
-                cell.textContent = '◯';
-            } else if (count === 1) {
-                cell.textContent = '△';
-            } else {
-                cell.textContent = '×';
-            }
-
-            cell.setAttribute('data-date', slotStart.toISOString());
             }
         }
 
