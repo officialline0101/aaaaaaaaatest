@@ -36,26 +36,13 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
-        .required::after {
-            content: "※必須";
-            color: red;
-            margin-left: 5px;
-        }
-        .input-group {
-            background-color: #ff4c4c;
-            color: #fff;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
         input[type="text"], input[type="tel"], textarea {
             width: 100%;
             padding: 10px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
-            background-color: #fff;
-            color: #000;
         }
         .visit-buttons, .symptoms {
             display: flex;
@@ -181,70 +168,58 @@
 <body>
     <div class="container">
         <h1>予約フォーム2</h1>
-        <div class="input-group">
-            <label for="name" class="required">お客様名</label>
-            <input type="text" id="name" placeholder="お名前を入力してください">
+        <label for="name">お客様名※必須</label>
+        <input type="text" id="name" placeholder="お名前を入力してください">
+
+        <label for="phone">電話番号※必須</label>
+        <input type="tel" id="phone" placeholder="電話番号を入力してください">
+
+        <label>ご来店回数※必須</label>
+        <div class="visit-buttons">
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <div class="input-group">
-            <label for="phone" class="required">電話番号</label>
-            <input type="tel" id="phone" placeholder="電話番号を入力してください">
+        <label>症状※必須</label>
+        <div class="symptoms">
+            <button type="button" onclick="selectSymptom(this)">軽症</button>
+            <button type="button" onclick="selectSymptom(this)">中等症</button>
+            <button type="button" onclick="selectSymptom(this)">重症</button>
         </div>
 
-        <div class="input-group">
-            <label class="required">ご来店回数</label>
-            <div class="visit-buttons">
-                <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
-                <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
+        <label for="date1">希望日</label>
+        <div class="calendar-container">
+            <div class="week-button-container">
+                <button class="week-button" onclick="previousWeek()">前の週</button>
+                <span class="current-month" id="currentMonth">月</span>
+                <button class="week-button" onclick="nextWeek()">翌週</button>
+            </div>
+            <div id="calendar1" class="calendar">
+                <table>
+                    <thead>
+                        <tr id="calendar-header">
+                            <th>時間</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- カレンダーの内容がここに追加される -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
             </div>
         </div>
 
-        <div class="input-group">
-            <label class="required">症状</label>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)">軽症</button>
-                <button type="button" onclick="selectSymptom(this)">中等症</button>
-                <button type="button" onclick="selectSymptom(this)">重症</button>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label for="date1">希望日</label>
-            <div class="calendar-container">
-                <div class="week-button-container">
-                    <button class="week-button" onclick="previousWeek()">前の週</button>
-                    <span class="current-month" id="currentMonth">月</span>
-                    <button class="week-button" onclick="nextWeek()">翌週</button>
-                </div>
-                <div id="calendar1" class="calendar">
-                    <table>
-                        <thead>
-                            <tr id="calendar-header">
-                                <th>時間</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- カレンダーの内容がここに追加される -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="loading-spinner" id="loadingSpinner">
-                    <div class="spinner"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
-            <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
-        </div>
+        <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
+        <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
     </div>
@@ -259,127 +234,229 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: '2005254357'
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
-                // LIFF initialization successful
-            }).catch(err => {
-                console.error('LIFF initialization failed', err);
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                console.log('LIFF初期化失敗', err);
             });
 
-            loadCalendar();
+            fetchAvailability(currentDate);
         });
 
         function selectVisit(button) {
-            visitCount = button.innerText;
-            document.querySelectorAll('.visit-buttons button').forEach(btn => btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('.visit-buttons button');
+            buttons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
+            visitCount = button.id === 'firstVisit' ? '初めて' : '2回目以降';
         }
 
         function selectSymptom(button) {
-            selectedSymptom = button.innerText;
-            document.querySelectorAll('.symptoms button').forEach(btn => btn.classList.remove('active'));
+            const buttons = document.querySelectorAll('.symptoms button');
+            buttons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
+            selectedSymptom = button.textContent;
         }
 
-        function submitForm() {
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const message = document.getElementById('message').value;
+function selectDate(cell) {
+    const cells = document.querySelectorAll('.calendar td');
+    cells.forEach(td => td.classList.remove('selected'));
+    cell.classList.add('selected');
 
-            if (!name || !phone || !visitCount || !selectedSymptom || !selectedFullDate) {
-                alert('全ての必須項目を入力してください');
+    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+    const selectedTime = cell.parentElement.firstChild.textContent; // 時間
+    const date = new Date(selectedDay);
+
+    // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
+    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+
+    // 変換後の日付を第1希望日の入力フィールドに設定
+    document.getElementById('date1').value = selectedFullDate;
+}
+
+        function submitForm() {
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom,
+                dates: [selectedFullDate],
+                message: document.getElementById('message').value
+            };
+
+// フォームデータのチェック
+if (!formData.name || !formData.phone || !formData.visitCount) {
+    alert('お名前・電話番号・ご来店回数すべてご記入ください。');
+    return;
+}
+
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+}
+
+        async function fetchAvailability(date) {
+            const startTime = new Date(date);
+            const endTime = new Date(date);
+            endTime.setDate(endTime.getDate() + 7);
+
+            const cacheKey = startTime.toISOString() + endTime.toISOString();
+
+            // キャッシュを確認
+            if (availabilityCache[cacheKey]) {
+                console.log('Using cached data');
+                updateCalendar(availabilityCache[cacheKey]);
                 return;
             }
 
-            const reservationDetails = {
-                name,
-                phone,
-                visitCount,
-                symptom: selectedSymptom,
-                date: selectedFullDate,
-                message
-            };
+            const url = 'https://script.google.com/macros/s/AKfycbwJcAUuZYWzIE8OnQoCbJQGDfyRMew1AzQBaZOOXw7_NaHlS9WPHyzCLq5BKqCeoRMRgw/exec' + 
+                        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-            liff.sendMessages([{
-                type: 'text',
-                text: `予約内容:\n名前: ${name}\n電話番号: ${phone}\nご来店回数: ${visitCount}\n症状: ${selectedSymptom}\n希望日: ${selectedFullDate}\nメッセージ: ${message}`
-            }]).then(() => {
-                alert('予約が送信されました');
-                liff.closeWindow();
-            }).catch(err => {
-                console.error('Failed to send message', err);
-                alert('メッセージの送信に失敗しました');
-            });
+            try {
+                showLoadingSpinner(); // Show loading spinner
+                const response = await fetch(url);
+                const data = await response.json();
+                console.log(data);
+
+                // データをキャッシュに保存
+                availabilityCache[cacheKey] = data;
+
+                updateCalendar(data);
+            } catch (error) {
+                console.error('Error fetching availability:', error);
+            } finally {
+                hideLoadingSpinner(); // Hide loading spinner
+            }
         }
 
-        function loadCalendar() {
+        function updateCalendar(availability) {
             const calendar = document.getElementById('calendar1');
-            const tbody = calendar.querySelector('tbody');
-            const headerRow = document.getElementById('calendar-header');
+            const table = calendar.querySelector('table tbody');
 
-            // Clear existing rows
-            while (headerRow.firstChild) {
-                headerRow.removeChild(headerRow.firstChild);
-            }
-            while (tbody.firstChild) {
-                tbody.removeChild(tbody.firstChild);
-            }
-
-            const startDate = new Date(currentDate);
-            startDate.setDate(startDate.getDate() - startDate.getDay());
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + 6);
-
-            document.getElementById('currentMonth').innerText = `${startDate.getFullYear()}年${startDate.getMonth() + 1}月`;
-
-            const headerCell = document.createElement('th');
-            headerCell.innerText = '時間';
-            headerRow.appendChild(headerCell);
-
-            for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                const th = document.createElement('th');
-                th.innerText = `${d.getMonth() + 1}/${d.getDate()}`;
-                headerRow.appendChild(th);
-            }
-
-            const hours = [
-                '10:00', '10:30', '11:00', '11:30', '12:00',
-                '12:30', '13:00', '13:30', '14:00', '14:30',
-                '15:00', '15:30', '16:00', '16:30', '17:00',
-                '17:30', '18:00', '18:30', '19:00', '19:30'
+            const times = [
+                '10:00', '10:30', '11:00', '11:30',
+                '12:00', '12:30', '13:00', '13:30',
+                '14:00', '14:30', '15:00', '15:30',
+                '16:00', '16:30', '17:00', '17:30'
             ];
 
-            hours.forEach(time => {
-                const tr = document.createElement('tr');
-                const timeCell = document.createElement('td');
-                timeCell.innerText = time;
-                tr.appendChild(timeCell);
+            if (table.rows.length === 0) {
+                for (const time of times) {
+                    const row = document.createElement('tr');
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = time;
+                    row.appendChild(timeCell);
 
-                for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                    const td = document.createElement('td');
-                    td.dataset.date = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-                    td.dataset.time = time;
-                    td.onclick = () => selectDate(td);
-                    tr.appendChild(td);
+                    for (let i = 0; i < 7; i++) {
+                        const cell = document.createElement('td');
+                        cell.addEventListener('click', () => selectDate(cell));
+                        row.appendChild(cell);
+                    }
+
+                    table.appendChild(row);
                 }
-                tbody.appendChild(tr);
+            }
+
+            // テーブルのヘッダーを更新
+            updateCalendarHeader(currentDate);
+
+            // 各セルを空白にリセット
+            for (let row of table.rows) {
+                for (let i = 1; i < row.cells.length; i++) {
+                    row.cells[i].textContent = '';
+                    row.cells[i].removeAttribute('data-date');
+                }
+            }
+
+// テーブルの内容を更新
+for (let i = 0; i < 7; i++) {
+    const day = new Date(currentDate);
+    day.setDate(day.getDate() + i);
+
+    for (let j = 0; j < times.length; j++) {
+        const cell = table.rows[j].cells[i + 1];
+        const slotStart = new Date(day);
+        slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
+
+        const slotEnd = new Date(slotStart);
+        slotEnd.setMinutes(slotStart.getMinutes() + 30);
+
+        const count = availability.reduce((acc, slot) => {
+            const eventStart = new Date(slot.startTime);
+            const eventEnd = new Date(slot.endTime);
+
+            if (eventStart < slotEnd && slotStart < eventEnd) {
+                return acc + 1;
+            }
+            return acc;
+        }, 0);
+
+        if (count === 0) {
+            cell.textContent = '◯';
+        } else if (count === 1) {
+            cell.textContent = '✕';
+        } else {
+            cell.textContent = '✕';
+        }
+
+        cell.setAttribute('data-date', slotStart.toISOString());
+    }
+}
+
+        }
+
+        function updateCalendarHeader(date) {
+            const headerRow = document.getElementById('calendar-header');
+            const headers = headerRow.querySelectorAll('th:not(:first-child)');
+
+            const startDate = new Date(date);
+
+            headers.forEach((th, index) => {
+                const day = new Date(startDate);
+                day.setDate(day.getDate() + index);
+
+const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+const dayString = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
+th.innerHTML = dayString.replace('(', '<br>(');
             });
-        }
 
-        function selectDate(td) {
-            document.querySelectorAll('.calendar td').forEach(cell => cell.classList.remove('selected'));
-            td.classList.add('selected');
-            selectedFullDate = `${td.dataset.date} ${td.dataset.time}`;
-        }
-
-        function previousWeek() {
-            currentDate.setDate(currentDate.getDate() - 7);
-            loadCalendar();
+            // 現在の月を表示
+            const currentMonthElement = document.getElementById('currentMonth');
+            currentMonthElement.textContent = `${startDate.getFullYear()}年 ${startDate.getMonth() + 1}月`;
         }
 
         function nextWeek() {
             currentDate.setDate(currentDate.getDate() + 7);
-            loadCalendar();
+            fetchAvailability(currentDate);
+        }
+
+        function previousWeek() {
+            currentDate.setDate(currentDate.getDate() - 7);
+            fetchAvailability(currentDate);
+        }
+
+        function showLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'none';
         }
     </script>
 </body>
