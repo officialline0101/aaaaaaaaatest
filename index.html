@@ -266,15 +266,21 @@
             selectedSymptom = button.textContent;
         }
 
-        function selectDate(cell) {
-            const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(td => td.classList.remove('selected'));
-            cell.classList.add('selected');
-            const selectedDay = cell.getAttribute('data-date');
-            const selectedTime = cell.parentElement.firstChild.textContent;
-            selectedFullDate = `${selectedDay} ${selectedTime}`;
-            document.getElementById('date1').value = selectedFullDate;
-        }
+function selectDate(cell) {
+    const cells = document.querySelectorAll('.calendar td');
+    cells.forEach(td => td.classList.remove('selected'));
+    cell.classList.add('selected');
+
+    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+    const selectedTime = cell.parentElement.firstChild.textContent; // 時間
+    const date = new Date(selectedDay);
+
+    // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
+    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+
+    // 変換後の日付を第1希望日の入力フィールドに設定
+    document.getElementById('date1').value = selectedFullDate;
+}
 
         function submitForm() {
             const formData = {
