@@ -86,6 +86,7 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
+            position: relative;
         }
         .calendar {
             flex: 1;
@@ -94,19 +95,19 @@
             border-radius: 4px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow: auto;
-            width: 100%; /* Full width of the container */
+            width: 100%;
         }
         .calendar table {
-            width: 100%; /* Full width of the container */
+            width: 100%;
             border-collapse: collapse;
         }
         .calendar th, .calendar td {
             text-align: center;
-            padding: 5px; /* Reduced padding for smaller width */
+            padding: 5px;
             cursor: pointer;
             vertical-align: top;
-            width: 50px; /* Set a fixed width for each cell */
-            box-sizing: border-box; /* Include padding in width */
+            width: 50px;
+            box-sizing: border-box;
         }
         .calendar th {
             background-color: #f7f7f7;
@@ -137,6 +138,24 @@
             font-size: 16px;
             font-weight: bold;
             color: #444;
+        }
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top-color: #444;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -174,7 +193,7 @@
                     <thead>
                         <tr id="calendar-header">
                             <th>時間</th>
-                            <th></th> <!-- Dates will be filled dynamically -->
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -187,6 +206,9 @@
                         <!-- カレンダーの内容がここに追加される -->
                     </tbody>
                 </table>
+            </div>
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
             </div>
         </div>
 
@@ -218,37 +240,34 @@
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
-                console.error('LIFF初期化失敗', err);
+                console.log('LIFF初期化失敗', err);
             });
 
             fetchAvailability(currentDate);
         });
 
-        function selectVisit(element) {
-            document.getElementById('firstVisit').classList.remove('active');
-            document.getElementById('repeatVisit').classList.remove('active');
-            element.classList.add('active');
-            visitCount = element.innerText;
+        function selectVisit(button) {
+            const buttons = document.querySelectorAll('.visit-buttons button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            visitCount = button.id === 'firstVisit' ? '初めて' : '2回目以降';
         }
 
-        function selectSymptom(element) {
-            const allSymptoms = document.querySelectorAll('.symptoms button');
-            allSymptoms.forEach(symptom => {
-                symptom.classList.remove('active');
-            });
-            element.classList.add('active');
-            selectedSymptom = element.innerText;
+        function selectSymptom(button) {
+            const buttons = document.querySelectorAll('.symptoms button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedSymptom = button.textContent;
         }
 
-        function selectDate(element) {
+        function selectDate(cell) {
             const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(cell => {
-                cell.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            selectedTime = element.parentNode.firstChild.textContent;
-            selectedDate = element.parentNode.parentNode.parentNode.querySelectorAll('th')[element.cellIndex].textContent;
-            selectedFullDate = `${selectedDate} ${selectedTime}`;
+            cells.forEach(td => td.classList.remove('selected'));
+            cell.classList.add('selected');
+            const selectedDay = cell.getAttribute('data-date');
+            const selectedTime = cell.parentElement.firstChild.textContent;
+            selectedFullDate = `${selectedDay} ${selectedTime}`;
+            document.getElementById('date1').value = selectedFullDate;
         }
 
         function submitForm() {
@@ -302,6 +321,7 @@
                         `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
+                showLoadingSpinner(); // Show loading spinner
                 const response = await fetch(url);
                 const data = await response.json();
                 console.log(data);
@@ -312,6 +332,8 @@
                 updateCalendar(data);
             } catch (error) {
                 console.error('Error fetching availability:', error);
+            } finally {
+                hideLoadingSpinner(); // Hide loading spinner
             }
         }
 
@@ -319,7 +341,6 @@
             const calendar = document.getElementById('calendar1');
             const table = calendar.querySelector('table tbody');
 
-            // 一度だけ行を作成
             const times = [
                 '10:00', '10:30', '11:00', '11:30',
                 '12:00', '12:30', '13:00', '13:30',
@@ -347,6 +368,14 @@
             // テーブルのヘッダーを更新
             updateCalendarHeader(currentDate);
 
+            // 各セルを空白にリセット
+            for (let row of table.rows) {
+                for (let i = 1; i < row.cells.length; i++) {
+                    row.cells[i].textContent = '';
+                    row.cells[i].removeAttribute('data-date');
+                }
+            }
+
             // テーブルの内容を更新
             for (let i = 0; i < 7; i++) {
                 const day = new Date(currentDate);
@@ -354,10 +383,17 @@
 
                 for (let j = 0; j < times.length; j++) {
                     const cell = table.rows[j].cells[i + 1];
+                    const slotStart = new Date(day);
+                    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]));
+
+                    const slotEnd = new Date(slotStart);
+                    slotEnd.setMinutes(slotStart.getMinutes() + 30);
+
                     const count = availability.reduce((acc, slot) => {
-                        const slotStart = new Date(slot.startTime);
-                        const slotEnd = new Date(slot.endTime);
-                        if (slotStart <= day && day < slotEnd) {
+                        const eventStart = new Date(slot.startTime);
+                        const eventEnd = new Date(slot.endTime);
+
+                        if (eventStart < slotEnd && slotStart < eventEnd) {
                             return acc + 1;
                         }
                         return acc;
@@ -370,6 +406,8 @@
                     } else {
                         cell.textContent = '×';
                     }
+
+                    cell.setAttribute('data-date', slotStart.toISOString());
                 }
             }
         }
@@ -401,6 +439,14 @@
         function previousWeek() {
             currentDate.setDate(currentDate.getDate() - 7);
             fetchAvailability(currentDate);
+        }
+
+        function showLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'none';
         }
     </script>
 </body>
