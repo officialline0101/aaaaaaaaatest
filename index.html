@@ -358,7 +358,7 @@ async function fetchAvailability(date) {
     }
 }
 
-function updateCalendar(availability, businessDays) {
+function updateCalendar(availability) {
     const calendar = document.getElementById('calendar1');
     const table = calendar.querySelector('table tbody');
 
@@ -410,12 +410,17 @@ function updateCalendar(availability, businessDays) {
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
-            const isBusinessDay = businessDays.some(businessDay => slotStart >= businessDay.start && slotEnd <= businessDay.end);
+            const isBusinessDay = availability.some(event => {
+                const eventStart = new Date(event.startTime);
+                const eventEnd = new Date(event.endTime);
+                return event.title === "営業日" && eventStart <= slotStart && eventEnd >= slotEnd;
+            });
+
             const count = availability.reduce((acc, slot) => {
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
 
-                if (eventStart < slotEnd && slotStart < eventEnd) {
+                if (event.title !== "営業日" && eventStart < slotEnd && slotStart < eventEnd) {
                     return acc + 1;
                 }
                 return acc;
@@ -434,6 +439,7 @@ function updateCalendar(availability, businessDays) {
             cell.setAttribute('data-date', slotStart.toISOString());
         }
     }
+    
         }
 
         function updateCalendarHeader(date) {
