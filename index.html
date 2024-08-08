@@ -422,22 +422,19 @@ function updateCalendar(availability, businessDays) {
                 return eventStart < slotEnd && slotStart < eventEnd && slot.title === "営業日";
             });
 
-            const count = availability.reduce((acc, slot) => {
+            // 営業日のイベント時間帯かどうかを確認
+            const inBusinessEventTime = availability.some(slot => {
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
+                return eventStart < slotEnd && slotStart < eventEnd && slot.title === "営業日";
+            });
 
-                if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
-                    return acc + 1;
-                }
-                return acc;
-            }, 0);
-
-            if (slotStart.getDay() === 0 && !isBusinessDay && !hasBusinessEvent) { // 日曜日の場合
+            if (isBusinessDay && inBusinessEventTime) {
+                cell.textContent = '◯';
+            } else if (isBusinessDay) {
                 cell.textContent = '✕';
-            } else if (isBusinessDay || hasBusinessEvent) {
-                cell.textContent = '◯';
-            } else if (count === 0) {
-                cell.textContent = '◯';
+            } else if (slotStart.getDay() === 0 && hasBusinessEvent) { // 日曜日の場合
+                cell.textContent = inBusinessEventTime ? '◯' : '✕';
             } else {
                 cell.textContent = '✕';
             }
