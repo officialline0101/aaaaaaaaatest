@@ -263,21 +263,17 @@
             selectedSymptom = button.textContent;
         }
 
-function selectDate(cell) {
-    const cells = document.querySelectorAll('.calendar td');
-    cells.forEach(td => td.classList.remove('selected'));
-    cell.classList.add('selected');
+        function selectDate(cell) {
+            const cells = document.querySelectorAll('.calendar td');
+            cells.forEach(td => td.classList.remove('selected'));
+            cell.classList.add('selected');
 
-    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-    const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-    const date = new Date(selectedDay);
+            const selectedDay = cell.getAttribute('data-date');
+            const selectedTime = cell.parentElement.firstChild.textContent;
+            const date = new Date(selectedDay);
 
-    // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
-
-    // 変換後の日付を第1希望日の入力フィールドに設定
-    document.getElementById('date1').value = selectedFullDate;
-}
+            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+        }
 
         function submitForm() {
             const formData = {
@@ -289,32 +285,27 @@ function selectDate(cell) {
                 message: document.getElementById('message').value
             };
 
-// フォームデータのチェック
-if (!formData.name || !formData.phone || !formData.visitCount) {
-    alert('お名前・電話番号・ご来店回数すべてご記入ください。');
-    return;
-}
+            if (!formData.name || !formData.phone || !formData.visitCount) {
+                alert('お名前・電話番号・ご来店回数すべてご記入ください。');
+                return;
+            }
 
-            // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
                 text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
-                /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-                /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
                 console.error('メッセージの送信に失敗しました', err);
             });
         }
 
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
-}
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+        }
 
         async function fetchAvailability(date) {
             const startTime = new Date(date);
@@ -323,7 +314,6 @@ function formatDate(dateStr) {
 
             const cacheKey = startTime.toISOString() + endTime.toISOString();
 
-            // キャッシュを確認
             if (availabilityCache[cacheKey]) {
                 console.log('Using cached data');
                 updateCalendar(availabilityCache[cacheKey]);
@@ -334,123 +324,98 @@ function formatDate(dateStr) {
                         `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
-                showLoadingSpinner(); // Show loading spinner
+                showLoadingSpinner();
                 const response = await fetch(url);
                 const data = await response.json();
                 console.log(data);
 
-                // データをキャッシュに保存
                 availabilityCache[cacheKey] = data;
 
                 updateCalendar(data);
             } catch (error) {
                 console.error('Error fetching availability:', error);
             } finally {
-                hideLoadingSpinner(); // Hide loading spinner
+                hideLoadingSpinner();
             }
         }
 
-function updateCalendar(availability) {
-    const calendar = document.getElementById('calendar1');
-    const table = calendar.querySelector('table tbody');
+        function updateCalendar(availability) {
+            const calendar = document.getElementById('calendar1');
+            const table = calendar.querySelector('table tbody');
 
-    const times = [
-        '10:00', '10:30', '11:00', '11:30',
-        '12:00', '12:30', '13:00', '13:30',
-        '14:00', '14:30', '15:00', '15:30',
-        '16:00', '16:30', '17:00', '17:30'
-    ];
+            const times = [
+                '10:00', '10:30', '11:00', '11:30',
+                '12:00', '12:30', '13:00', '13:30',
+                '14:00', '14:30', '15:00', '15:30',
+                '16:00', '16:30', '17:00', '17:30'
+            ];
 
-    if (table.rows.length === 0) {
-        for (const time of times) {
-            const row = document.createElement('tr');
-            const timeCell = document.createElement('td');
-            timeCell.textContent = time;
-            row.appendChild(timeCell);
+            if (table.rows.length === 0) {
+                for (const time of times) {
+                    const row = document.createElement('tr');
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = time;
+                    row.appendChild(timeCell);
+
+                    for (let i = 0; i < 7; i++) {
+                        const cell = document.createElement('td');
+                        cell.addEventListener('click', () => selectDate(cell));
+                        row.appendChild(cell);
+                    }
+
+                    table.appendChild(row);
+                }
+            }
+
+            updateCalendarHeader(currentDate);
+
+            for (let row of table.rows) {
+                for (let i = 1; i < row.cells.length; i++) {
+                    row.cells[i].textContent = '';
+                    row.cells[i].removeAttribute('data-date');
+                }
+            }
 
             for (let i = 0; i < 7; i++) {
-                const cell = document.createElement('td');
-                cell.addEventListener('click', () => selectDate(cell));
-                row.appendChild(cell);
-            }
+                const day = new Date(currentDate);
+                day.setDate(day.getDate() + i);
+                const dateStr = day.toISOString().split('T')[0];
 
-            table.appendChild(row);
-        }
-    }
+                for (let j = 0; j < times.length; j++) {
+                    const timeStr = times[j];
+                    const key = `${dateStr}T${timeStr}`;
+                    const cell = table.rows[j].cells[i + 1];
+                    const dayData = availability.find(item => item.date === key);
 
-    // テーブルのヘッダーを更新
-    updateCalendarHeader(currentDate);
-
-    // 各セルを空白にリセット
-    for (let row of table.rows) {
-        for (let i = 1; i < row.cells.length; i++) {
-            row.cells[i].textContent = '';
-            row.cells[i].removeAttribute('data-date');
-        }
-    }
-
-    // テーブルの内容を更新
-    for (let i = 0; i < 7; i++) {
-        const day = new Date(currentDate);
-        day.setDate(day.getDate() + i);
-
-        for (let j = 0; j < times.length; j++) {
-            const cell = table.rows[j].cells[i + 1];
-            const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
-
-            const slotEnd = new Date(slotStart);
-            slotEnd.setMinutes(slotStart.getMinutes() + 30);
-
-            const count = availability.reduce((acc, slot) => {
-                const eventStart = new Date(slot.startTime);
-                const eventEnd = new Date(slot.endTime);
-
-                if (eventStart < slotEnd && slotStart < eventEnd) {
-                    return acc + 1;
+                    if (dayData && dayData.available) {
+                        cell.textContent = '〇';
+                        cell.setAttribute('data-date', dateStr);
+                    }
                 }
-                return acc;
-            }, 0);
-
-            if (slotStart.getDay() === 0) { // 日曜日の場合
-                cell.textContent = '✕';
-            } else if (count === 0) {
-                cell.textContent = '◯';
-            } else if (count === 1) {
-                cell.textContent = '✕';
-            } else {
-                cell.textContent = '✕';
             }
-
-            cell.setAttribute('data-date', slotStart.toISOString());
-        }
-    }
-
         }
 
         function updateCalendarHeader(date) {
-            const headerRow = document.getElementById('calendar-header');
-            const headers = headerRow.querySelectorAll('th:not(:first-child)');
+            const header = document.getElementById('calendar-header');
+            header.cells[0].textContent = '時間';
 
-            const startDate = new Date(date);
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(date);
+                day.setDate(day.getDate() + i);
+                const dateStr = `${('0' + (day.getMonth() + 1)).slice(-2)}/${('0' + day.getDate()).slice(-2)}`;
+                const cell = header.cells[i + 1];
 
-            headers.forEach((th, index) => {
-                const day = new Date(startDate);
-                day.setDate(day.getDate() + index);
+                if (!cell) {
+                    const newCell = document.createElement('th');
+                    newCell.textContent = dateStr;
+                    header.appendChild(newCell);
+                } else {
+                    cell.textContent = dateStr;
+                }
+            }
 
-const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
-const dayString = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
-th.innerHTML = dayString.replace('(', '<br>(');
-            });
-
-            // 現在の月を表示
-            const currentMonthElement = document.getElementById('currentMonth');
-            currentMonthElement.textContent = `${startDate.getFullYear()}年 ${startDate.getMonth() + 1}月`;
-        }
-
-        function nextWeek() {
-            currentDate.setDate(currentDate.getDate() + 7);
-            fetchAvailability(currentDate);
+            const currentMonth = document.getElementById('currentMonth');
+            currentMonth.textContent = `${date.getFullYear()}年${date.getMonth() + 1}月`;
         }
 
         function previousWeek() {
@@ -458,12 +423,19 @@ th.innerHTML = dayString.replace('(', '<br>(');
             fetchAvailability(currentDate);
         }
 
+        function nextWeek() {
+            currentDate.setDate(currentDate.getDate() + 7);
+            fetchAvailability(currentDate);
+        }
+
         function showLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'block';
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'block';
         }
 
         function hideLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'none';
+            const spinner = document.getElementById('loadingSpinner');
+            spinner.style.display = 'none';
         }
     </script>
 </body>
