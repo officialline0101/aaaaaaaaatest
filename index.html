@@ -168,6 +168,9 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+    .available {
+        color: red;
+    }
     </style>
 </head>
 <body>
@@ -442,18 +445,21 @@ function updateCalendar(availability, businessDays) {
                 const isBusinessEventTime = businessEventTimes.some(event => {
                     return slotStart < event.end && event.start < slotEnd;
                 });
-                cell.textContent = isBusinessEventTime ? '◯' : '✕';
+                if (isBusinessEventTime) {
+                    cell.textContent = '◯';
+                    cell.classList.add('available'); // クラスを追加
+                } else {
+                    cell.textContent = '✕';
+                }
             } else if (isBusinessDay) {
                 cell.textContent = '◯';
+                cell.classList.add('available'); // クラスを追加
             } else if (count === 0) {
                 cell.textContent = '◯';
+                cell.classList.add('available'); // クラスを追加
             } else {
                 cell.textContent = '✕';
             }
-
-            cell.setAttribute('data-date', slotStart.toISOString());
-        }
-    }
     
         }
 
