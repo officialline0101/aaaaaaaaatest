@@ -442,6 +442,12 @@ function updateCalendar(availability, businessDays) {
                 return acc;
             }, 0);
 
+// 特定の時間帯を定義（13時から14時の例）
+const specificUnavailableStart = new Date(slotStart);
+specificUnavailableStart.setHours(12, 0, 0, 0);
+const specificUnavailableEnd = new Date(slotStart);
+specificUnavailableEnd.setHours(13, 0, 0, 0);
+            
             if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) { // 日曜日の場合
                 cell.textContent = '✕';
             } else if (businessEventTimes.length > 0) {
