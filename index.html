@@ -400,9 +400,6 @@ function updateCalendar(availability, businessDays) {
         for (let i = 1; i < row.cells.length; i++) {
             row.cells[i].textContent = '';
             row.cells[i].removeAttribute('data-date');
-            row.cells[i].classList.remove('unavailable');
-            row.cells[i].classList.remove('available');
-            row.cells[i].style.pointerEvents = 'auto'; // クリックを有効化
         }
     }
 
@@ -434,7 +431,6 @@ function updateCalendar(availability, businessDays) {
         cell.textContent = '✕';
         cell.classList.add('unavailable'); // クラスを追加
         cell.setAttribute('data-date', slotStart.toISOString());
-        cell.style.pointerEvents = 'none'; // クリックを無効化
         continue;
     }
 
@@ -457,7 +453,6 @@ function updateCalendar(availability, businessDays) {
             if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) { // 日曜日の場合
                 cell.textContent = '✕';
                 cell.classList.add('unavailable'); // クラスを追加
-                cell.style.pointerEvents = 'none'; // クリックを無効化
             } else if (businessEventTimes.length > 0) {
                 const isBusinessEventTime = businessEventTimes.some(event => {
                     return slotStart < event.end && event.start < slotEnd;
@@ -468,7 +463,6 @@ function updateCalendar(availability, businessDays) {
                 } else {
                     cell.textContent = '✕';
                     cell.classList.add('unavailable'); // クラスを追加
-                    cell.style.pointerEvents = 'none'; // クリックを無効化
                 }
             } else if (isBusinessDay) {
                 cell.textContent = '◯';
@@ -479,7 +473,6 @@ function updateCalendar(availability, businessDays) {
             } else {
                 cell.textContent = '✕';
                 cell.classList.add('unavailable'); // クラスを追加
-                cell.style.pointerEvents = 'none'; // クリックを無効化
             }
 
             cell.setAttribute('data-date', slotStart.toISOString());
