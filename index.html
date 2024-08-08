@@ -426,6 +426,14 @@ function updateCalendar(availability, businessDays) {
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
+    // 12:00 - 13:00 を✕に設定
+    if (slotStart.getHours() === 12 || (slotStart.getHours() === 13 && slotStart.getMinutes() === 0)) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable'); // クラスを追加
+        cell.setAttribute('data-date', slotStart.toISOString());
+        continue;
+    }
+
             const isBusinessDay = businessDays.some(businessDay => {
                 const businessDayStart = new Date(businessDay.start);
                 const businessDayEnd = new Date(businessDay.end);
@@ -441,12 +449,6 @@ function updateCalendar(availability, businessDays) {
                 }
                 return acc;
             }, 0);
-
-// 特定の時間帯を定義（13時から14時の例）
-const specificUnavailableStart = new Date(slotStart);
-specificUnavailableStart.setHours(12, 0, 0, 0);
-const specificUnavailableEnd = new Date(slotStart);
-specificUnavailableEnd.setHours(13, 0, 0, 0);
             
             if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) { // 日曜日の場合
                 cell.textContent = '✕';
