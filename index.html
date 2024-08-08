@@ -445,12 +445,7 @@ function updateCalendar(availability, businessDays) {
                 const isBusinessEventTime = businessEventTimes.some(event => {
                     return slotStart < event.end && event.start < slotEnd;
                 });
-                if (isBusinessEventTime) {
-                    cell.textContent = '◯';
-                    cell.classList.add('available'); // クラスを追加
-                } else {
-                    cell.textContent = '✕';
-                }
+                cell.textContent = isBusinessEventTime ? '◯' : '✕';
             } else if (isBusinessDay) {
                 cell.textContent = '◯';
                 cell.classList.add('available'); // クラスを追加
@@ -460,6 +455,10 @@ function updateCalendar(availability, businessDays) {
             } else {
                 cell.textContent = '✕';
             }
+
+            cell.setAttribute('data-date', slotStart.toISOString());
+        }
+    }
     
         }
 
