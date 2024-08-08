@@ -316,41 +316,43 @@ function formatDate(dateStr) {
     return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
 }
 
-        async function fetchAvailability(date) {
-            const startTime = new Date(date);
-            const endTime = new Date(date);
-            endTime.setDate(endTime.getDate() + 7);
+async function fetchAvailability(date) {
+    const startTime = new Date(date);
+    const endTime = new Date(date);
+    endTime.setDate(endTime.getDate() + 7);
 
-            const cacheKey = startTime.toISOString() + endTime.toISOString();
+    const cacheKey = startTime.toISOString() + endTime.toISOString();
 
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey]);
-                return;
-            }
+    // キャッシュを確認
+    if (availabilityCache[cacheKey]) {
+        console.log('Using cached data');
+        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].workingDays);
+        return;
+    }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwWtRvVCm_Bc9flinolzFEJGD6eeF-nNqPMqHMEyWmNgmg6Q9MDH-q3SPTUO9fBEQpsdg/exec' + 
-                        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+    try {
+        showLoadingSpinner(); // Show loading spinner
+        const [availabilityResponse, workingDaysResponse] = await Promise.all([
+            fetch('https://script.google.com/macros/s/AKfycbyVpOPJeMa5G-AXWCcqooULWyo17yxCvID8kI4JAEVkiaZgbddQOHiWejnW_hqxjwXlbw/exec' + 
+                  `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`),
+            fetchWorkingDays(startTime, endTime)
+        ]);
 
-            try {
-                showLoadingSpinner(); // Show loading spinner
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+        const availabilityData = await availabilityResponse.json();
+        const workingDays = await workingDaysResponse;
 
-                // データをキャッシュに保存
-                availabilityCache[cacheKey] = data;
+        // データをキャッシュに保存
+        availabilityCache[cacheKey] = { availability: availabilityData, workingDays: workingDays };
 
-                updateCalendar(data);
-            } catch (error) {
-                console.error('Error fetching availability:', error);
-            } finally {
-                hideLoadingSpinner(); // Hide loading spinner
-            }
-        }
+        updateCalendar(availabilityData, workingDays);
+    } catch (error) {
+        console.error('Error fetching availability:', error);
+    } finally {
+        hideLoadingSpinner(); // Hide loading spinner
+    }
+}
 
-function updateCalendar(availability) {
+function updateCalendar(availability, workingDays) {
     const calendar = document.getElementById('calendar1');
     const table = calendar.querySelector('table tbody');
 
@@ -394,6 +396,12 @@ function updateCalendar(availability) {
         const day = new Date(currentDate);
         day.setDate(day.getDate() + i);
 
+        const isWorkingDay = workingDays.some(event => {
+            const eventStart = new Date(event.startTime);
+            const eventEnd = new Date(event.endTime);
+            return day >= eventStart && day <= eventEnd;
+        });
+
         for (let j = 0; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
             const slotStart = new Date(day);
@@ -412,7 +420,7 @@ function updateCalendar(availability) {
                 return acc;
             }, 0);
 
-            if (slotStart.getDay() === 0) { // 日曜日の場合
+            if (!isWorkingDay) {
                 cell.textContent = '✕';
             } else if (count === 0) {
                 cell.textContent = '◯';
