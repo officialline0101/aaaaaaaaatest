@@ -326,25 +326,26 @@ async function fetchAvailability(date) {
     // キャッシュを確認
     if (availabilityCache[cacheKey]) {
         console.log('Using cached data');
-        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].workingDays);
+        updateCalendar(availabilityCache[cacheKey]);
         return;
     }
 
+    const url = 'https://script.google.com/macros/s/AKfycbwWtRvVCm_Bc9flinolzFEJGD6eeF-nNqPMqHMEyWmNgmg6Q9MDH-q3SPTUO9fBEQpsdg/exec' + 
+                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+
     try {
         showLoadingSpinner(); // Show loading spinner
-        const [availabilityResponse, workingDaysResponse] = await Promise.all([
-            fetch('https://script.google.com/macros/s/AKfycbyVpOPJeMa5G-AXWCcqooULWyo17yxCvID8kI4JAEVkiaZgbddQOHiWejnW_hqxjwXlbw/exec' + 
-                  `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`),
-            fetchWorkingDays(startTime, endTime)
-        ]);
-
-        const availabilityData = await availabilityResponse.json();
-        const workingDays = await workingDaysResponse;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
 
         // データをキャッシュに保存
-        availabilityCache[cacheKey] = { availability: availabilityData, workingDays: workingDays };
+        availabilityCache[cacheKey] = data;
 
-        updateCalendar(availabilityData, workingDays);
+        // 営業日イベントを取得
+        const businessDays = await fetchBusinessDays(startTime, endTime);
+
+        updateCalendar(data, businessDays);
     } catch (error) {
         console.error('Error fetching availability:', error);
     } finally {
@@ -352,7 +353,22 @@ async function fetchAvailability(date) {
     }
 }
 
-function updateCalendar(availability, workingDays) {
+// 営業日を取得する関数を追加
+async function fetchBusinessDays(startTime, endTime) {
+    const url = 'https://script.google.com/macros/s/AKfycbwWtRvVCm_Bc9flinolzFEJGD6eeF-nNqPMqHMEyWmNgmg6Q9MDH-q3SPTUO9fBEQpsdg/exec' + 
+                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}&type=businessDays`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.businessDays;
+    } catch (error) {
+        console.error('Error fetching business days:', error);
+        return [];
+    }
+}
+
+function updateCalendar(availability, businessDays) {
     const calendar = document.getElementById('calendar1');
     const table = calendar.querySelector('table tbody');
 
@@ -396,16 +412,17 @@ function updateCalendar(availability, workingDays) {
         const day = new Date(currentDate);
         day.setDate(day.getDate() + i);
 
-        const isWorkingDay = workingDays.some(event => {
-            const eventStart = new Date(event.startTime);
-            const eventEnd = new Date(event.endTime);
-            return day >= eventStart && day <= eventEnd;
+        const isBusinessDay = businessDays.some(businessDay => {
+            const businessDate = new Date(businessDay);
+            return businessDate.getFullYear() === day.getFullYear() &&
+                   businessDate.getMonth() === day.getMonth() &&
+                   businessDate.getDate() === day.getDate();
         });
 
         for (let j = 0; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
             const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
@@ -420,7 +437,9 @@ function updateCalendar(availability, workingDays) {
                 return acc;
             }, 0);
 
-            if (!isWorkingDay) {
+            if (isBusinessDay) {
+                cell.textContent = '◯';
+            } else if (slotStart.getDay() === 0) { // 日曜日の場合
                 cell.textContent = '✕';
             } else if (count === 0) {
                 cell.textContent = '◯';
