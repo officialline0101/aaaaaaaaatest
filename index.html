@@ -326,7 +326,7 @@ async function fetchAvailability(date) {
     // キャッシュを確認
     if (availabilityCache[cacheKey]) {
         console.log('Using cached data');
-        updateCalendar(availabilityCache[cacheKey]);
+        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
         return;
     }
 
@@ -339,32 +339,22 @@ async function fetchAvailability(date) {
         const data = await response.json();
         console.log(data);
 
-        // データをキャッシュに保存
-        availabilityCache[cacheKey] = data;
+        // 営業日の情報を抽出
+        const businessDays = data.filter(event => event.summary === "営業日").map(event => {
+            return {
+                start: new Date(event.startTime),
+                end: new Date(event.endTime)
+            };
+        });
 
-        // 営業日イベントを取得
-        const businessDays = await fetchBusinessDays(startTime, endTime);
+        // データをキャッシュに保存
+        availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
 
         updateCalendar(data, businessDays);
     } catch (error) {
         console.error('Error fetching availability:', error);
     } finally {
         hideLoadingSpinner(); // Hide loading spinner
-    }
-}
-
-// 営業日を取得する関数を追加
-async function fetchBusinessDays(startTime, endTime) {
-    const url = 'https://script.google.com/macros/s/AKfycbyVpOPJeMa5G-AXWCcqooULWyo17yxCvID8kI4JAEVkiaZgbddQOHiWejnW_hqxjwXlbw/exec' + 
-                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}&type=businessDays`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data.businessDays;
-    } catch (error) {
-        console.error('Error fetching business days:', error);
-        return [];
     }
 }
 
@@ -412,21 +402,16 @@ function updateCalendar(availability, businessDays) {
         const day = new Date(currentDate);
         day.setDate(day.getDate() + i);
 
-        const isBusinessDay = businessDays.some(businessDay => {
-            const businessDate = new Date(businessDay);
-            return businessDate.getFullYear() === day.getFullYear() &&
-                   businessDate.getMonth() === day.getMonth() &&
-                   businessDate.getDate() === day.getDate();
-        });
-
         for (let j = 0; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
             const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
 
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
+            // 営業日の判定
+            const isBusinessDay = businessDays.some(businessDay => slotStart >= businessDay.start && slotEnd <= businessDay.end);
             const count = availability.reduce((acc, slot) => {
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
@@ -437,14 +422,16 @@ function updateCalendar(availability, businessDays) {
                 return acc;
             }, 0);
 
-            if (isBusinessDay) {
-                cell.textContent = '◯';
-            } else if (slotStart.getDay() === 0) { // 日曜日の場合
+            if (slotStart.getDay() === 0) { // 日曜日の場合
                 cell.textContent = '✕';
+            } else if (isBusinessDay) {
+                if (count === 0) {
+                    cell.textContent = '◯';
+                } else {
+                    cell.textContent = '✕';
+                }
             } else if (count === 0) {
                 cell.textContent = '◯';
-            } else if (count === 1) {
-                cell.textContent = '✕';
             } else {
                 cell.textContent = '✕';
             }
