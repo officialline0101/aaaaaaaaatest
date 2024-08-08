@@ -405,22 +405,25 @@ function updateCalendar(availability) {
         for (let j = 0; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
             const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
-            const isBusinessDay = availability.some(event => {
-                const eventStart = new Date(event.startTime);
-                const eventEnd = new Date(event.endTime);
-                return event.title === "営業日" && eventStart <= slotStart && eventEnd >= slotEnd;
+            // "営業日"イベントを優先してチェック
+            const isBusinessDay = availability.some(slot => {
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+                return slot.title === '営業日' && eventStart < slotEnd && slotStart < eventEnd;
             });
 
+            // "営業日"イベントを除外してカウント
             const count = availability.reduce((acc, slot) => {
+                if (slot.title === '営業日') return acc;
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
 
-                if (event.title !== "営業日" && eventStart < slotEnd && slotStart < eventEnd) {
+                if (eventStart < slotEnd && slotStart < eventEnd) {
                     return acc + 1;
                 }
                 return acc;
