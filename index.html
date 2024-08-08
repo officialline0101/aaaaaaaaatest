@@ -405,27 +405,36 @@ function updateCalendar(availability, businessDays) {
         for (let j = 0; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
             const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
-            const isBusinessDay = businessDays.some(businessDay => slotStart >= businessDay.start && slotEnd <= businessDay.end);
+            const isBusinessDay = businessDays.some(businessDay => {
+                const businessDayStart = new Date(businessDay.start);
+                const businessDayEnd = new Date(businessDay.end);
+                return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
+            });
+
+            const hasBusinessEvent = availability.some(slot => {
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+                return eventStart < slotEnd && slotStart < eventEnd && slot.title === "営業日";
+            });
+
             const count = availability.reduce((acc, slot) => {
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
 
-                // "営業日"というタイトルのイベントは予約としてカウントしない
                 if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
                     return acc + 1;
                 }
                 return acc;
             }, 0);
 
-            // 定休日（日曜日）であっても営業日のイベントがある場合は「〇」と表示
-            if (slotStart.getDay() === 0 && !isBusinessDay) { // 日曜日の場合
+            if (slotStart.getDay() === 0 && !isBusinessDay && !hasBusinessEvent) { // 日曜日の場合
                 cell.textContent = '✕';
-            } else if (isBusinessDay) {
+            } else if (isBusinessDay || hasBusinessEvent) {
                 cell.textContent = '◯';
             } else if (count === 0) {
                 cell.textContent = '◯';
