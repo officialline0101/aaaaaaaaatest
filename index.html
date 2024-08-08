@@ -31,10 +31,15 @@
             margin-bottom: 20px;
             font-size: 24px;
         }
-        label {
+        .label {
             display: block;
             margin-bottom: 10px;
+            padding: 10px;
             font-weight: bold;
+            background-color: #13ca5e;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
         }
         input[type="text"], input[type="tel"], textarea {
             width: 100%;
@@ -168,26 +173,26 @@
 <body>
     <div class="container">
         <h1>予約フォーム2</h1>
-        <label for="name">お客様名※必須</label>
+        <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <label for="phone">電話番号※必須</label>
+        <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <label>ご来店回数※必須</label>
+        <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <label>症状※必須</label>
+        <div class="label">症状※必須</div>
         <div class="symptoms">
             <button type="button" onclick="selectSymptom(this)">軽症</button>
             <button type="button" onclick="selectSymptom(this)">中等症</button>
             <button type="button" onclick="selectSymptom(this)">重症</button>
         </div>
 
-        <label for="date1">希望日</label>
+        <div class="label">希望日</div>
         <div class="calendar-container">
             <div class="week-button-container">
                 <button class="week-button" onclick="previousWeek()">前の週</button>
@@ -218,7 +223,7 @@
             </div>
         </div>
 
-        <label for="message">メッセージ（質問等お気軽にご記入ください）</label>
+        <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
@@ -325,7 +330,7 @@ function formatDate(dateStr) {
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwJcAUuZYWzIE8OnQoCbJQGDfyRMew1AzQBaZOOXw7_NaHlS9WPHyzCLq5BKqCeoRMRgw/exec' + 
+            const url = 'https://script.google.com/macros/s/AKfycbxMhSrDmlRJCVEmJX9gIWJAuSNl6oo_JbQt2mKAZJ20UqPSFJs14gVLSu6lfZRklSDBYg/exec' + 
                         `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -345,79 +350,81 @@ function formatDate(dateStr) {
             }
         }
 
-        function updateCalendar(availability) {
-            const calendar = document.getElementById('calendar1');
-            const table = calendar.querySelector('table tbody');
+function updateCalendar(availability) {
+    const calendar = document.getElementById('calendar1');
+    const table = calendar.querySelector('table tbody');
 
-            const times = [
-                '10:00', '10:30', '11:00', '11:30',
-                '12:00', '12:30', '13:00', '13:30',
-                '14:00', '14:30', '15:00', '15:30',
-                '16:00', '16:30', '17:00', '17:30'
-            ];
+    const times = [
+        '10:00', '10:30', '11:00', '11:30',
+        '12:00', '12:30', '13:00', '13:30',
+        '14:00', '14:30', '15:00', '15:30',
+        '16:00', '16:30', '17:00', '17:30'
+    ];
 
-            if (table.rows.length === 0) {
-                for (const time of times) {
-                    const row = document.createElement('tr');
-                    const timeCell = document.createElement('td');
-                    timeCell.textContent = time;
-                    row.appendChild(timeCell);
+    if (table.rows.length === 0) {
+        for (const time of times) {
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            timeCell.textContent = time;
+            row.appendChild(timeCell);
 
-                    for (let i = 0; i < 7; i++) {
-                        const cell = document.createElement('td');
-                        cell.addEventListener('click', () => selectDate(cell));
-                        row.appendChild(cell);
-                    }
-
-                    table.appendChild(row);
-                }
+            for (let i = 0; i < 7; i++) {
+                const cell = document.createElement('td');
+                cell.addEventListener('click', () => selectDate(cell));
+                row.appendChild(cell);
             }
 
-            // テーブルのヘッダーを更新
-            updateCalendarHeader(currentDate);
-
-            // 各セルを空白にリセット
-            for (let row of table.rows) {
-                for (let i = 1; i < row.cells.length; i++) {
-                    row.cells[i].textContent = '';
-                    row.cells[i].removeAttribute('data-date');
-                }
-            }
-
-// テーブルの内容を更新
-for (let i = 0; i < 7; i++) {
-    const day = new Date(currentDate);
-    day.setDate(day.getDate() + i);
-
-    for (let j = 0; j < times.length; j++) {
-        const cell = table.rows[j].cells[i + 1];
-        const slotStart = new Date(day);
-        slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
-
-        const slotEnd = new Date(slotStart);
-        slotEnd.setMinutes(slotStart.getMinutes() + 30);
-
-        const count = availability.reduce((acc, slot) => {
-            const eventStart = new Date(slot.startTime);
-            const eventEnd = new Date(slot.endTime);
-
-            if (eventStart < slotEnd && slotStart < eventEnd) {
-                return acc + 1;
-            }
-            return acc;
-        }, 0);
-
-        if (count === 0) {
-            cell.textContent = '◯';
-        } else if (count === 1) {
-            cell.textContent = '✕';
-        } else {
-            cell.textContent = '✕';
+            table.appendChild(row);
         }
-
-        cell.setAttribute('data-date', slotStart.toISOString());
     }
-}
+
+    // テーブルのヘッダーを更新
+    updateCalendarHeader(currentDate);
+
+    // 各セルを空白にリセット
+    for (let row of table.rows) {
+        for (let i = 1; i < row.cells.length; i++) {
+            row.cells[i].textContent = '';
+            row.cells[i].removeAttribute('data-date');
+        }
+    }
+
+    // テーブルの内容を更新
+    for (let i = 0; i < 7; i++) {
+        const day = new Date(currentDate);
+        day.setDate(day.getDate() + i);
+
+        for (let j = 0; j < times.length; j++) {
+            const cell = table.rows[j].cells[i + 1];
+            const slotStart = new Date(day);
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
+
+            const slotEnd = new Date(slotStart);
+            slotEnd.setMinutes(slotStart.getMinutes() + 30);
+
+            const count = availability.reduce((acc, slot) => {
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+
+                if (eventStart < slotEnd && slotStart < eventEnd) {
+                    return acc + 1;
+                }
+                return acc;
+            }, 0);
+
+            if (slotStart.getDay() === 0) { // 日曜日の場合
+                cell.textContent = '✕';
+            } else if (count === 0) {
+                cell.textContent = '◯';
+            } else if (count === 1) {
+                cell.textContent = '✕';
+            } else {
+                cell.textContent = '✕';
+            }
+
+            cell.setAttribute('data-date', slotStart.toISOString());
+        }
+    }
 
         }
 
