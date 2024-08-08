@@ -358,7 +358,7 @@ async function fetchAvailability(date) {
     }
 }
 
-function updateCalendar(availability) {
+function updateCalendar(availability, businessDays) {
     const calendar = document.getElementById('calendar1');
     const table = calendar.querySelector('table tbody');
 
@@ -405,25 +405,18 @@ function updateCalendar(availability) {
         for (let j = 0; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
             const slotStart = new Date(day);
-            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // 修正ポイント: ミリ秒まで指定
 
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
-            // "営業日"イベントを優先してチェック
-            const isBusinessDay = availability.some(slot => {
-                const eventStart = new Date(slot.startTime);
-                const eventEnd = new Date(slot.endTime);
-                return slot.title === '営業日' && eventStart < slotEnd && slotStart < eventEnd;
-            });
-
-            // "営業日"イベントを除外してカウント
+            const isBusinessDay = businessDays.some(businessDay => slotStart >= businessDay.start && slotEnd <= businessDay.end);
             const count = availability.reduce((acc, slot) => {
-                if (slot.title === '営業日') return acc;
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
 
-                if (eventStart < slotEnd && slotStart < eventEnd) {
+                // "営業日"というタイトルのイベントは予約としてカウントしない
+                if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
                     return acc + 1;
                 }
                 return acc;
