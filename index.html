@@ -445,8 +445,12 @@ function updateCalendar(availability, businessDays) {
                 const isBusinessEventTime = businessEventTimes.some(event => {
                     return slotStart < event.end && event.start < slotEnd;
                 });
-                cell.textContent = isBusinessEventTime ? '◯' : '✕';
-                cell.classList.add('available'); // クラスを追加
+                if (isBusinessEventTime) {
+                    cell.textContent = '◯';
+                    cell.classList.add('available'); // クラスを追加
+                } else {
+                    cell.textContent = '✕';
+                }
             } else if (isBusinessDay) {
                 cell.textContent = '◯';
                 cell.classList.add('available'); // クラスを追加
