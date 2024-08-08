@@ -416,7 +416,7 @@ function updateCalendar(availability, businessDays) {
                 return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
             });
 
-            const businessEvent = availability.find(slot => {
+            const hasBusinessEvent = availability.some(slot => {
                 const eventStart = new Date(slot.startTime);
                 const eventEnd = new Date(slot.endTime);
                 return eventStart < slotEnd && slotStart < eventEnd && slot.title === "営業日";
@@ -432,24 +432,23 @@ function updateCalendar(availability, businessDays) {
                 return acc;
             }, 0);
 
-            if (businessEvent) {
-                const businessEventStart = new Date(businessEvent.startTime);
-                const businessEventEnd = new Date(businessEvent.endTime);
-                if (slotStart >= businessEventStart && slotEnd <= businessEventEnd) {
-                    cell.textContent = '◯';
-                } else {
-                    cell.textContent = '✕';
-                }
+            if (slotStart.getDay() === 0 && !isBusinessDay && !hasBusinessEvent) { // 日曜日の場合
+                cell.textContent = '✕';
+            } else if (hasBusinessEvent) {
+                cell.textContent = '✕'; // 営業日のイベントがある日で設定された時間以外は「✕」
+                availability.forEach(slot => {
+                    const eventStart = new Date(slot.startTime);
+                    const eventEnd = new Date(slot.endTime);
+                    if (eventStart < slotEnd && slotStart < eventEnd && slot.title === "営業日") {
+                        cell.textContent = '◯'; // 営業日のイベントがある日の設定された時間は「◯」
+                    }
+                });
+            } else if (isBusinessDay) {
+                cell.textContent = '◯';
+            } else if (count === 0) {
+                cell.textContent = '◯';
             } else {
-                if (slotStart.getDay() === 0 && !isBusinessDay) { // 日曜日の場合
-                    cell.textContent = '✕';
-                } else if (isBusinessDay) {
-                    cell.textContent = '◯';
-                } else if (count === 0) {
-                    cell.textContent = '◯';
-                } else {
-                    cell.textContent = '✕';
-                }
+                cell.textContent = '✕';
             }
 
             cell.setAttribute('data-date', slotStart.toISOString());
