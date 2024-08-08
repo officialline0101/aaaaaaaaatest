@@ -410,7 +410,6 @@ function updateCalendar(availability, businessDays) {
             const slotEnd = new Date(slotStart);
             slotEnd.setMinutes(slotStart.getMinutes() + 30);
 
-            // 営業日の判定
             const isBusinessDay = businessDays.some(businessDay => slotStart >= businessDay.start && slotEnd <= businessDay.end);
             const count = availability.reduce((acc, slot) => {
                 const eventStart = new Date(slot.startTime);
@@ -425,11 +424,7 @@ function updateCalendar(availability, businessDays) {
             if (slotStart.getDay() === 0) { // 日曜日の場合
                 cell.textContent = '✕';
             } else if (isBusinessDay) {
-                if (count === 0) {
-                    cell.textContent = '◯';
-                } else {
-                    cell.textContent = '✕';
-                }
+                cell.textContent = '◯';
             } else if (count === 0) {
                 cell.textContent = '◯';
             } else {
@@ -439,7 +434,6 @@ function updateCalendar(availability, businessDays) {
             cell.setAttribute('data-date', slotStart.toISOString());
         }
     }
-
         }
 
         function updateCalendarHeader(date) {
