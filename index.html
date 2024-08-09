@@ -180,6 +180,9 @@
         .menu-section.active {
             display: block;
         }
+#repairLabel, #repairButtons {
+    display: none;
+}
     </style>
 </head>
 <body>
@@ -219,9 +222,8 @@
                 <button type="button" onclick="selectSymptom(this)">オフのみ</button>
             </div>
             
-            <!-- 以下のlabelとirradiationsのdivをhiddenクラスで初期的に非表示にします -->
-            <label id="repairLabel" class="hidden">※お直しネイルを選択された方は本数をお選びください</label>
-            <div id="irradiations" class="irradiations hidden">
+<label id="repairLabel">※お直しネイルを選択された方は<br>本数をお選びください</label>
+<div id="repairButtons" class="irradiations">
                 <button type="button" id="oneirradiations" onclick="selectirradiations(this)">1本</button>
                 <button type="button" id="twoirradiations" onclick="selectirradiations(this)">2本</button>
                 <button type="button" id="threeirradiations" onclick="selectirradiations(this)">3本</button>
@@ -275,7 +277,7 @@
             </div>
         </div>
 
-        <div class="label">お直し・長さだしを選択された方は<br>ご希望本数を記載ください。</div>
+        <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
@@ -333,26 +335,17 @@
             button.classList.add('active');
             selectedSymptom = button.textContent;
 
-            // お直しネイルが選択された場合に表示
-            if (selectedSymptom === 'お直しネイル') {
-                document.getElementById('repairLabel').classList.remove('hidden');
-                document.getElementById('irradiations').classList.remove('hidden');
-            } else {
-                document.getElementById('repairLabel').classList.add('hidden');
-                document.getElementById('irradiations').classList.add('hidden');
-            }
+    const repairLabel = document.getElementById('repairLabel');
+    const repairButtons = document.getElementById('repairButtons');
 
-        function selectirradiations(element) {
-            const buttons = document.querySelectorAll('.irradiations button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        function selectirradiations(element) {
-            const buttons = document.querySelectorAll('.irradiations button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-        }
+    if (selectedSymptom === 'お直しネイル') {
+        repairLabel.style.display = 'block';
+        repairButtons.style.display = 'flex';
+    } else {
+        repairLabel.style.display = 'none';
+        repairButtons.style.display = 'none';
+    }
+}
 
         function showMenu(menu) {
             document.querySelectorAll('.menu-section').forEach(section => {
