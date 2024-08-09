@@ -191,7 +191,7 @@
         <div class="label">電話番号</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">ネイルのオフに関して選択</div>
+        <div class="label">ネイルのオフに関して選択してください</div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">オフあり</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">オフなし</button>
@@ -381,7 +381,7 @@ async function fetchAvailability(date) {
         return;
     }
 
-    const url = 'https://script.google.com/macros/s/AKfycbxqXvLoma8ekENEzPr-eWl71QcbAHTbPN3ZH-r3KLlrK4_l7f1a5NykpWrI13DO7YE6FA/exec' + 
+    const url = 'https://script.google.com/macros/s/AKfycbyVpOPJeMa5G-AXWCcqooULWyo17yxCvID8kI4JAEVkiaZgbddQOHiWejnW_hqxjwXlbw/exec' + 
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
     try {
@@ -440,11 +440,12 @@ function updateCalendar(availability, businessDays) {
     // テーブルのヘッダーを更新
     updateCalendarHeader(currentDate);
 
-    // 各セルを空白にリセット
+    // 各セルを空白にリセットし、クラスもリセット
     for (let row of table.rows) {
         for (let i = 1; i < row.cells.length; i++) {
             row.cells[i].textContent = '';
             row.cells[i].removeAttribute('data-date');
+            row.cells[i].classList.remove('available', 'unavailable', 'selected');
         }
     }
 
@@ -459,7 +460,7 @@ function updateCalendar(availability, businessDays) {
             const eventStart = new Date(slot.startTime);
             const eventEnd = new Date(slot.endTime);
             if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
-                businessEventTimes.push({start: eventStart, end: eventEnd});
+                businessEventTimes.push({ start: eventStart, end: eventEnd });
             }
         });
 
@@ -486,7 +487,7 @@ function updateCalendar(availability, businessDays) {
                 }
                 return acc;
             }, 0);
-            
+
             if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) { // 日曜日の場合
                 cell.textContent = '✕';
                 cell.classList.add('unavailable'); // クラスを追加
