@@ -492,7 +492,21 @@ function updateCalendar(availability, businessDays) {
                 return acc;
             }, 0);
 
-            if (slotStart.getDay() === 3 && !isBusinessDay && businessEventTimes.length === 0) { // 日曜日の場合
+            // 土日で19:30~21:00の場合は「×」を表示
+            if ((slotStart.getDay() === 0 || slotStart.getDay() === 6) && 
+                (slotStart.getHours() >= 19 && slotStart.getHours() < 21)) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable'); // クラスを追加
+            }
+            // 月火木金で09:30~17:30の場合は「×」を表示
+            else if ((slotStart.getDay() >= 1 && slotStart.getDay() <= 5) && 
+                     slotStart.getDay() !== 3 && 
+                     slotStart.getHours() >= 9 && slotStart.getHours() < 18) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable'); // クラスを追加
+            }
+            // 上記以外の条件で「営業日」でない場合、通常の処理を行う
+            else if (slotStart.getDay() === 3 && !isBusinessDay && businessEventTimes.length === 0) { 
                 cell.textContent = '✕';
                 cell.classList.add('unavailable'); // クラスを追加
             } else if (businessEventTimes.length > 0) {
