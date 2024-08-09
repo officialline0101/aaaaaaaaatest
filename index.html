@@ -178,14 +178,14 @@
 </head>
 <body>
     <div class="container">
-        <h1>予約フォーム2</h1>
-        <div class="label">お客様名※必須</div>
+        <h1>予約フォーム</h1>
+        <div class="label">お客様名</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <div class="label">電話番号※必須</div>
+        <div class="label">電話番号</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">ご来店回数※必須</div>
+        <div class="label">ご来店回数</div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
@@ -270,10 +270,19 @@
         }
         
 function selectDate(cell) {
+    // "unavailable" クラスが付いている場合はクリックを無効化
+    if (cell.classList.contains('unavailable')) {
+        return; // 何もせずに終了
+    }
+
+    // 既に選択されているセルの選択を解除
     const cells = document.querySelectorAll('.calendar td');
     cells.forEach(td => td.classList.remove('selected'));
+
+    // 新しいセルを選択状態にする
     cell.classList.add('selected');
 
+    // 選択された日付と時間を取得
     const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
     const selectedTime = cell.parentElement.firstChild.textContent; // 時間
     const date = new Date(selectedDay);
