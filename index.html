@@ -218,8 +218,10 @@
                 <button type="button" onclick="selectSymptom(this)">ハンドネイルケア</button>
                 <button type="button" onclick="selectSymptom(this)">オフのみ</button>
             </div>
-            <label id="repairLabel" style="display:none;">※お直しネイルを選択された方は本数をお選びください</label>
-            <div class="irradiations">
+            
+            <!-- 以下のlabelとirradiationsのdivをhiddenクラスで初期的に非表示にします -->
+            <label id="repairLabel" class="hidden">※お直しネイルを選択された方は本数をお選びください</label>
+            <div id="irradiations" class="irradiations hidden">
                 <button type="button" id="oneirradiations" onclick="selectirradiations(this)">1本</button>
                 <button type="button" id="twoirradiations" onclick="selectirradiations(this)">2本</button>
                 <button type="button" id="threeirradiations" onclick="selectirradiations(this)">3本</button>
@@ -332,14 +334,22 @@
             selectedSymptom = button.textContent;
         }
 
-            // お直しネイルが選択された時だけラベルを表示
-            const repairLabel = document.getElementById('repairLabel');
+            // お直しネイルが選択された場合に表示
             if (selectedSymptom === 'お直しネイル') {
-                repairLabel.style.display = 'block';
+                document.getElementById('repairLabel').classList.remove('hidden');
+                document.getElementById('irradiations').classList.remove('hidden');
             } else {
-                repairLabel.style.display = 'none';
+                document.getElementById('repairLabel').classList.add('hidden');
+                document.getElementById('irradiations').classList.add('hidden');
             }
         }
+
+        function selectirradiations(element) {
+            const buttons = document.querySelectorAll('.irradiations button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+
 
         function showMenu(menu) {
             document.querySelectorAll('.menu-section').forEach(section => {
