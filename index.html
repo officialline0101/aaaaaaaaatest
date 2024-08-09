@@ -218,6 +218,11 @@
                 <button type="button" onclick="selectSymptom(this)">ハンドネイルケア</button>
                 <button type="button" onclick="selectSymptom(this)">オフのみ</button>
             </div>
+            <label>※お直しネイルを選択された方は本数をお選びください</label>
+            <div class="irradiations">
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)">1回照射</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)">2回照射</button>
+            </div>
         </div>
 
         <div id="female" class="menu-section">
@@ -273,6 +278,7 @@
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
+        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
 
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
@@ -291,6 +297,16 @@
             buttons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             visitCount = button.id === 'firstVisit' ? 'オフあり' : 'オフなし';
+        }
+
+        function selectirradiations(element) {
+            /* 訪問回数ボタンの選択状態をリセット */
+            document.getElementById('firstirradiations').classList.remove('active');
+            document.getElementById('repeatirradiations').classList.remove('active');
+            /* クリックされたボタンを選択状態にする */
+            element.classList.add('active');
+            /* 選択された訪問回数を変数に格納 */
+            irradiationsCount = element.innerText;
         }
 
         function selectSymptom(button) {
@@ -351,7 +367,7 @@ if (!formData.name || !formData.phone) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース：${formData.selectedSymptom}${formData.visitCount}\nネイル：【${formData.visitCount}】\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース：${formData.selectedSymptom}${formData.visitCount}${formData.irradiationsCount}\nネイル：【${formData.visitCount}】\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
