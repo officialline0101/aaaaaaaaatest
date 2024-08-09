@@ -491,6 +491,21 @@ function updateCalendar(availability, businessDays) {
                 }
                 return acc;
             }, 0);
+
+            const dayOfWeek = slotStart.getDay();
+
+            if (
+                (dayOfWeek === 0 || dayOfWeek === 6) && 
+                (times[j] === '19:30' || times[j] === '20:00' || times[j] === '20:30' || times[j] === '21:00')
+            ) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+            } else if (
+                (dayOfWeek >= 1 && dayOfWeek <= 5) && 
+                (times[j] >= '09:30' && times[j] <= '17:30')
+            ) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
             
             if (slotStart.getDay() === 3 && !isBusinessDay && businessEventTimes.length === 0) { // 日曜日の場合
                 cell.textContent = '✕';
