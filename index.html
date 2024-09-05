@@ -326,44 +326,43 @@
             fetchAvailability(currentDate);
         });
 
-    // カレンダーの日付をクリックした際に希望日時を即時反映
-    document.querySelectorAll('.calendar td').forEach(cell => {
-        cell.addEventListener('click', () => {
-            selectDate(cell);
-            updateDisplayInfo();  // 日付を選択したら即座に表示を更新
-        });
-    });
 
 function updateDisplayInfo() {
     const name = document.getElementById('name').value;
-    const visitCountText = visitCount ? `・ご来店回数：${visitCount}` : '・来店回数が未選択です';
-    const selectedSymptomText = selectedSymptom.length > 0 ? `・メニュー：${selectedSymptom.join(', ')}` : '・メニューが未選択です'; // メニューを複数選択可能に
-    const irradiationsText = irradiationsCount ? `・オプション：${irradiationsCount}` : '・オプション無し';
-    const totalAmountText = `・合計金額：¥${menuPrice + optionsPrice}`;
-    const selectedDateText = selectedFullDate ? `・希望日時：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
+    const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+    const selectedSymptomText = selectedSymptom.length > 0 ? `・<span style="color:red;"><strong>メニュー</strong></span>：${selectedSymptom.join(', ')}` : '・メニューが未選択です'; // メニューを複数選択可能に
+    const irradiationsText = irradiationsCount ? `・<span style="color:red;"><strong>オプション</strong></span>：${irradiationsCount}` : '・オプション無し';
+    const totalAmountText = `・<span style="color:red;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
+    const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
 
     // displayInfo要素に情報を表示
     document.getElementById('displayInfo').innerHTML = `
-        <p>・お名前：${name}</p>
+        <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
+        <hr>
         <p>${visitCountText}</p>
+        <hr>
         <p>${selectedSymptomText}</p>
+        <hr>
         <p>${irradiationsText}</p>
+        <hr>
         <p>${selectedDateText}</p>
+        <hr>
         <p>${totalAmountText}</p>
+        <hr>
     `;
 }
 
 // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
-document.getElementById('name').addEventListener('input', updateDisplayInfo);
-document.querySelectorAll('.visit-buttons button').forEach(button => {
-    button.addEventListener('click', updateDisplayInfo);
-});
-document.querySelectorAll('.symptoms button').forEach(button => {
-    button.addEventListener('click', updateDisplayInfo);
-});
-document.querySelectorAll('.irradiations button').forEach(button => {
-    button.addEventListener('click', updateDisplayInfo);
-});
+        document.getElementById('name').addEventListener('input', updateDisplayInfo);
+        document.querySelectorAll('.visit-buttons button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+        document.querySelectorAll('.symptoms button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+        document.querySelectorAll('.irradiations button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
 
 // 日付セルのクリックイベントで希望日時を更新
 document.querySelectorAll('.calendar td').forEach(cell => {
@@ -377,13 +376,15 @@ function selectSymptom(button) {
     // 全ボタンの選択をリセット
     const buttons = document.querySelectorAll('.symptoms button');
     buttons.forEach(btn => btn.classList.remove('active'));
+
     
     // クリックされたボタンを選択状態に
     button.classList.add('active');
 
-        // 選択されたメニューの名前と価格を取得
-        selectedSymptom = button.textContent;
-        menuPrice = parseInt(button.getAttribute('data-price'), 10);
+    // 選択されたメニューの名前と価格を取得
+    const symptomName = button.textContent;  // ボタンのテキストを取得
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
 
     // 表示を更新
     updateDisplayInfo();
