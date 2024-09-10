@@ -204,7 +204,6 @@
     margin-bottom: 20px; /* 下にスペース */
     max-width: 100%; /* max-widthを100%に */
 }
-
 .irradiations button, .symptoms button, .menu-sections button {
     display: block; /* ブロック要素でボタンを独立させる */
     width: 100%; /* ボタンの幅を親要素に合わせる */
@@ -234,7 +233,7 @@
 /* フォーカス（クリック時）のエフェクト */
 .irradiations button:active, .symptoms button:active, .menu-sections button:active {
     transform: translateY(0); /* クリックしたときにボタンが元の位置に戻る */
-    background-color: #d0d0d0; /* クリック時の背景色をさらに濃く */
+    background-color: #444; /* クリック時の背景色をさらに濃く */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* クリック後に元の影に戻る */
 }
 
@@ -485,6 +484,41 @@
 
             fetchAvailability(currentDate);
         });
+
+function scrollToNext(element) {
+    const nextElement = element.nextElementSibling;
+    if (nextElement) {
+        nextElement.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function selectmanorwoman(button) {
+    button.classList.add('active');
+    scrollToNext(button);
+}
+
+function selectVisit(button) {
+    button.classList.add('active');
+    scrollToNext(button);
+}
+
+function selectSymptom(button) {
+    button.classList.add('active');
+    scrollToNext(button);
+}
+
+function showMenu(menuId) {
+    const allMenus = document.querySelectorAll('.menu-section');
+    allMenus.forEach(menu => {
+        menu.classList.remove('active');
+    });
+    
+    const selectedMenu = document.getElementById(menuId);
+    if (selectedMenu) {
+        selectedMenu.classList.add('active');
+        selectedMenu.scrollIntoView({ behavior: 'smooth' });
+    }
+}
 
 
 function updateDisplayInfo() {
