@@ -1026,3 +1026,48 @@ for (let i = 0; i < 7; i++) {
                 cell.classList.add('unavailable');
             }
         }
+    }
+} 
+    
+        }
+
+        function updateCalendarHeader(date) {
+            const headerRow = document.getElementById('calendar-header');
+            const headers = headerRow.querySelectorAll('th:not(:first-child)');
+
+            const startDate = new Date(date);
+
+            headers.forEach((th, index) => {
+                const day = new Date(startDate);
+                day.setDate(day.getDate() + index);
+
+const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+const dayString = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
+th.innerHTML = dayString.replace('(', '<br>(');
+            });
+
+            // 現在の月を表示
+            const currentMonthElement = document.getElementById('currentMonth');
+            currentMonthElement.textContent = `${startDate.getFullYear()}年 ${startDate.getMonth() + 1}月`;
+        }
+
+        function nextWeek() {
+            currentDate.setDate(currentDate.getDate() + 7);
+            fetchAvailability(currentDate);
+        }
+
+        function previousWeek() {
+            currentDate.setDate(currentDate.getDate() - 7);
+            fetchAvailability(currentDate);
+        }
+
+        function showLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoadingSpinner() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
