@@ -51,13 +51,13 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        .visit-buttons, .symptoms, .menu-sections, .irradiations, .manorwoman-buttons  {
+        .visit-buttons, .manorwoman-buttons  {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
-        .visit-buttons button, .symptoms button, .menu-sections button, .manorwoman-buttons button  {
+        .visit-buttons button, .manorwoman-buttons button  {
             flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
@@ -196,68 +196,64 @@
             margin: 0;
             text-align: center;
         }
-    .menu-sections {
-        display: grid;
-        grid-template-columns: 1fr; /* 1列に変更 */
-        gap: 10px;
-        margin-bottom: 20px;
+.irradiations, .symptoms, .menu-sections {
+    display: flex; /* フレックスボックスでレイアウト */
+    flex-direction: column; /* 縦方向にボタンを並べる */
+    align-items: center; /* ボタンを水平方向に中央揃え */
+    gap: 10px; /* ボタンの間に10pxの隙間 */
+    margin-bottom: 20px; /* 下にスペース */
+    max-width: 100%; /* max-widthを100%に */
+}
+
+.irradiations button, .symptoms button, .menu-sections button {
+    display: block; /* ブロック要素でボタンを独立させる */
+    width: 100%; /* ボタンの幅を親要素に合わせる */
+    max-width: 400px; /* 最大幅を400pxに制限 */
+    padding: 12px 20px; /* ボタンの内側に余白を追加 */
+    border: 1px solid #ccc; /* ボーダー */
+    border-radius: 6px; /* 角を丸く */
+    background-color: #f7f7f7; /* 背景色を設定 */
+    color: #333; /* 文字色 */
+    font-size: 16px; /* テキストサイズ */
+    cursor: pointer; /* カーソルをポインターに */
+    text-align: center; /* テキストを中央に揃える */
+    white-space: nowrap; /* テキストが折り返されないようにする */
+    box-sizing: border-box; /* 幅計算をパディングとボーダー含めて */
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* アニメーション */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 影を追加して立体感 */
+    margin: 0; /* 自動マージンを解除 */
+}
+
+/* ホバー時のアニメーション */
+.irradiations button:hover, .symptoms button:hover, .menu-sections button:hover {
+    background-color: #e0e0e0; /* ホバー時に背景色を少し暗く */
+    transform: translateY(-3px); /* ホバー時に少し上に持ち上がる */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15); /* 影を強くして立体感を出す */
+}
+
+/* フォーカス（クリック時）のエフェクト */
+.irradiations button:active, .symptoms button:active, .menu-sections button:active {
+    transform: translateY(0); /* クリックしたときにボタンが元の位置に戻る */
+    background-color: #d0d0d0; /* クリック時の背景色をさらに濃く */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* クリック後に元の影に戻る */
+}
+
+/* フェードインアニメーション */
+.irradiations button, .symptoms button, .menu-sections button {
+    opacity: 0;
+    animation: fadeIn 1s forwards; /* 1秒でフェードイン */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9); /* 少し縮小状態から */
     }
-
-    .menu-sections button {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: #f7f7f7;
-        cursor: pointer;
-        text-align: center;
-        white-space: nowrap;
-        box-sizing: border-box;
-        width: 100%;
+    100% {
+        opacity: 1;
+        transform: scale(1); /* 通常のサイズに拡大 */
     }
-.symptoms {
-    display: grid;
-    grid-template-columns: 1fr; /* 1列に変更 */
-    gap: 0px; /* 隙間を0に設定 */
-    margin-bottom: 20px;
 }
-.symptoms button {
-    display: block; /* ボタンをブロック要素に変更 */
-    width: 100%; /* ページの横幅に合わせる */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f7f7f7;
-    cursor: pointer;
-    text-align: center;
-    white-space: nowrap; /* テキストの折り返しを防ぐ */
-    box-sizing: border-box;
-    margin: 0; /* ボタン間の余白をなくす */
-}
-.irradiations {
-    display: grid;
-    grid-template-columns: 1fr; /* 1列に設定 */
-    gap: 10px; /* ボタン間に隙間を追加 */
-    justify-content: center; /* 水平方向に中央に配置 */
-    align-items: center; /* 垂直方向に中央に配置 */
-    margin-bottom: 20px;
-    max-width: none; /* max-width の制限を解除 */
-}
-
-.irradiations button {
-    display: block; /* ボタンをブロック要素に変更 */
-    width: 100%; /* ページの横幅に合わせる */
-    max-width: 400px; /* ボタンの最大幅を設定（任意で調整） */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f7f7f7;
-    cursor: pointer;
-    text-align: center;
-    white-space: nowrap; /* テキストの折り返しを防ぐ */
-    box-sizing: content-box; /* ボタンの幅をコンテンツに基づいて計算 */
-    margin: 0 auto; /* ボタンを中央に配置 */
-}
-
     </style>
 </head>
 <body>
@@ -329,12 +325,12 @@
         <button type="button" id="irradiations2-4" onclick="selectirradiations(this)" data-price="15000">ニキビ・ニキビ跡ケアコース</button>
         <button type="button" id="irradiations2-5" onclick="selectirradiations(this)" data-price="15000">しみ・くすみ・たるみ・毛穴ケアコース</button>
         <button type="button" id="irradiations2-6" onclick="selectirradiations(this)" data-price="15000">アンチエイジング幹細胞培養液導入コース</button>
-        <button type="button" id="irradiations2-7" onclick="selectirradiations(this)" data-price="15000">敏感肌・赤みピーリング(クリスティーナUNSTRESS)</button>
-        <button type="button" id="irradiations2-8" onclick="selectirradiations(this)" data-price="15000">美白・透明感ピーリング(クリスティーナILLUSTRIOUS)</button>
-        <button type="button" id="irradiations2-9" onclick="selectirradiations(this)" data-price="15000">皮脂抑制・毛穴デトックスピーリング(クリスティーナBIOPHYTO)</button>
-        <button type="button" id="irradiations2-10" onclick="selectirradiations(this)" data-price="15000">女優肌シルク肌ピーリング(クリスティーナSILK)</button>
-        <button type="button" id="irradiations2-11" onclick="selectirradiations(this)" data-price="15000">本格的肌再生ピーリング(剥離少し・ハーブリプロ)</button>
-        <button type="button" id="irradiations2-12" onclick="selectirradiations(this)" data-price="15000">エクソソーム72時間肌再生ピーリング(剥離なし・エピダーマルスキン)</button>
+        <button type="button" id="irradiations2-7" onclick="selectirradiations(this)" data-price="15000">敏感肌・赤みピーリング<br>(クリスティーナUNSTRESS)</button>
+        <button type="button" id="irradiations2-8" onclick="selectirradiations(this)" data-price="15000">美白・透明感ピーリング<br>(クリスティーナILLUSTRIOUS)</button>
+        <button type="button" id="irradiations2-9" onclick="selectirradiations(this)" data-price="15000">皮脂抑制・毛穴デトックスピーリング<br>(クリスティーナBIOPHYTO)</button>
+        <button type="button" id="irradiations2-10" onclick="selectirradiations(this)" data-price="15000">女優肌シルク肌ピーリング<br>(クリスティーナSILK)</button>
+        <button type="button" id="irradiations2-11" onclick="selectirradiations(this)" data-price="15000">本格的肌再生ピーリング<br>(剥離少し・ハーブリプロ)</button>
+        <button type="button" id="irradiations2-12" onclick="selectirradiations(this)" data-price="15000">エクソソーム72時間肌再生ピーリング<br>(剥離なし・エピダーマルスキン)</button>
     </div>
 </div>
 
