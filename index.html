@@ -235,7 +235,6 @@
 .irradiations button:active, .symptoms button:active, .menu-sections button:active {
     transform: translateY(0); /* クリックしたときにボタンが元の位置に戻る */
     background-color: #444; /* クリック時の背景色をさらに濃く */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* クリック後に元の影に戻る */
 }
 
 /* フェードインアニメーション */
@@ -636,46 +635,48 @@ function updateTotalAmount() {
         document.getElementById('menuLabel').style.display = 'none';
         document.getElementById('menuSections').style.display = 'none';
 
-        function selectmanorwoman(element) {
-            // 訪問回数ボタンの選択状態をリセット
-            document.getElementById('firstmanorwoman').classList.remove('active');
-            document.getElementById('repeatmanorwoman').classList.remove('active');
-            
-            // クリックされたボタンを選択状態にする
-            element.classList.add('active');
-            
-            // 選択された訪問回数を変数に格納
-            manorwomanCount = element.innerText;
-            
-            // 性別が選択されたらメニューセクションを表示する
-            document.getElementById('menuLabel').style.display = 'block';
-            document.getElementById('menuSections').style.display = 'block';
+function selectmanorwoman(element) {
+    // 訪問回数ボタンの選択状態をリセット
+    document.getElementById('firstmanorwoman').classList.remove('active');
+    document.getElementById('repeatmanorwoman').classList.remove('active');
+    
+    // クリックされたボタンを選択状態にする
+    element.classList.add('active');
+    
+    // 選択された訪問回数を変数に格納
+    manorwomanCount = element.innerText;
+    
+    // 性別が選択されたらメニューセクションを表示する
+    document.getElementById('menuLabel').style.display = 'block';
+    document.getElementById('menuSections').style.display = 'block';
 
-            // メニューの表示をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.style.display = 'none';
-            });
+    // メニューの表示をリセット
+    document.querySelectorAll('.menu-sections button').forEach(button => {
+        button.style.display = 'none';
+    });
 
-            if (manorwomanCount === '男性') {
-                document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'hairremoval\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'bridal\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
-            } else if (manorwomanCount === '女性') {
-                document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'bustup\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'bridal\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
-                document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
-  // 次のステップにスクロール
-  scrollToElement('visitSections');
-            }
-        }
+    if (manorwomanCount === '男性') {
+        document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'hairremoval\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'bridal\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
+    } else if (manorwomanCount === '女性') {
+        document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'bustup\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'bridal\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
+        document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
+    }
+
+    // 次のステップにスクロール
+    scrollToElement('visitSections');
+}
+
 
 function selectirradiations(element) {
     // Get all buttons within the current symptom group
