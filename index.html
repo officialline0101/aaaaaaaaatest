@@ -204,6 +204,7 @@
     margin-bottom: 20px; /* 下にスペース */
     max-width: 100%; /* max-widthを100%に */
 }
+
 .irradiations button, .symptoms button, .menu-sections button {
     display: block; /* ブロック要素でボタンを独立させる */
     width: 100%; /* ボタンの幅を親要素に合わせる */
@@ -271,7 +272,7 @@
         </div>
 
         <div class="label">ご来店回数※必須</div>
-        <div class="visit-buttons">
+        <div class="visit-buttons" id="visitSections">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
@@ -291,7 +292,7 @@
 
         <div id="facial" class="menu-section">
 <p style="color: red; font-weight: bold; background-color: #f0f0f0; padding: 5px;">選択項目2</p>
-            <div class="symptoms">
+            <div class="symptoms" id="irradiations11">
                 <button type="button" onclick="selectSymptom(this)">小顔輪郭矯正</button>
                 <button type="button" onclick="selectSymptom(this)">ピーリングメニュー</button>
                 <button type="button" onclick="selectSymptom(this)">毛穴ハイドラメニュー</button>
@@ -304,7 +305,7 @@
     <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
         <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">◆小顔輪郭矯正◆<br>コースをお選びください</p>
     </div>
-    <div class="symptoms">
+    <div class="symptoms" id="irradiations22">
         <button type="button" id="irradiations1-1" onclick="selectirradiations(this)" data-price="15000">小顔矯正リフトアップコース</button>
         <button type="button" id="irradiations1-2" onclick="selectirradiations(this)" data-price="15000">小顔矯正エラ張りコース</button>
         <button type="button" id="irradiations1-3" onclick="selectirradiations(this)" data-price="15000">小顔矯正脂肪分解ECSコース</button>
@@ -317,7 +318,7 @@
     <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
         <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">◆ピーリングメニュー◆<br>コースをお選びください</p>
     </div>
-    <div class="symptoms">
+    <div class="symptoms" id="irradiations33">
         <button type="button" id="irradiations2-1" onclick="selectirradiations(this)" data-price="15000">強炭酸・ガリレオピーリング</button>
         <button type="button" id="irradiations2-2" onclick="selectirradiations(this)" data-price="15000">毛穴ケアつるんと美肌コース</button>
         <button type="button" id="irradiations2-3" onclick="selectirradiations(this)" data-price="15000">究極の美白コース</button>
@@ -337,7 +338,7 @@
     <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
         <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">◆毛穴ハイドラメニュー◆<br>コースをお選びください</p>
     </div>
-    <div class="symptoms">
+    <div class="symptoms" id="irradiations44">
         <button type="button" id="irradiations3-1" onclick="selectirradiations(this)" data-price="15000">毛穴洗浄コース</button>
         <button type="button" id="irradiations3-2" onclick="selectirradiations(this)" data-price="15000">毛穴黒ずみピーリングコース</button>
         <button type="button" id="irradiations3-3" onclick="selectirradiations(this)" data-price="15000">毛穴引き締め美容液導入コース</button>
@@ -348,7 +349,7 @@
     <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
         <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">◆肌質改善光フォトメニュー◆<br>コースをお選びください</p>
     </div>
-    <div class="symptoms">
+    <div class="symptoms" id="irradiations55">
         <button type="button" id="irradiations4-1" onclick="selectirradiations(this)" data-price="15000">シミ部分コース</button>
         <button type="button" id="irradiations4-2" onclick="selectirradiations(this)" data-price="15000">シミ全体コース</button>
         <button type="button" id="irradiations4-3" onclick="selectirradiations(this)" data-price="15000">シミW打ちコース</button>
@@ -366,7 +367,7 @@
     <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
         <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">◆脂肪分解・細胞リフトアップメニュー◆<br>コースをお選びください</p>
     </div>
-    <div class="symptoms">
+    <div class="symptoms" id="irradiations66">
         <button type="button" id="irradiations5-1" onclick="selectirradiations(this)" data-price="15000">Y字・円盤ブロープ×ハンドECS</button>
         <button type="button" id="irradiations5-2" onclick="selectirradiations(this)" data-price="15000">痩身マシンECS脂肪分解コース</button>
         <button type="button" id="irradiations5-3" onclick="selectirradiations(this)" data-price="15000">痩身マシン全身徹底スリムコース</button>
@@ -485,11 +486,16 @@
             fetchAvailability(currentDate);
         });
 
-    // スクロール処理
-    function scrollToNext(element) {
-        // 次の要素にスクロールする
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+function scrollToElement(elementId) {
+  var targetElement = document.getElementById(elementId);
+  if (targetElement) {
+    // ターゲット要素までスクロールする
+    targetElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center' // 画面の中央に持ってくる
+    });
+  }
+}
 
 function updateDisplayInfo() {
     const name = document.getElementById('name').value;
@@ -573,19 +579,23 @@ function selectSymptom(button) {
         section.style.display = 'none';
     });
 
-    // 選択された症状に応じたirradiationsを表示
+    // 選択された症状に応じたirradiationsを表示し、スクロール先を設定
     if (symptomName === "小顔輪郭矯正") {
         document.getElementById('irradiations1').style.display = 'flex';
+        scrollToElement('irradiations22');  // 小顔輪郭矯正のスクロール先
     } else if (symptomName === "ピーリングメニュー") {
         document.getElementById('irradiations2').style.display = 'flex';
+        scrollToElement('irradiations33');  // ピーリングメニューのスクロール先
     } else if (symptomName === "毛穴ハイドラメニュー") {
         document.getElementById('irradiations3').style.display = 'flex';
+        scrollToElement('irradiations44');  // ピーリングメニューのスクロール先
     } else if (symptomName === "肌質改善光フォトメニュー") {
         document.getElementById('irradiations4').style.display = 'flex';
+        scrollToElement('irradiations55');  // ピーリングメニューのスクロール先
     } else if (symptomName === "脂肪分解・細胞リフトアップメニュー") {
         document.getElementById('irradiations5').style.display = 'flex';
+        scrollToElement('irradiations66');  // ピーリングメニューのスクロール先
     }
-
 
     // 表示を更新
     updateDisplayInfo();
@@ -596,6 +606,8 @@ function selectSymptom(button) {
             document.getElementById('repeatVisit').classList.remove('active');
             element.classList.add('active');
             visitCount = element.innerText;
+  // メニューにスクロール
+  scrollToElement('menuSections');
         }
 
 function selectirradiations(button) {
@@ -644,10 +656,6 @@ function updateTotalAmount() {
                 button.style.display = 'none';
             });
 
-        // 次の要素にスクロール
-        const nextElement = document.querySelector('.visit-buttons');
-        scrollToNext(nextElement);
-
             if (manorwomanCount === '男性') {
                 document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
                 document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
@@ -664,6 +672,8 @@ function updateTotalAmount() {
                 document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
                 document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
                 document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
+  // 次のステップにスクロール
+  scrollToElement('visitSections');
             }
         }
 
@@ -723,6 +733,10 @@ function selectirradiations(element) {
 
         // 表示を更新
         updateDisplayInfo();
+
+
+  // メニューにスクロール
+  scrollToElement('irradiations11');
     }
         
     function selectDate(cell) {
@@ -1012,48 +1026,3 @@ for (let i = 0; i < 7; i++) {
                 cell.classList.add('unavailable');
             }
         }
-    }
-} 
-    
-        }
-
-        function updateCalendarHeader(date) {
-            const headerRow = document.getElementById('calendar-header');
-            const headers = headerRow.querySelectorAll('th:not(:first-child)');
-
-            const startDate = new Date(date);
-
-            headers.forEach((th, index) => {
-                const day = new Date(startDate);
-                day.setDate(day.getDate() + index);
-
-const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
-const dayString = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
-th.innerHTML = dayString.replace('(', '<br>(');
-            });
-
-            // 現在の月を表示
-            const currentMonthElement = document.getElementById('currentMonth');
-            currentMonthElement.textContent = `${startDate.getFullYear()}年 ${startDate.getMonth() + 1}月`;
-        }
-
-        function nextWeek() {
-            currentDate.setDate(currentDate.getDate() + 7);
-            fetchAvailability(currentDate);
-        }
-
-        function previousWeek() {
-            currentDate.setDate(currentDate.getDate() - 7);
-            fetchAvailability(currentDate);
-        }
-
-        function showLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-        }
-
-        function hideLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'none';
-        }
-    </script>
-</body>
-</html>
