@@ -485,41 +485,11 @@
             fetchAvailability(currentDate);
         });
 
-function scrollToNext(element) {
-    const nextElement = element.nextElementSibling;
-    if (nextElement) {
-        nextElement.scrollIntoView({ behavior: 'smooth' });
+    // スクロール処理
+    function scrollToNext(element) {
+        // 次の要素にスクロールする
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
-
-function selectmanorwoman(button) {
-    button.classList.add('active');
-    scrollToNext(button);
-}
-
-function selectVisit(button) {
-    button.classList.add('active');
-    scrollToNext(button);
-}
-
-function selectSymptom(button) {
-    button.classList.add('active');
-    scrollToNext(button);
-}
-
-function showMenu(menuId) {
-    const allMenus = document.querySelectorAll('.menu-section');
-    allMenus.forEach(menu => {
-        menu.classList.remove('active');
-    });
-    
-    const selectedMenu = document.getElementById(menuId);
-    if (selectedMenu) {
-        selectedMenu.classList.add('active');
-        selectedMenu.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
 
 function updateDisplayInfo() {
     const name = document.getElementById('name').value;
@@ -673,6 +643,10 @@ function updateTotalAmount() {
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 button.style.display = 'none';
             });
+
+        // 次の要素にスクロール
+        const nextElement = document.querySelector('.visit-buttons');
+        scrollToNext(nextElement);
 
             if (manorwomanCount === '男性') {
                 document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
