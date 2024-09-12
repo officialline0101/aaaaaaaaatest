@@ -583,7 +583,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: ''
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -607,6 +607,7 @@ function scrollToElement(elementId) {
 function updateDisplayInfo() {
     const name = document.getElementById('name').value;
     const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+    const manorwomanText = manorwomanCount ? `・<span style="color:red;"><strong>ご性別</strong></span>：${manorwomanCount}` : '・ご性別が未選択です';
     const irradiationsText = irradiationsCount ? `・<span style="color:red;"><strong>コース</strong></span>：${irradiationsCount}` : '・コースが未選択です';
     const totalAmountText = `・<span style="color:red;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
     const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
@@ -616,7 +617,7 @@ function updateDisplayInfo() {
     document.getElementById('displayInfo').innerHTML = `
         <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
         <hr>
-        <p>・<span style="color:red;"><strong>性別</strong></span>：${manorwomanCount}</p>
+        <p>${manorwomanText}</p>
         <hr>
         <p>${visitCountText}</p>
         <hr>
@@ -632,6 +633,9 @@ function updateDisplayInfo() {
 // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
         document.getElementById('name').addEventListener('input', updateDisplayInfo);
         document.querySelectorAll('.visit-buttons button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+        document.querySelectorAll('.manorwoman-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
         document.querySelectorAll('.symptoms button').forEach(button => {
