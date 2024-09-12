@@ -728,6 +728,7 @@ function selectSymptom(button) {
             document.getElementById('repeatVisit').classList.remove('active');
             element.classList.add('active');
             visitCount = element.innerText;
+
   // メニューにスクロール
   scrollToElement('menuSections');
         }
@@ -815,24 +816,24 @@ function selectmanorwoman(element) {
     scrollToElement('visitSections');
 }
 
-    function showMenu(menu) {
-        // すべてのメニューボタンの選択状態をリセット
-        document.querySelectorAll('.menu-sections button').forEach(button => {
-            button.classList.remove('active');
-        });
+function showMenu(menu) {
+    // すべてのメニューボタンの選択状態をリセット
+    document.querySelectorAll('.menu-sections button').forEach(button => {
+        button.classList.remove('active');
+    });
 
-        // 選択されたメニューセクションを表示
-        document.querySelectorAll('.menu-section').forEach(section => {
-            section.classList.remove('active');
-            section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-        });
+    // 選択されたメニューセクションを表示
+    document.querySelectorAll('.menu-section').forEach(section => {
+        section.classList.remove('active');
+        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    });
 
-        // 対応するメニューボタンを選択状態にする
-        document.querySelectorAll('.menu-sections button').forEach(button => {
-            if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                button.classList.add('active');
-            }
-        });
+    // 対応するメニューボタンを選択状態にする
+    document.querySelectorAll('.menu-sections button').forEach(button => {
+        if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
+            button.classList.add('active');
+        }
+    });
 
     // irradiationsもリセット
     const irradiationsSections = document.querySelectorAll('.irradiations');
@@ -840,23 +841,41 @@ function selectmanorwoman(element) {
         section.style.display = 'none';
     });
 
-        // 選択されたメニューセクションを表示
-        document.getElementById(menu).classList.add('active');
+    // 選択されたメニューセクションを表示
+    document.getElementById(menu).classList.add('active');
 
     // メニューとオプションをリセット
-    selectedSymptom = '';      // メニューのリセット
-    irradiationsCount = '';    // オプションのリセット
-    menuPrice = 0;             // メニューの価格リセット
-    optionsPrice = 0;          // オプションの価格リセット
-    totalAmount = 0;           // 合計金額リセット
+    selectedSymptom = '';      
+    irradiationsCount = '';    
+    menuPrice = 0;             
+    optionsPrice = 0;          
+    totalAmount = 0;           
 
-        // 表示を更新
-        updateDisplayInfo();
-
-
-  // メニューにスクロール
-  scrollToElement('irradiations11');
+    // フェイシャルメニューの場合、選択項目2にスクロール
+    if (menu === 'facial') {
+        scrollToElement('facial');  // 'facial'の要素までスクロール
+    } else if (menu === 'body') {
+        scrollToElement('body');  // 'body'の要素までスクロール
+    } else if (menu === 'bustup') {
+        scrollToElement('bustup');  // 'body'の要素までスクロール
+    } else if (menu === 'hairremovalman') {
+        scrollToElement('hairremovalman');  // 'body'の要素までスクロール
+    } else if (menu === 'hairremovalladies') {
+        scrollToElement('hairremovalladies');  // 'body'の要素までスクロール
+    } else if (menu === 'bridal') {
+        scrollToElement('bridal');  // 'body'の要素までスクロール
+    } else if (menu === 'eyebrows') {
+        scrollToElement('eyebrows');  // 'body'の要素までスクロール
+    } else if (menu === 'selfwhitening') {
+        scrollToElement('selfwhitening');  // 'body'の要素までスクロール
+    } else if (menu === 'Mugwortsteamed') {
+        scrollToElement('Mugwortsteamed');  // 'body'の要素までスクロール
     }
+
+    // 表示を更新
+    updateDisplayInfo();
+}
+
         
     function selectDate(cell) {
         // "unavailable" クラスが付いている場合はクリックを無効化
