@@ -371,7 +371,7 @@
     </div>
     <div class="symptoms" id="irradiations66">
         <button type="button" id="irradiations5-1" onclick="selectirradiations(this)" data-price="15000">Y字・円盤ブロープ×ハンドECS</button>
-        <button type="button" id="irradiations5-2" onclick="selectirradiations(this)" data-price="15000">Y字ブロープ×ハンドECS</button>
+        <button type="button" id="irradiations5-2" onclick="selectirradiations(this)" data-price="15000">Y字ブロープ×ハンドECS</button>×
         <button type="button" id="irradiations5-3" onclick="selectirradiations(this)" data-price="15000">円盤ブロープ×ハンドECS</button>
         <button type="button" id="irradiations5-4" onclick="selectirradiations(this)" data-price="15000">Y字ブロープ</button>
         <button type="button" id="irradiations5-2" onclick="selectirradiations(this)" data-price="15000">円盤ブロープ</button>
@@ -998,7 +998,7 @@ const times = [
         '12:00', '12:30', '13:00', '13:30',
         '14:00', '14:30', '15:00', '15:30',
         '16:00', '16:30', '17:00', '17:30',
-        '18:00'
+        '18:00', '18:30', '19:00'
 ];
 
     if (table.rows.length === 0) {
@@ -1088,21 +1088,6 @@ for (let i = 0; i < 7; i++) {
             cell.textContent = '✕';
             cell.classList.add('unavailable');
         }
-        // 土曜日で、営業日ではない場合
-        else if (slotStart.getDay() === 6 && !isBusinessDay && businessEventTimes.length === 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        // 日曜日で、営業日ではない場合
-        else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        // 月曜日で、営業日ではない場合
-        else if (slotStart.getDay() === 1 && !isBusinessDay && businessEventTimes.length === 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
         // 営業日でかつ他のイベントがない場合
         else if (isBusinessDay && count === 0) {
             cell.textContent = '◯';
@@ -1153,25 +1138,7 @@ for (let i = 0; i < 7; i++) {
             j = end - 1; 
         }
     }
-
-    // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
-    for (let i = 0; i < 7; i++) {
-        const twentyOClockRow = times.indexOf('17:30');
-        const twentyOneOClockRow = times.indexOf('18:00');
-
-        for (let j = twentyOClockRow; j < times.length; j++) {
-            const cell = table.rows[j].cells[i + 1];
-            const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
-            
-            // 20:00のセルに×がある場合、21:00のセルも×にする
-            if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
-                cell.textContent = '✕';
-                cell.classList.remove('available');
-                cell.classList.add('unavailable');
-            }
-        }
     }
-} 
     
         }
 
