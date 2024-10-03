@@ -722,20 +722,43 @@ for (let i = 0; i < 7; i++) {
         }
     });
 
-    for (let j = 0; j < times.length; j++) {
-        const cell = table.rows[j].cells[i + 1];
-        const slotStart = new Date(day);
-        slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+for (let j = 0; j < times.length; j++) {
+    const cell = table.rows[j].cells[i + 1];
 
-            const slotEnd = new Date(slotStart);
-            // selectedMenuTime（メニュー選択時間）がある場合はそれを使い、ない場合はデフォルト値として30分を設定
-            let menuDuration = selectedMenuTime || 30;
-            // 訪問回数が選択されている場合、その時間も加算する
-            let visitDuration = selectedVisitTime || 0; // 初めての場合は20分、2回目以降は15分が選択される
-            // 訪問回数が選択されている場合、その時間も加算する
-            let irradiationsDuration = selectedirradiationsTime || 0; // 初めての場合は20分、2回目以降は15分が選択される
-            // メニュー時間と訪問回数の時間を合計して、終了時間を設定
-            slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+    // すでにセルが✕の場合はスキップする
+    if (cell.textContent === '✕') {
+        continue;
+    }
+
+    const slotStart = new Date(day);
+    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+
+    const slotEnd = new Date(slotStart);
+    let menuDuration = selectedMenuTime || 30;
+    let visitDuration = selectedVisitTime || 0;
+    let irradiationsDuration = selectedirradiationsTime || 0;
+
+    // メニュー時間と訪問回数の時間を合計して、終了時間を設定
+    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+
+// 18時以降に終了する予約を不可にする (17:30は可)
+if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+} else if (slotEnd.getHours() > 18) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+}
+
+    // ここで終了時間を使った条件処理を行う
+    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
+    if (slotStart < now) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    }
 
         const isBusinessDay = businessDays.some(businessDay => {
             const businessDayStart = new Date(businessDay.start);
