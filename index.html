@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja"> <!-- HTML文書の言語を日本語に設定 -->
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>予約フォーム</title>
+    <meta charset="UTF-8"> <!-- 文字エンコーディングをUTF-8に設定 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- ビューポート設定：デバイスに応じてレイアウトを調整 -->
+    <title>予約フォーム</title> <!-- タイトルを「予約フォーム」に設定 -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +14,6 @@
             height: 100vh;
             margin: 0;
             padding-top: 20px;
-            overflow-x: hidden; /* 横スクロールを防ぐ */
         }
         .container {
             background-color: #fff;
@@ -24,12 +23,16 @@
             max-width: 500px;
             padding: 20px;
             box-sizing: border-box;
-            margin: 0 auto; /* 中央に配置 */
         }
         h1 {
             text-align: center;
             margin-bottom: 20px;
             font-size: 24px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
         .label {
             display: block;
@@ -49,13 +52,13 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        .visit-buttons, .symptoms, .menu-sections, .irradiations  {
+        .visit-buttons, .symptoms, .menu-sections, .irradiations {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
-        .visit-buttons button, .symptoms button, .menu-sections button, .irradiations button  {
+        .visit-buttons button, .symptoms button, .menu-sections button, .irradiations button {
             flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
@@ -66,7 +69,7 @@
             text-align: center;
             white-space: nowrap;
         }
-        .visit-buttons button.active, .symptoms button.active, .menu-sections button.active, .irradiations button.active  {
+        .visit-buttons button.active, .symptoms button.active, .menu-sections button.active, .irradiations button.active {
             background-color: #444;
             color: #fff;
         }
@@ -87,6 +90,12 @@
             color: #fff;
             font-size: 18px;
             cursor: pointer;
+        }
+        .menu-section {
+            display: none;
+        }
+        .menu-section.active {
+            display: block;
         }
         .calendar-container {
             display: flex;
@@ -189,218 +198,119 @@
     <div class="container">
         <h1>BIG HANDS<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
-        <input type="text" id="name" placeholder="お名前を入力してください">
+        <input type="text" id="name" placeholder="お名前を入力してください"> <!-- 名前入力フィールド -->
 
         <div class="label">電話番号※必須</div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください">
+        <input type="tel" id="phone" placeholder="電話番号を入力してください"> <!-- 電話番号入力フィールド -->
 
         <div class="label">ご来店回数※任意</div>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button> <!-- 初めて来店ボタン -->
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button> <!-- 2回目以降来店ボタン -->
         </div>
-
-        <div class="label">希望日時</div>
-        <label for="date1">第1希望日※必須<br>希望時間は30分単位でお願いします</label> <!-- 第1希望日時のラベル -->
+        <div class="label">希望日時<br>（希望時間は30分単位でお願いします）</div>
+        <label for="date1">第1希望日※必須</label> <!-- 第1希望日時のラベル -->
         <input type="datetime-local" id="date1" placeholder="タップして日時を入力"> <!-- 第1希望日時入力フィールド -->
 
         <label for="date2">第2希望日</label> <!-- 第2希望日時のラベル -->
         <input type="datetime-local" id="date2" placeholder="タップして日時を入力"> <!-- 第2希望日時入力フィールド -->
 
         <div class="label">メッセージ<br>（お身体のお悩みがございましたらご記載ください）</div>
-        <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
+        <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">ご予約内容</div>
-        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
-
-        <button class="submit-button" onclick="submitForm()">予約を行う</button>
+        <button class="submit-button" onclick="submitForm()">予約を行う</button> <!-- フォーム送信ボタン -->
     </div>
 
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
     <script>
-        let visitCount = '';
-        let selectedSymptom = [];  // 配列として定義
-        let selectedFullDate = '';
-        let currentDate = new Date();
-        let availabilityCache = {};
+        let visitCount = ''; <!-- 訪問回数を格納する変数 -->
+        let selectedSymptom = ''; <!-- 選択された症状を格納する変数 -->
         let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
-        let totalAmount = 0; // 合計金額を格納する変数
-        let menuPrice = 0; // メニューの価格
-        let optionsPrice = 0; // オプションの合計価格
 
+        // LIFF初期化
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
             }).then(() => {
+                // LIFF初期化成功時の処理
                 console.log('LIFF初期化成功');
             }).catch((err) => {
-                console.log('LIFF初期化失敗', err);
+                // LIFF初期化失敗時の処理
+                console.error('LIFF初期化失敗', err);
             });
-
-            fetchAvailability(currentDate);
         });
-
-
-function updateDisplayInfo() {
-    const name = document.getElementById('name').value;
-    const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-    const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
-
-    // displayInfo要素に情報を表示
-    document.getElementById('displayInfo').innerHTML = `
-        <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
-        <hr>
-        <p>${visitCountText}</p>
-        <hr>
-        <p>${selectedDateText}</p>
-        <hr>
-    `;
-}
-
-// 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
-        document.getElementById('name').addEventListener('input', updateDisplayInfo);
-        document.querySelectorAll('.visit-buttons button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.symptoms button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.irradiations button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-
-// 日付セルのクリックイベントで希望日時を更新
-document.querySelectorAll('.calendar td').forEach(cell => {
-    cell.addEventListener('click', () => {
-        selectDate(cell);
-        updateDisplayInfo();  // 日付を選択したら即座に表示を更新
-    });
-});
-
-function selectSymptom(button) {
-    // 全ボタンの選択をリセット
-    const buttons = document.querySelectorAll('.symptoms button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-
-    
-    // クリックされたボタンを選択状態に
-    button.classList.add('active');
-
-    // 選択されたメニューの名前と価格を取得
-    const symptomName = button.textContent;  // ボタンのテキストを取得
-    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
-
-    // 表示を更新
-    updateDisplayInfo();
-}
-
-function selectirradiations(button) {
-    // ボタンの選択状態を切り替える
-    button.classList.toggle('active');
-
-    // 選択されたオプションを取得
-    const selectedButtons = document.querySelectorAll('.irradiations button.active');
-    const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
-    irradiationsCount = selectedIrradiations.join(', ');
-
-        // すべてのオプションの価格を再計算
-        optionsPrice = 0; // 全体をリセットして再計算
-        selectedButtons.forEach(btn => {
-            const price = parseInt(btn.getAttribute('data-price'), 10);
-            optionsPrice += price;
-        });
-
-    // 表示を更新
-    updateDisplayInfo();
-}
-
-function updateTotalAmount() {
-    totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
-    updateDisplayInfo(); // 表示を更新
-}
 
         function selectVisit(element) {
+            /* 訪問回数ボタンの選択状態をリセット */
             document.getElementById('firstVisit').classList.remove('active');
             document.getElementById('repeatVisit').classList.remove('active');
+            /* クリックされたボタンを選択状態にする */
             element.classList.add('active');
+            /* 選択された訪問回数を変数に格納 */
             visitCount = element.innerText;
         }
 
-    function showMenu(menu) {
-        // すべてのメニューボタンの選択状態をリセット
-        document.querySelectorAll('.menu-sections button').forEach(button => {
-            button.classList.remove('active');
-        });
-
-        // 選択されたメニューセクションを表示
-        document.querySelectorAll('.menu-section').forEach(section => {
-            section.classList.remove('active');
-            section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-        });
-
-        // 対応するメニューボタンを選択状態にする
-        document.querySelectorAll('.menu-sections button').forEach(button => {
-            if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                button.classList.add('active');
-            }
-        });
-
-        // 選択されたメニューセクションを表示
-        document.getElementById(menu).classList.add('active');
-
-    // メニューとオプションをリセット
-    selectedSymptom = '';      // メニューのリセット
-    irradiationsCount = '';    // オプションのリセット
-    menuPrice = 0;             // メニューの価格リセット
-    optionsPrice = 0;          // オプションの価格リセット
-    totalAmount = 0;           // 合計金額リセット
-
-        // 表示を更新
-        updateDisplayInfo();
-    }
-        
-    function selectDate(cell) {
-        // "unavailable" クラスが付いている場合はクリックを無効化
-        if (cell.classList.contains('unavailable')) {
-            return; // 何もせずに終了
+        function selectirradiations(element) {
+            /* 訪問回数ボタンの選択状態をリセット */
+            document.getElementById('firstirradiations').classList.remove('active');
+            document.getElementById('repeatirradiations').classList.remove('active');
+            /* クリックされたボタンを選択状態にする */
+            element.classList.add('active');
+            /* 選択された訪問回数を変数に格納 */
+            irradiationsCount = element.innerText;
         }
 
-        // 既に選択されているセルの選択を解除
-        const cells = document.querySelectorAll('.calendar td');
-        cells.forEach(td => td.classList.remove('selected'));
+        function showMenu(menu) {
+            document.querySelectorAll('.menu-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(menu).classList.add('active');
+        }
 
-        // 新しいセルを選択状態にする
-        cell.classList.add('selected');
-
-        // 選択された日付と時間を取得
-        const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-        const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-        const date = new Date(selectedDay);
-
-        // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-        selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
-
-        // 希望日時を即座に更新
-        updateDisplayInfo();
-    }
+        function selectSymptom(element) {
+            /* 全ての症状ボタンの選択状態をリセット */
+            const allSymptoms = document.querySelectorAll('.symptoms button');
+            allSymptoms.forEach(symptom => {
+                symptom.classList.remove('active');
+            });
+            /* クリックされたボタンを選択状態にする */
+            element.classList.add('active');
+            /* 選択された症状を変数に格納 */
+            selectedSymptom = element.innerText;
+        }
 
         function submitForm() {
+            /* フォームの入力値を取得 */
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const date1 = formatDate(document.getElementById('date1').value);
+            const date2 = formatDate(document.getElementById('date2').value);
+            const message = document.getElementById('message').value;
+
+            /* フォームデータをオブジェクトにまとめる */
             const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                visitCount: visitCount,
-                dates: [selectedFullDate],
-                message: document.getElementById('message').value
+                name,
+                phone,
+                visitCount,
+                selectedSymptom,
+                irradiationsCount,
+                dates: [date1, date2],
+                message
             };
+
+            // フォームデータのチェック
+            if (!formData.visitCount) {
+                alert('ご性別をご選択ください。');
+                return;
+            }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\n${formData.dates[1]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
-                alert('送信内容を確認次第返信いたします。');
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
                 /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
@@ -421,7 +331,7 @@ function updateTotalAmount() {
             const hours = ('0' + date.getHours()).slice(-2);
             const minutes = ('0' + date.getMinutes()).slice(-2);
             return `${year}年${month}月${day}日 ${hours}:${minutes}`;
-}
+        }
     </script>
 </body>
 </html>
