@@ -127,7 +127,7 @@
             background-color: #ddd;
         }
         .calendar td.selected {
-            background-color: #444;
+            background-color: #13ca5e;
             color: #fff;
         }
         .week-button-container {
@@ -183,11 +183,37 @@
 #repairLabel, #repairButtons {
     display: none;
 }
+        #treatment-text {
+            background-color: #eef9f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+.highlight-background {
+    background-color: #f9f9d6;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    margin-top: 10px; /* 上に余白を追加 */
+    text-align: center; /* コンテナ内の要素を中央に配置 */
+}
+
+.highlight-text {
+    display: block;
+    font-weight: bold;
+    text-align: center; /* テキストを中央揃えにする */
+}
+.red-circle {
+    color: red; /* 赤色に設定 */
+}
+.bold-cross {
+    font-weight: bold; /* 太文字に設定 */
+}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>骨セレブ<br>予約フォーム</h1>
+        <h1>salon skip<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
@@ -196,63 +222,98 @@
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">初回</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <div class="label">メニューをお選びください</div>
-        <div class="menu-sections">
-            <button type="button" onclick="showMenu('male')">カイロプラクティック</button>
-            <button type="button" onclick="showMenu('female')">美容カイロエステ</button>
+        <div class="label" id="menuLabel">メニューをお選びください</div>
+        <div class="menu-sections" id="menuSections">
+            <button type="button" onclick="showMenu('male1')">まつ毛</button>
+            <button type="button" onclick="showMenu('male2')">まつ毛</button>
+            <button type="button" onclick="showMenu('female1')">WAX</button>
+            <button type="button" onclick="showMenu('female2')">WAX</button>
+            <button type="button" onclick="showMenu('malenew')">ヘアメイク</button>
         </div>
 
-        <div id="male" class="menu-section">
-            <label>◆ブライダルコース◆</label>
+        <div id="treatment-text" style="margin-bottom: 20px;"></div>
+
+        <div id="male1" class="menu-section">
+        <div class="highlight-background">
+            <span class="highlight-text">◆その他まつげメニュー◆</span>
+        </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">初回</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">2回目以降</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">18歳未満</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">12歳未満</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">8歳未満</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">産後ケア</button>
-            </div>
-            <label>オプション</label>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ヘッドマッサージ</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">パーソナルトレーニング</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～顔</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～ウエストはみ肉</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～二の腕の振り袖さよなら</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～背中すっきり</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～おしり・太ももすっきり</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～足首・アキレス腱すっきり</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">まつ毛パーマ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">下まつ毛パーマ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">まつ毛パーマ上下セット</button>
+                <button type="button" onclick="selectSymptom(this)" data-price="15000">アイシャンプー</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">【新規様】まつげパーマ+まゆげWAXセット</button>
             </div>
         </div>
 
-        <div id="female" class="menu-section">
-            <label>◆シェービングコース◆</label>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">頭蓋骨ヘッドスパ</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">小顔調整＋たるみ</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">小顔調整＋シミ</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">小顔調整＋にきび</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">小顔調整＋むくみ</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">骨盤矯正＋ヒップアップ</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">骨盤矯正＋ウエストくびれ</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">骨盤矯正＋O脚</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">骨盤矯正＋ダイエット</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">骨盤矯正＋小顔調整</button>
+        <div id="male2" class="menu-section">
+            <div class="highlight-background">
+                <span class="highlight-text">◆その他まつげメニュー◆</span>
             </div>
-            <label>オプション</label>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ヘッドマッサージ</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">パーソナルトレーニング</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～顔</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～ウエストはみ肉</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～二の腕の振り袖さよなら</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～背中すっきり</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～おしり・太ももすっきり</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">むくみケア～足首・アキレス腱すっきり</button>
+                <div class="symptoms">
+                    <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">まつ毛パーマ</button>
+                    <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">下まつ毛パーマ</button>
+                    <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">まつ毛パーマ上下セット</button>
+                    <button type="button" onclick="selectSymptom(this)" data-price="15000">アイシャンプー</button>
+                    <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">まつげパーマ+まゆげWAXセット</button>
+                </div>
+            </div>
+
+            <div id="female1" class="menu-section">
+                <div class="highlight-background">
+                    <span class="highlight-text">◆脱毛メニュー◆</span>
+                </div>
+                    <div class="symptoms">
+                        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">【ご新規様】まゆ毛WAX※Mensは紹介のみ</button>
+                        <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">韓国美肌WAX</button>
+                    </div>
+                <div class="highlight-background">
+                    <span class="highlight-text">マッサージコース：オプション</span>
+                </div>
+                    <div class="irradiations">
+                        <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:おでこ</button>
+                        <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:もみあげ</button>
+                        <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:鼻まわり</button>
+                        <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:口まわり</button>
+                        <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:チーク</button>
+                        <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:鼻毛</button>
+                    </div>
+                </div>
+
+                <div id="female2" class="menu-section">
+                    <div class="highlight-background">
+                        <span class="highlight-text">◆脱毛メニュー◆</span>
+                    </div>
+                        <div class="symptoms">
+                            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">【2回目以降】まゆ毛WAX※Mensは紹介のみ</button>
+                            <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">韓国美肌WAX</button>
+                        </div>
+                    <div class="highlight-background">
+                        <span class="highlight-text">マッサージコース：オプション</span>
+                    </div>
+                        <div class="irradiations">
+                            <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:おでこ</button>
+                            <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:もみあげ</button>
+                            <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:鼻まわり</button>
+                            <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:口まわり</button>
+                            <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:チーク</button>
+                            <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">【オプション】パーツWAX:鼻毛</button>
+                        </div>
+                    </div>
+
+        <div id="malenew" class="menu-section">
+        <div class="highlight-background">
+            <span class="highlight-text">◆その他まつげメニュー（まつげ・メイク）◆</span>
+        </div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this)" data-price="15000">ポイントメイク</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ヘアセット</button>
+                <button type="button" onclick="selectSymptom(this)" data-price="15000">キッズヘアセット</button>
+                <button type="button" onclick="selectSymptom(this)" data-price="15000">メイク</button>
             </div>
         </div>
 
@@ -310,7 +371,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: ''
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -320,14 +381,73 @@
             fetchAvailability(currentDate);
         });
 
+        // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
+        let visitTimes = {
+            '1回目〈30分〉': 0,
+            '2回目以降〈0分〉': 0
+        };
 
-function updateDisplayInfo() {
+        let selectedVisitTime = 0; // 訪問回数で選択された時間
+
+        // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
+        let irradiationsTimes = {
+            '【オプション】パーツWAX:おでこ': 15,
+            '【オプション】パーツWAX:もみあげ': 15,
+            '【オプション】パーツWAX:鼻まわり': 15,
+            '【オプション】パーツWAX:口まわり': 15,
+            '【オプション】パーツWAX:チーク': 15,
+            '【オプション】パーツWAX:鼻毛': 15
+        };
+
+        let selectedirradiationsTime = 0; // 訪問回数で選択された時間
+
+        let menuTimes = {
+        'まつ毛パーマ': 60,
+        '下まつ毛パーマ': 40,
+        'まつ毛パーマ上下セット': 90,
+        'アイシャンプー': 10,
+        '【新規様】まつげパーマ+まゆげWAXセット': 105,
+        'まつげパーマ+まゆげWAXセット': 105,
+        '【ご新規様】まゆ毛WAX※Mensは紹介のみ': 60,
+        '韓国美肌WAX': 75,
+        '【2回目以降】まゆ毛WAX※Mensは紹介のみ': 60,
+        'ポイントメイク': 40,
+        'ヘアセット': 40,
+        'キッズヘアセット': 60,
+        'メイク': 60
+        };
+
+
+        let selectedMenuTime = 0;
+
+        function updateDisplayInfo() {
     const name = document.getElementById('name').value;
     const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-    const selectedSymptomText = selectedSymptom.length > 0 ? `・<span style="color:red;"><strong>メニュー</strong></span>：${selectedSymptom.join(', ')}` : '・メニューが未選択です'; // メニューを複数選択可能に
-    const irradiationsText = irradiationsCount ? `・<span style="color:red;"><strong>オプション</strong></span>：${irradiationsCount}` : '・オプション無し';
-    const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
+    
+    // メニューが選択されていたら、各メニューを改行して表示
+    const selectedSymptomText = selectedSymptom.length > 0 
+        ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>${selectedSymptom.join('<br>')}`
+        : '・メニューが未選択です';
 
+    // オプションが選択されていたら、各オプションを改行して表示
+    const irradiationsText = irradiationsCount 
+        ? `<span style="color:red;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
+        : '・オプション無し';
+
+    // 所要時間を計算
+    let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
+    let hours = Math.floor(totalMinutes / 60);
+    let minutes = totalMinutes % 60;
+
+    // 所要時間の表示形式：○○時間○○分
+    let totalTimeText = `・<span style="color:red;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
+
+    // 合計金額の表示
+    const totalAmountText = `・<span style="color:red;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
+    
+    // 希望日時が選択された場合の表示
+    const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
+    
     // displayInfo要素に情報を表示
     document.getElementById('displayInfo').innerHTML = `
         <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
@@ -338,22 +458,27 @@ function updateDisplayInfo() {
         <hr>
         <p>${irradiationsText}</p>
         <hr>
+        <p>${totalTimeText}</p>
+        <hr>
         <p>${selectedDateText}</p>
+        <hr>
+        <p>${totalAmountText}</p>
         <hr>
     `;
 }
 
 // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
-        document.getElementById('name').addEventListener('input', updateDisplayInfo);
-        document.querySelectorAll('.visit-buttons button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.symptoms button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.irradiations button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
+document.getElementById('name').addEventListener('input', updateDisplayInfo);
+document.querySelectorAll('.visit-buttons button').forEach(button => {
+    button.addEventListener('click', updateDisplayInfo);
+});
+document.querySelectorAll('.symptoms button').forEach(button => {
+    button.addEventListener('click', updateDisplayInfo);
+});
+document.querySelectorAll('.irradiations button').forEach(button => {
+    button.addEventListener('click', updateDisplayInfo);
+});
+
 
 // 日付セルのクリックイベントで希望日時を更新
 document.querySelectorAll('.calendar td').forEach(cell => {
@@ -363,7 +488,7 @@ document.querySelectorAll('.calendar td').forEach(cell => {
     });
 });
 
-function selectSymptom(button) {
+        function selectSymptom(button, treatmentId) {
     // 全ボタンの選択をリセット
     const buttons = document.querySelectorAll('.symptoms button');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -371,6 +496,40 @@ function selectSymptom(button) {
     
     // クリックされたボタンを選択状態に
     button.classList.add('active');
+            selectedSymptom = button.textContent;
+
+    const selectedMenu = button.textContent;
+    selectedMenuTime = menuTimes[selectedMenu]; // メニュー時間を取得して保存
+    console.log('選択されたメニューの時間:', selectedMenuTime);
+
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+
+            // トリートメントテキストを表示
+            const treatmentText = document.getElementById('treatment-text');
+
+            if (treatmentId === 'treatment1') {
+                treatmentText.innerHTML = `まつげパーマすることで、<br>綺麗なカールをキープ☆<br>種類豊富なカールからお好みに合わせて<br>提案させていただきます。</div><div style="text-align: right;"><strong>料金：4,800円</strong></div>`;
+            } else if (treatmentId === 'treatment2') {
+                treatmentText.innerHTML = `下まつげパーマすることで、目幅アップ☆<br>逆まつ毛対策にも◎</div><div style="text-align: right;"><strong>料金：2,500円<br></strong></div>`;
+            } else if (treatmentId === 'treatment3') {
+                treatmentText.innerHTML = `上下まつげパーマで目幅アップ！！<br>自まつげを最大限に活かせます☆</div><div style="text-align: right;"><strong>料金：7,000円</strong></div>`;
+            } else if (treatmentId === 'treatment4') {
+                treatmentText.innerHTML = `目元はプロにお任せください。<br>まつげパーマとまゆげWAXで<br>簡単垢抜けメニューです。</div><div style="text-align: right;"><strong>料金：7,800円</strong></div>`;
+            } else if (treatmentId === 'treatment5') {
+                treatmentText.innerHTML = `骨格に合わせて黄金比をとり、<br>理想の眉に形に！自己処理を２週間ほど控えて、<br>なるべく生えた状態でのご来店を勧めております。</div><div style="text-align: right;"><strong>料金：3,800円</strong></div>`;
+            } else if (treatmentId === 'treatment6') {
+                treatmentText.innerHTML = `骨格に合わせて黄金比をとり、<br>理想の眉に形に！自己処理を２週間ほど控えて、<br>なるべく生えた状態でのご来店を勧めております。</div><div style="text-align: right;"><strong>料金：3,000円</strong></div>`;
+            } else if (treatmentId === 'treatment7') {
+                treatmentText.innerHTML = `目に見えない産毛もケア!<br>細かい産毛がなくなり,肌の質感が格別に変わります。<br>ワントーン明るく、自信の持てる素肌をGET♪</div><div style="text-align: right;"><strong>料金：7,700円</strong></div>`;
+            } else if (treatmentId === 'treatment8') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+            } else if (treatmentId === 'treatment9') {
+                treatmentText.innerHTML = `特別な日のヘアセットはお任せください☆<br>時間外対応可能（早朝料金有）ご相談ください。</div><div style="text-align: right;"><strong>料金：4,800円</strong></div>`;
+            } else {
+                treatmentText.innerHTML = '';
+            }
+
 
     // 選択されたメニューの名前と価格を取得
     const symptomName = button.textContent;  // ボタンのテキストを取得
@@ -390,27 +549,78 @@ function selectirradiations(button) {
     const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
     irradiationsCount = selectedIrradiations.join(', ');
 
-        // すべてのオプションの価格を再計算
-        optionsPrice = 0; // 全体をリセットして再計算
-        selectedButtons.forEach(btn => {
-            const price = parseInt(btn.getAttribute('data-price'), 10);
-            optionsPrice += price;
-        });
+    // すべてのオプションの価格を再計算
+    optionsPrice = 0; // 全体をリセットして再計算
+    let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
+    selectedButtons.forEach(btn => {
+        const price = parseInt(btn.getAttribute('data-price'), 10);
+        optionsPrice += price;
+
+        // 各オプションの時間を加算
+        const irradiationName = btn.innerText;
+        const irradiationTime = irradiationsTimes[irradiationName] || 0;
+        totalirradiationsTime += irradiationTime;
+    });
+
+    // selectedirradiationsTimeに合計時間を設定
+    selectedirradiationsTime = totalirradiationsTime;
+
+    console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
+
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
 
     // 表示を更新
     updateDisplayInfo();
 }
+
 
 function updateTotalAmount() {
     totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
     updateDisplayInfo(); // 表示を更新
 }
 
-        function selectVisit(element) {
+        // 初期状態でメニューセクションを非表示にする
+        document.getElementById('menuLabel').style.display = 'none';
+        document.getElementById('menuSections').style.display = 'none';
+
+function selectVisit(element) {
+            // 訪問回数ボタンの選択状態をリセット
             document.getElementById('firstVisit').classList.remove('active');
             document.getElementById('repeatVisit').classList.remove('active');
+            
+            // クリックされたボタンを選択状態にする
             element.classList.add('active');
+            
+            // 選択された訪問回数を変数に格納
             visitCount = element.innerText;
+
+            // 性別が選択されたらメニューセクションを表示する
+            document.getElementById('menuLabel').style.display = 'block';
+            document.getElementById('menuSections').style.display = 'block';
+
+            // メニューの表示をリセット
+            document.querySelectorAll('.menu-sections button').forEach(button => {
+                button.style.display = 'none';
+            });
+
+            if (visitCount === '1回目') {
+                document.querySelector('button[onclick="showMenu(\'male1\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'malenew\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'female1\')"]').style.display = 'inline-block';
+            } else if (visitCount === '2回目以降') {
+                document.querySelector('button[onclick="showMenu(\'male2\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'malenew\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'female2\')"]').style.display = 'inline-block';
+            }
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedVisitTime = visitTimes[visitCount];
+
+            console.log('選択された訪問回数の時間:', selectedVisitTime);
+
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
         }
 
     function showMenu(menu) {
@@ -421,9 +631,10 @@ function updateTotalAmount() {
 
         // 選択されたメニューセクションを表示
         document.querySelectorAll('.menu-section').forEach(section => {
-            section.classList.remove('active');
-            section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-        });
+        section.classList.remove('active');
+        // オプションとコースの選択をリセット
+        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    });
 
         // 対応するメニューボタンを選択状態にする
         document.querySelectorAll('.menu-sections button').forEach(button => {
@@ -556,12 +767,11 @@ function updateCalendar(availability, businessDays) {
     const table = calendar.querySelector('table tbody');
 
 const times = [
-        '10:00', '10:30', '11:00', '11:30',
+        '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
         '12:00', '12:30', '13:00', '13:30',
         '14:00', '14:30', '15:00', '15:30',
         '16:00', '16:30', '17:00', '17:30',
-        '18:00', '18:30', '19:00', '19:30',
-        '20:00'
+        '18:00'
 ];
 
     if (table.rows.length === 0) {
@@ -593,6 +803,10 @@ const times = [
         }
     }
 
+
+    // 現在の日時を取得
+    const now = new Date();
+
 // テーブルの内容を更新
 for (let i = 0; i < 7; i++) {
     const day = new Date(currentDate);
@@ -608,13 +822,43 @@ for (let i = 0; i < 7; i++) {
         }
     });
 
-    for (let j = 0; j < times.length; j++) {
-        const cell = table.rows[j].cells[i + 1];
-        const slotStart = new Date(day);
-        slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+for (let j = 0; j < times.length; j++) {
+    const cell = table.rows[j].cells[i + 1];
 
-        const slotEnd = new Date(slotStart);
-        slotEnd.setMinutes(slotStart.getMinutes() + 30);
+    // すでにセルが✕の場合はスキップする
+    if (cell.textContent === '✕') {
+        continue;
+    }
+
+    const slotStart = new Date(day);
+    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+
+    const slotEnd = new Date(slotStart);
+    let menuDuration = selectedMenuTime || 30;
+    let visitDuration = selectedVisitTime || 0;
+    let irradiationsDuration = selectedirradiationsTime || 0;
+
+    // メニュー時間と訪問回数の時間を合計して、終了時間を設定
+    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+
+// 18時以降に終了する予約を不可にする (17:30は可)
+if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+} else if (slotEnd.getHours() > 18) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+}
+
+    // ここで終了時間を使った条件処理を行う
+    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
+    if (slotStart < now) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    }
 
         const isBusinessDay = businessDays.some(businessDay => {
             const businessDayStart = new Date(businessDay.start);
@@ -636,24 +880,6 @@ for (let i = 0; i < 7; i++) {
             return acc;
         }, 0);
 
-// 12:00 - 12:59 と 17:00 - 18:29 と 19:01 - 20:00 ✕に設定（全ての曜日）
-if (
-    (
-        // 12:00 - 12:59 の時間帯
-        (slotStart.getHours() === 12 && slotStart.getMinutes() >= 0 && slotStart.getMinutes() < 60) || 
-        // 17:00 - 18:29 の時間帯
-        (slotStart.getHours() === 17 && slotStart.getMinutes() >= 0) || 
-        (slotStart.getHours() === 18 && slotStart.getMinutes() < 30) || 
-        // 19:01 - 20:00 の時間帯
-        (slotStart.getHours() === 19 && slotStart.getMinutes() > 0) || 
-        (slotStart.getHours() === 20 && slotStart.getMinutes() === 0)
-    )
-) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    cell.setAttribute('data-date', slotStart.toISOString());
-    continue;
-}
         // 営業日のイベント時間内に他のイベントがある場合
         if (isBusinessEventTime && count > 0) {
             cell.textContent = '✕';
@@ -666,6 +892,11 @@ if (
         }
         // 営業日で、指定されている時間以外の時間は×
         else if (businessEventTimes.length > 0) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+        }
+        // 日曜日で、営業日ではない場合
+        else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
             cell.textContent = '✕';
             cell.classList.add('unavailable');
         }
@@ -686,44 +917,10 @@ if (
         cell.setAttribute('data-date', slotStart.toISOString());
     }
 
-    // ×と×の間のセル数が3未満の場合、その間のセルを×にする
-    for (let j = 0; j < times.length - 1; j++) {
-        let start = -1;
-        let end = -1;
-
-        // ×の開始位置を見つける
-        if (table.rows[j].cells[i + 1].textContent === '✕') {
-            start = j;
-        }
-
-        // その次の×を見つける
-        for (let k = j + 1; k < times.length; k++) {
-            if (table.rows[k].cells[i + 1].textContent === '✕') {
-                end = k;
-                break;
-            }
-        }
-
-        // ×と×の間のセル数が3未満の場合、その間のセルを×に変更
-        if (end !== -1 && end - start < 3) {
-            for (let k = start + 1; k < end; k++) {
-                const cell = table.rows[k].cells[i + 1];
-                cell.textContent = '✕';
-                cell.classList.remove('available');
-                cell.classList.add('unavailable');
-            }
-        }
-
-        // 次のループで位置を調整
-        if (end !== -1) {
-            j = end - 1; 
-        }
-    }
-
     // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
     for (let i = 0; i < 7; i++) {
-        const twentyOClockRow = times.indexOf('18:30');
-        const twentyOneOClockRow = times.indexOf('19:00');
+        const twentyOClockRow = times.indexOf('17:30');
+        const twentyOneOClockRow = times.indexOf('18:00');
 
         for (let j = twentyOClockRow; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
