@@ -766,7 +766,7 @@ const times = [
         '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
         '12:00', '12:30', '13:00', '13:30',
         '14:00', '14:30', '15:00', '15:30',
-        '16:00'
+        '16:00', '16:30', '17:00'
 ];
 
     if (table.rows.length === 0) {
@@ -837,11 +837,11 @@ for (let j = 0; j < times.length; j++) {
     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 18時以降に終了する予約を不可にする (17:30は可)
-if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
+if (slotEnd.getHours() === 17 && slotEnd.getMinutes() > 0) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
-} else if (slotEnd.getHours() > 18) {
+} else if (slotEnd.getHours() > 17) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
@@ -914,8 +914,8 @@ if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
 
     // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
     for (let i = 0; i < 7; i++) {
-        const twentyOClockRow = times.indexOf('17:30');
-        const twentyOneOClockRow = times.indexOf('18:00');
+        const twentyOClockRow = times.indexOf('16:30');
+        const twentyOneOClockRow = times.indexOf('17:00');
 
         for (let j = twentyOClockRow; j < times.length; j++) {
             const cell = table.rows[j].cells[i + 1];
