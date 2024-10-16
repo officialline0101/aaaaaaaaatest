@@ -484,53 +484,65 @@ document.querySelectorAll('.calendar td').forEach(cell => {
     });
 });
 
-        function selectSymptom(button, treatmentId) {
-    // 全ボタンの選択をリセット
-    const buttons = document.querySelectorAll('.symptoms button');
-    buttons.forEach(btn => btn.classList.remove('active'));
+function selectSymptom(button, treatmentId) {
+    // 現在選択されている症状を取得
+    const selectedButtons = document.querySelectorAll('.symptoms button.active');
 
-    
-    // クリックされたボタンを選択状態に
-    button.classList.add('active');
-            selectedSymptom = button.textContent;
+    // 既に5個選択されていて、新たに選択しようとしている場合は選択をキャンセル
+    if (selectedButtons.length >= 4 && !button.classList.contains('active')) {
+        alert('選択できるメニューは4つまでです。');
+        return;
+    }
 
-    const selectedMenu = button.textContent;
-    selectedMenuTime = menuTimes[selectedMenu]; // メニュー時間を取得して保存
-    console.log('選択されたメニューの時間:', selectedMenuTime);
+    // ボタンの選択状態をトグル（選択済みのものを解除できる）
+    button.classList.toggle('active');
+
+    // 選択された症状を取得
+    const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+    const selectedSymptoms = Array.from(updatedSelectedButtons).map(btn => btn.textContent);
+
+    // 選択された症状の時間を再計算
+    let totalSymptomTime = 0; // 合計時間
+    selectedSymptoms.forEach(symptom => {
+        const symptomTime = menuTimes[symptom] || 0;
+        totalSymptomTime += symptomTime;
+    });
+
+    // selectedMenuTimeに合計時間を設定
+    selectedMenuTime = totalSymptomTime;
+
+    console.log('選択されたメニューの合計時間:', selectedMenuTime);
 
     // カレンダーを更新するために取得する日付を渡す
     fetchAvailability(currentDate);
 
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
 
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `まつげパーマすることで、<br>綺麗なカールをキープ☆<br>種類豊富なカールからお好みに合わせて<br>提案させていただきます。</div><div style="text-align: right;"><strong>料金：4,800円</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `下まつげパーマすることで、目幅アップ☆<br>逆まつ毛対策にも◎</div><div style="text-align: right;"><strong>料金：2,500円<br></strong></div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `上下まつげパーマで目幅アップ！！<br>自まつげを最大限に活かせます☆</div><div style="text-align: right;"><strong>料金：7,000円</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `目元はプロにお任せください。<br>まつげパーマとまゆげWAXで<br>簡単垢抜けメニューです。</div><div style="text-align: right;"><strong>料金：7,800円</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `骨格に合わせて黄金比をとり、<br>理想の眉に形に！自己処理を２週間ほど控えて、<br>なるべく生えた状態でのご来店を勧めております。</div><div style="text-align: right;"><strong>料金：3,800円</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `骨格に合わせて黄金比をとり、<br>理想の眉に形に！自己処理を２週間ほど控えて、<br>なるべく生えた状態でのご来店を勧めております。</div><div style="text-align: right;"><strong>料金：3,000円</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `目に見えない産毛もケア!<br>細かい産毛がなくなり,肌の質感が格別に変わります。<br>ワントーン明るく、自信の持てる素肌をGET♪</div><div style="text-align: right;"><strong>料金：7,700円</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `特別な日のヘアセットはお任せください☆<br>時間外対応可能（早朝料金有）ご相談ください。</div><div style="text-align: right;"><strong>料金：4,800円</strong></div>`;
-            } else {
-                treatmentText.innerHTML = '';
-            }
+    // トリートメントテキストを表示
+    const treatmentText = document.getElementById('treatment-text');
+    if (treatmentId === 'treatment1') {
+        treatmentText.innerHTML = `まつげパーマすることで、<br>綺麗なカールをキープ☆<br>種類豊富なカールからお好みに合わせて<br>提案させていただきます。</div><div style="text-align: right;"><strong>料金：4,800円</strong></div>`;
+    } else if (treatmentId === 'treatment2') {
+        treatmentText.innerHTML = `下まつげパーマすることで、目幅アップ☆<br>逆まつ毛対策にも◎</div><div style="text-align: right;"><strong>料金：2,500円<br></strong></div>`;
+    } else if (treatmentId === 'treatment3') {
+        treatmentText.innerHTML = `上下まつげパーマで目幅アップ！！<br>自まつげを最大限に活かせます☆</div><div style="text-align: right;"><strong>料金：7,000円</strong></div>`;
+    } else if (treatmentId === 'treatment4') {
+        treatmentText.innerHTML = `目元はプロにお任せください。<br>まつげパーマとまゆげWAXで<br>簡単垢抜けメニューです。</div><div style="text-align: right;"><strong>料金：7,800円</strong></div>`;
+    } else if (treatmentId === 'treatment5') {
+        treatmentText.innerHTML = `骨格に合わせて黄金比をとり、<br>理想の眉に形に！自己処理を２週間ほど控えて、<br>なるべく生えた状態でのご来店を勧めております。</div><div style="text-align: right;"><strong>料金：3,800円</strong></div>`;
+    } else if (treatmentId === 'treatment6') {
+        treatmentText.innerHTML = `骨格に合わせて黄金比をとり、<br>理想の眉に形に！自己処理を２週間ほど控えて、<br>なるべく生えた状態でのご来店を勧めております。</div><div style="text-align: right;"><strong>料金：3,000円</strong></div>`;
+    } else if (treatmentId === 'treatment7') {
+        treatmentText.innerHTML = `目に見えない産毛もケア!<br>細かい産毛がなくなり,肌の質感が格別に変わります。<br>ワントーン明るく、自信の持てる素肌をGET♪</div><div style="text-align: right;"><strong>料金：7,700円</strong></div>`;
+    } else if (treatmentId === 'treatment8') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+    } else if (treatmentId === 'treatment9') {
+        treatmentText.innerHTML = `特別な日のヘアセットはお任せください☆<br>時間外対応可能（早朝料金有）ご相談ください。</div><div style="text-align: right;"><strong>料金：4,800円</strong></div>`;
+    } else {
+        treatmentText.innerHTML = '';
+    }
 
-
-    // 選択されたメニューの名前と価格を取得
-    const symptomName = button.textContent;  // ボタンのテキストを取得
-    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
+    // 選択されたメニューの名前を配列として保存
+    selectedSymptom = selectedSymptoms;
 
     // 表示を更新
     updateDisplayInfo();
@@ -619,39 +631,34 @@ function selectVisit(element) {
     fetchAvailability(currentDate);
         }
 
-    function showMenu(menu) {
-        // すべてのメニューボタンの選択状態をリセット
-        document.querySelectorAll('.menu-sections button').forEach(button => {
-            button.classList.remove('active');
-        });
+        function showMenu(menu) {
+    // すべてのメニューセクションを非表示にする
+    const menuSections = document.querySelectorAll('.menu-section');
+    menuSections.forEach(section => section.style.display = 'none');
 
-        // 選択されたメニューセクションを表示
-        document.querySelectorAll('.menu-section').forEach(section => {
-        section.classList.remove('active');
-        // オプションとコースの選択をリセット
-        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    // 選択されたメニューセクションを表示する
+    const selectedMenuSection = document.getElementById(menu);
+    if (selectedMenuSection) {
+        selectedMenuSection.style.display = 'block';
+    }
+
+    // 表示されたメニューセクション内の症状ボタンを取得し、選択済みのボタンを復元
+    const symptomsButtons = selectedMenuSection.querySelectorAll('.symptoms button');
+    symptomsButtons.forEach(button => {
+        if (selectedSymptom.includes(button.textContent)) {
+            button.classList.add('active');  // 選択済みのボタンに active クラスを付与
+        } else {
+            button.classList.remove('active');  // 未選択の場合はクラスを削除
+        }
     });
 
-        // 対応するメニューボタンを選択状態にする
-        document.querySelectorAll('.menu-sections button').forEach(button => {
-            if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                button.classList.add('active');
-            }
-        });
+    // カレンダーを更新するために日付を取得
+    fetchAvailability(currentDate);
 
-        // 選択されたメニューセクションを表示
-        document.getElementById(menu).classList.add('active');
+    // トリートメントテキストを更新
+    updateDisplayInfo();
+}
 
-    // メニューとオプションをリセット
-    selectedSymptom = '';      // メニューのリセット
-    irradiationsCount = '';    // オプションのリセット
-    menuPrice = 0;             // メニューの価格リセット
-    optionsPrice = 0;          // オプションの価格リセット
-    totalAmount = 0;           // 合計金額リセット
-
-        // 表示を更新
-        updateDisplayInfo();
-    }
         
     function selectDate(cell) {
         // "unavailable" クラスが付いている場合はクリックを無効化
@@ -759,177 +766,189 @@ async function fetchAvailability(date) {
 }
 
 function updateCalendar(availability, businessDays) {
-    const calendar = document.getElementById('calendar1');
-    const table = calendar.querySelector('table tbody');
+    const calendar = document.getElementById('calendar1'); // カレンダーを取得
+    const table = calendar.querySelector('table tbody'); // カレンダーのテーブル要素を取得
 
-const times = [
+    // 表示する時間帯のリスト（09:00から17:00までの30分刻み）
+    const times = [
         '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
         '12:00', '12:30', '13:00', '13:30',
         '14:00', '14:30', '15:00', '15:30',
         '16:00', '16:30', '17:00'
-];
+    ];
 
+    // カレンダーに行がまだない場合、時間ごとに新しい行を作成
     if (table.rows.length === 0) {
         for (const time of times) {
-            const row = document.createElement('tr');
-            const timeCell = document.createElement('td');
-            timeCell.textContent = time;
-            row.appendChild(timeCell);
+            const row = document.createElement('tr'); // 新しい行を作る
+            const timeCell = document.createElement('td'); // 時間を表示するセルを作る
+            timeCell.textContent = time; // セルに時間を設定
+            row.appendChild(timeCell); // 行に時間のセルを追加
 
+            // 7日分のセルを作る（月〜日）
             for (let i = 0; i < 7; i++) {
-                const cell = document.createElement('td');
-                cell.addEventListener('click', () => selectDate(cell));
-                row.appendChild(cell);
+                const cell = document.createElement('td'); // 各日のセルを作成
+                cell.addEventListener('click', () => selectDate(cell)); // クリックイベントを追加
+                row.appendChild(cell); // 行にセルを追加
             }
 
-            table.appendChild(row);
+            table.appendChild(row); // テーブルに行を追加
         }
     }
 
-    // テーブルのヘッダーを更新
+    // カレンダーのヘッダーを更新（例えば曜日など）
     updateCalendarHeader(currentDate);
 
-    // 各セルを空白にリセットし、クラスもリセット
+    // 全てのセルをリセット（内容とクラス名をクリア）
     for (let row of table.rows) {
         for (let i = 1; i < row.cells.length; i++) {
-            row.cells[i].textContent = '';
-            row.cells[i].removeAttribute('data-date');
-            row.cells[i].classList.remove('available', 'unavailable', 'selected');
+            row.cells[i].textContent = ''; // セルの内容を空にする
+            row.cells[i].removeAttribute('data-date'); // 日付属性を削除
+            row.cells[i].classList.remove('available', 'unavailable', 'selected'); // クラスをリセット
         }
     }
 
-
-    // 現在の日時を取得
+    // 現在の日時を取得（リアルタイムで過ぎた時間を✕にするため）
     const now = new Date();
 
-// テーブルの内容を更新
-for (let i = 0; i < 7; i++) {
-    const day = new Date(currentDate);
-    day.setDate(day.getDate() + i);
-
-    let businessEventTimes = []; // 営業日のイベント時間帯を記録する配列
-
-    availability.forEach(slot => {
-        const eventStart = new Date(slot.startTime);
-        const eventEnd = new Date(slot.endTime);
-        if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
-            businessEventTimes.push({ start: eventStart, end: eventEnd });
-        }
-    });
-
-for (let j = 0; j < times.length; j++) {
-    const cell = table.rows[j].cells[i + 1];
-
-    // すでにセルが✕の場合はスキップする
-    if (cell.textContent === '✕') {
-        continue;
-    }
-
-    const slotStart = new Date(day);
-    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
-
-    const slotEnd = new Date(slotStart);
-    let menuDuration = selectedMenuTime || 30;
-    let visitDuration = selectedVisitTime || 0;
-    let irradiationsDuration = selectedirradiationsTime || 0;
-
-    // メニュー時間と訪問回数の時間を合計して、終了時間を設定
-    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
-
-// 18時以降に終了する予約を不可にする (17:30は可)
-if (slotEnd.getHours() === 17 && slotEnd.getMinutes() > 0) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-} else if (slotEnd.getHours() > 17) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
-
-    // ここで終了時間を使った条件処理を行う
-    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
-    if (slotStart < now) {
-        cell.textContent = '✕';
-        cell.classList.add('unavailable');
-        continue;
-    }
-
-        const isBusinessDay = businessDays.some(businessDay => {
-            const businessDayStart = new Date(businessDay.start);
-            const businessDayEnd = new Date(businessDay.end);
-            return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
-        });
-
-        const isBusinessEventTime = businessEventTimes.some(event => {
-            return slotStart < event.end && event.start < slotEnd;
-        });
-
-        const count = availability.reduce((acc, slot) => {
-            const eventStart = new Date(slot.startTime);
-            const eventEnd = new Date(slot.endTime);
-
-            if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
-                return acc + 1;
-            }
-            return acc;
-        }, 0);
-
-        // 営業日のイベント時間内に他のイベントがある場合
-        if (isBusinessEventTime && count > 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        // 営業日のイベント時間（他のイベントがない場合）
-        else if (isBusinessEventTime) {
-            cell.textContent = '◯';
-            cell.classList.add('available');
-        }
-        // 営業日で、指定されている時間以外の時間は×
-        else if (businessEventTimes.length > 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        // 日曜日で、営業日ではない場合
-        else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        // 営業日でかつ他のイベントがない場合
-        else if (isBusinessDay && count === 0) {
-            cell.textContent = '◯';
-            cell.classList.add('available');
-        }
-        // それ以外の条件
-        else if (count === 0) {
-            cell.textContent = '◯';
-            cell.classList.add('available');
-        } else {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-
-        cell.setAttribute('data-date', slotStart.toISOString());
-    }
-
-    // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
+    // 各日のセルをアップデート（7日分）
     for (let i = 0; i < 7; i++) {
-        const twentyOClockRow = times.indexOf('16:30');
-        const twentyOneOClockRow = times.indexOf('17:00');
+        const day = new Date(currentDate); // 現在の日付を基準に
+        day.setDate(day.getDate() + i); // 次の日付に進めていく
 
-        for (let j = twentyOClockRow; j < times.length; j++) {
-            const cell = table.rows[j].cells[i + 1];
-            const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
-            
-            // 20:00のセルに×がある場合、21:00のセルも×にする
-            if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
+        let businessEventTimes = []; // 営業日の時間帯を保存する配列
+
+        // 営業日と時間帯を確認して保存
+        availability.forEach(slot => {
+            const eventStart = new Date(slot.startTime); // イベント開始時間
+            const eventEnd = new Date(slot.endTime); // イベント終了時間
+            if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
+                businessEventTimes.push({ start: eventStart, end: eventEnd }); // 営業日の時間を追加
+            }
+        });
+
+        // 各時間帯ごとにセルの状態を設定
+        for (let j = 0; j < times.length; j++) {
+            const cell = table.rows[j].cells[i + 1]; // 時間帯ごとのセル
+
+            // すでに✕が入ってるセルはスキップ
+            if (cell.textContent === '✕') {
+                continue;
+            }
+
+            const slotStart = new Date(day);
+            slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0); // セルの開始時間を設定
+
+            const slotEnd = new Date(slotStart); // セルの終了時間
+            let menuDuration = selectedMenuTime || 30; // メニューの時間（30分）
+            let visitDuration = selectedVisitTime || 0; // 訪問時間
+            let irradiationsDuration = selectedirradiationsTime || 0; // 照射時間
+
+            // 終了時間を計算
+            slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+
+            // 営業時間外（17:00以降 or 09:00前）は✕にする
+            if (slotStart.getHours() >= 17 || slotStart.getHours() < 9) {
                 cell.textContent = '✕';
-                cell.classList.remove('available');
+                cell.classList.add('unavailable');
+                continue;
+            }
+
+            // 17時を過ぎて終了する予約も✕にする
+            if (slotEnd.getHours() === 17 && slotEnd.getMinutes() > 0) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+                continue;
+            } else if (slotEnd.getHours() > 17) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+                continue;
+            }
+
+            // リアルタイムで既に過ぎた時間も✕にする
+            if (slotStart < now) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+                continue;
+            }
+
+            // 営業日かつイベントの時間内かどうかをチェック
+            const isBusinessDay = businessDays.some(businessDay => {
+                const businessDayStart = new Date(businessDay.start);
+                const businessDayEnd = new Date(businessDay.end);
+                return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
+            });
+
+            const isBusinessEventTime = businessEventTimes.some(event => {
+                return slotStart < event.end && event.start < slotEnd;
+            });
+
+            // 他のイベントが重複しているかを確認
+            const count = availability.reduce((acc, slot) => {
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+                if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
+                    return acc + 1;
+                }
+                return acc;
+            }, 0);
+
+            // 営業日のイベント時間内に他のイベントがある場合は✕にする
+            if (isBusinessEventTime && count > 0) {
+                cell.textContent = '✕';
                 cell.classList.add('unavailable');
             }
+            // 営業日のイベント時間内で他のイベントがない場合は◯にする
+            else if (isBusinessEventTime) {
+                cell.textContent = '◯';
+                cell.classList.add('available');
+            }
+            // 営業日でも時間外なら✕にする
+            else if (businessEventTimes.length > 0) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+            }
+            // 日曜日で営業日でない場合は✕にする
+            else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+            }
+            // 営業日でイベントがない場合は◯にする
+            else if (isBusinessDay && count === 0) {
+                cell.textContent = '◯';
+                cell.classList.add('available');
+            }
+            // 最後に、それ以外の条件でイベントがない場合も◯にする
+            else if (count === 0) {
+                cell.textContent = '◯';
+                cell.classList.add('available');
+            } else {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+            }
+
+            // 各セルに予約時間をデータとして保存
+            cell.setAttribute('data-date', slotStart.toISOString());
+        }
+
+        // 20:00と21:00のセルをチェックして、連続で✕にする処理
+        for (let i = 0; i < 7; i++) {
+            const twentyOClockRow = times.indexOf('16:30');
+            const twentyOneOClockRow = times.indexOf('17:00');
+
+            for (let j = twentyOClockRow; j < times.length; j++) {
+                const cell = table.rows[j].cells[i + 1];
+                const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
+
+                // 20:00のセルが✕なら21:00も✕にする
+                if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
+                    cell.textContent = '✕';
+                    cell.classList.remove('available');
+                    cell.classList.add('unavailable');
+                }
+            }
         }
     }
-} 
     
         }
 
