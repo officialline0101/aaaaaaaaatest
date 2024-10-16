@@ -488,7 +488,7 @@ function selectSymptom(button, treatmentId) {
     // 現在選択されている症状を取得
     const selectedButtons = document.querySelectorAll('.symptoms button.active');
 
-    // 既に5個選択されていて、新たに選択しようとしている場合は選択をキャンセル
+    // 既に4個選択されていて、新たに選択しようとしている場合は選択をキャンセル
     if (selectedButtons.length >= 4 && !button.classList.contains('active')) {
         alert('選択できるメニューは4つまでです。');
         return;
@@ -510,6 +510,11 @@ function selectSymptom(button, treatmentId) {
 
     // selectedMenuTimeに合計時間を設定
     selectedMenuTime = totalSymptomTime;
+
+    // 選択されたボタン数をmenuLabelに反映
+    const menuLabel = document.getElementById('menuLabel');
+    const selectedCount = updatedSelectedButtons.length;
+    menuLabel.innerHTML = `メニューをお選びください（選択中のメニュー数: ${selectedCount}）`;
 
     console.log('選択されたメニューの合計時間:', selectedMenuTime);
 
