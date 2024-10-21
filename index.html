@@ -919,23 +919,23 @@
         }
 
 
-        function selectSymptom(button) {
-            // 全ボタンの選択をリセット
-            const buttons = document.querySelectorAll('.symptoms button');
-            buttons.forEach(btn => btn.classList.remove('active'));
+function selectSymptom(button) {
+    // 全ボタンの選択をリセット
+    const buttons = document.querySelectorAll('.symptoms button');
+    buttons.forEach(btn => btn.classList.remove('active'));
 
-            // クリックされたボタンを選択状態に
-            button.classList.add('active');
+    // クリックされたボタンを選択状態に
+    button.classList.add('active');
 
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
+    // 選択されたメニューの名前と価格を取得
+    const symptomName = button.innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();  // 改行を削除して1行にする
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
 
-            // 全てのirradiationsを非表示にする
-            document.querySelectorAll('.irradiations').forEach(section => {
-                section.style.display = 'none';
-            });
+    // 全てのirradiationsを非表示にする
+    document.querySelectorAll('.irradiations').forEach(section => {
+        section.style.display = 'none';
+    });
 
             // 選択された症状に応じたirradiationsを表示し、スクロール先を設定
             if (symptomName === "小顔輪郭矯正") {
