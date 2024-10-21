@@ -978,36 +978,36 @@
             scrollToElement('menuSections');
         }
 
-        function selectirradiations(element) {
-            // 今クリックされたボタンのグループの中にある全ボタンをゲットするよ✨
-            const irradiationsButtons = element.parentNode.querySelectorAll('button');
+function selectirradiations(element) {
+    // 今クリックされたボタンのグループの中にある全ボタンをゲットするよ✨
+    const irradiationsButtons = element.parentNode.querySelectorAll('button');
 
-            // 全部のボタンから 'active' っていうクラス（選ばれてるよ～ってやつ）を消しちゃうね💅
-            irradiationsButtons.forEach(button => {
-                button.classList.remove('active');
-            });
+    // 全部のボタンから 'active' っていうクラス（選ばれてるよ～ってやつ）を消しちゃうね💅
+    irradiationsButtons.forEach(button => {
+        button.classList.remove('active');
+    });
 
-            // クリックされたボタンを選択状態にして 'active' を追加するよ💖
-            element.classList.add('active');
+    // クリックされたボタンを選択状態にして 'active' を追加するよ💖
+    element.classList.add('active');
 
-    // ボタンのHTMLテキストを取得して、<br>タグを削除しながら変数に保存するの📋
-    const selectedCourse = element.innerHTML.replace(/<br>/g, '');  // <br>を削除してテキストを結合
+    // ボタンのテキストを取得して、改行や余計な空白を取り除く📋
+    const selectedCourse = element.textContent.replace(/\s+/g, ' ').trim();  // 改行や余計な空白を削除
     irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
 
-            // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
-            const selectedPrice = parseInt(element.getAttribute('data-price'), 10);  // 値段は数値に変換して保存
-            menuPrice = selectedPrice;  // 価格を `menuPrice` に保存しておくの
+    // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
+    const selectedPrice = parseInt(element.getAttribute('data-price'), 10);  // 値段は数値に変換して保存
+    menuPrice = selectedPrice;  // 価格を `menuPrice` に保存しておくの
 
-            // デバッグ用にコンソールにコース名と価格を表示して確認しとくわよ～💅
-            console.log("選ばれたコースは: ", selectedCourse);
-            console.log("選ばれたコースの値段は: ", selectedPrice);
+    // デバッグ用にコンソールにコース名と価格を表示して確認しとくわよ～💅
+    console.log("選ばれたコースは: ", selectedCourse);
+    console.log("選ばれたコースの値段は: ", selectedPrice);
 
-            // 選ばれたメニューの名前を配列に入れておくよ✨（今は一つだけど、将来的に複数選べるかも⁉）
-            irradiationsCount = [selectedCourse];  // 配列にしとくことで、あとで他のデータも簡単に追加できるよね💖
+    // 選ばれたメニューの名前を配列に入れておくよ✨
+    irradiationsCount = [selectedCourse];  // 配列にしとく
 
-            // UIとか合計金額を更新するために、`updateDisplayInfo()`を呼び出して表示もちゃんと整えるよ📱
-            updateDisplayInfo();
-        }
+    // UIとか合計金額を更新するために、`updateDisplayInfo()`を呼び出して表示もちゃんと整えるよ📱
+    updateDisplayInfo();
+}
 
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
