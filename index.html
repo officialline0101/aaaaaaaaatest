@@ -893,49 +893,48 @@
             });
         });
 
-        function selectBodyMenu(button) {
-            // 親要素である .menu-section を取得
-            const menuSection = button.closest('.menu-section');
+function selectBodyMenu(button) {
+    // 親要素である .menu-section を取得
+    const menuSection = button.closest('.menu-section');
 
-            // 同じセクション内の他のボタンの選択を解除する
-            const buttons = menuSection.querySelectorAll('.symptoms button');
-            buttons.forEach(btn => {
-                btn.style.backgroundColor = '';  // ボタンの背景色をリセット
-                btn.style.color = '';  // テキストの色をリセット
-            });
+    // 同じセクション内の他のボタンの選択を解除する
+    const buttons = menuSection.querySelectorAll('.symptoms button');
+    buttons.forEach(btn => {
+        btn.style.backgroundColor = '';  // ボタンの背景色をリセット
+        btn.style.color = '';  // テキストの色をリセット
+    });
 
-            // クリックされたボタンを選択状態にする
-            button.style.backgroundColor = '#444';  // 選択時の色
-            button.style.color = 'white';  // テキストを白に変更
+    // クリックされたボタンを選択状態にする
+    button.style.backgroundColor = '#444';  // 選択時の色
+    button.style.color = 'white';  // テキストを白に変更
+
+    // 改行や空白を削除した症状名を取得
+    const symptomName = button.innerText.replace(/\s+/g, '');  // ボタンのテキストを取得し、空白や改行を削除
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
+
+    // 選択されたコースを更新
+    irradiationsCount = symptomName;
+    updateDisplayInfo();
+}
+
+        function selectSymptom(button) {
+            // 全ボタンの選択をリセット
+            const buttons = document.querySelectorAll('.symptoms button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // クリックされたボタンを選択状態に
+            button.classList.add('active');
 
             // 選択されたメニューの名前と価格を取得
             const symptomName = button.textContent;  // ボタンのテキストを取得
             selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
             menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
 
-            // 選択されたコースを更新
-            irradiationsCount = button.innerText;
-            updateDisplayInfo();
-        }
-
-
-function selectSymptom(button) {
-    // 全ボタンの選択をリセット
-    const buttons = document.querySelectorAll('.symptoms button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-
-    // クリックされたボタンを選択状態に
-    button.classList.add('active');
-
-    // 選択されたメニューの名前と価格を取得
-    const symptomName = button.innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();  // 改行を削除して1行にする
-    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
-
-    // 全てのirradiationsを非表示にする
-    document.querySelectorAll('.irradiations').forEach(section => {
-        section.style.display = 'none';
-    });
+            // 全てのirradiationsを非表示にする
+            document.querySelectorAll('.irradiations').forEach(section => {
+                section.style.display = 'none';
+            });
 
             // 選択された症状に応じたirradiationsを表示し、スクロール先を設定
             if (symptomName === "小顔輪郭矯正") {
@@ -978,36 +977,36 @@ function selectSymptom(button) {
             scrollToElement('menuSections');
         }
 
-function selectirradiations(element) {
-    // 今クリックされたボタンのグループの中にある全ボタンをゲットするよ✨
-    const irradiationsButtons = element.parentNode.querySelectorAll('button');
+        function selectirradiations(element) {
+            // 今クリックされたボタンのグループの中にある全ボタンをゲットするよ✨
+            const irradiationsButtons = element.parentNode.querySelectorAll('button');
 
-    // 全部のボタンから 'active' っていうクラス（選ばれてるよ～ってやつ）を消しちゃうね💅
-    irradiationsButtons.forEach(button => {
-        button.classList.remove('active');
-    });
+            // 全部のボタンから 'active' っていうクラス（選ばれてるよ～ってやつ）を消しちゃうね💅
+            irradiationsButtons.forEach(button => {
+                button.classList.remove('active');
+            });
 
-    // クリックされたボタンを選択状態にして 'active' を追加するよ💖
-    element.classList.add('active');
+            // クリックされたボタンを選択状態にして 'active' を追加するよ💖
+            element.classList.add('active');
 
-    // ボタンのHTMLテキストを取得して、<br>タグを空白に置き換えて1行にする📋
-    const selectedCourse = element.innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim();
-    irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
+            // ボタンのテキスト（コース名）を取得して変数に保存するの📋
+            const selectedCourse = element.textContent;  // 選ばれたコース名をゲット
+            irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
 
-    // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
-    const selectedPrice = parseInt(element.getAttribute('data-price'), 10);  // 値段は数値に変換して保存
-    menuPrice = selectedPrice;  // 価格を `menuPrice` に保存しておくの
+            // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
+            const selectedPrice = parseInt(element.getAttribute('data-price'), 10);  // 値段は数値に変換して保存
+            menuPrice = selectedPrice;  // 価格を `menuPrice` に保存しておくの
 
-    // デバッグ用にコンソールにコース名と価格を表示して確認しとくわよ～💅
-    console.log("選ばれたコースは: ", selectedCourse);
-    console.log("選ばれたコースの値段は: ", selectedPrice);
+            // デバッグ用にコンソールにコース名と価格を表示して確認しとくわよ～💅
+            console.log("選ばれたコースは: ", selectedCourse);
+            console.log("選ばれたコースの値段は: ", selectedPrice);
 
-    // 選ばれたメニューの名前を配列に入れておくよ✨
-    irradiationsCount = [selectedCourse];  // 配列にしとく
+            // 選ばれたメニューの名前を配列に入れておくよ✨（今は一つだけど、将来的に複数選べるかも⁉）
+            irradiationsCount = [selectedCourse];  // 配列にしとくことで、あとで他のデータも簡単に追加できるよね💖
 
-    // UIとか合計金額を更新するために、`updateDisplayInfo()`を呼び出して表示もちゃんと整えるよ📱
-    updateDisplayInfo();
-}
+            // UIとか合計金額を更新するために、`updateDisplayInfo()`を呼び出して表示もちゃんと整えるよ📱
+            updateDisplayInfo();
+        }
 
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
