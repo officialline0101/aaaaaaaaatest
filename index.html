@@ -990,8 +990,12 @@
             // クリックされたボタンを選択状態にして 'active' を追加するよ💖
             element.classList.add('active');
 
-    // ボタンのテキスト（コース名）を取得して、改行タグを削除するの📋
-    let selectedCourse = element.innerHTML.replace(/<br\s*\/?>/gi, '');  // <br>タグを削除する
+    // ボタンのテキスト（コース名）を取得して、<br>や改行を削除するの📋
+    let selectedCourse = element.innerHTML
+        .replace(/<br\s*\/?>/gi, '')  // <br>, <br/>, <br /> のすべてを削除
+        .replace(/\n/g, '')           // 改行を削除するよ✨
+        .replace(/\r/g, '');          // キャリッジリターンを削除するよ
+
     irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
 
             // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
