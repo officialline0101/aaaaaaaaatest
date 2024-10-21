@@ -990,9 +990,9 @@
             // クリックされたボタンを選択状態にして 'active' を追加するよ💖
             element.classList.add('active');
 
-            // ボタンのテキスト（コース名）を取得して変数に保存するの📋
-            const selectedCourse = element.textContent;  // 選ばれたコース名をゲット
-            irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
+    // ボタンのHTMLテキストを取得して、<br>タグを削除しながら変数に保存するの📋
+    const selectedCourse = element.innerHTML.replace(/<br>/g, '');  // <br>を削除してテキストを結合
+    irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
 
             // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
             const selectedPrice = parseInt(element.getAttribute('data-price'), 10);  // 値段は数値に変換して保存
@@ -1146,17 +1146,17 @@
             updateDisplayInfo();
         }
 
-function submitForm() {
-    const formData = {
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        visitCount: visitCount,
-        manorwomanCount: manorwomanCount,
-        selectedSymptom: selectedSymptom,
-        irradiationsCount: irradiationsCount.join(''),  // 配列を文字列として連結
-        dates: [selectedFullDate],
-        message: document.getElementById('message').value
-    };
+        function submitForm() {
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                visitCount: visitCount,
+                manorwomanCount: manorwomanCount,
+                selectedSymptom: selectedSymptom,
+                irradiationsCount: irradiationsCount,
+                dates: [selectedFullDate],
+                message: document.getElementById('message').value
+            };
 
             // フォームデータのチェック
             if (!formData.name || !formData.phone || !formData.irradiationsCount) {
