@@ -237,9 +237,9 @@
 
         #treatment-text {
             background-color: #eef9f5;
-            padding: 0px;
-            border-radius: 0px;
-            margin-top: 0px;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
         }
 
         .highlight-background {
@@ -274,7 +274,7 @@
 
 <body>
     <div class="container">
-        <h1>テンプレートフォームA_カレンダー改造型<br>予約フォーム</h1>
+        <h1>骨セレブ<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
@@ -283,7 +283,7 @@
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">初回来店</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">初回</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
@@ -292,8 +292,6 @@
             <button type="button" onclick="showMenu('male')">カイロプラクティック</button>
             <button type="button" onclick="showMenu('female')">美容カイロエステ</button>
         </div>
-
-        <div id="treatment-text" style="margin-bottom: 20px;"></div>
 
         <div id="male" class="menu-section">
             <div class="highlight-background">
@@ -416,8 +414,8 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '初回来店': 0,
-            '2回目以降': 0
+            '初回': 0,
+            '2回目以降〈0分〉': 0
         };
 
         let selectedVisitTime = 0; // 訪問回数で選択された時間
@@ -521,65 +519,70 @@
         });
 
         function selectSymptom(button, treatmentId) {
-    // ボタンの選択状態を切り替える
-    button.classList.toggle('active');
+            // 全ボタンの選択をリセット
+            const buttons = document.querySelectorAll('.symptoms button');
+            buttons.forEach(btn => btn.classList.remove('active'));
 
-    // 選択されたオプションを取得
-    const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
-    
-    if (updatedSelectedButtons.length === 0) {
-        // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
-        selectedMenuTime = 0;
-        selectedSymptom = null; // 選択されたメニューをリセット
-        menuPrice = 0; // メニュー価格をリセット
-    } else {
-        // 1つだけ選択状態にする
-        if (updatedSelectedButtons.length > 1) {
-            updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active'); // クリックしたボタンだけを選択
-        }
 
-        // 選択されたメニューの時間を取得して保存
-        const selectedMenu = button.textContent;
-        selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-        selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-        menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
-    }
+            // クリックされたボタンを選択状態に
+            button.classList.add('active');
+            selectedSymptom = button.textContent;
 
-    console.log('選択されたメニューの時間:', selectedMenuTime);
+            const selectedMenu = button.textContent;
+            selectedMenuTime = menuTimes[selectedMenu]; // メニュー時間を取得して保存
+            console.log('選択されたメニューの時間:', selectedMenuTime);
 
-    // カレンダーを更新するために取得する日付を渡す
-    fetchAvailability(currentDate);
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
 
-    // 選択されたメニューの名前と価格を取得
-    const symptomName = button.textContent;  // ボタンのテキストを取得
-    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-    menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+            // トリートメントテキストを表示
+            const treatmentText = document.getElementById('treatment-text');
 
-    // 表示を更新
-    updateDisplayInfo();
-}
-
-        function selectirradiations(button) {
-            // 既に2個選択されていて、新たに選択しようとしている場合は選択をキャンセル
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            if (selectedButtons.length >= 2 && !button.classList.contains('active')) {
-                alert('選択できるオプションは2つまでです。');
-                return;
+            if (treatmentId === 'treatment1') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
+            } else if (treatmentId === 'treatment2') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
+            } else if (treatmentId === 'treatment3') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
+            } else if (treatmentId === 'treatment4') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
+            } else if (treatmentId === 'treatment5') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
+            } else if (treatmentId === 'treatment6') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
+            } else if (treatmentId === 'treatment7') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
+            } else if (treatmentId === 'treatment8') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+            } else if (treatmentId === 'treatment9') {
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+            } else {
+                treatmentText.innerHTML = '';
             }
 
+
+            // 選択されたメニューの名前と価格を取得
+            const symptomName = button.textContent;  // ボタンのテキストを取得
+            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+            menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
+
+            // 表示を更新
+            updateDisplayInfo();
+        }
+
+        function selectirradiations(button) {
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
 
             // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiations = Array.from(updatedSelectedButtons).map(btn => btn.innerText);
+            const selectedButtons = document.querySelectorAll('.irradiations button.active');
+            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
             irradiationsCount = selectedIrradiations.join(', ');
 
             // すべてのオプションの価格を再計算
             optionsPrice = 0; // 全体をリセットして再計算
             let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
-            updatedSelectedButtons.forEach(btn => {
+            selectedButtons.forEach(btn => {
                 const price = parseInt(btn.getAttribute('data-price'), 10);
                 optionsPrice += price;
 
@@ -600,6 +603,7 @@
             // 表示を更新
             updateDisplayInfo();
         }
+
 
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
@@ -622,47 +626,37 @@
         }
 
         function showMenu(menu) {
-    // すべてのメニューボタンの選択状態をリセット
-    document.querySelectorAll('.menu-sections button').forEach(button => {
-        button.classList.remove('active');
-    });
+            // すべてのメニューボタンの選択状態をリセット
+            document.querySelectorAll('.menu-sections button').forEach(button => {
+                button.classList.remove('active');
+            });
 
-    // 選択されたメニューセクションを表示
-    document.querySelectorAll('.menu-section').forEach(section => {
-        section.classList.remove('active');
-        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-    });
+            // 選択されたメニューセクションを表示
+            document.querySelectorAll('.menu-section').forEach(section => {
+                section.classList.remove('active');
+                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            });
 
-    // 対応するメニューボタンを選択状態にする
-    document.querySelectorAll('.menu-sections button').forEach(button => {
-        if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-            button.classList.add('active');
+            // 対応するメニューボタンを選択状態にする
+            document.querySelectorAll('.menu-sections button').forEach(button => {
+                if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
+                    button.classList.add('active');
+                }
+            });
+
+            // 選択されたメニューセクションを表示
+            document.getElementById(menu).classList.add('active');
+
+            // メニューとオプションをリセット
+            selectedSymptom = '';      // メニューのリセット
+            irradiationsCount = '';    // オプションのリセット
+            menuPrice = 0;             // メニューの価格リセット
+            optionsPrice = 0;          // オプションの価格リセット
+            totalAmount = 0;           // 合計金額リセット
+
+            // 表示を更新
+            updateDisplayInfo();
         }
-    });
-
-    // 選択されたメニューセクションを表示
-    document.getElementById(menu).classList.add('active');
-
-    // メニューとオプションをリセット
-    selectedSymptom = '';          // メニューのリセット
-    irradiationsCount = '';        // オプションのリセット
-    menuPrice = 0;                 // メニューの価格リセット
-    optionsPrice = 0;              // オプションの価格リセット
-    totalAmount = 0;               // 合計金額リセット
-
-    // 時間のリセット
-    selectedMenuTime = 0;          // メニュー時間を0分にリセット
-    selectedVisitTime = 0;         // 訪問時間のリセット
-    selectedirradiationsTime = 0;  // オプション時間のリセット
-
-    // カレンダーを更新
-    fetchAvailability(currentDate);  // 現在の日付に基づいてカレンダーを更新
-
-    // 表示を更新
-    updateDisplayInfo();
-}
-
-
 
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
@@ -774,11 +768,11 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '10:00', '11:00',
-                '12:00', '13:00',
-                '14:00', '15:00',
-                '16:00', '17:00',
-                '18:00', '18:30', '19:00', '20:00'
+                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+                '12:00', '12:30', '13:00', '13:30',
+                '14:00', '14:30', '15:00', '15:30',
+                '16:00', '16:30', '17:00', '17:30',
+                '18:00'
             ];
 
             if (table.rows.length === 0) {
@@ -849,11 +843,11 @@
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
                     // 18時以降に終了する予約を不可にする (17:30は可)
-                    if (slotEnd.getHours() === 20 && slotEnd.getMinutes() > 0) {
+                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
-                    } else if (slotEnd.getHours() > 20) {
+                    } else if (slotEnd.getHours() > 18) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
@@ -887,24 +881,6 @@
                         return acc;
                     }, 0);
 
-                    // 12:00 - 12:59 と 17:00 - 18:29 と 19:01 - 20:00 ✕に設定（全ての曜日）
-                    if (
-                        (
-                            // 12:00 - 12:59 の時間帯
-                            (slotStart.getHours() === 12 && slotStart.getMinutes() >= 0 && slotStart.getMinutes() < 60) ||
-                            // 17:00 - 18:29 の時間帯
-                            (slotStart.getHours() === 17 && slotStart.getMinutes() >= 0) ||
-                            (slotStart.getHours() === 18 && slotStart.getMinutes() < 30) ||
-                            // 19:01 - 20:00 の時間帯
-                            (slotStart.getHours() === 19 && slotStart.getMinutes() > 0) ||
-                            (slotStart.getHours() === 20 && slotStart.getMinutes() === 0)
-                        )
-                    ) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        cell.setAttribute('data-date', slotStart.toISOString());
-                        continue;
-                    }
                     // 営業日のイベント時間内に他のイベントがある場合
                     if (isBusinessEventTime && count > 0) {
                         cell.textContent = '✕';
@@ -917,6 +893,11 @@
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 日曜日で、営業日ではない場合
+                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
@@ -935,6 +916,24 @@
                     }
 
                     cell.setAttribute('data-date', slotStart.toISOString());
+                }
+
+                // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
+                for (let i = 0; i < 7; i++) {
+                    const twentyOClockRow = times.indexOf('17:30');
+                    const twentyOneOClockRow = times.indexOf('18:00');
+
+                    for (let j = twentyOClockRow; j < times.length; j++) {
+                        const cell = table.rows[j].cells[i + 1];
+                        const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
+
+                        // 20:00のセルに×がある場合、21:00のセルも×にする
+                        if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
+                            cell.textContent = '✕';
+                            cell.classList.remove('available');
+                            cell.classList.add('unavailable');
+                        }
+                    }
                 }
             }
 
