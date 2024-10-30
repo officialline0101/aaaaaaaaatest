@@ -38,7 +38,7 @@
         }
 
         .label {
-            display: block;
+            display: inline-block;
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
@@ -46,6 +46,10 @@
             color: white;
             border-radius: 4px;
             text-align: center;
+            width: 100%;
+            /* 他のボタンと同じ幅を持たせる */
+            box-sizing: border-box;
+            /* 幅の一貫性を保つ */
         }
 
         input[type="text"],
@@ -60,9 +64,7 @@
         }
 
         .visit-buttons,
-        .symptoms,
-        .menu-sections,
-        .irradiations {
+        .manorwoman-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -70,9 +72,7 @@
         }
 
         .visit-buttons button,
-        .symptoms button,
-        .menu-sections button,
-        .irradiations button {
+        .manorwoman-buttons button {
             flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
@@ -87,7 +87,8 @@
         .visit-buttons button.active,
         .symptoms button.active,
         .menu-sections button.active,
-        .irradiations button.active {
+        .irradiations button.active,
+        .manorwoman-buttons button.active {
             background-color: #444;
             color: #fff;
         }
@@ -164,7 +165,7 @@
         }
 
         .calendar td.selected {
-            background-color: #13ca5e;
+            background-color: #444;
             color: #fff;
         }
 
@@ -235,138 +236,538 @@
             display: none;
         }
 
-        #treatment-text {
-            background-color: #eef9f5;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 20px;
+        .irradiations .irradiation-group {
+            margin-bottom: 20px;
         }
 
-        .highlight-background {
-            background-color: #f9f9d6;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            margin-top: 10px;
-            /* 上に余白を追加 */
-            text-align: center;
-            /* コンテナ内の要素を中央に配置 */
-        }
-
-        .highlight-text {
-            display: block;
-            font-weight: bold;
-            text-align: center;
-            /* テキストを中央揃えにする */
-        }
-
-        .red-circle {
+        .irradiations .irradiation-group p {
             color: red;
-            /* 赤色に設定 */
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 5px;
+            margin: 0;
+            text-align: center;
         }
 
-        .bold-cross {
-            font-weight: bold;
-            /* 太文字に設定 */
+        .irradiations,
+        .symptoms,
+        .menu-sections {
+            display: flex;
+            /* フレックスボックスでレイアウト */
+            flex-direction: column;
+            /* 縦方向にボタンを並べる */
+            align-items: center;
+            /* ボタンを水平方向に中央揃え */
+            gap: 10px;
+            /* ボタンの間に10pxの隙間 */
+            margin-bottom: 20px;
+            /* 下にスペース */
+            max-width: 100%;
+            /* max-widthを100%に */
+        }
+
+        .irradiations button,
+        .symptoms button,
+        .menu-sections button {
+            display: block;
+            /* ブロック要素でボタンを独立させる */
+            width: 100%;
+            /* ボタンの幅を親要素に合わせる */
+            max-width: 400px;
+            /* 最大幅を400pxに制限 */
+            padding: 12px 20px;
+            /* ボタンの内側に余白を追加 */
+            border: 1px solid #F8B2B5;
+            /* 薄めの赤 */
+            border-radius: 6px;
+            /* 角を丸く */
+            background-color: #f7f7f7;
+            /* 背景色を設定 */
+            color: #333;
+            /* 文字色 */
+            font-size: 16px;
+            /* テキストサイズ */
+            cursor: pointer;
+            /* カーソルをポインターに */
+            text-align: center;
+            /* テキストを中央に揃える */
+            white-space: nowrap;
+            /* テキストが折り返されないようにする */
+            box-sizing: border-box;
+            /* 幅計算をパディングとボーダー含めて */
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            /* アニメーション */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            /* 影を追加して立体感 */
+            margin: 0;
+            /* 自動マージンを解除 */
+        }
+
+        /* ホバー時のアニメーション */
+        .irradiations button:hover,
+        .symptoms button:hover,
+        .menu-sections button:hover {
+            background-color: #444444;
+            /* ホバー時に背景色を少し暗く */
+            transform: translateY(-3px);
+            /* ホバー時に少し上に持ち上がる */
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+            /* 影を強くして立体感を出す */
+        }
+
+        /* フォーカス（クリック時）のエフェクト */
+        .irradiations button:active,
+        .symptoms button:active,
+        .menu-sections button:active {
+            transform: translateY(0);
+            /* クリックしたときにボタンが元の位置に戻る */
+            background-color: #444;
+            /* クリック時の背景色をさらに濃く */
+        }
+
+        /* フェードインアニメーション */
+        .irradiations button,
+        .symptoms button,
+        .menu-sections button {
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            /* 1秒でフェードイン */
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+                /* 少し縮小状態から */
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                /* 通常のサイズに拡大 */
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>taki salon<br>予約フォーム</h1>
+        <h1>Elegram<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
         <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
+        <div class="label">ご性別※必須</div>
+        <div class="manorwoman-buttons">
+            <button type="button" id="firstmanorwoman" onclick="selectmanorwoman(this)">男性</button>
+            <button type="button" id="repeatmanorwoman" onclick="selectmanorwoman(this)">女性</button>
+        </div>
+
         <div class="label">ご来店回数※必須</div>
-        <div class="visit-buttons">
+        <div class="visit-buttons" id="visitSections">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <div class="label">メニューをお選びください</div>
-        <div class="menu-sections">
-            <button type="button" onclick="showMenu('male')">脱毛男性限定</button>
-            <button type="button" onclick="showMenu('female')">脱毛女性限定</button>
+        <div class="label" id="menuLabel">メニューをお選びください</div>
+        <p style="color: red; font-weight: bold; background-color: #f0f0f0; padding: 5px;">選択項目1</p>
+        <div class="menu-sections" id="menuSections">
+            <button type="button" onclick="showMenu('facial')">フェイシャルメニュー</button>
+            <button type="button" onclick="showMenu('body')">ボディーメニュー</button>
+            <button type="button" onclick="showMenu('bustup')">バストアップメニュー</button>
+            <button type="button" onclick="showMenu('hairremovalman')">脱毛メニュー</button>
+            <button type="button" onclick="showMenu('hairremovalladies')">脱毛メニュー</button>
+            <button type="button" onclick="showMenu('bridal')">ブライダルメニュー</button>
             <button type="button" onclick="showMenu('eyebrows')">眉毛メニュー</button>
-            <button type="button" onclick="showMenu('whitening')">ホワイトニングメニュー</button>
-            <button type="button" onclick="showMenu('monitor')">期間限定モニター募集</button>
+            <button type="button" onclick="showMenu('selfwhitening')">セルフホワイトニング</button>
+            <button type="button" onclick="showMenu('Mugwortsteamed')">よもぎ蒸し・オイルリンパ</button>
         </div>
 
-        <div id="treatment-text" style="margin-bottom: 20px;"></div>
-
-        <div id="male" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆脱毛メニュー◆<br>---男性限定---</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">【脱毛】顔のみ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">【脱毛】髭のみ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">【脱毛】両腕or両足のみ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">【脱毛】両腕＋両足</button>
+        <div id="facial" class="menu-section">
+            <p style="color: red; font-weight: bold; background-color: #f0f0f0; padding: 5px;">選択項目2</p>
+            <div class="symptoms" id="irradiations11">
+                <button type="button" onclick="selectSymptom(this)">小顔輪郭矯正</button>
+                <button type="button" onclick="selectSymptom(this)">ピーリングメニュー</button>
+                <button type="button" onclick="selectSymptom(this)">毛穴ハイドラメニュー</button>
+                <button type="button" onclick="selectSymptom(this)">肌質改善光フォトメニュー</button>
+                <button type="button" onclick="selectSymptom(this)">脂肪分解・細胞リフトアップメニュー</button>
             </div>
         </div>
 
-        <div id="female" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆脱毛メニュー◆<br>---女性限定---</span>
+        <div id="irradiations1" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆小顔輪郭矯正◆<br>コースをお選びください</p>
             </div>
+            <div class="symptoms" id="irradiations22">
+                <button type="button" id="irradiations1-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約フェイシャルメニュー</button>
+                <button type="button" id="irradiations1-1" onclick="selectirradiations(this)"
+                    data-price="15000">小顔矯正リフトアップコース</button>
+                <button type="button" id="irradiations1-2" onclick="selectirradiations(this)"
+                    data-price="15000">小顔矯正エラ張りコース</button>
+                <button type="button" id="irradiations1-3" onclick="selectirradiations(this)"
+                    data-price="15000">小顔矯正脂肪分解ECSコース</button>
+                <button type="button" id="irradiations1-4" onclick="selectirradiations(this)"
+                    data-price="15000">小顔矯正肩こりスッキリコース</button>
+                <button type="button" id="irradiations1-5" onclick="selectirradiations(this)"
+                    data-price="15000">小顔矯正顔筋リフトアップコース</button>
+            </div>
+        </div>
+
+        <div id="irradiations2" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆ピーリングメニュー◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations33">
+                <button type="button" id="irradiations2-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約フェイシャルメニュー</button>
+                <button type="button" id="irradiations2-1" onclick="selectirradiations(this)"
+                    data-price="15000">強炭酸・ガリレオピーリング</button>
+                <button type="button" id="irradiations2-2" onclick="selectirradiations(this)"
+                    data-price="15000">毛穴ケアつるんと美肌コース</button>
+                <button type="button" id="irradiations2-3" onclick="selectirradiations(this)"
+                    data-price="15000">究極の美白コース</button>
+                <button type="button" id="irradiations2-4" onclick="selectirradiations(this)"
+                    data-price="15000">ニキビ・ニキビ跡ケアコース</button>
+                <button type="button" id="irradiations2-5" onclick="selectirradiations(this)"
+                    data-price="15000">しみ・くすみ・たるみ・毛穴ケアコース</button>
+                <button type="button" id="irradiations2-6" onclick="selectirradiations(this)"
+                    data-price="15000">アンチエイジング<br>幹細胞培養液導入コース</button>
+                <button type="button" id="irradiations2-7" onclick="selectirradiations(this)"
+                    data-price="15000">敏感肌・赤みピーリング<br>(クリスティーナUNSTRESS)</button>
+                <button type="button" id="irradiations2-8" onclick="selectirradiations(this)"
+                    data-price="15000">美白・透明感ピーリング<br>(クリスティーナILLUSTRIOUS)</button>
+                <button type="button" id="irradiations2-9" onclick="selectirradiations(this)"
+                    data-price="15000">皮脂抑制・毛穴デトックスピーリング<br>(クリスティーナBIOPHYTO)</button>
+                <button type="button" id="irradiations2-10" onclick="selectirradiations(this)"
+                    data-price="15000">女優肌シルク肌ピーリング<br>(クリスティーナSILK)</button>
+                <button type="button" id="irradiations2-11" onclick="selectirradiations(this)"
+                    data-price="15000">本格的肌再生ピーリング<br>(剥離あり・クリスティーナ<br>ROSEDEMER)</button>
+                <button type="button" id="irradiations2-11" onclick="selectirradiations(this)"
+                    data-price="15000">本格的肌再生ピーリング<br>(剥離少し・ハーブリプロ)</button>
+                <button type="button" id="irradiations2-12" onclick="selectirradiations(this)"
+                    data-price="15000">エクソソーム72時間肌再生ピーリング<br>(剥離なし・エピダーマルスキン)</button>
+            </div>
+        </div>
+
+        <div id="irradiations3" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆毛穴ハイドラメニュー◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations44">
+                <button type="button" id="irradiations3-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約フェイシャルメニュー</button>
+                <button type="button" id="irradiations3-1" onclick="selectirradiations(this)"
+                    data-price="15000">毛穴洗浄コース</button>
+                <button type="button" id="irradiations3-2" onclick="selectirradiations(this)"
+                    data-price="15000">毛穴黒ずみピーリングコース</button>
+                <button type="button" id="irradiations3-3" onclick="selectirradiations(this)"
+                    data-price="15000">毛穴引き締め美容液導入コース</button>
+            </div>
+        </div>
+
+        <div id="irradiations4" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆肌質改善光フォトメニュー◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations55">
+                <button type="button" id="irradiations4-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約フェイシャルメニュー</button>
+                <button type="button" id="irradiations4-1" onclick="selectirradiations(this)"
+                    data-price="15000">シミ部分コース</button>
+                <button type="button" id="irradiations4-2" onclick="selectirradiations(this)"
+                    data-price="15000">シミ全体コース</button>
+                <button type="button" id="irradiations4-3" onclick="selectirradiations(this)"
+                    data-price="15000">シミW打ちコース</button>
+                <button type="button" id="irradiations4-4" onclick="selectirradiations(this)"
+                    data-price="15000">ニキビ部分コース</button>
+                <button type="button" id="irradiations4-5" onclick="selectirradiations(this)"
+                    data-price="15000">ニキビ全体コース</button>
+                <button type="button" id="irradiations4-6" onclick="selectirradiations(this)"
+                    data-price="15000">ニキビW打ちコース</button>
+                <button type="button" id="irradiations4-7" onclick="selectirradiations(this)"
+                    data-price="15000">赤ら顔部分コース</button>
+                <button type="button" id="irradiations4-8" onclick="selectirradiations(this)"
+                    data-price="15000">赤ら顔全体コース</button>
+                <button type="button" id="irradiations4-9" onclick="selectirradiations(this)"
+                    data-price="15000">赤ら顔W打ちコース</button>
+                <button type="button" id="irradiations4-10" onclick="selectirradiations(this)"
+                    data-price="15000">若返り全体コース</button>
+            </div>
+        </div>
+
+        <div id="irradiations5" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆脂肪分解・細胞リフトアップメニュー◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations66">
+                <button type="button" id="irradiations5-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約フェイシャルメニュー</button>
+                <button type="button" id="irradiations5-1" onclick="selectirradiations(this)"
+                    data-price="15000">Y字・円盤ブロープ×ハンドECS</button>
+                <button type="button" id="irradiations5-2" onclick="selectirradiations(this)"
+                    data-price="15000">Y字ブロープ×ハンドECS</button>
+                <button type="button" id="irradiations5-3" onclick="selectirradiations(this)"
+                    data-price="15000">円盤ブロープ×ハンドECS</button>
+                <button type="button" id="irradiations5-4" onclick="selectirradiations(this)"
+                    data-price="15000">Y字ブロープ</button>
+                <button type="button" id="irradiations5-2" onclick="selectirradiations(this)"
+                    data-price="15000">円盤ブロープ</button>
+                <button type="button" id="irradiations5-3" onclick="selectirradiations(this)"
+                    data-price="15000">Y字・円盤ブロープ</button>
+                <button type="button" id="irradiations5-4" onclick="selectirradiations(this)"
+                    data-price="15000">ハンドECS</button>
+            </div>
+        </div>
+
+        <div id="body" class="menu-section">
+            <label
+                style="color: red; font-weight: bold; background-color: #f0f0f0; width: 100%; display: block; padding: 40px; padding-left: 5px; box-sizing: border-box; margin-bottom: 20px;">◆ボディーメニュー◆<br>コースをお選びください</label>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">全身美肌脱毛</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">脱毛+光フェイシャル</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">腕・足・脇セット</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">脇・VIOセット</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">お好きなパーツ3セット</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="15000">Sパーツ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="15000">Mパーツ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="15000">Lパーツ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="15000">Dパーツ</button>
+                <button type="button" id="1-0firstirradiations" onclick="selectBodyMenu(this)" data-price="15000">とりあえず予約ボディーメニュー</button>
+                <button type="button" id="1-1firstirradiations" onclick="selectBodyMenu(this)" data-price="15000">美脚痩身
+                    下半身コース</button>
+                <button type="button" id="1-2irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">二の腕・背中・脇集中コース</button>
+                <button type="button" id="1-3irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">下腹ポッコリ・お腹くびれコース</button>
+                <button type="button" id="1-4irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">ポッコリお腹メソッド骨格矯正コース</button>
+                <button type="button" id="1-5irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">本気の全身スリムコース</button>
+                <button type="button" id="1-6irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">美尻エステコース</button>
+                <button type="button" id="1-7irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">打たない肩ボトックス</button>
+                <button type="button" id="1-8irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">猫背矯正・肩張り歪み改善コース</button>
+                <button type="button" id="1-9irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">肩こり腰痛改善コース</button>
+                <button type="button" id="1-10irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">自律神経改善コース</button>
+                <button type="button" id="1-11irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">骨盤矯正コース</button>
+                <button type="button" id="1-12irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">全身美矯正コース</button>
+            </div>
+        </div>
+
+        <div id="bustup" class="menu-section">
+            <label
+                style="color: red; font-weight: bold; background-color: #f0f0f0; width: 100%; display: block; padding: 40px; padding-left: 5px; box-sizing: border-box; margin-bottom: 20px;">◆バストアップメニュー◆<br>コースをお選びください</label>
+            <div class="symptoms">
+                <button type="button" id="2-0irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">とりあえず予約バストアップメニュー</button>
+                <button type="button" id="2-1irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">育乳痩せ型コース</button>
+                <button type="button" id="2-2irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">育乳理想のバストアップコース</button>
+                <button type="button" id="2-3irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">上半身スッキリバストアップコース</button>
+            </div>
+        </div>
+
+        <div id="hairremovalman" class="menu-section">
+            <p style="color: red; font-weight: bold; background-color: #f0f0f0; padding: 5px;">男性脱毛<br>選択項目2</p>
+            <div class="symptoms" id="irradiations11">
+                <button type="button" onclick="selectSymptom(this)">男性：光脱毛</button>
+                <button type="button" onclick="selectSymptom(this)">WAX脱毛</button>
+            </div>
+        </div>
+
+        <div id="hairremovalladies" class="menu-section">
+            <p style="color: red; font-weight: bold; background-color: #f0f0f0; padding: 5px;">女性脱毛<br>選択項目2</p>
+            <div class="symptoms" id="irradiations11">
+                <button type="button" onclick="selectSymptom(this)">女性：光脱毛</button>
+                <button type="button" onclick="selectSymptom(this)">WAX脱毛</button>
+            </div>
+        </div>
+
+        <div id="irradiations6" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆男性：光脱毛◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations77">
+                <button type="button" id="irradiations6-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約男性光脱毛</button>
+                <button type="button" id="irradiations6-1" onclick="selectirradiations(this)"
+                    data-price="15000">髭脱毛一式</button>
+                <button type="button" id="irradiations6-2" onclick="selectirradiations(this)"
+                    data-price="15000">髭・脇・腕セット脱毛</button>
+                <button type="button" id="irradiations6-3" onclick="selectirradiations(this)"
+                    data-price="15000">VIO脱毛</button>
+                <button type="button" id="irradiations6-4" onclick="selectirradiations(this)"
+                    data-price="15000">全身脱毛(顔・VIOなし)SHR</button>
+                <button type="button" id="irradiations6-5" onclick="selectirradiations(this)"
+                    data-price="15000">全身脱毛(顔・VIOなし)SHR.IPL</button>
+                <button type="button" id="irradiations6-6" onclick="selectirradiations(this)"
+                    data-price="15000">Sパーツ脱毛</button>
+                <button type="button" id="irradiations6-7" onclick="selectirradiations(this)"
+                    data-price="15000">Mパーツ脱毛</button>
+                <button type="button" id="irradiations6-8" onclick="selectirradiations(this)"
+                    data-price="15000">Lパーツ脱毛</button>
+
+            </div>
+        </div>
+
+        <div id="irradiations7" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆女性：光脱毛◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations88">
+                <button type="button" id="irradiations1-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約女性光脱毛</button>
+                <button type="button" id="irradiations1-1" onclick="selectirradiations(this)"
+                    data-price="15000">Sパーツ脱毛</button>
+                <button type="button" id="irradiations1-2" onclick="selectirradiations(this)"
+                    data-price="15000">Mパーツ脱毛</button>
+                <button type="button" id="irradiations1-3" onclick="selectirradiations(this)"
+                    data-price="15000">Lパーツ脱毛</button>
+                <button type="button" id="irradiations1-4" onclick="selectirradiations(this)"
+                    data-price="15000">VIOコース</button>
+                <button type="button" id="irradiations1-5" onclick="selectirradiations(this)"
+                    data-price="15000">顔脱毛コース</button>
+                <button type="button" id="irradiations1-6" onclick="selectirradiations(this)"
+                    data-price="15000">選べるパーツ3か所脱毛</button>
+                <button type="button" id="irradiations1-7" onclick="selectirradiations(this)"
+                    data-price="15000">選べるパーツ5か所脱毛</button>
+                <button type="button" id="irradiations1-8" onclick="selectirradiations(this)"
+                    data-price="15000">全身脱毛(顔・VIOなし)</button>
+                <button type="button" id="irradiations1-9" onclick="selectirradiations(this)"
+                    data-price="15000">全身脱毛(顔のみ含む)</button>
+                <button type="button" id="irradiations1-10" onclick="selectirradiations(this)"
+                    data-price="15000">全身脱毛(顔無し・VIO有)</button>
+                <button type="button" id="irradiations1-11" onclick="selectirradiations(this)"
+                    data-price="15000">全身脱毛(顔・VIO有)</button>
+            </div>
+        </div>
+
+        <div id="irradiations8" class="irradiations" style="display: none;">
+            <div style="background-color: #f0f0f0; padding: 1px; width: 100%; box-sizing: border-box;">
+                <p style="color: red; font-weight: bold; padding-left: 4px; display: inline-block;">
+                    ◆WAX脱毛◆<br>コースをお選びください</p>
+            </div>
+            <div class="symptoms" id="irradiations99">
+                <button type="button" id="irradiations1-0" onclick="selectirradiations(this)"
+                    data-price="15000">とりあえず予約WAX脱毛</button>
+                <button type="button" id="irradiations1-1" onclick="selectirradiations(this)"
+                    data-price="15000">おでこ</button>
+                <button type="button" id="irradiations1-2" onclick="selectirradiations(this)"
+                    data-price="15000">眉・眉周り</button>
+                <button type="button" id="irradiations1-3" onclick="selectirradiations(this)"
+                    data-price="15000">鼻(小鼻)</button>
+                <button type="button" id="irradiations1-4" onclick="selectirradiations(this)"
+                    data-price="15000">鼻下</button>
+                <button type="button" id="irradiations1-5" onclick="selectirradiations(this)"
+                    data-price="15000">口まわり</button>
+                <button type="button" id="irradiations1-6" onclick="selectirradiations(this)"
+                    data-price="15000">ほほ</button>
+                <button type="button" id="irradiations1-7" onclick="selectirradiations(this)"
+                    data-price="15000">もみあげ(フェイスライン)</button>
+                <button type="button" id="irradiations1-8" onclick="selectirradiations(this)"
+                    data-price="15000">うなじ</button>
+                <button type="button" id="irradiations1-9" onclick="selectirradiations(this)"
+                    data-price="15000">ワキ</button>
+                <button type="button" id="irradiations1-10" onclick="selectirradiations(this)"
+                    data-price="15000">両腕(ALL)</button>
+                <button type="button" id="irradiations1-11" onclick="selectirradiations(this)"
+                    data-price="15000">両肘下</button>
+                <button type="button" id="irradiations1-12" onclick="selectirradiations(this)"
+                    data-price="15000">背中</button>
+                <button type="button" id="irradiations1-13" onclick="selectirradiations(this)"
+                    data-price="15000">背中(上部)</button>
+                <button type="button" id="irradiations1-14" onclick="selectirradiations(this)"
+                    data-price="15000">おしり</button>
+                <button type="button" id="irradiations1-15" onclick="selectirradiations(this)"
+                    data-price="15000">両足(ALL)</button>
+                <button type="button" id="irradiations1-16" onclick="selectirradiations(this)"
+                    data-price="15000">両膝下</button>
+                <button type="button" id="irradiations1-17" onclick="selectirradiations(this)"
+                    data-price="15000">フェイシャルWAX</button>
+                <button type="button" id="irradiations1-18" onclick="selectirradiations(this)"
+                    data-price="15000">鼻毛</button>
+                <button type="button" id="irradiations1-19" onclick="selectirradiations(this)"
+                    data-price="15000">VIO</button>
+                <button type="button" id="irradiations1-20" onclick="selectirradiations(this)"
+                    data-price="15000">IO</button>
+                <button type="button" id="irradiations1-21" onclick="selectirradiations(this)"
+                    data-price="15000">VI</button>
+                <button type="button" id="irradiations1-22" onclick="selectirradiations(this)"
+                    data-price="15000">V</button>
+                <button type="button" id="irradiations1-23" onclick="selectirradiations(this)"
+                    data-price="15000">I</button>
+                <button type="button" id="irradiations1-24" onclick="selectirradiations(this)"
+                    data-price="15000">O</button>
+            </div>
+        </div>
+
+        <div id="bridal" class="menu-section">
+            <label
+                style="color: red; font-weight: bold; background-color: #f0f0f0; width: 100%; display: block; padding: 40px; padding-left: 5px; box-sizing: border-box; margin-bottom: 20px;">◆ブライダルメニュー◆<br>コースをお選びください</label>
+            <div class="symptoms">
+                <button type="button" id="3-1irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">まずはお試しコース</button>
+                <button type="button" id="3-2irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">挙式直前1DAYコース</button>
+                <button type="button" id="3-3irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">二の腕ほっそり<br>1ヶ月スリム集中ケアコース</button>
+                <button type="button" id="3-4irradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">二の腕ほっそり<br>3ヶ月スリム集中ケアコース</button>
             </div>
         </div>
 
         <div id="eyebrows" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆眉毛メニュー◆</span>
-            </div>
+            <label
+                style="color: red; font-weight: bold; background-color: #f0f0f0; width: 100%; display: block; padding: 40px; padding-left: 5px; box-sizing: border-box; margin-bottom: 20px;">◆眉毛メニュー◆<br>コースをお選びください</label>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="15000">ハリウッドブロウリフト</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="15000">眉毛スタイリング</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment16')" data-price="15000">フェイスワックス</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment17')" data-price="15000">HBL+フェイスワックス</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment18')" data-price="15000">HBL+ヘットマッサージ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment19')" data-price="15000">眉毛スタイリング+フェイスワックス</button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">とりあえず予約眉毛メニュー</button>
+                <button type="button" id="secondirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">眉毛スタイリング</button>
+                <button type="button" id="repeatirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">眉毛スタイリング×WAX</button>
             </div>
         </div>
 
-        <div id="whitening" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆ホワイトニングメニュー◆</span>
-            </div>
+        <div id="selfwhitening" class="menu-section">
+            <label
+                style="color: red; font-weight: bold; background-color: #f0f0f0; width: 100%; display: block; padding: 40px; padding-left: 5px; box-sizing: border-box; margin-bottom: 20px;">◆セルフホワイトニング◆<br>コースをお選びください</label>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment20')" data-price="15000">ホワイトニング</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment21')" data-price="15000">ホワイトニング5回券</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment22')" data-price="15000">ホワイトニング10回</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment23')" data-price="15000">ホワイトニング1ヶ月通い放題</button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">照射15分×2回</button>
+                <button type="button" id="repeatirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">照射15分×3回</button></button>
             </div>
-            <div class="highlight-background">
-                <span class="highlight-text">照射回数</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">1回照射</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">2回照射</button>
-            </div>
-            </div>
+        </div>
 
-        <div id="monitor" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆期間限定モニター募集◆</span>
-            </div>
+        <div id="Mugwortsteamed" class="menu-section">
+            <label
+                style="color: red; font-weight: bold; background-color: #f0f0f0; width: 100%; display: block; padding: 40px; padding-left: 5px; box-sizing: border-box; margin-bottom: 20px;">◆よもぎ蒸し・オイルリンパ◆<br>コースをお選びください</label>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment24')" data-price="15000">【期間限定モニター募集】まつ毛パーマ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment25')" data-price="15000">【期間限定モニター募集】オイルリンパマッサージ</button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)" data-price="15000">とりあえず予約<br>よもぎ蒸し・オイルリンパ</button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)" data-price="15000">発汗 ダイエット
+                    むくみ改善</button>
+                <button type="button" id="repeatirradiations" onclick="selectBodyMenu(this)" data-price="15000">美肌効果
+                    エイジング 肌トラブル改善</button></button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)" data-price="15000">不眠 鬱
+                    ストレス改善</button>
+                <button type="button" id="repeatirradiations" onclick="selectBodyMenu(this)" data-price="15000">妊活
+                    フェムケア女性特有のお悩み改善</button></button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)" data-price="15000">温活 腸活
+                    腸内環境の整え 便秘改善</button>
+                <button type="button" id="repeatirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">骨格美人矯正×全身よもぎ蒸し</button></button>
+                <button type="button" id="firstirradiations" onclick="selectBodyMenu(this)"
+                    data-price="15000">よもぎ蒸し×全身オイルリンパ</button>
             </div>
         </div>
 
@@ -401,7 +802,7 @@
             </div>
         </div>
 
-        <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
+        <div class="label">メッセージ<br>（複数メニューをご希望の方は<br>こちらにお書きください。）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="label">ご予約内容</div>
@@ -421,6 +822,7 @@
         let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
+        let manorwomanCount = '';
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
@@ -436,7 +838,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '1回目': 20,
+            '1回目': 60,
             '2回目以降': 0
         };
 
@@ -444,91 +846,415 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '1回照射': 0,
-            '2回照射': 20
+    'ベーシックコース〈30分〉': 30,
+    'スピードコース〈90分〉': 90,
+    '小顔矯正リフトアップコース': 30,
+    '小顔矯正エラ張りコース': 30,
+    '小顔矯正脂肪分解ECSコース': 60,
+    '小顔矯正肩こりスッキリコース': 40,
+    '小顔矯正顔筋リフトアップコース': 50,
+    '強炭酸・ガリレオピーリング': 40,
+    '毛穴ケアつるんと美肌コース': 60,
+    '究極の美白コース': 60,
+    'ニキビ・ニキビ跡ケアコース': 60,
+    'しみ・くすみ・たるみ・毛穴ケアコース': 60,
+    'アンチエイジング 幹細胞培養液導入コース': 60,
+    '敏感肌・赤みピーリング (クリスティーナUNSTRESS)': 60,
+    '美白・透明感ピーリング (クリスティーナILLUSTRIOUS)': 60,
+    '皮脂抑制・毛穴デトックスピーリング (クリスティーナBIOPHYTO)': 60,
+    '女優肌シルク肌ピーリング (クリスティーナSILK)': 60,
+    '本格的肌再生ピーリング (剥離あり・クリスティーナROSEDEMER)': 40,
+    '本格的肌再生ピーリング (剥離少し・ハーブリプロ)': 60,
+    'エクソソーム72時間肌再生ピーリング (剥離なし・エピダーマルスキン)': 40,
+    '毛穴洗浄コース': 40,
+    '毛穴黒ずみピーリングコース': 40,
+    '毛穴引き締め美容液導入コース': 60,
+    'シミ部分コース': 30,
+    'シミ全体コース': 40,
+    'シミW打ちコース': 40,
+    'ニキビ部分コース': 30,
+    'ニキビ全体コース': 40,
+    'ニキビW打ちコース': 40,
+    '赤ら顔部分コース': 30,
+    '赤ら顔全体コース': 40,
+    '赤ら顔W打ちコース': 40,
+    '若返り全体コース': 40,
+    'Y字・円盤ブロープ×ハンドECS': 60,
+    'Y字ブロープ×ハンドECS': 40,
+    '円盤ブロープ×ハンドECS': 40,
+    'Y字ブロープ': 40,
+    '円盤ブロープ': 40,
+    'Y字・円盤ブロープ': 50,
+    'ハンドECS': 40,
+    '美脚痩身 下半身コース': 60,
+    '二の腕・背中・脇集中コース': 60,
+    '下腹ポッコリ・お腹くびれコース': 60,
+    'ポッコリお腹メソッド骨格矯正コース': 40,
+    '本気の全身スリムコース': 120,
+    '美尻エステコース': 60,
+    '打たない肩ボトックス': 50,
+    '猫背矯正・肩張り歪み改善コース': 40,
+    '肩こり腰痛改善コース': 40,
+    '自律神経改善コース': 40,
+    '骨盤矯正コース': 30,
+    '全身美矯正コース': 60,
+    '育乳痩せ型コース': 40,
+    '育乳理想のバストアップコース': 40,
+    '上半身スッキリバストアップコース': 60,
+    '髭脱毛一式': 30,
+    '髭・脇・腕セット脱毛': 40,
+    'VIO脱毛': 30,
+    '全身脱毛(顔・VIOなし)SHR': 90,
+    '全身脱毛(顔・VIOなし)SHR.IPL': 100,
+    '全身脱毛(顔・VIOあり)SHR': 110,
+    '全身脱毛(顔・VIOあり)SHR.IPL': 120,
+    'Sパーツ脱毛': 20,
+    'Mパーツ脱毛': 30,
+    'Lパーツ脱毛': 30,
+    'VIOコース': 30,
+    '顔脱毛コース': 30,
+    '選べるパーツ3か所脱毛': 50,
+    '選べるパーツ5か所脱毛': 60,
+    '全身脱毛(顔・VIOなし)': 60,
+    '全身脱毛(顔のみ含む)': 70,
+    '全身脱毛(顔無し・VIO有)': 90,
+    '全身脱毛(顔・VIO有)': 100,
+    'おでこ': 15,
+    '眉・眉周り': 15,
+    '鼻(小鼻)': 15,
+    '鼻下': 15,
+    '口まわり': 15,
+    'あご・あご下': 15,
+    'ほほ': 15,
+    'もみあげ(フェイスライン)': 15,
+    'うなじ': 15,
+    'ワキ': 15,
+    '両腕(ALL)': 60,
+    '両肘下': 40,
+    '背中': 60,
+    '背中(上部)': 40,
+    'おしり': 40,
+    '両足(ALL)': 90,
+    '両膝下': 60,
+    'フェイシャルWAX': 60,
+    '鼻毛': 30,
+    'VIO': 60,
+    'IO': 40,
+    'VI': 40,
+    'V': 30,
+    'I': 30,
+    'O': 30,
+    'まずはお試しコース': 30,
+    '挙式直前1DAYコース': 120,
+    '二の腕ほっそり 1ヶ月スリム集中ケアコース': 90,
+    '二の腕ほっそり 3ヶ月スリム集中ケアコース': 90,
+    '眉毛スタイリング': 30,
+    '眉毛スタイリング×WAX': 60,
+    '照射15分×2回': 40,
+    '照射15分×3回': 60,
+    '発汗 ダイエット むくみ改善': 60,
+    '美肌効果 エイジング 肌トラブル改善': 60,
+    '不眠 鬱 ストレス改善': 60,
+    '妊活 フェムケア女性特有のお悩み改善': 60,
+    '温活 腸活 腸内環境の整え 便秘改善': 60,
+    '骨格美人矯正×全身よもぎ蒸し': 100,
+    'よもぎ蒸し×全身オイルリンパ': 90,
+    'とりあえず予約フェイシャルメニュー': 90,
+    'とりあえず予約ボディーメニュー': 90,
+    'とりあえず予約バストアップメニュー': 90,
+    'とりあえず予約男性光脱毛': 90,
+    'とりあえず予約女性光脱毛': 90,
+    'とりあえず予約WAX脱毛': 90,
+    'とりあえず予約眉毛メニュー': 60,
+    'とりあえず予約 よもぎ蒸し・オイルリンパ': 90
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '【脱毛】顔のみ': 30,
-            '【脱毛】髭のみ': 30,
-            '【脱毛】両腕or両足のみ': 60,
-            '【脱毛】両腕＋両足': 90,
-            '全身美肌脱毛': 90,
-            '脱毛+光フェイシャル': 120,
-            '腕・足・脇セット': 90,
-            '脇・VIOセット': 45,
-            'お好きなパーツ3セット': 90,
-            'Sパーツ': 30,
-            'Mパーツ': 60,
-            'Lパーツ': 60,
-            'Dパーツ': 30,
-            'ハリウッドブロウリフト': 90,
-            '眉毛スタイリング': 60,
-            'フェイスワックス': 60,
-            'HBL+フェイスワックス': 90,
-            'HBL+ヘットマッサージ': 90,
-            '眉毛スタイリング+フェイスワックス': 90,
-            'ハリウッドブロウリフト': 90,
-            '脇・VIOセット': 45,
-            'お好きなパーツ3セット': 90,
-            'Sパーツ': 30,
-            'Mパーツ': 60,
-            'Lパーツ': 60,
-            'ハリウッドブロウリフト': 90,
-            '脇・VIOセット': 45,
-            'お好きなパーツ3セット': 90,
-            'Sパーツ': 30,
-            'Mパーツ': 60,
-            'Lパーツ': 60,
-            'Dパーツ': 30,
-            '【期間限定モニター募集】まつ毛パーマ': 90,
-            '【期間限定モニター募集】オイルリンパマッサージ': 90
-        };
-
+    'ベーシックコース〈30分〉': 30,
+    'スピードコース〈90分〉': 90,
+    '小顔矯正リフトアップコース': 30,
+    '小顔矯正エラ張りコース': 30,
+    '小顔矯正脂肪分解ECSコース': 60,
+    '小顔矯正肩こりスッキリコース': 40,
+    '小顔矯正顔筋リフトアップコース': 50,
+    '強炭酸・ガリレオピーリング': 40,
+    '毛穴ケアつるんと美肌コース': 60,
+    '究極の美白コース': 60,
+    'ニキビ・ニキビ跡ケアコース': 60,
+    'しみ・くすみ・たるみ・毛穴ケアコース': 60,
+    'アンチエイジング 幹細胞培養液導入コース': 60,
+    '敏感肌・赤みピーリング (クリスティーナUNSTRESS)': 60,
+    '美白・透明感ピーリング (クリスティーナILLUSTRIOUS)': 60,
+    '皮脂抑制・毛穴デトックスピーリング (クリスティーナBIOPHYTO)': 60,
+    '女優肌シルク肌ピーリング (クリスティーナSILK)': 60,
+    '本格的肌再生ピーリング (剥離あり・クリスティーナROSEDEMER)': 40,
+    '本格的肌再生ピーリング (剥離少し・ハーブリプロ)': 60,
+    'エクソソーム72時間肌再生ピーリング (剥離なし・エピダーマルスキン)': 40,
+    '毛穴洗浄コース': 40,
+    '毛穴黒ずみピーリングコース': 40,
+    '毛穴引き締め美容液導入コース': 60,
+    'シミ部分コース': 30,
+    'シミ全体コース': 40,
+    'シミW打ちコース': 40,
+    'ニキビ部分コース': 30,
+    'ニキビ全体コース': 40,
+    'ニキビW打ちコース': 40,
+    '赤ら顔部分コース': 30,
+    '赤ら顔全体コース': 40,
+    '赤ら顔W打ちコース': 40,
+    '若返り全体コース': 40,
+    'Y字・円盤ブロープ×ハンドECS': 60,
+    'Y字ブロープ×ハンドECS': 40,
+    '円盤ブロープ×ハンドECS': 40,
+    'Y字ブロープ': 40,
+    '円盤ブロープ': 40,
+    'Y字・円盤ブロープ': 50,
+    'ハンドECS': 40,
+    '美脚痩身 下半身コース': 60,
+    '二の腕・背中・脇集中コース': 60,
+    '下腹ポッコリ・お腹くびれコース': 60,
+    'ポッコリお腹メソッド骨格矯正コース': 40,
+    '本気の全身スリムコース': 120,
+    '美尻エステコース': 60,
+    '打たない肩ボトックス': 50,
+    '猫背矯正・肩張り歪み改善コース': 40,
+    '肩こり腰痛改善コース': 40,
+    '自律神経改善コース': 40,
+    '骨盤矯正コース': 30,
+    '全身美矯正コース': 60,
+    '育乳痩せ型コース': 40,
+    '育乳理想のバストアップコース': 40,
+    '上半身スッキリバストアップコース': 60,
+    '髭脱毛一式': 30,
+    '髭・脇・腕セット脱毛': 40,
+    'VIO脱毛': 30,
+    '全身脱毛(顔・VIOなし)SHR': 90,
+    '全身脱毛(顔・VIOなし)SHR.IPL': 100,
+    '全身脱毛(顔・VIOあり)SHR': 110,
+    '全身脱毛(顔・VIOあり)SHR.IPL': 120,
+    'Sパーツ脱毛': 20,
+    'Mパーツ脱毛': 30,
+    'Lパーツ脱毛': 30,
+    'VIOコース': 30,
+    '顔脱毛コース': 30,
+    '選べるパーツ3か所脱毛': 50,
+    '選べるパーツ5か所脱毛': 60,
+    '全身脱毛(顔・VIOなし)': 60,
+    '全身脱毛(顔のみ含む)': 70,
+    '全身脱毛(顔無し・VIO有)': 90,
+    '全身脱毛(顔・VIO有)': 100,
+    'おでこ': 15,
+    '眉・眉周り': 15,
+    '鼻(小鼻)': 15,
+    '鼻下': 15,
+    '口まわり': 15,
+    'あご・あご下': 15,
+    'ほほ': 15,
+    'もみあげ(フェイスライン)': 15,
+    'うなじ': 15,
+    'ワキ': 15,
+    '両腕(ALL)': 60,
+    '両肘下': 40,
+    '背中': 60,
+    '背中(上部)': 40,
+    'おしり': 40,
+    '両足(ALL)': 90,
+    '両膝下': 60,
+    'フェイシャルWAX': 60,
+    '鼻毛': 30,
+    'VIO': 60,
+    'IO': 40,
+    'VI': 40,
+    'V': 30,
+    'I': 30,
+    'O': 30,
+    'まずはお試しコース': 30,
+    '挙式直前1DAYコース': 120,
+    '二の腕ほっそり 1ヶ月スリム集中ケアコース': 90,
+    '二の腕ほっそり 3ヶ月スリム集中ケアコース': 90,
+    '眉毛スタイリング': 30,
+    '眉毛スタイリング×WAX': 60,
+    '照射15分×2回': 40,
+    '照射15分×3回': 60,
+    '発汗 ダイエット むくみ改善': 60,
+    '美肌効果 エイジング 肌トラブル改善': 60,
+    '不眠 鬱 ストレス改善': 60,
+    '妊活 フェムケア女性特有のお悩み改善': 60,
+    '温活 腸活 腸内環境の整え 便秘改善': 60,
+    '骨格美人矯正×全身よもぎ蒸し': 100,
+    'よもぎ蒸し×全身オイルリンパ': 90,
+    'とりあえず予約フェイシャルメニュー': 90,
+    'とりあえず予約ボディーメニュー': 90,
+    'とりあえず予約バストアップメニュー': 90,
+    'とりあえず予約男性光脱毛': 90,
+    'とりあえず予約女性光脱毛': 90,
+    'とりあえず予約WAX脱毛': 90,
+    'とりあえず予約眉毛メニュー': 60,
+    'とりあえず予約 よもぎ蒸し・オイルリンパ': 90
+};
 
         let selectedMenuTime = 0;
+
+        let BodyMenuTimes = {
+    'ベーシックコース〈30分〉': 30,
+    'スピードコース〈90分〉': 90,
+    '小顔矯正リフトアップコース': 30,
+    '小顔矯正エラ張りコース': 30,
+    '小顔矯正脂肪分解ECSコース': 60,
+    '小顔矯正肩こりスッキリコース': 40,
+    '小顔矯正顔筋リフトアップコース': 50,
+    '強炭酸・ガリレオピーリング': 40,
+    '毛穴ケアつるんと美肌コース': 60,
+    '究極の美白コース': 60,
+    'ニキビ・ニキビ跡ケアコース': 60,
+    'しみ・くすみ・たるみ・毛穴ケアコース': 60,
+    'アンチエイジング 幹細胞培養液導入コース': 60,
+    '敏感肌・赤みピーリング (クリスティーナUNSTRESS)': 60,
+    '美白・透明感ピーリング (クリスティーナILLUSTRIOUS)': 60,
+    '皮脂抑制・毛穴デトックスピーリング (クリスティーナBIOPHYTO)': 60,
+    '女優肌シルク肌ピーリング (クリスティーナSILK)': 60,
+    '本格的肌再生ピーリング (剥離あり・クリスティーナROSEDEMER)': 40,
+    '本格的肌再生ピーリング (剥離少し・ハーブリプロ)': 60,
+    'エクソソーム72時間肌再生ピーリング (剥離なし・エピダーマルスキン)': 40,
+    '毛穴洗浄コース': 40,
+    '毛穴黒ずみピーリングコース': 40,
+    '毛穴引き締め美容液導入コース': 60,
+    'シミ部分コース': 30,
+    'シミ全体コース': 40,
+    'シミW打ちコース': 40,
+    'ニキビ部分コース': 30,
+    'ニキビ全体コース': 40,
+    'ニキビW打ちコース': 40,
+    '赤ら顔部分コース': 30,
+    '赤ら顔全体コース': 40,
+    '赤ら顔W打ちコース': 40,
+    '若返り全体コース': 40,
+    'Y字・円盤ブロープ×ハンドECS': 60,
+    'Y字ブロープ×ハンドECS': 40,
+    '円盤ブロープ×ハンドECS': 40,
+    'Y字ブロープ': 40,
+    '円盤ブロープ': 40,
+    'Y字・円盤ブロープ': 50,
+    'ハンドECS': 40,
+    '美脚痩身 下半身コース': 60,
+    '二の腕・背中・脇集中コース': 60,
+    '下腹ポッコリ・お腹くびれコース': 60,
+    'ポッコリお腹メソッド骨格矯正コース': 40,
+    '本気の全身スリムコース': 120,
+    '美尻エステコース': 60,
+    '打たない肩ボトックス': 50,
+    '猫背矯正・肩張り歪み改善コース': 40,
+    '肩こり腰痛改善コース': 40,
+    '自律神経改善コース': 40,
+    '骨盤矯正コース': 30,
+    '全身美矯正コース': 60,
+    '育乳痩せ型コース': 40,
+    '育乳理想のバストアップコース': 40,
+    '上半身スッキリバストアップコース': 60,
+    '髭脱毛一式': 30,
+    '髭・脇・腕セット脱毛': 40,
+    'VIO脱毛': 30,
+    '全身脱毛(顔・VIOなし)SHR': 90,
+    '全身脱毛(顔・VIOなし)SHR.IPL': 100,
+    '全身脱毛(顔・VIOあり)SHR': 110,
+    '全身脱毛(顔・VIOあり)SHR.IPL': 120,
+    'Sパーツ脱毛': 20,
+    'Mパーツ脱毛': 30,
+    'Lパーツ脱毛': 30,
+    'VIOコース': 30,
+    '顔脱毛コース': 30,
+    '選べるパーツ3か所脱毛': 50,
+    '選べるパーツ5か所脱毛': 60,
+    '全身脱毛(顔・VIOなし)': 60,
+    '全身脱毛(顔のみ含む)': 70,
+    '全身脱毛(顔無し・VIO有)': 90,
+    '全身脱毛(顔・VIO有)': 100,
+    'おでこ': 15,
+    '眉・眉周り': 15,
+    '鼻(小鼻)': 15,
+    '鼻下': 15,
+    '口まわり': 15,
+    'あご・あご下': 15,
+    'ほほ': 15,
+    'もみあげ(フェイスライン)': 15,
+    'うなじ': 15,
+    'ワキ': 15,
+    '両腕(ALL)': 60,
+    '両肘下': 40,
+    '背中': 60,
+    '背中(上部)': 40,
+    'おしり': 40,
+    '両足(ALL)': 90,
+    '両膝下': 60,
+    'フェイシャルWAX': 60,
+    '鼻毛': 30,
+    'VIO': 60,
+    'IO': 40,
+    'VI': 40,
+    'V': 30,
+    'I': 30,
+    'O': 30,
+    'まずはお試しコース': 30,
+    '挙式直前1DAYコース': 120,
+    '二の腕ほっそり 1ヶ月スリム集中ケアコース': 90,
+    '二の腕ほっそり 3ヶ月スリム集中ケアコース': 90,
+    '眉毛スタイリング': 30,
+    '眉毛スタイリング×WAX': 60,
+    '照射15分×2回': 40,
+    '照射15分×3回': 60,
+    '発汗 ダイエット むくみ改善': 60,
+    '美肌効果 エイジング 肌トラブル改善': 60,
+    '不眠 鬱 ストレス改善': 60,
+    '妊活 フェムケア女性特有のお悩み改善': 60,
+    '温活 腸活 腸内環境の整え 便秘改善': 60,
+    '骨格美人矯正×全身よもぎ蒸し': 100,
+    'よもぎ蒸し×全身オイルリンパ': 90,
+    'とりあえず予約フェイシャルメニュー': 90,
+    'とりあえず予約ボディーメニュー': 90,
+    'とりあえず予約バストアップメニュー': 90,
+    'とりあえず予約男性光脱毛': 90,
+    'とりあえず予約女性光脱毛': 90,
+    'とりあえず予約WAX脱毛': 90,
+    'とりあえず予約眉毛メニュー': 60,
+    'とりあえず予約 よもぎ蒸し・オイルリンパ': 90
+};
+
+        let selectBodyMenuTime = 0;
+
+        function scrollToElement(elementId) {
+            var targetElement = document.getElementById(elementId);
+            if (targetElement) {
+                // ターゲット要素までスクロールする
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center' // 画面の中央に持ってくる
+                });
+            }
+        }
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-
-            // メニューが選択されていたら、各メニューを改行して表示
-            const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>${selectedSymptom.join('<br>')}`
-                : '・メニューが未選択です';
-
-            // オプションが選択されていたら、各オプションを改行して表示
-            const irradiationsText = irradiationsCount
-                ? `<span style="color:red;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
-                : '・オプション無し';
+            const manorwomanText = manorwomanCount ? `・<span style="color:red;"><strong>ご性別</strong></span>：${manorwomanCount}` : '・ご性別が未選択です';
+            const irradiationsText = irradiationsCount ? `・<span style="color:red;"><strong>コース</strong></span>：${irradiationsCount}` : '・コースが未選択です';
+            const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です'; // 日付が未選択の場合のメッセージを追加
 
             // 所要時間を計算
-            let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
+            let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectBodyMenuTime + selectedVisitTime;
             let hours = Math.floor(totalMinutes / 60);
             let minutes = totalMinutes % 60;
-
-            // 所要時間の表示形式：○○時間○○分
-            let totalTimeText = `・<span style="color:red;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
-
-            // 合計金額の表示
-            const totalAmountText = `・<span style="color:red;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
-
-            // 希望日時が選択された場合の表示
-            const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
 
             // displayInfo要素に情報を表示
             document.getElementById('displayInfo').innerHTML = `
         <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
         <hr>
+        <p>${manorwomanText}</p>
+        <hr>
         <p>${visitCountText}</p>
         <hr>
-        <p>${selectedSymptomText}</p>
-        <hr>
         <p>${irradiationsText}</p>
-        <hr>
-        <p>${totalTimeText}</p>
         <hr>
         <p>${selectedDateText}</p>
         <hr>
@@ -540,13 +1266,15 @@
         document.querySelectorAll('.visit-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
+        document.querySelectorAll('.manorwoman-buttons button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
         document.querySelectorAll('.symptoms button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
         document.querySelectorAll('.irradiations button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
-
 
         // 日付セルのクリックイベントで希望日時を更新
         document.querySelectorAll('.calendar td').forEach(cell => {
@@ -556,141 +1284,101 @@
             });
         });
 
-        function selectSymptom(button, treatmentId) {
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+        function selectBodyMenu(button) {
+    // 親要素である .menu-section を取得
+    const menuSection = button.closest('.menu-section');
 
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+    // 同じセクション内の他のボタンの選択を解除する
+    const buttons = menuSection.querySelectorAll('.symptoms button');
+    buttons.forEach(btn => {
+        btn.style.backgroundColor = '';  // ボタンの背景色をリセット
+        btn.style.color = '';  // テキストの色をリセット
+    });
 
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
-            } else {
-                // 1つだけ選択状態にする
-                if (updatedSelectedButtons.length > 1) {
-                    updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active'); // クリックしたボタンだけを選択
-                }
+    // クリックされたボタンを選択状態にする
+    button.style.backgroundColor = '#444';  // 選択時の色
+    button.style.color = 'white';  // テキストを白に変更
 
-                // 選択されたメニューの時間を取得して保存
-                const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
-            }
+    // 選択されたメニューの名前と価格を取得し、<br>をスペースに置換する
+    const symptomName = button.innerHTML.replace(/<br\s*\/?>/gi, ' ');  // <br>タグをスペースに変換
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
 
-            console.log('選択されたメニューの時間:', selectedMenuTime);
+    // 選択されたコースを更新
+    irradiationsCount = symptomName;
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
+    // 合計時間の設定
+    let totalirradiationsTime = 0;  // 合計時間をリセット
+    const irradiationTime = irradiationsTimes[symptomName] || 0; // 各オプションの時間を取得
+    totalirradiationsTime += irradiationTime;
 
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
-
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>【脱毛】顔のみ</strong><br></div><div style="text-align: right;"><strong>料金：5500円</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>【脱毛】髭のみ</strong><br></div><div style="text-align: right;"><strong>料金：4500円</strong></div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>【脱毛】両腕or両足のみ</strong><br></div><div style="text-align: right;"><strong>料金：5500円</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>【脱毛】両腕＋両足</strong><br>セット脱毛になります♪</div><div style="text-align: right;"><strong>料金：8000円</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>全身美肌脱毛</strong><br>【顔＋VIO込み】</div><div style="text-align: right;"><strong>初回限定：￥5500<br>通常価格：￥8800</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>脱毛＋光フェイシャル</strong><br>【全身脱毛＋小顔効果】</div><div style="text-align: right;"><strong>料金：12000円</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>腕・足・脇セット</strong><br></div><div style="text-align: right;"><strong>料金：6000円</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>脇・VIOセット</strong><br></div><div style="text-align: right;"><strong>料金：3500円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>お好きなパーツ3セット</strong><br></div><div style="text-align: right;"><strong>料金：6500円</strong></div>`;
-            } else if (treatmentId === 'treatment10') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>Sパーツ</strong><br>両脇・乳輪周り・うなじ・おへそ周り・手の指・手の甲・足の指・足の甲の中からお選びいただけます♪</div><div style="text-align: right;"><strong>料金：1500円</strong></div>`;
-            } else if (treatmentId === 'treatment11') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>Mパーツ</strong><br>両ひじ上・両ひじ下・腰・両ひざ・ヒップからお選びいただけます♪</div><div style="text-align: right;"><strong>料金：2000円</strong></div>`;
-            } else if (treatmentId === 'treatment12') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>Lパーツ</strong><br>両ひざ上・両ひざ下・背中上・背中下・お腹全体・バスト周り・顔全体からお選びいただけます。</div><div style="text-align: right;"><strong>料金：2500円</strong></div>`;
-            } else if (treatmentId === 'treatment13') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>Dパーツ</strong><br>Vライン・Vライン横・Iライン・Oラインからお選びいただけます♪<br></div><div style="text-align: right;"><strong>料金：1000円</strong></div>`;
-            } else if (treatmentId === 'treatment14') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>ハリウッドブロウリフト</strong><br>【眉毛パーマ＋ワックス脱毛】</div><div style="text-align: right;"><strong>初回限定：￥5500<br>通常価格：￥6980</strong></div>`;
-            } else if (treatmentId === 'treatment15') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>眉毛スタイリング</strong><br>【眉毛パーマorワックス脱毛】</div><div style="text-align: right;"><strong>初回限定：￥3500<br>通常価格：￥4000</strong></div>`;
-            } else if (treatmentId === 'treatment16') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>フェイスワックス</strong><br>【美肌パック付き】</div><div style="text-align: right;"><strong>初回限定：￥3500<br>通常価格：￥4000</strong></div>`;
-            } else if (treatmentId === 'treatment17') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>HBL＋フェイスワックス</strong><br></div><div style="text-align: right;"><strong>料金：8000円</strong></div>`;
-            } else if (treatmentId === 'treatment18') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>HBL＋へットマッサージ</strong><br></div><div style="text-align: right;"><strong>初回限定：￥6000<br>通常価格：￥7480</strong></div>`;
-            } else if (treatmentId === 'treatment19') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>眉毛スタイリング＋フェイスワックス</strong><br></div><div style="text-align: right;"><strong>初回限定：￥6000<br>通常価格：￥7000</strong></div>`;
-            } else if (treatmentId === 'treatment20') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>ホワイトニング</strong><br></div><div style="text-align: right;"><strong>1回照射：￥2800　　　15分<br>2回照射：￥4000　15分×2回</strong></div>`;
-            } else if (treatmentId === 'treatment21') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>ホワイトニング回数券：５回</strong><br>※回数券お持ちの方もこちらからご予約ください。</div><div style="text-align: right;"><strong>1回照射：￥13000　　　15分<br>2回照射：￥18000　15分×2回</strong></div>`;
-            } else if (treatmentId === 'treatment22') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>ホワイトニング回数券：１０回</strong><br>※回数券お持ちの方もこちらからご予約ください。</div><div style="text-align: right;"><strong>1回照射：￥25000　　　15分<br>2回照射：￥35000　15分×2回</strong></div>`;
-            } else if (treatmentId === 'treatment23') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>ホワイトニング1ヶ月通い放題</strong><br>1ヶ月通い放題のお得なプラン♪<br>《来店時に1回500円》<br>※すでに加入されてる方もこちらからご予約ください</div><div style="text-align: right;"><strong>月額4000円</strong></div>`;
-            } else if (treatmentId === 'treatment24') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>まつ毛パーマ</strong><br>≪モニター条件≫<br>・目の周りのトラブルがない人<br>・マツエクがついていない<br>・まつ毛パーマ・マツエクをしたことがある人</div><div style="text-align: right;"><strong>料金：1500円</strong></div>`;
-            } else if (treatmentId === 'treatment25') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>オイルリンパマッサージ</strong><br>≪モニター条件≫<br>妊娠中・授乳中・生理中ではない方</div><div style="text-align: right;"><strong>料金：2000円</strong></div>`;
-            } else {
-                treatmentText.innerHTML = '';
-            }
-
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
-        function selectirradiations(button) {
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
-
-            // 選択されたオプションを取得
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiations.join(', ');
-
-            // すべてのオプションの価格を再計算
-            optionsPrice = 0; // 全体をリセットして再計算
-            let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
-            selectedButtons.forEach(btn => {
-                const price = parseInt(btn.getAttribute('data-price'), 10);
-                optionsPrice += price;
-
-                // 各オプションの時間を加算
-                const irradiationName = btn.innerText;
-                const irradiationTime = irradiationsTimes[irradiationName] || 0;
-                totalirradiationsTime += irradiationTime;
-            });
-
-            // selectedirradiationsTimeに合計時間を設定
-            selectedirradiationsTime = totalirradiationsTime;
-
-            console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
+    // selectedirradiationsTimeに合計時間を設定
+    selectedirradiationsTime = totalirradiationsTime;
+    console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
 
+    updateDisplayInfo();
+}
+
+function selectSymptom(button) {
+    // 全ボタンの選択をリセット
+    const buttons = document.querySelectorAll('.symptoms button');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // クリックされたボタンを選択状態に
+    button.classList.add('active');
+
+                // 選択されたオプションを取得
+                const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+
+    // 選択されたメニューの名前と価格を取得
+    const symptomName = button.textContent;  // ボタンのテキストを取得
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
+
+    // 選択されたメニューの時間を取得して保存
+    selectedMenuTime = menuTimes[symptomName] || 0;  // メニュー時間を取得して保存
+    console.log('選択されたメニューの時間:', selectedMenuTime);
+
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+
+    // 全てのirradiationsを非表示にする
+    document.querySelectorAll('.irradiations').forEach(section => {
+        section.style.display = 'none';
+    });
+
+            // 選択された症状に応じたirradiationsを表示し、スクロール先を設定
+            if (symptomName === "小顔輪郭矯正") {
+                document.getElementById('irradiations1').style.display = 'flex';
+                scrollToElement('irradiations22');  // 小顔輪郭矯正のスクロール先
+            } else if (symptomName === "ピーリングメニュー") {
+                document.getElementById('irradiations2').style.display = 'flex';
+                scrollToElement('irradiations33');  // ピーリングメニューのスクロール先
+            } else if (symptomName === "毛穴ハイドラメニュー") {
+                document.getElementById('irradiations3').style.display = 'flex';
+                scrollToElement('irradiations44');  // ピーリングメニューのスクロール先
+            } else if (symptomName === "肌質改善光フォトメニュー") {
+                document.getElementById('irradiations4').style.display = 'flex';
+                scrollToElement('irradiations55');  // ピーリングメニューのスクロール先
+            } else if (symptomName === "脂肪分解・細胞リフトアップメニュー") {
+                document.getElementById('irradiations5').style.display = 'flex';
+                scrollToElement('irradiations66');  // ピーリングメニューのスクロール先
+            } else if (symptomName === "男性：光脱毛") {
+                document.getElementById('irradiations6').style.display = 'flex';
+                scrollToElement('irradiations77');  // ピーリングメニューのスクロール先
+            } else if (symptomName === "女性：光脱毛") {
+                document.getElementById('irradiations7').style.display = 'flex';
+                scrollToElement('irradiations88');  // ピーリングメニューのスクロール先
+            } else if (symptomName === "WAX脱毛") {
+                document.getElementById('irradiations8').style.display = 'flex';
+                scrollToElement('irradiations99');  // ピーリングメニューのスクロール先
+            }
+
             // 表示を更新
             updateDisplayInfo();
-        }
-
-
-        function updateTotalAmount() {
-            totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
-            updateDisplayInfo(); // 表示を更新
         }
 
         function selectVisit(element) {
@@ -706,6 +1394,112 @@
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
+
+            // メニューにスクロール
+            scrollToElement('menuSections');
+        }
+
+        function selectirradiations(element) {
+    // 今クリックされたボタンのグループの中にある全ボタンをゲットするよ✨
+    const irradiationsButtons = element.parentNode.querySelectorAll('button');
+
+    // 選択されたオプションを取得
+    const selectedButtons = document.querySelectorAll('.irradiations button.active');
+    const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
+    irradiationsCount = selectedIrradiations.join(', ');
+
+    // 全部のボタンから 'active' っていうクラス（選ばれてるよ～ってやつ）を消しちゃうね💅
+    irradiationsButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // クリックされたボタンを選択状態にして 'active' を追加するよ💖
+    element.classList.add('active');
+
+    // ボタンのテキスト（コース名）を取得して変数に保存するの📋
+    const selectedCourse = element.textContent;  // 選ばれたコース名をゲット
+    irradiationsCount = selectedCourse;  // コース名を `irradiationsCount` に保存
+
+    // ボタンに隠されてるデータ属性 `data-price` から価格を取得するよ💸
+    const selectedPrice = parseInt(element.getAttribute('data-price'), 10);  // 値段は数値に変換して保存
+    menuPrice = selectedPrice;  // 価格を `menuPrice` に保存しておくの
+
+    // デバッグ用にコンソールにコース名と価格を表示して確認しとくわよ～💅
+    console.log("選ばれたコースは: ", selectedCourse);
+    console.log("選ばれたコースの値段は: ", selectedPrice);
+
+    // 選ばれたメニューの名前を配列に入れておくよ✨（今は一つだけど、将来的に複数選べるかも⁉）
+    irradiationsCount = [selectedCourse];  // 配列にしとくことで、あとで他のデータも簡単に追加できるよね💖
+
+    // 合計時間の計算
+    let totalirradiationsTime = 0;  // 全オプションの合計時間をリセット
+    selectedButtons.forEach(btn => {
+        const irradiationName = btn.innerText;
+        const irradiationTime = irradiationsTimes[irradiationName] || 0;
+        totalirradiationsTime += irradiationTime;
+    });
+
+    // 合計時間を selectedirradiationsTime に設定
+    selectedirradiationsTime = totalirradiationsTime;
+    console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
+
+    // カレンダーを更新するために、取得した日付を渡す
+    fetchAvailability(currentDate);
+
+    // UIとか合計金額を更新するために、`updateDisplayInfo()`を呼び出して表示もちゃんと整えるよ📱
+    updateDisplayInfo();
+}
+
+
+        function updateTotalAmount() {
+            totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
+            updateDisplayInfo(); // 表示を更新
+        }
+
+        // 初期状態でメニューセクションを非表示にする
+        document.getElementById('menuLabel').style.display = 'none';
+        document.getElementById('menuSections').style.display = 'none';
+
+        function selectmanorwoman(element) {
+            // 訪問回数ボタンの選択状態をリセット
+            document.getElementById('firstmanorwoman').classList.remove('active');
+            document.getElementById('repeatmanorwoman').classList.remove('active');
+
+            // クリックされたボタンを選択状態にする
+            element.classList.add('active');
+
+            // 選択された訪問回数を変数に格納
+            manorwomanCount = element.innerText;
+
+            // 性別が選択されたらメニューセクションを表示する
+            document.getElementById('menuLabel').style.display = 'block';
+            document.getElementById('menuSections').style.display = 'block';
+
+            // メニューの表示をリセット
+            document.querySelectorAll('.menu-sections button').forEach(button => {
+                button.style.display = 'none';
+            });
+
+            if (manorwomanCount === '男性') {
+                document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'hairremovalman\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
+            } else if (manorwomanCount === '女性') {
+                document.querySelector('button[onclick="showMenu(\'facial\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'body\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'hairremovalladies\')"]').style.display = 'inline-block'
+                document.querySelector('button[onclick="showMenu(\'bustup\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'bridal\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'eyebrows\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'selfwhitening\')"]').style.display = 'inline-block';
+                document.querySelector('button[onclick="showMenu(\'Mugwortsteamed\')"]').style.display = 'inline-block';
+            }
+
+            // 次のステップにスクロール
+            scrollToElement('visitSections');
         }
 
         function showMenu(menu) {
@@ -727,19 +1521,47 @@
                 }
             });
 
+            // irradiationsもリセット
+            const irradiationsSections = document.querySelectorAll('.irradiations');
+            irradiationsSections.forEach(section => {
+                section.style.display = 'none';
+            });
+
             // 選択されたメニューセクションを表示
             document.getElementById(menu).classList.add('active');
 
             // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
+            selectedSymptom = '2006377601-BWadbvyJ';
+            irradiationsCount = '';
+            menuPrice = 0;
+            optionsPrice = 0;
+            totalAmount = 0;
+
+            // フェイシャルメニューの場合、選択項目2にスクロール
+            if (menu === 'facial') {
+                scrollToElement('facial');  // 'facial'の要素までスクロール
+            } else if (menu === 'body') {
+                scrollToElement('body');  // 'body'の要素までスクロール
+            } else if (menu === 'bustup') {
+                scrollToElement('bustup');  // 'body'の要素までスクロール
+            } else if (menu === 'hairremovalman') {
+                scrollToElement('hairremovalman');  // 'body'の要素までスクロール
+            } else if (menu === 'hairremovalladies') {
+                scrollToElement('hairremovalladies');  // 'body'の要素までスクロール
+            } else if (menu === 'bridal') {
+                scrollToElement('bridal');  // 'body'の要素までスクロール
+            } else if (menu === 'eyebrows') {
+                scrollToElement('eyebrows');  // 'body'の要素までスクロール
+            } else if (menu === 'selfwhitening') {
+                scrollToElement('selfwhitening');  // 'body'の要素までスクロール
+            } else if (menu === 'Mugwortsteamed') {
+                scrollToElement('Mugwortsteamed');  // 'body'の要素までスクロール
+            }
 
             // 表示を更新
             updateDisplayInfo();
         }
+
 
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
@@ -771,6 +1593,7 @@
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 visitCount: visitCount,
+                manorwomanCount: manorwomanCount,
                 selectedSymptom: selectedSymptom,
                 irradiationsCount: irradiationsCount,
                 dates: [selectedFullDate],
@@ -778,7 +1601,7 @@
             };
 
             // フォームデータのチェック
-            if (!formData.name || !formData.phone || !formData.selectedSymptom) {
+            if (!formData.name || !formData.phone || !formData.irradiationsCount) {
                 alert('お名前・電話番号・メニューすべてご記入ください。');
                 return;
             }
@@ -786,7 +1609,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}${formData.visitCount}${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご性別：${formData.manorwomanCount}\nご来店回数：${formData.visitCount}\nメニュー：${formData.irradiationsCount},${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -855,7 +1678,7 @@
                 '12:00', '12:30', '13:00', '13:30',
                 '14:00', '14:30', '15:00', '15:30',
                 '16:00', '16:30', '17:00', '17:30',
-                '18:00', '18:30'
+                '18:00', '18:30', '19:00'
             ];
 
             if (table.rows.length === 0) {
@@ -886,7 +1709,6 @@
                     row.cells[i].classList.remove('available', 'unavailable', 'selected');
                 }
             }
-
 
             // 現在の日時を取得
             const now = new Date();
@@ -919,14 +1741,15 @@
 
                     const slotEnd = new Date(slotStart);
                     let menuDuration = selectedMenuTime || 30;
+                    let BodymenuDuration = selectBodyMenuTime || 30;
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
-                    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+                    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + BodymenuDuration + irradiationsDuration);
 
                     // 18時以降に終了する予約を不可にする (17:30は可)
-                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 30) {
+                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
@@ -964,8 +1787,25 @@
                         return acc;
                     }, 0);
 
+                    // リアルタイムで過ぎた時間のセルを×にする条件
+                    if (slotStart < now) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        cell.setAttribute('data-date', slotStart.toISOString());
+                        continue;
+                    }
+                    // 2つ以上のイベントがある場合
+                    if (count >= 2) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 1つのイベントがある場合
+                    else if (count === 1) {
+                        cell.textContent = '◯';
+                        cell.classList.add('available');
+                    }
                     // 営業日のイベント時間内に他のイベントがある場合
-                    if (isBusinessEventTime && count > 0) {
+                    else if (isBusinessEventTime && count > 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
@@ -976,11 +1816,6 @@
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 日曜日で、営業日ではない場合
-                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
@@ -999,24 +1834,6 @@
                     }
 
                     cell.setAttribute('data-date', slotStart.toISOString());
-                }
-
-                // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
-                for (let i = 0; i < 7; i++) {
-                    const twentyOClockRow = times.indexOf('17:30');
-                    const twentyOneOClockRow = times.indexOf('18:00');
-
-                    for (let j = twentyOClockRow; j < times.length; j++) {
-                        const cell = table.rows[j].cells[i + 1];
-                        const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
-
-                        // 20:00のセルに×がある場合、21:00のセルも×にする
-                        if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
-                            cell.textContent = '✕';
-                            cell.classList.remove('available');
-                            cell.classList.add('unavailable');
-                        }
-                    }
                 }
             }
 
