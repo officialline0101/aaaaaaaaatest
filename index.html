@@ -42,7 +42,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #005ea6;
+            background-color: #13ca5e;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -274,21 +274,25 @@
 
 <body>
     <div class="container">
-        <h1>南星運転代行<br>予約フォーム</h1>
+        <h1>調布ほとりの鍼灸整骨院<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
         <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">お迎え先(必須)<br>※駐車場が未定の場合は、未定とご入力下さい。</div>
-        <textarea id="message2" rows="4" placeholder="お迎え先の施設名や住所をご入力下さい。"></textarea>
+        <div class="label">ご来店回数※必須</div>
+        <div class="visit-buttons">
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
+        </div>
 
-        <div class="label">お帰り先(必須)<br>お帰りの先の施設名や住所をご入力下さい。<br>※場所の詳細がわからない場合は未定とご入力下さい。</div>
-        <textarea id="message3" rows="4" placeholder="お帰りの先の施設名や住所をご入力下さい。"></textarea>
-
-        <div class="label">その他ご質問、ご要望などございましたらご記入ください。</div>
-        <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
+        <div class="label">メニューをお選びください</div>
+        <div id="treatment-text" style="margin-bottom: 20px;"></div>
+        <div class="symptoms">
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">初めての方【酸素ドーム】</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">既存の方【酸素ドーム】</button>
+        </div>
 
         <div class="label">希望日時</div>
         <div class="calendar-container">
@@ -321,17 +325,26 @@
             </div>
         </div>
 
-        <div class="label">その他ご質問、ご要望などございましたらご記入ください。</div>
+        <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
+
+        <div class="label">ご予約内容</div>
+        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
 
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
+        let visitCount = '';
+        let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
+        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
+        let totalAmount = 0; // 合計金額を格納する変数
+        let menuPrice = 0; // メニューの価格
+        let optionsPrice = 0; // オプションの合計価格
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
@@ -347,6 +360,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
+            '1回目〈30分〉': 0,
             '2回目以降〈0分〉': 0
         };
 
@@ -354,13 +368,15 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '美白パック〈30分〉': 0
+            'リラックスマッサージの(パック付き)〈30分〉': 00,
+            '美白パック〈30分〉': 00
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'スピードコース〈90分〉': 0
+            '初めての方【酸素ドーム】': 75,
+            '既存の方【酸素ドーム】': 75
         };
 
 
@@ -402,13 +418,9 @@
         <hr>
         <p>${selectedSymptomText}</p>
         <hr>
-        <p>${irradiationsText}</p>
-        <hr>
         <p>${totalTimeText}</p>
         <hr>
         <p>${selectedDateText}</p>
-        <hr>
-        <p>${totalAmountText}</p>
         <hr>
     `;
         }
@@ -434,9 +446,130 @@
             });
         });
 
+        function selectSymptom(button, treatmentId) {
+            // ボタンの選択状態を切り替える
+            button.classList.toggle('active');
+
+            // 選択されたオプションを取得
+            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+
+            if (updatedSelectedButtons.length === 0) {
+                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
+                selectedMenuTime = 0;
+                selectedSymptom = null; // 選択されたメニューをリセット
+                menuPrice = 0; // メニュー価格をリセット
+            } else {
+                // 1つだけ選択状態にする
+                if (updatedSelectedButtons.length > 1) {
+                    updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active'); // クリックしたボタンだけを選択
+                }
+
+                // 選択されたメニューの時間を取得して保存
+                const selectedMenu = button.textContent;
+                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
+                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
+                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+            }
+
+            console.log('選択されたメニューの時間:', selectedMenuTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+
+            // トリートメントテキストを表示
+            const treatmentText = document.getElementById('treatment-text');
+
+            if (treatmentId === 'treatment1') {
+    treatmentText.innerHTML = `
+        <div style="text-align: center;">
+            <strong>【酸素ドーム】</strong>
+        </div>
+        <div style="text-align: left;">
+            ほとりの接骨院が初めての方<br>
+            ※症状によりお時間が前後する場合がございます
+        </div>
+        <div style="text-align: right;">
+            <strong>所要時間：75分</strong>
+        </div>`;
+} else if (treatmentId === 'treatment2') {
+    treatmentText.innerHTML = `
+            <div style="text-align: center;">
+            <strong>【酸素ドーム】</strong>
+        </div>
+        <div style="text-align: left;">
+            ほとりの接骨院が2回目以降の方
+            <br>※症状によりお時間が前後する場合がございます
+        </div>
+        <div style="text-align: right;">
+            <strong>所要時間：75分</strong>
+        </div>`;
+            } else {
+                treatmentText.innerHTML = '';
+            }
+
+            // 選択されたメニューの名前と価格を取得
+            const symptomName = button.textContent;  // ボタンのテキストを取得
+            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+
+            // 表示を更新
+            updateDisplayInfo();
+        }
+
+        function selectirradiations(button) {
+            // ボタンの選択状態を切り替える
+            button.classList.toggle('active');
+
+            // 選択されたオプションを取得
+            const selectedButtons = document.querySelectorAll('.irradiations button.active');
+            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
+            irradiationsCount = selectedIrradiations.join(', ');
+
+            // すべてのオプションの価格を再計算
+            optionsPrice = 0; // 全体をリセットして再計算
+            let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
+            selectedButtons.forEach(btn => {
+                const price = parseInt(btn.getAttribute('data-price'), 10);
+                optionsPrice += price;
+
+                // 各オプションの時間を加算
+                const irradiationName = btn.innerText;
+                const irradiationTime = irradiationsTimes[irradiationName] || 0;
+                totalirradiationsTime += irradiationTime;
+            });
+
+            // selectedirradiationsTimeに合計時間を設定
+            selectedirradiationsTime = totalirradiationsTime;
+
+            console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+
+            // 表示を更新
+            updateDisplayInfo();
+        }
+
+
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
             updateDisplayInfo(); // 表示を更新
+        }
+
+        function selectVisit(element) {
+            document.getElementById('firstVisit').classList.remove('active');
+            document.getElementById('repeatVisit').classList.remove('active');
+            element.classList.add('active');
+            visitCount = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedVisitTime = visitTimes[visitCount];
+
+            console.log('選択された訪問回数の時間:', selectedVisitTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
         }
 
         function selectDate(cell) {
@@ -468,25 +601,26 @@
             const formData = {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom,
+                irradiationsCount: irradiationsCount,
                 dates: [selectedFullDate],
-                message: document.getElementById('message').value,
-                message2: document.getElementById('message2').value,
-                message3: document.getElementById('message3').value
+                message: document.getElementById('message').value
             };
 
             // フォームデータのチェック
-            if (!formData.name || !formData.phone || !formData.message2 || !formData.message3) {
-                alert('お名前・電話番号・お迎え先・お帰り先すべてご記入ください。');
+            if (!formData.name || !formData.phone || !formData.selectedSymptom) {
+                alert('お名前・電話番号・メニューすべてご記入ください。');
                 return;
             }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nお迎え先：${formData.message2}\nお帰り先：${formData.message3}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
-                alert('担当より折返しの電話でご予約完了となりますので予めご了承下さい。');
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
                 /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
@@ -548,12 +682,17 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-                '12:00', '12:30', '13:00', '13:30',
-                '14:00', '14:30', '15:00', '15:30',
-                '16:00', '16:30', '17:00', '17:30',
-                '18:00'
-            ];
+    '08:45', '09:00', '09:15', '09:30', '09:45', 
+    '10:00', '10:15', '10:30', '10:45',
+    '11:00', '11:15', '11:30', '11:45',
+    '12:00', '12:15', '12:30', '12:45',
+    '13:00', '13:15', '13:30', '13:45',
+    '14:00', '14:15', '14:30', '14:45',
+    '15:00', '15:15', '15:30', '15:45',
+    '16:00', '16:15', '16:30', '16:45',
+    '17:00', '17:15', '17:30', '17:45',
+    '18:00', '18:15', '18:30'
+];
 
             if (table.rows.length === 0) {
                 for (const time of times) {
@@ -615,23 +754,41 @@
                     slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
                     const slotEnd = new Date(slotStart);
-                    let menuDuration = selectedMenuTime || 30;
+                    let menuDuration = selectedMenuTime || 15;
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-                    // 18時以降に終了する予約を不可にする (17:30は可)
-                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    } else if (slotEnd.getHours() > 18) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    }
+// 月曜日～金曜日12:31～14:59を営業時間外とする条件
+const isWeekday = slotStart.getDay() >= 1 && slotStart.getDay() <= 5;
+const middayStart = new Date(day);  // 新しいDateオブジェクトを使用
+middayStart.setHours(12, 31);
+const middayEnd = new Date(day);  // 新しいDateオブジェクトを使用
+middayEnd.setHours(14, 59);
+
+if (isWeekday && slotEnd >= middayStart && slotStart < middayEnd) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    
+    // クリックイベントを無効化して「✕」セルが動かないように固定
+    cell.onclick = null;  // 既存のクリックイベントを削除
+    continue;
+}
+
+// 平日19:00、土曜14:30以降を営業時間外とする条件
+const isSaturday = slotStart.getDay() === 6;
+const eveningLimitWeekday = new Date(day);  // 新しいDateオブジェクトを使用
+eveningLimitWeekday.setHours(19, 0);
+const eveningLimitSaturday = new Date(day);  // 新しいDateオブジェクトを使用
+eveningLimitSaturday.setHours(14, 30);
+
+if ((isSaturday && slotEnd > eveningLimitSaturday) || (!isSaturday && slotEnd > eveningLimitWeekday)) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+}
 
                     // ここで終了時間を使った条件処理を行う
                     // 例えば、リアルタイムで既に過ぎた時間帯は×にする
@@ -700,8 +857,8 @@
 
                 // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
                 for (let i = 0; i < 7; i++) {
-                    const twentyOClockRow = times.indexOf('17:30');
-                    const twentyOneOClockRow = times.indexOf('18:00');
+                    const twentyOClockRow = times.indexOf('18:15');
+                    const twentyOneOClockRow = times.indexOf('18:30');
 
                     for (let j = twentyOClockRow; j < times.length; j++) {
                         const cell = table.rows[j].cells[i + 1];
