@@ -274,7 +274,7 @@
 
 <body>
     <div class="container">
-        <h1>しんおおさか整骨院<br>予約フォーム</h1>
+        <h1>調布ほとりの鍼灸整骨院<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
@@ -283,21 +283,15 @@
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">初診</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
         <div class="label">メニューをお選びください</div>
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">目力チャージ4D</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">体幹軸リセット</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">吸引リフレッシュ</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">内臓チューニング</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">脳内クリーンアップ</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">EMS楽トレ</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">伝統鍼灸</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">美容鍼</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">初めての方【酸素ドーム】</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">既存の方【酸素ドーム】</button>
         </div>
 
         <div class="label">希望日時</div>
@@ -331,7 +325,7 @@
             </div>
         </div>
 
-        <div class="label">メッセージ<br>（身体のお悩みなどがあればご自由にご記載ください）</div>
+        <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="label">ご予約内容</div>
@@ -354,7 +348,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: '2006539363-qONAVVnV'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -366,7 +360,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '初診': 20,
+            '1回目': 0,
             '2回目以降': 0
         };
 
@@ -374,20 +368,15 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '美白パック〈30分〉': 0
+            'リラックスマッサージの(パック付き)〈30分〉': 00,
+            '美白パック〈30分〉': 00
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '目力チャージ4D': 15,
-            '体幹軸リセット': 20,
-            '吸引リフレッシュ': 20,
-            '内臓チューニング': 20,
-            '脳内クリーンアップ': 20,
-            'EMS楽トレ': 20,
-            '伝統鍼灸': 20,
-            '美容鍼': 20
+            '初めての方【酸素ドーム】': 75,
+            '既存の方【酸素ドーム】': 75
         };
 
 
@@ -428,6 +417,8 @@
         <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
+        <hr>
+        <p>${totalTimeText}</p>
         <hr>
         <p>${selectedDateText}</p>
         <hr>
@@ -490,21 +481,29 @@
             const treatmentText = document.getElementById('treatment-text');
 
             if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：10分</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong</div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>施術時間：15分</strong></div>`;
+    treatmentText.innerHTML = `
+        <div style="text-align: center;">
+            <strong>【酸素ドーム】</strong>
+        </div>
+        <div style="text-align: left;">
+            ほとりの接骨院が初めての方<br>
+            ※症状によりお時間が前後する場合がございます
+        </div>
+        <div style="text-align: right;">
+            <strong>所要時間：75分</strong>
+        </div>`;
+} else if (treatmentId === 'treatment2') {
+    treatmentText.innerHTML = `
+            <div style="text-align: center;">
+            <strong>【酸素ドーム】</strong>
+        </div>
+        <div style="text-align: left;">
+            ほとりの接骨院が2回目以降の方
+            <br>※症状によりお時間が前後する場合がございます
+        </div>
+        <div style="text-align: right;">
+            <strong>所要時間：75分</strong>
+        </div>`;
             } else {
                 treatmentText.innerHTML = '';
             }
@@ -618,7 +617,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -650,7 +649,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbz34YZy5dhD2I_QK6Zw0REhgUXl7tP7mA6HTwawnVvj8Lm_2yufqtUyCpwW9IIRKQhyiw/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -683,7 +682,7 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-    '09:00', '09:15', '09:30', '09:45',
+    '08:45', '09:00', '09:15', '09:30', '09:45', 
     '10:00', '10:15', '10:30', '10:45',
     '11:00', '11:15', '11:30', '11:45',
     '12:00', '12:15', '12:30', '12:45',
@@ -692,9 +691,7 @@
     '15:00', '15:15', '15:30', '15:45',
     '16:00', '16:15', '16:30', '16:45',
     '17:00', '17:15', '17:30', '17:45',
-    '18:00', '18:15', '18:30', '18:45',
-    '19:00', '19:15', '19:30', '19:45',
-    '20:00'
+    '18:00', '18:15', '18:30'
 ];
 
             if (table.rows.length === 0) {
@@ -757,24 +754,37 @@
                     slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
                     const slotEnd = new Date(slotStart);
-                    let menuDuration = selectedMenuTime || 30;
+                    let menuDuration = selectedMenuTime || 15;
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-// 月・火・木・金は20:00以降、水・土は12:30以降を営業時間外とする条件
-const dayOfWeek = slotStart.getDay();
-const eveningLimitWeekdays = new Date(day);  // 新しいDateオブジェクトを使用
-eveningLimitWeekdays.setHours(20, 0); // 月・火・木・金の20:00
-const afternoonLimitWedSat = new Date(day);  // 新しいDateオブジェクトを使用
-afternoonLimitWedSat.setHours(12, 30); // 水・土の12:30
+// 月曜日～金曜日12:31～14:59を営業時間外とする条件
+const isWeekday = slotStart.getDay() >= 1 && slotStart.getDay() <= 5;
+const middayStart = new Date(day);  // 新しいDateオブジェクトを使用
+middayStart.setHours(12, 31);
+const middayEnd = new Date(day);  // 新しいDateオブジェクトを使用
+middayEnd.setHours(14, 59);
 
-if (
-    (dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5) && slotEnd > eveningLimitWeekdays ||  // 月・火・木・金
-    (dayOfWeek === 3 || dayOfWeek === 6) && slotEnd > afternoonLimitWedSat  // 水・土
-) {
+if (isWeekday && slotEnd >= middayStart && slotStart < middayEnd) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    
+    // クリックイベントを無効化して「✕」セルが動かないように固定
+    cell.onclick = null;  // 既存のクリックイベントを削除
+    continue;
+}
+
+// 平日19:00、土曜14:30以降を営業時間外とする条件
+const isSaturday = slotStart.getDay() === 6;
+const eveningLimitWeekday = new Date(day);  // 新しいDateオブジェクトを使用
+eveningLimitWeekday.setHours(19, 0);
+const eveningLimitSaturday = new Date(day);  // 新しいDateオブジェクトを使用
+eveningLimitSaturday.setHours(14, 30);
+
+if ((isSaturday && slotEnd > eveningLimitSaturday) || (!isSaturday && slotEnd > eveningLimitWeekday)) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
@@ -823,12 +833,6 @@ if (
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
-// 月・火・木・金の09:00~10:59は✕にする（優先的にチェック）
-if ((slotStart.getDay() === 1 || slotStart.getDay() === 2 || slotStart.getDay() === 4 || slotStart.getDay() === 5) &&
-    slotStart.getHours() >= 9 && slotStart.getHours() <= 10) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-}
                     // 日曜日で、営業日ではない場合
                     else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
@@ -853,8 +857,8 @@ if ((slotStart.getDay() === 1 || slotStart.getDay() === 2 || slotStart.getDay() 
 
                 // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
                 for (let i = 0; i < 7; i++) {
-                    const twentyOClockRow = times.indexOf('19:45');
-                    const twentyOneOClockRow = times.indexOf('20:00');
+                    const twentyOClockRow = times.indexOf('18:15');
+                    const twentyOneOClockRow = times.indexOf('18:30');
 
                     for (let j = twentyOClockRow; j < times.length; j++) {
                         const cell = table.rows[j].cells[i + 1];
