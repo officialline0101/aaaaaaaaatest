@@ -42,7 +42,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #158acf;
+            background-color: #13ca5e;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -106,7 +106,7 @@
             padding: 15px;
             border: none;
             border-radius: 4px;
-            background-color: #158acf;
+            background-color: #ff4c4c;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -274,17 +274,27 @@
 
 <body>
     <div class="container">
-        <h1>俺婚<br>≪ご新規様≫<br>予約フォーム</h1>
-        <div class="label">お客様名</div>
+        <h1>しんおおさか整骨院<br>予約フォーム</h1>
+        <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <div class="label">電話番号</div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください">
+        <div class="label">ご来店回数※必須</div>
+        <div class="visit-buttons">
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">初診</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
+        </div>
 
         <div class="label">メニューをお選びください</div>
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this)" data-price="15000">ご面談</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">目力チャージ4D</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">体幹軸リセット</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">吸引リフレッシュ</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">内臓チューニング</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">脳内クリーンアップ</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">EMS楽トレ</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">伝統鍼灸</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">美容鍼</button>
         </div>
 
         <div class="label">希望日時</div>
@@ -353,7 +363,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '初診': 0,
+            '初診': 20,
             '2回目以降': 0
         };
 
@@ -367,7 +377,14 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'ご面談': 0
+            '目力チャージ4D': 15,
+            '体幹軸リセット': 20,
+            '吸引リフレッシュ': 20,
+            '内臓チューニング': 20,
+            '脳内クリーンアップ': 20,
+            'EMS楽トレ': 20,
+            '伝統鍼灸': 20,
+            '美容鍼': 20
         };
 
 
@@ -404,6 +421,8 @@
             // displayInfo要素に情報を表示
             document.getElementById('displayInfo').innerHTML = `
         <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
+        <hr>
+        <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
         <hr>
@@ -579,7 +598,6 @@
         function submitForm() {
             const formData = {
                 name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
                 visitCount: visitCount,
                 selectedSymptom: selectedSymptom,
                 irradiationsCount: irradiationsCount,
@@ -587,10 +605,16 @@
                 message: document.getElementById('message').value
             };
 
+            // フォームデータのチェック
+            if (!formData.name ||!formData.selectedSymptom) {
+                alert('お名前・メニューすべてご記入ください。');
+                return;
+            }
+
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -622,7 +646,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbyJjFF16v_y5qndj5gJN5CXJO_hCRMxjfO7ykSsRoCu89VxkUz6a_yqM3ynLc1dT1jL/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -655,12 +679,19 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-    '10:00', '11:00', '12:00', '13:00', 
-    '14:00', '15:00', '16:00', '17:00', 
-    '18:00', '19:00', '20:00', '21:00', 
-    '22:00', '23:00'
+    '09:00', '09:15', '09:30', '09:45',
+    '10:00', '10:15', '10:30', '10:45',
+    '11:00', '11:15', '11:30', '11:45',
+    '12:00', '12:15', '12:30', '12:45',
+    '13:00', '13:15', '13:30', '13:45',
+    '14:00', '14:15', '14:30', '14:45',
+    '15:00', '15:15', '15:30', '15:45',
+    '16:00', '16:15', '16:30', '16:45',
+    '17:00', '17:15', '17:30', '17:45',
+    '18:00', '18:15', '18:30', '18:45',
+    '19:00', '19:15', '19:30', '19:45',
+    '20:00'
 ];
-
 
             if (table.rows.length === 0) {
                 for (const time of times) {
@@ -732,13 +763,13 @@
 // 月・火・木・金は20:00以降、水・土は12:30以降を営業時間外とする条件
 const dayOfWeek = slotStart.getDay();
 const eveningLimitWeekdays = new Date(day);  // 新しいDateオブジェクトを使用
-eveningLimitWeekdays.setHours(23, 50); // 月・火・木・金の20:00
+eveningLimitWeekdays.setHours(20, 0); // 月・火・木・金の20:00
 const afternoonLimitWedSat = new Date(day);  // 新しいDateオブジェクトを使用
-afternoonLimitWedSat.setHours(21, 00); // 水・土の12:30
+afternoonLimitWedSat.setHours(12, 30); // 水・土の12:30
 
 if (
-    (dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5 || dayOfWeek === 3) && slotEnd > eveningLimitWeekdays ||  // 月・火・木・金
-    (dayOfWeek === 0 || dayOfWeek === 6) && slotEnd > afternoonLimitWedSat  // 水・土
+    (dayOfWeek === 1 || dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 5) && slotEnd > eveningLimitWeekdays ||  // 月・火・木・金
+    (dayOfWeek === 3 || dayOfWeek === 6) && slotEnd > afternoonLimitWedSat  // 水・土
 ) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
@@ -789,11 +820,16 @@ if (
                         cell.classList.add('unavailable');
                     }
 // 月・火・木・金の09:00~10:59は✕にする（優先的にチェック）
-if ((slotStart.getDay() === 6 || slotStart.getDay() === 0) &&
-    slotStart.getHours() >= 22 && slotStart.getHours() <= 23) {
+if ((slotStart.getDay() === 1 || slotStart.getDay() === 2 || slotStart.getDay() === 4 || slotStart.getDay() === 5) &&
+    slotStart.getHours() >= 9 && slotStart.getHours() <= 10) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
 }
+                    // 日曜日で、営業日ではない場合
+                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
                     // 営業日でかつ他のイベントがない場合
                     else if (isBusinessDay && count === 0) {
                         cell.textContent = '◯';
@@ -809,6 +845,24 @@ if ((slotStart.getDay() === 6 || slotStart.getDay() === 0) &&
                     }
 
                     cell.setAttribute('data-date', slotStart.toISOString());
+                }
+
+                // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
+                for (let i = 0; i < 7; i++) {
+                    const twentyOClockRow = times.indexOf('19:45');
+                    const twentyOneOClockRow = times.indexOf('20:00');
+
+                    for (let j = twentyOClockRow; j < times.length; j++) {
+                        const cell = table.rows[j].cells[i + 1];
+                        const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
+
+                        // 20:00のセルに×がある場合、21:00のセルも×にする
+                        if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
+                            cell.textContent = '✕';
+                            cell.classList.remove('available');
+                            cell.classList.add('unavailable');
+                        }
+                    }
                 }
             }
 
