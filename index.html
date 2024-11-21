@@ -438,29 +438,38 @@
         }
 
         function selectDate(cell) {
-            // "unavailable" クラスが付いている場合はクリックを無効化
-            if (cell.classList.contains('unavailable')) {
-                return; // 何もせずに終了
-            }
+    // "unavailable" クラスが付いている場合はクリックを無効化
+    if (cell.classList.contains('unavailable')) {
+        return; // 何もせずに終了
+    }
 
-            // 既に選択されているセルの選択を解除
-            const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(td => td.classList.remove('selected'));
+    // 既に選択されているセルの選択を解除
+    const cells = document.querySelectorAll('.calendar td');
+    cells.forEach(td => td.classList.remove('selected'));
 
-            // 新しいセルを選択状態にする
-            cell.classList.add('selected');
+    // 新しいセルを選択状態にする
+    cell.classList.add('selected');
 
-            // 選択された日付と時間を取得
-            const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-            const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-            const date = new Date(selectedDay);
+    // 選択された日付と時間を取得
+    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+    const selectedTime = cell.parentElement.firstChild.textContent; // 時間
+    const date = new Date(selectedDay);
 
-            // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+    // 時間部分を調整 (0時～2時は25時形式に変更)
+    const timeParts = selectedTime.split(':');
+    let hour = parseInt(timeParts[0], 10);
+    const minute = timeParts[1];
 
-            // 希望日時を即座に更新
-            updateDisplayInfo();
-        }
+    if (hour >= 0 && hour <= 2) {
+        hour += 24; // 25時, 26時に変換
+    }
+
+    // 日付部分を「○○年○○月○○日 25:○○」形式に変換
+    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${hour}:${minute}`;
+
+    // 希望日時を即座に更新
+    updateDisplayInfo();
+}
 
         function submitForm() {
             const formData = {
