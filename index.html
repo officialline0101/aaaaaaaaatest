@@ -274,12 +274,18 @@
 
 <body>
     <div class="container">
-        <h1>俺婚<br>≪リピーター様≫<br>予約フォーム</h1>
+        <h1>俺婚<br>≪ご新規様≫<br>予約フォーム</h1>
         <div class="label">お客様名</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
         <div class="label">電話番号</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
+
+        <div class="label">初めてor会員</div>
+        <div class="visit-buttons">
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">会員</button>
+        </div>
 
         <div class="label">メニューをお選びください</div>
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
@@ -367,7 +373,7 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '美容鍼': 20
+            'ご面談': 0
         };
 
 
@@ -587,16 +593,10 @@
                 message: document.getElementById('message').value
             };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前');
-                return;
-            }
-
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n初めてor会員：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -628,7 +628,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbyJjFF16v_y5qndj5gJN5CXJO_hCRMxjfO7ykSsRoCu89VxkUz6a_yqM3ynLc1dT1jL/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
