@@ -274,85 +274,27 @@
 
 <body>
     <div class="container">
-        <h1>占屋伊千夜<br>予約フォーム</h1>
+        <h1>Life-Style リラクゼーション<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <div class="label">電話番号※必須</div>
+        <div class="label">電話番号※任意</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">ご来店回数※必須</div>
+        <div class="label">ご来店回数</div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
         <div class="label">メニューをお選びください</div>
-        <div class="menu-sections">
-            <button type="button" onclick="showMenu('male')">1名様</button>
-            <button type="button" onclick="showMenu('female')">2名様</button>
-            <button type="button" onclick="showMenu('whitening')">3名様から</button>
-        </div>
-
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
-
-        <div id="male" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆1名様◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">50分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">40分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">30分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">20分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">10分鑑定</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">追加、延長</button>
-            </div>
-        </div>
-
-        <div id="female" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆2名様◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">50分ずつ計100分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">40分ずつ計80分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">30分ずつ計60分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">20分ずつ計40分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="15000">10分ずつ計20分鑑定</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">追加、延長</button>
-            </div>
-        </div>
-        <div id="whitening" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆3名様から◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="15000">3名様から50分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="15000">3名様から40分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="15000">3名様から30分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="15000">3名様から20分鑑定</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="15000">3名様から10分鑑定</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">追加、延長、団体料金など</button>
-            </div>
+        <div class="symptoms">
+            <button type="button" onclick="selectSymptom(this)" data-price="15000">初回限定もみほぐし90分</button>
+            <button type="button" onclick="selectSymptom(this)" data-price="15000">もみほぐし60分</button>
+            <button type="button" onclick="selectSymptom(this)" data-price="15000">もみほぐし90分</button>
+            <button type="button" onclick="selectSymptom(this)" data-price="15000">ファーミング45分</button>
+            <button type="button" onclick="selectSymptom(this)" data-price="15000">ファーミング60分</button>
         </div>
 
         <div class="label">希望日時</div>
@@ -429,28 +371,17 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '追加、延長': 10,
-            '追加、延長、団体料金など': 10
+            '美白パック〈30分〉': 0
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '50分鑑定': 60,
-            '40分鑑定': 50,
-            '30分鑑定': 40,
-            '20分鑑定': 30,
-            '10分鑑定': 20,
-            '50分ずつ計100分鑑定': 110,
-            '40分ずつ計80分鑑定': 90,
-            '30分ずつ計60分鑑定': 70,
-            '20分ずつ計40分鑑定': 50,
-            '10分ずつ計20分鑑定': 30,
-            '3名様から50分鑑定': 60,
-            '3名様から40分鑑定': 50,
-            '3名様から30分鑑定': 40,
-            '3名様から20分鑑定': 30,
-            '3名様から10分鑑定': 20
+            '初回限定もみほぐし90分': 135,
+            'もみほぐし60分': 105,
+            'もみほぐし90分': 135,
+            'ファーミング45分': 90,
+            'ファーミング60分': 105
         };
 
 
@@ -491,8 +422,6 @@
         <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
-        <hr>
-        <p>${irradiationsText}</p>
         <hr>
         <p>${selectedDateText}</p>
         <hr>
@@ -555,35 +484,23 @@
             const treatmentText = document.getElementById('treatment-text');
 
             if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：50分鑑定</div><div style="text-align: right;"><strong>料金：5,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
             } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：40分鑑定</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
             } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：30分鑑定</div><div style="text-align: right;"><strong>料金：3,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
             } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：20分鑑定</div><div style="text-align: right;"><strong>料金：2,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
             } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;">1名様：10分鑑定</div><div style="text-align: right;"><strong>料金：1,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
             } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：50分ずつ計100分鑑定</div><div style="text-align: right;"><strong>料金：11,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
             } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：40分ずつ計80分鑑定</div><div style="text-align: right;"><strong>料金：9,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
             } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：30分ずつ計60分鑑定</div><div style="text-align: right;"><strong>料金：7,000円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
             } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：20分ずつ計40分鑑定</div><div style="text-align: right;"><strong>料金：5,000円</strong></div>`;
-            } else if (treatmentId === 'treatment10') {
-                treatmentText.innerHTML = `<div style="text-align: left;">2名様：10分ずつ計20分鑑定</div><div style="text-align: right;"><strong>料金：3,000円</strong></div>`;
-            } else if (treatmentId === 'treatment11') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様から：3名様から50分鑑定</div><div style="text-align: right;"><strong>料金：5,500円</strong></div>`;
-            } else if (treatmentId === 'treatment12') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様から：3名様から40分鑑定</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
-            } else if (treatmentId === 'treatment13') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様から：3名様から30分鑑定</div><div style="text-align: right;"><strong>料金：3,500円</strong></div>`;
-            } else if (treatmentId === 'treatment14') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様から：3名様から20分鑑定</div><div style="text-align: right;"><strong>料金：2,500円</strong></div>`;
-            } else if (treatmentId === 'treatment15') {
-                treatmentText.innerHTML = `<div style="text-align: left;">3名様から：3名様から10分鑑定</div><div style="text-align: right;"><strong>料金：1,500円</strong></div>`;
+                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
             } else {
                 treatmentText.innerHTML = '';
             }
@@ -652,39 +569,6 @@
             fetchAvailability(currentDate);
         }
 
-        function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // 選択されたメニューセクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
-
-            // 対応するメニューボタンを選択状態にする
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                    button.classList.add('active');
-                }
-            });
-
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
             if (cell.classList.contains('unavailable')) {
@@ -711,36 +595,26 @@
         }
 
         function submitForm() {
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-        irradiationsCount: irradiationsCount,
-        dates: [selectedFullDate],
-        message: document.getElementById('message').value.trim()
-    };
+            const formData = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom,
+                irradiationsCount: irradiationsCount,
+                dates: [selectedFullDate],
+                message: document.getElementById('message').value
+            };
 
-    // フォームデータのチェック
-    if (!formData.name) {
-        alert('お名前を入力してください。');
-        return;
-    }
-
-    if (!formData.phone) {
-        alert('電話番号を入力してください。');
-        return;
-    }
-
-    if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
-        return;
-    }
+            // フォームデータのチェック
+            if (!formData.name || formData.selectedSymptom.length === 0) {
+                alert('お名前・電話番号・メニューすべてご記入ください。');
+                return;
+            }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -772,7 +646,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbyCqdpGhyReTxqh2w6Aa-Hc7wPW-7rQpBOIJ9lAXIrkSP9V90BHLechbdotkWid/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -805,23 +679,12 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-    '10:00', '10:15', '10:30', '10:45',
-    '11:00', '11:15', '11:30', '11:45',
-    '12:00', '12:15', '12:30', '12:45',
-    '13:00', '13:15', '13:30', '13:45',
-    '14:00', '14:15', '14:30', '14:45',
-    '15:00', '15:15', '15:30', '15:45',
-    '16:00', '16:15', '16:30', '16:45',
-    '17:00', '17:15', '17:30', '17:45',
-    '18:00', '18:15', '18:30', '18:45',
-    '19:00', '19:15', '19:30', '19:45',
-    '20:00', '20:15', '20:30', '20:45',
-    '21:00', '21:15', '21:30', '21:45',
-    '22:00', '22:15', '22:30', '22:45',
-    '23:00', '23:15', '23:30', '23:45',
-    '00:00', '00:15', '00:30', '00:45',
-    '01:00'
-];
+                '10:00', '10:30', '11:00', '11:30',
+                '12:00', '12:30', '13:00', '13:30',
+                '14:00', '14:30', '15:00', '15:30',
+                '16:00', '16:30', '17:00', '17:30',
+                '18:00', '18:30'
+            ];
 
             if (table.rows.length === 0) {
                 for (const time of times) {
@@ -883,23 +746,31 @@
                     slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
                     const slotEnd = new Date(slotStart);
-                    let menuDuration = selectedMenuTime || 10;
+                    let menuDuration = selectedMenuTime || 30;
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-// 深夜3時から4時に終了する予約を不可にする
-if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 0) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-} else if (slotEnd.getHours() > 1 && slotEnd.getHours() < 8) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
+                    // 18時以降に終了する予約を不可にする (17:30は可)
+                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 30) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    } else if (slotEnd.getHours() > 18) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
+
+                    // ここで終了時間を使った条件処理を行う
+                    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
+                    if (slotStart < now) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
 
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);
@@ -960,8 +831,8 @@ if (slotEnd.getHours() === 1 && slotEnd.getMinutes() > 0) {
 
                 // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
                 for (let i = 0; i < 7; i++) {
-                    const twentyOClockRow = times.indexOf('17:30');
-                    const twentyOneOClockRow = times.indexOf('18:00');
+                    const twentyOClockRow = times.indexOf('18:00');
+                    const twentyOneOClockRow = times.indexOf('18:30');
 
                     for (let j = twentyOClockRow; j < times.length; j++) {
                         const cell = table.rows[j].cells[i + 1];
