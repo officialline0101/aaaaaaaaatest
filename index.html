@@ -42,7 +42,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #13ca5e;
+            background-color: #57453a;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -106,7 +106,7 @@
             padding: 15px;
             border: none;
             border-radius: 4px;
-            background-color: #ff4c4c;
+            background-color: #ca9660;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -269,32 +269,208 @@
             font-weight: bold;
             /* 太文字に設定 */
         }
+        .spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.treatment-container {
+        text-align: center;
+        padding: 10px;
+        background-color: #ffffff;
+        color: #333;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        max-width: 350px;
+        margin: auto;
+    }
+    .treatment-image {
+        text-align: center;
+        margin-top: 15px;
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+        height: 180px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #d4af37;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin: 15px auto;
+    }
+    .treatment-description {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #fafafa;
+        color: #555;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: left;
+        max-width: 350px;
+        margin: 15px auto;
+    }
+    .treatment-price {
+        margin-top: 15px;
+        padding: 10px;
+        background: #fff;
+        color: #333;
+        border-radius: 8px;
+        border: 1px solid #d4af37;
+        font-weight: bold;
+        font-size: 15px;
+        text-align: right;
+        max-width: 350px;
+        margin: 15px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+    }
+    .spinner-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+    .title {
+    font-size: 24px;
+    color: #4A4A4A;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Life-Style リラクゼーション<br>予約フォーム</h1>
+        <h1>グランディール<br>予約フォーム</h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
 
-        <div class="label">電話番号※任意</div>
+        <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">ご来店回数</div>
+        <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">初めて</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
         <div class="label">メニューをお選びください</div>
+        <div class="menu-sections">
+            <button type="button" onclick="showMenu('Laphos')">ラフォス&リンパ</button>
+            <button type="button" onclick="showMenu('allhands')">オールハンド</button>
+            <button type="button" onclick="showMenu('DryHeadSpa')">ドライヘッドスパ</button>
+            <button type="button" onclick="showMenu('custommade')">オーダーメイドプラン</button>
+        </div>
+
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
-        <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this)" data-price="15000">初回限定もみほぐし90分</button>
-            <button type="button" onclick="selectSymptom(this)" data-price="15000">もみほぐし60分</button>
-            <button type="button" onclick="selectSymptom(this)" data-price="15000">もみほぐし90分</button>
-            <button type="button" onclick="selectSymptom(this)" data-price="15000">ファーミング45分</button>
-            <button type="button" onclick="selectSymptom(this)" data-price="15000">ファーミング60分</button>
+
+        <div id="Laphos" class="menu-section">
+            <div class="highlight-background">
+                <span class="highlight-text">◆ラフォス&リンパ◆</span>
+            </div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">ラフォス&リンパ施術90分(所要時間:約150分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">ラフォス&リンパ施術120分(所要時間:約180分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">ラフォス&リンパ施術150分(所要時間:約210分)</button>
+            </div>
+            <div class="highlight-background">
+                <span class="highlight-text">ブライダルコース：オプション</span>
+            </div>
+            <div class="irradiations">
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ドライヘッドスパ施術75分</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">クイックドライヘッドスパ施術30分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">フェイシャル施術60分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋10分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋20分</button>
+            </div>
+        </div>
+
+        <div id="allhands" class="menu-section">
+            <div class="highlight-background">
+                <span class="highlight-text">◆オールハンド◆</span>
+            </div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">オールハンド施術60分(所要時間:約120分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">オールハンド施術90分(所要時間:約150分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">オールハンド施術120分(所要時間:約180分)</button>
+            </div>
+            <div class="highlight-background">
+                <span class="highlight-text">シェービングコース：オプション</span>
+            </div>
+            <div class="irradiations">
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ドライヘッドスパ施術75分</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">クイックドライヘッドスパ施術30分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">フェイシャル施術60分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋10分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋20分</button>
+            </div>
+        </div>
+
+        <div id="DryHeadSpa" class="menu-section">
+            <div class="highlight-background">
+                <span class="highlight-text">◆ドライヘッドスパ◆</span>
+            </div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">ドライヘッドスパ施術75分<br>(所要時間:約130分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">背中ラフォス&ドライヘッドスパ施術120分<br>(所要時間:約180分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ドライヘッドスパ&フェイシャル施術120分<br>(所要時間:180分)</button>
+            </div>
+            <div class="highlight-background">
+                <span class="highlight-text">マッサージコース：オプション</span>
+            </div>
+            <div class="irradiations">
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ドライヘッドスパ施術75分</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">クイックドライヘッドスパ施術30分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">フェイシャル施術60分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋10分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋20分</button>
+            </div>
+        </div>
+
+        <div id="custommade" class="menu-section">
+            <div class="highlight-background">
+                <span class="highlight-text">◆オーダーメイドプラン◆</span>
+            </div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="15000">オーダーメイド施術90分(所要時間:約150分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="15000">オーダーメイド施術120分(所要時間:約180分)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="15000">オーダーメイド施術150分(所要時間:210分)</button>
+            </div>
+            <div class="highlight-background">
+                <span class="highlight-text">ブライダルコース：オプション</span>
+            </div>
+            <div class="irradiations">
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">ドライヘッドスパ施術75分</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">クイックドライヘッドスパ施術30分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">フェイシャル施術60分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋10分</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">追加ラフォス＋20分</button>
+            </div>
         </div>
 
         <div class="label">希望日時</div>
@@ -363,7 +539,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '1回目': 0,
+            '初めて': 0,
             '2回目以降': 0
         };
 
@@ -371,19 +547,29 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '美白パック〈30分〉': 0
+            'ドライヘッドスパ施術75分': 75,
+            'クイックドライヘッドスパ施術30分': 30,
+            'フェイシャル施術60分': 60,
+            '追加ラフォス＋10分': 10,
+            '追加ラフォス＋20分': 20
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '初回限定もみほぐし90分': 135,
-            'もみほぐし60分': 105,
-            'もみほぐし90分': 135,
-            'ファーミング45分': 90,
-            'ファーミング60分': 105
+            'ラフォス&リンパ施術90分(所要時間:約150分)': 210,
+            'ラフォス&リンパ施術120分(所要時間:約180分)': 240,
+            'ラフォス&リンパ施術150分(所要時間:約210分)': 270,
+            'オールハンド施術60分(所要時間:約120分)': 180,
+            'オールハンド施術90分(所要時間:約150分)': 210,
+            'オールハンド施術120分(所要時間:約180分)': 240,
+            'ドライヘッドスパ施術75分(所要時間:約130分)': 190,
+            '背中ラフォス&ドライヘッドスパ施術120分(所要時間:約180分)': 240,
+            'ドライヘッドスパ&フェイシャル施術120分(所要時間:180分)': 240,
+            'オーダーメイド施術90分(所要時間:約150分)': 210,
+            'オーダーメイド施術120分(所要時間:約180分)': 240,
+            'オーダーメイド施術150分(所要時間:210分)': 270
         };
-
 
         let selectedMenuTime = 0;
 
@@ -422,6 +608,10 @@
         <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
+        <hr>
+        <p>${irradiationsText}</p>
+        <hr>
+        <p>${totalTimeText}</p>
         <hr>
         <p>${selectedDateText}</p>
         <hr>
@@ -483,24 +673,124 @@
             // トリートメントテキストを表示
             const treatmentText = document.getElementById('treatment-text');
 
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+            function createTreatmentContent(title, imageUrl, description, price, time) {
+    return `
+        <div class="treatment-container">
+            <div style="font-size: 18px; font-weight: bold;">${title}</div>
+        </div>
+
+        <div class="treatment-image">
+            <div class="spinner-overlay">
+                <div class="spinner"></div>
+            </div>
+            <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 100%; display: none;" 
+                 onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
+        </div>
+
+        <div class="treatment-description">${description}</div>
+
+        <div class="treatment-price">
+            <span>価格：</span><span>${price}</span><br>
+            <span>所要時間：</span><span>${time}</span>
+        </div>`;
+}
+
+if (treatmentId === 'treatment1') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ラフォス&リンパ施術90分<br>(所要時間:約150分)',
+        'https://www.dropbox.com/scl/fi/4t9gum1imxjphhxhtzou3/.png?rlkey=4vi8bzlhyo7o58o0rvkexy8i5&st=4rj3a2wm&raw=1',
+        '別途カウンセリング時間約30分。<br>ラジオ波でハンドで届かない深層まで温めほぐします',
+        '9,350円~',
+        '150分'
+    );
+} else if (treatmentId === 'treatment2') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ラフォス&リンパ施術120分<br>(所要時間:約180分)',
+        'https://www.dropbox.com/scl/fi/4t9gum1imxjphhxhtzou3/.png?rlkey=4vi8bzlhyo7o58o0rvkexy8i5&st=4rj3a2wm&raw=1',
+        '別途カウンセリング時間約30分。<br>ラジオ波でハンドで届かない深層まで温めほぐします',
+        '9,350円~',
+        '180分'
+    );
+} else if (treatmentId === 'treatment3') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ラフォス&リンパ施術150分<br>(所要時間:約210分)',
+        'https://www.dropbox.com/scl/fi/4t9gum1imxjphhxhtzou3/.png?rlkey=4vi8bzlhyo7o58o0rvkexy8i5&st=4rj3a2wm&raw=1',
+        '別途カウンセリング時間約30分。<br>ラジオ波でハンドで届かない深層まで温めほぐします',
+        '9,350円~',
+        '210分'
+    );
+} else if (treatmentId === 'treatment4') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'オールハンド60分<br>(所要時間:約120分)',
+        'https://www.dropbox.com/scl/fi/1njkdrqheuh8wisstun4p/.png?rlkey=epu0lxky9rcrsfqx3cweakdsc&st=89x6mqsu&raw=1',
+        '別途カウンセリング時間約30分。<br>足先からデコルテまで触れていきます。',
+        '6,000円~',
+        '120分'
+    );
+} else if (treatmentId === 'treatment5') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'オールハンド90分<br>(所要時間:約150分)',
+        'https://www.dropbox.com/scl/fi/1njkdrqheuh8wisstun4p/.png?rlkey=epu0lxky9rcrsfqx3cweakdsc&st=89x6mqsu&raw=1',
+        '別途カウンセリング時間約30分。<br>足先からデコルテまで触れていきます。',
+        '6,000円~',
+        '150分'
+    );
+} else if (treatmentId === 'treatment6') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'オールハンド120分<br>(所要時間:約180分)',
+        'https://www.dropbox.com/scl/fi/1njkdrqheuh8wisstun4p/.png?rlkey=epu0lxky9rcrsfqx3cweakdsc&st=89x6mqsu&raw=1',
+        '別途カウンセリング時間約30分。<br>足先からデコルテまで触れていきます。',
+        '6,000円~',
+        '180分'
+    );
+} else if (treatmentId === 'treatment7') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ドライヘッドスパ75分<br>(所要時間:約130分)',
+        'https://www.dropbox.com/scl/fi/mobieph7imx5zf62g1kjz/.png?rlkey=es3o3x6e1lh2lh4dp5i182pp5&st=nx6x5uhj&raw=1',
+        '心と身体の疲れを癒してくれるドライヘッドスパ',
+        '7,150円~',
+        '130分'
+    );
+} else if (treatmentId === 'treatment8') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '背中ラフォス&ドライヘッドスパ施術120分<br>(所要時間:約180分)',
+        'https://www.dropbox.com/scl/fi/mobieph7imx5zf62g1kjz/.png?rlkey=es3o3x6e1lh2lh4dp5i182pp5&st=nx6x5uhj&raw=1',
+        '心と身体の疲れを癒してくれるドライヘッドスパ&<br>≪ラフォス≫でハンドでは届かない深部まで温めマッサージ。',
+        '-円~',
+        '180分'
+    );
+} else if (treatmentId === 'treatment9') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ドライヘッドスパ&フェイシャル施術120分<br>(所要時間:約180分)',
+        'https://www.dropbox.com/scl/fi/mobieph7imx5zf62g1kjz/.png?rlkey=es3o3x6e1lh2lh4dp5i182pp5&st=nx6x5uhj&raw=1',
+        '心と身体の疲れを癒してくれるドライヘッドスパ&<br>フェイシャル',
+        '-円~',
+        '180分'
+    );
+} else if (treatmentId === 'treatment10') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'オーダーメイド施術90分<br>(所要時間:約120分)',
+        'https://www.dropbox.com/scl/fi/l0v85wub9x9xosq8jjney/.png?rlkey=m9ucydo2cuborouoss7b8n46q&st=oesnixcg&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '9,350円~',
+        '120分'
+    );
+} else if (treatmentId === 'treatment11') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'オーダーメイド施術120分<br>(所要時間:約180分)',
+        'https://www.dropbox.com/scl/fi/l0v85wub9x9xosq8jjney/.png?rlkey=m9ucydo2cuborouoss7b8n46q&st=oesnixcg&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '9,350円~',
+        '180分'
+    );
+} else if (treatmentId === 'treatment12') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'オーダーメイド施術150分<br>(所要時間:約210分)',
+        'https://www.dropbox.com/scl/fi/l0v85wub9x9xosq8jjney/.png?rlkey=m9ucydo2cuborouoss7b8n46q&st=oesnixcg&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '9,350円~',
+        '210分'
+    );
             } else {
                 treatmentText.innerHTML = '';
             }
@@ -569,6 +859,39 @@
             fetchAvailability(currentDate);
         }
 
+        function showMenu(menu) {
+            // すべてのメニューボタンの選択状態をリセット
+            document.querySelectorAll('.menu-sections button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // 選択されたメニューセクションを表示
+            document.querySelectorAll('.menu-section').forEach(section => {
+                section.classList.remove('active');
+                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+            });
+
+            // 対応するメニューボタンを選択状態にする
+            document.querySelectorAll('.menu-sections button').forEach(button => {
+                if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
+                    button.classList.add('active');
+                }
+            });
+
+            // 選択されたメニューセクションを表示
+            document.getElementById(menu).classList.add('active');
+
+            // メニューとオプションをリセット
+            selectedSymptom = '';      // メニューのリセット
+            irradiationsCount = '';    // オプションのリセット
+            menuPrice = 0;             // メニューの価格リセット
+            optionsPrice = 0;          // オプションの価格リセット
+            totalAmount = 0;           // 合計金額リセット
+
+            // 表示を更新
+            updateDisplayInfo();
+        }
+
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
             if (cell.classList.contains('unavailable')) {
@@ -595,36 +918,51 @@
         }
 
         function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                visitCount: visitCount,
-                selectedSymptom: selectedSymptom,
-                irradiationsCount: irradiationsCount,
-                dates: [selectedFullDate],
-                message: document.getElementById('message').value
-            };
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        visitCount: visitCount,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+        irradiationsCount: irradiationsCount,
+        dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+        message: document.getElementById('message').value.trim()
+    };
 
-            // フォームデータのチェック
-            if (!formData.name || formData.selectedSymptom.length === 0) {
-                alert('お名前・電話番号・メニューすべてご記入ください。');
-                return;
-            }
+    // フォームデータのチェック
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    if (!formData.phone) {
+        alert('電話番号を入力してください。');
+        return;
+    }
+
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
+
+    if (!formData.dates) {
+        alert('希望日時を選択してください。');
+        return;
+    }
+
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+    }]).then(() => {
+        /* メッセージ送信成功時の処理 */
+        alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+        /* LIFFウィンドウを閉じる */
+        liff.closeWindow();
+    }).catch((err) => {
+        /* メッセージ送信失敗時の処理 */
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
@@ -646,7 +984,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbyCqdpGhyReTxqh2w6Aa-Hc7wPW-7rQpBOIJ9lAXIrkSP9V90BHLechbdotkWid/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -679,11 +1017,11 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '10:00', '10:30', '11:00', '11:30',
+                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
                 '12:00', '12:30', '13:00', '13:30',
                 '14:00', '14:30', '15:00', '15:30',
                 '16:00', '16:30', '17:00', '17:30',
-                '18:00', '18:30'
+                '18:00'
             ];
 
             if (table.rows.length === 0) {
@@ -754,7 +1092,7 @@
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
                     // 18時以降に終了する予約を不可にする (17:30は可)
-                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 30) {
+                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
@@ -828,26 +1166,7 @@
 
                     cell.setAttribute('data-date', slotStart.toISOString());
                 }
-
-                // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
-                for (let i = 0; i < 7; i++) {
-                    const twentyOClockRow = times.indexOf('18:00');
-                    const twentyOneOClockRow = times.indexOf('18:30');
-
-                    for (let j = twentyOClockRow; j < times.length; j++) {
-                        const cell = table.rows[j].cells[i + 1];
-                        const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
-
-                        // 20:00のセルに×がある場合、21:00のセルも×にする
-                        if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
-                            cell.textContent = '✕';
-                            cell.classList.remove('available');
-                            cell.classList.add('unavailable');
-                        }
-                    }
-                }
             }
-
         }
 
         function updateCalendarHeader(date) {
