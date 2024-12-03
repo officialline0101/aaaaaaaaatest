@@ -305,12 +305,12 @@
         <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-<div class="label">生年月日</div>
-<div class="datetime-wrapper" style="text-align: center;">
-    <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-    <input type="date" id="birthDate" class="datetime-input" placeholder=" " aria-label="タップして生年月日を入力">
-    <span class="datetime-placeholder">タップして生年月日を入力</span>
-</div>
+    <div class="label">生年月日</div>
+    <div class="datetime-wrapper" style="text-align: center;">
+        <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+        <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+        <span class="datetime-placeholder">タップして日時を入力</span>
+    </div>
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
@@ -551,15 +551,6 @@
             });
         });
 
-function updateBirthDate() {
-    const birthDateInput = document.getElementById('date1').value;
-    if (!formData.dates) formData.dates = [];
-    formData.dates[1] = formatDate(birthDateInput);
-
-    // 必要ならデバッグ用に出力
-    console.log('生年月日が更新されました:', formData.dates[1]);
-}
-
         function selectSymptom(button, treatmentId) {
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
@@ -750,15 +741,15 @@ function updateBirthDate() {
             updateDisplayInfo();
         }
 
-function submitForm() {
+        function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
-        birthDate = document.getElementById('birthDate').value;,
         phone: document.getElementById('phone').value.trim(),
+        birthDate: document.getElementById('date1').value.trim(), // 生年月日を取得
         visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
         irradiationsCount: irradiationsCount,
-        dates: [selectedFullDate, formData.dates ? formData.dates[1] : ''],
+        dates: [selectedFullDate],
         message: document.getElementById('message').value.trim()
     };
 
@@ -778,20 +769,20 @@ function submitForm() {
         return;
     }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n生年月日：${formattedBirthDate}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}${formData.dates[1]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n生年月日：${formatDate(formData.birthDate)}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：${formData.dates[0]}\nメッセージ：${formData.message}`
+    }]).then(() => {
+        /* メッセージ送信成功時の処理 */
+        alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+        /* LIFFウィンドウを閉じる */
+        liff.closeWindow();
+    }).catch((err) => {
+        /* メッセージ送信失敗時の処理 */
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
 function formatDate(dateStr) {
     if (!dateStr) return '';
