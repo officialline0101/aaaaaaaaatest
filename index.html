@@ -307,11 +307,11 @@
 
         <div class="label">生年月日</div>
 
-        <div class="datetime-wrapper" style="text-align: center;">
-            <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-            <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
-            <span class="datetime-placeholder">タップして日時を入力</span>
-        </div>
+<div class="datetime-wrapper" style="text-align: center;">
+    <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+    <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力" onchange="updateBirthDate(this)">
+    <span class="datetime-placeholder">タップして日時を入力</span>
+</div>
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
@@ -742,23 +742,23 @@
             updateDisplayInfo();
         }
 
-document.getElementById('date1').addEventListener('change', function () {
-    const selectedDate = this.value; // 入力された日付を取得
-    formData.dates[1] = formatDate(selectedDate); // dates[1] にフォーマット済みの日付を格納
-    updateDisplayInfo(); // 表示情報を更新
-});
+// フォームデータを初期化
+const formData = {
+    name: '',
+    phone: '',
+    visitCount: '',
+    selectedSymptom: [],
+    irradiationsCount: '',
+    dates: ['', ''], // dates[1]を初期化
+    message: ''
+};
 
-// submitForm 関数内で dates[1] を確認
-function submitForm() {
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-        irradiationsCount: irradiationsCount,
-        dates: [selectedFullDate, formData.dates[1]], // dates[1] を含める
-        message: document.getElementById('message').value.trim()
-    };
+// 生年月日入力を監視して値を格納
+function updateBirthDate(input) {
+    const birthDate = input.value; // datetime-local入力から値を取得
+    formData.dates[1] = birthDate;
+    console.log('生年月日が更新されました:', birthDate);
+}
 
     // フォームデータのチェック
     if (!formData.name) {
@@ -773,11 +773,6 @@ function submitForm() {
 
     if (!formData.selectedSymptom) {
         alert('メニューを選択してください。');
-        return;
-    }
-
-    if (!formData.dates[1]) {
-        alert('生年月日を選択してください。');
         return;
     }
 
