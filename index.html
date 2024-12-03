@@ -269,6 +269,30 @@
             font-weight: bold;
             /* 太文字に設定 */
         }
+
+                .datetime-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .datetime-input {
+            width: 100%;
+            padding: 15px; /* サイズを大きく調整 */
+            font-size: 18px; /* フォントサイズを大きく */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .datetime-input:focus + .datetime-placeholder,
+        .datetime-input:not(:placeholder-shown) + .datetime-placeholder {
+            visibility: hidden;
+            opacity: 0;
+        }
     </style>
 </head>
 
@@ -280,6 +304,15 @@
 
         <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
+
+        <div class="label">生年月日</div>
+
+        <!-- カスタム placeholder 表示用 -->
+<div class="datetime-wrapper" style="text-align: center;">
+    <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+    <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+    <span class="datetime-placeholder">タップして日時を入力</span>
+</div>
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
@@ -753,41 +786,41 @@
         }
 
         function formatDate(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
-        }
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+}
 
-        async function fetchAvailability(date) {
-            const startTime = new Date(date);
-            const endTime = new Date(date);
-            endTime.setDate(endTime.getDate() + 7);
+async function fetchAvailability(date) {
+    const startTime = new Date(date);
+    const endTime = new Date(date);
+    endTime.setDate(endTime.getDate() + 7);
 
-            const cacheKey = startTime.toISOString() + endTime.toISOString();
+    const cacheKey = startTime.toISOString() + endTime.toISOString();
 
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-                return;
-            }
+    // キャッシュを確認
+    if (availabilityCache[cacheKey]) {
+        console.log('Using cached data');
+        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+        return;
+    }
 
-            const url = 'https://script.google.com/macros/s/AKfycbyJjFF16v_y5qndj5gJN5CXJO_hCRMxjfO7ykSsRoCu89VxkUz6a_yqM3ynLc1dT1jL/exec' +
-                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+    const url = 'https://script.google.com/macros/s/AKfycbwCmsPGlnnyRNfl9YlFwlQr1qBnFnLSST9QhiID5ikT5gNj0_rQ8lVkif1AMER0X1wU/exec' +
+        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-            try {
-                showLoadingSpinner(); // Show loading spinner
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+    try {
+        showLoadingSpinner(); // Show loading spinner
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
 
-                // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-                    return {
-                        start: new Date(event.startTime),
-                        end: new Date(event.endTime)
-                    };
-                });
+        // 営業日の情報を抽出
+        const businessDays = data.filter(event => event.summary === "営業日").map(event => {
+            return {
+                start: new Date(event.startTime),
+                end: new Date(event.endTime)
+            };
+        });
 
                 // データをキャッシュに保存
                 availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
@@ -800,57 +833,54 @@
             }
         }
 
-        function updateCalendar(availability, businessDays) {
-            const calendar = document.getElementById('calendar1');
-            const table = calendar.querySelector('table tbody');
-
-// 時刻を24時間形式で変換する関数
-function convertTo24HourFormat(time) {
-    const [hour, minute] = time.split(':').map(Number);
-    if (hour < 3) {
-        // 0時～2時を24時以降に変換
-        return `${hour + 24}:${minute < 10 ? '0' + minute : minute}`;
-    }
-    return time;
+// 時間を正規化する関数
+function normalizeTime(date) {
+    const hours = date.getHours();
+    const normalizedHours = hours < 6 ? hours + 24 : hours; // 深夜時間は24時以降に変換
+    const normalizedDate = new Date(date);
+    normalizedDate.setHours(normalizedHours);
+    return normalizedDate;
 }
 
-            const times = [
-    '10:00', '10:30',
-    '11:00', '11:30',
-    '12:00', '12:30',
-    '13:00', '13:30',
-    '14:00', '14:30',
-    '15:00', '15:30',
-    '16:00', '16:30',
-    '17:00', '17:30',
-    '18:00', '18:30',
-    '19:00', '19:30',
-    '20:00', '20:30',
-    '21:00', '21:30',
-    '22:00', '22:30',
-    '23:00', '23:30',
-    '00:00', '00:30',
-    '01:00'
-];
+function updateCalendar(availability, businessDays) {
+    const calendar = document.getElementById('calendar1');
+    const table = calendar.querySelector('table tbody');
 
-// テーブルの行を生成する際に24時間形式に変換して表示
-if (table.rows.length === 0) {
-    for (const time of times) {
-        const row = document.createElement('tr');
-        const timeCell = document.createElement('td');
-        // 表示する時間を24時間形式に変換
-        timeCell.textContent = convertTo24HourFormat(time);
-        row.appendChild(timeCell);
+    const times = [
+        '10:00', '10:30',
+        '11:00', '11:30',
+        '12:00', '12:30',
+        '13:00', '13:30',
+        '14:00', '14:30',
+        '15:00', '15:30',
+        '16:00', '16:30',
+        '17:00', '17:30',
+        '18:00', '18:30',
+        '19:00', '19:30',
+        '20:00', '20:30',
+        '21:00', '21:30',
+        '22:00', '22:30',
+        '23:00', '23:30',
+        '24:00', '24:30'
+    ];
 
-        for (let i = 0; i < 7; i++) {
-            const cell = document.createElement('td');
-            cell.addEventListener('click', () => selectDate(cell));
-            row.appendChild(cell);
+    // テーブルの行を作成（初回のみ）
+    if (table.rows.length === 0) {
+        for (const time of times) {
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            timeCell.textContent = time; // 表示用の時間
+            row.appendChild(timeCell);
+
+            for (let i = 0; i < 7; i++) {
+                const cell = document.createElement('td');
+                cell.addEventListener('click', () => selectDate(cell));
+                row.appendChild(cell);
+            }
+
+            table.appendChild(row);
         }
-
-        table.appendChild(row);
     }
-}
 
             // テーブルのヘッダーを更新
             updateCalendarHeader(currentDate);
@@ -901,13 +931,6 @@ if (table.rows.length === 0) {
 
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
-
-// 終了時間が翌日 (0時以降) になる場合は✕に設定
-if (slotEnd.getDate() !== slotStart.getDate()) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
 
 // 深夜3時から4時に終了する予約を不可にする
 if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 0) {
