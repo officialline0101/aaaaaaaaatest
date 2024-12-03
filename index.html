@@ -307,11 +307,11 @@
 
         <div class="label">生年月日</div>
 
-<div class="datetime-wrapper" style="text-align: center;">
-    <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-    <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
-    <span class="datetime-placeholder">タップして日時を入力</span>
-</div>
+        <div class="datetime-wrapper" style="text-align: center;">
+            <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+            <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+            <span class="datetime-placeholder">タップして日時を入力</span>
+        </div>
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
@@ -439,26 +439,17 @@
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
 
-document.addEventListener('DOMContentLoaded', function () {
-    // 初期化コード
-    liff.init({
-        liffId: '2005254357-zKma9BZk'
-    }).then(() => {
-        console.log('LIFF初期化成功');
-    }).catch((err) => {
-        console.log('LIFF初期化失敗', err);
-    });
+        document.addEventListener('DOMContentLoaded', function () {
+            liff.init({
+                liffId: '2005254357-zKma9BZk'
+            }).then(() => {
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                console.log('LIFF初期化失敗', err);
+            });
 
-    // 生年月日の入力を監視し、formData.dates[1] に格納
-    const birthdateInput = document.getElementById('date1');
-    birthdateInput.addEventListener('change', function () {
-        const formData = { dates: [] }; // 必要に応じて formData を初期化
-        formData.dates[1] = this.value;
-        console.log('生年月日が更新されました:', formData.dates[1]);
-    });
-
-    fetchAvailability(currentDate);
-});
+            fetchAvailability(currentDate);
+        });
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
@@ -751,14 +742,21 @@ document.addEventListener('DOMContentLoaded', function () {
             updateDisplayInfo();
         }
 
-        function submitForm() {
+        document.getElementById('date1').addEventListener('change', function () {
+    const selectedDate = this.value; // 入力された日付を取得
+    formData.dates[1] = formatDate(selectedDate); // dates[1] にフォーマット済みの日付を格納
+    updateDisplayInfo(); // 表示情報を更新
+});
+
+// submitForm 関数内で dates[1] を確認
+function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         visitCount: visitCount,
         selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
         irradiationsCount: irradiationsCount,
-        dates: [selectedFullDate],
+        dates: [selectedFullDate, formData.dates[1]], // dates[1] を含める
         message: document.getElementById('message').value.trim()
     };
 
@@ -778,22 +776,24 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\n ${formData.dates[1]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    if (!formData.dates[1]) {
+        alert('生年月日を選択してください。');
+        return;
+    }
 
-        function formatDate(dateStr) {
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\n生年月日：${formData.dates[1]}\nメッセージ：${formData.message}`
+    }]).then(() => {
+        alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
+
+function formatDate(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
