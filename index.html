@@ -305,13 +305,12 @@
         <div class="label">電話番号※必須</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">生年月日</div>
-
-        <div class="datetime-wrapper" style="text-align: center;">
-            <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-            <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
-            <span class="datetime-placeholder">タップして日時を入力</span>
-        </div>
+<div class="label">生年月日</div>
+<div class="datetime-wrapper" style="text-align: center;">
+    <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+    <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+    <span class="datetime-placeholder">タップして日時を入力</span>
+</div>
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
@@ -552,6 +551,15 @@
             });
         });
 
+function updateBirthDate() {
+    const birthDateInput = document.getElementById('date1').value;
+    if (!formData.dates) formData.dates = [];
+    formData.dates[1] = formatDate(birthDateInput);
+
+    // 必要ならデバッグ用に出力
+    console.log('生年月日が更新されました:', formData.dates[1]);
+}
+
         function selectSymptom(button, treatmentId) {
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
@@ -742,14 +750,14 @@
             updateDisplayInfo();
         }
 
-        function submitForm() {
+function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
         irradiationsCount: irradiationsCount,
-        dates: ['', ''], // dates[1]を初期化
+        dates: [selectedFullDate, formData.dates ? formData.dates[1] : ''],
         message: document.getElementById('message').value.trim()
     };
 
