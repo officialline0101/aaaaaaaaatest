@@ -742,14 +742,21 @@
             updateDisplayInfo();
         }
 
-        function submitForm() {
+document.getElementById('date1').addEventListener('change', function () {
+    const selectedDate = this.value; // 入力された日付を取得
+    formData.dates[1] = formatDate(selectedDate); // dates[1] にフォーマット済みの日付を格納
+    updateDisplayInfo(); // 表示情報を更新
+});
+
+// submitForm 関数内で dates[1] を確認
+function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         visitCount: visitCount,
         selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
         irradiationsCount: irradiationsCount,
-        dates: [selectedFullDate],
+        dates: [selectedFullDate, formData.dates[1]], // dates[1] を含める
         message: document.getElementById('message').value.trim()
     };
 
