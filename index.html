@@ -287,7 +287,7 @@
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降〈0分〉</button>
         </div>
 
-        <div class="label">メニューをお選びください</div>
+        <div class="label">買取内容をお選びください</div>
         <div class="menu-sections">
             <button type="button" onclick="showMenu('jewelry')">ジュエリー（宝石）貴金属</button>
             <button type="button" onclick="showMenu('brandbag')">ブランドバック</button>
@@ -444,7 +444,7 @@
             </div>
         </div>
 
-        <div class="label">希望日時<br>（メニュー選択後に選択ください）</div>
+        <div class="label">希望日時<br>（買取内容選択後に選択ください）</div>
         <div class="calendar-container">
             <div class="week-button-container">
                 <button class="week-button" onclick="previousWeek()">前の週</button>
@@ -493,7 +493,7 @@
         let availabilityCache = {};
         let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
         let totalAmount = 0; // 合計金額を格納する変数
-        let menuPrice = 0; // メニューの価格
+        let menuPrice = 0; // 買取内容の価格
         let optionsPrice = 0; // オプションの合計価格
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -587,10 +587,10 @@
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
 
-            // メニューが選択されていたら、各メニューを改行して表示
+            // 買取内容が選択されていたら、各買取内容を改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>${selectedSymptom.join('<br>')}`
-                : '・メニューが未選択です';
+                ? `<span style="color:red;"><strong>【買取内容】</strong></span><br>${selectedSymptom.join('<br>')}`
+                : '・買取内容が未選択です';
 
             // オプションが選択されていたら、各オプションを改行して表示
             const irradiationsText = irradiationsCount
@@ -662,10 +662,10 @@
             const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
 
             if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
+                // すべてのボタンの選択が解除された場合、買取内容時間を0にリセット
                 selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
+                selectedSymptom = null; // 選択された買取内容をリセット
+                menuPrice = 0; // 買取内容価格をリセット
             } else {
                 // 1つだけ選択状態にする
                 if (updatedSelectedButtons.length > 1) {
@@ -673,14 +673,14 @@
                     button.classList.add('active'); // クリックしたボタンだけを選択
                 }
 
-                // 選択されたメニューの時間を取得して保存
+                // 選択された買取内容の時間を取得して保存
                 const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+                selectedMenuTime = menuTimes[selectedMenu] || 0; // 買取内容時間を取得して保存
+                selectedSymptom = [selectedMenu]; // 選択された買取内容名を配列として保存
+                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // 買取内容の価格を取得
             }
 
-            console.log('選択されたメニューの時間:', selectedMenuTime);
+            console.log('選択された買取内容の時間:', selectedMenuTime);
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
@@ -710,10 +710,10 @@
                 treatmentText.innerHTML = '';
             }
 
-            // 選択されたメニューの名前と価格を取得
+            // 選択された買取内容の名前と価格を取得
             const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+            selectedSymptom = [symptomName];  // 選択された買取内容名を配列として保存
+            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // 買取内容の価格を取得
 
             // 表示を更新
             updateDisplayInfo();
@@ -780,31 +780,31 @@
         }
 
         function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
+            // すべての買取内容ボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 button.classList.remove('active');
             });
 
-            // 選択されたメニューセクションを表示
+            // 選択された買取内容セクションを表示
             document.querySelectorAll('.menu-section').forEach(section => {
                 section.classList.remove('active');
                 section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
             });
 
-            // 対応するメニューボタンを選択状態にする
+            // 対応する買取内容ボタンを選択状態にする
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
                     button.classList.add('active');
                 }
             });
 
-            // 選択されたメニューセクションを表示
+            // 選択された買取内容セクションを表示
             document.getElementById(menu).classList.add('active');
 
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
+            // 買取内容とオプションをリセット
+            selectedSymptom = '';      // 買取内容のリセット
             irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
+            menuPrice = 0;             // 買取内容の価格リセット
             optionsPrice = 0;          // オプションの価格リセット
             totalAmount = 0;           // 合計金額リセット
 
@@ -860,7 +860,7 @@
     }
 
     if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
+        alert('買取内容を選択してください。');
         return;
     }
 
@@ -872,7 +872,7 @@
     // LINEトークにメッセージを送信
     liff.sendMessages([{
         type: 'text',
-        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n買取内容：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
     }]).then(() => {
         /* メッセージ送信成功時の処理 */
         alert('当日キャンセルは無いようにお願いいたします。');
@@ -1008,7 +1008,7 @@
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
-// メニュー時間と訪問回数の時間を合計して、終了時間を設定
+// 買取内容時間と訪問回数の時間を合計して、終了時間を設定
 slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 終了時間が翌日 (0時以降) になる場合は✕に設定
