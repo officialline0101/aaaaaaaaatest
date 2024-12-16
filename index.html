@@ -289,6 +289,40 @@
         background-color: #444;
         color: #fff;
     }
+    .highlight-background {
+    cursor: pointer;
+    background-color: #13ca5e;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 18px; /* テキストを読みやすく */
+    display: flex;
+    justify-content: center; /* オプションを中央寄せ */
+    align-items: center;
+    position: relative; /* プラス記号を右端に配置 */
+}
+
+.highlight-text {
+    font-weight: bold;
+    display: inline-block;
+    color: #fff; /* オプションテキストの色 */
+}
+
+#toggle-symbol {
+    font-weight: bold;
+    font-size: 24px; /* 記号を大きく見やすく */
+    color: #fff; /* 青色で目立たせる */
+    position: absolute; /* 右端に配置 */
+    right: 15px; /* 右端との距離を調整 */
+    top: 15%; /* 親要素の中央に配置 */
+    transition: transform 0.2s ease, color 0.2s ease; /* アニメーション効果 */
+}
+
+.highlight-background:hover #toggle-symbol {
+    transform: scale(1.2); /* ホバー時に拡大 */
+    color: #fff; /* 色を濃く */
+}
+
     </style>
 </head>
 
@@ -305,11 +339,11 @@
             <button type="button" onclick="selectSymptom(this, null, 'kidsPlan')">キッズバースデープラン</button>
         </div>
         <div class="highlight-background">
-            <span class="highlight-text">オプション</span>
+            <span class="highlight-text" id="toggle-options" onclick="toggleOptions()">オプション <span id="toggle-symbol">＋</span></span>
         </div>
         <div id="irradiations">
             <div id="basicPlan" class="options" style="display: none;">
-                <button type="button" onclick="selectirradiations(this)" data-price="6600">新婦ヘアセット6600円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="6600">新婦ヘアセット 6600円</button>
                 <button type="button" onclick="selectirradiations(this)" data-price="5500">新郎ヘアセット 5500円</button>
                 <button type="button" onclick="selectirradiations(this)" data-price="5500">フルメイク 5500円</button>
                 <button type="button" onclick="selectirradiations(this)" data-price="11000">衣装追加レンタル（ウェディングドレス） 11000円</button>
@@ -424,20 +458,20 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '新婦ヘアセット6600円': 40,
-            '新郎ヘアセット5500円': 20,
-            'フルメイク5500円': 40,
-            '衣装追加レンタル（ウェディングドレス）11000円': 15,
-            '衣装追加レンタル（メンズ衣装）5500円': 15,
-            '衣装追加レンタル（マタニティドレス）5500円': 15,
-            '花の装飾追加レンタル5500円': 0,
-            '人数追加（5名以上希望の方一人につき）1100円': 0,
-            '時間追加（10分）1100円': 10,
-            '時間追加（20分）2200円': 20,
-            '時間追加（30分）3300円': 30,
-            '時間追加（40分）4400円': 40,
-            '時間追加（50分）5500円': 50,
-            '時間追加（60分）6600円': 60
+            '新婦ヘアセット 6600円': 40,
+            '新郎ヘアセット 5500円': 20,
+            'フルメイク 5500円': 40,
+            '衣装追加レンタル（ウェディングドレス） 11000円': 15,
+            '衣装追加レンタル（メンズ衣装） 5500円': 15,
+            '衣装追加レンタル（マタニティドレス） 5500円': 15,
+            '花の装飾追加レンタル 5500円': 0,
+            '人数追加（5名以上希望の方一人につき） 1100円': 0,
+            '時間追加（10分） 1100円': 10,
+            '時間追加（20分） 2200円': 20,
+            '時間追加（30分） 3300円': 30,
+            '時間追加（40分） 4400円': 40,
+            '時間追加（50分） 5500円': 50,
+            '時間追加（60分） 6600円': 60
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
@@ -450,6 +484,19 @@
         };
 
         let selectedMenuTime = 0;
+
+        function toggleOptions() {
+    const optionsDiv = document.getElementById('irradiations'); // オプション全体のDIV
+    const toggleSymbol = document.getElementById('toggle-symbol'); // ＋/－の部分
+
+    if (optionsDiv.style.display === 'none' || optionsDiv.style.display === '') {
+        optionsDiv.style.display = 'block'; // オプションを表示
+        toggleSymbol.textContent = '－';    // マイナス記号に変更
+    } else {
+        optionsDiv.style.display = 'none'; // オプションを非表示
+        toggleSymbol.textContent = '＋';    // プラス記号に変更
+    }
+}
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
@@ -626,44 +673,54 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDisplayInfo();
 }
 
-
-        function selectirradiations(button) {
+function selectirradiations(button) {
     // 選択された日時をリセット
     selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    // ボタンの選択状態を切り替える
+    button.classList.toggle('active');
 
-            // 選択されたオプションを取得
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiations.join(', ');
+    // 各プランのdiv要素を取得
+    const basicPlan = document.getElementById('basicPlan');
+    const maternityPlan = document.getElementById('maternityPlan');
+    const weddingPlan = document.getElementById('weddingPlan');
+    const kidsPlan = document.getElementById('kidsPlan');
 
-            // すべてのオプションの価格を再計算
-            optionsPrice = 0; // 全体をリセットして再計算
-            let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
-            selectedButtons.forEach(btn => {
-                const price = parseInt(btn.getAttribute('data-price'), 10);
-                optionsPrice += price;
+    // 選択されたオプションを取得
+    const selectedButtons = document.querySelectorAll('.options button.active');
+    const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
+    irradiationsCount = selectedIrradiations.join(', ');
 
-                // 各オプションの時間を加算
-                const irradiationName = btn.innerText;
-                const irradiationTime = irradiationsTimes[irradiationName] || 0;
-                totalirradiationsTime += irradiationTime;
-            });
+    // すべてのオプションの価格を再計算
+    optionsPrice = 0; // 全体をリセットして再計算
+    let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
+    selectedButtons.forEach(btn => {
+        const price = parseInt(btn.getAttribute('data-price'), 10);
+        optionsPrice += price;
 
-            // selectedirradiationsTimeに合計時間を設定
-            selectedirradiationsTime = totalirradiationsTime;
+        // 各オプションの時間を加算
+        const irradiationName = btn.innerText;
+        const irradiationTime = irradiationsTimes[irradiationName] || 0;
+        totalirradiationsTime += irradiationTime;
+    });
 
-            console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
+    // selectedirradiationsTimeに合計時間を設定
+    selectedirradiationsTime = totalirradiationsTime;
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
+    console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
 
-            // 表示を更新
-            updateDisplayInfo();
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
 
+    // 表示を更新
+    updateDisplayInfo();
+
+    // デバッグ: 各プランの状態を確認
+    console.log('Basic Plan:', basicPlan);
+    console.log('Maternity Plan:', maternityPlan);
+    console.log('Wedding Plan:', weddingPlan);
+    console.log('Kids Plan:', kidsPlan);
+}
 
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
@@ -781,7 +838,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwXLPa4lbo9gkrf7gAz3brdBUAar4-mozrVozquC1aagnGF239sPjuVhbYSMlqYMRiM/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbyJjFF16v_y5qndj5gJN5CXJO_hCRMxjfO7ykSsRoCu89VxkUz6a_yqM3ynLc1dT1jL/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
