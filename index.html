@@ -235,15 +235,8 @@
             display: none;
         }
 
-        #treatment-text {
-            background-color: #eef9f5;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 20px;
-        }
-
         .highlight-background {
-            background-color: #f9f9d6;
+            background-color: #13ca5e;
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 15px;
@@ -269,187 +262,91 @@
             font-weight: bold;
             /* 太文字に設定 */
         }
+
+    .symptoms,
+    .options {
+        display: block;
+        /* ボタンを縦並びに */
+    }
+
+    .symptoms button,
+    .options button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f7f7f7;
+        cursor: pointer;
+        box-sizing: border-box;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .symptoms button.active,
+    .options button.active {
+        background-color: #444;
+        color: #fff;
+    }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>買う蔵<br>予約フォーム</h1>
-        <div class="label">お客様名※必須</div>
-        <input type="text" id="name" placeholder="お名前を入力してください">
+        <h1>Style Lily<br>空き枠確認 / 予約フォーム</h1>
 
-        <div class="label">電話番号※必須</div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください">
-
-        <div class="label">ご来店回数</div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目〈30分〉</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降〈0分〉</button>
-        </div>
-
-        <div class="label">買取内容をお選びください</div>
-        <div class="menu-sections">
-            <button type="button" onclick="showMenu('jewelry')">ジュエリー（宝石）貴金属</button>
-            <button type="button" onclick="showMenu('brandbag')">ブランドバック</button>
-            <button type="button" onclick="showMenu('branditems')">ブランド品</button>
-            <button type="button" onclick="showMenu('Brandnamewatches')">ブランド腕時計</button>
-            <button type="button" onclick="showMenu('tradeablecoupon')">金券、商品券類</button>
-            <button type="button" onclick="showMenu('alcohol')">お酒</button>
-            <button type="button" onclick="showMenu('smartphone')">スマートフォン</button>
-            <button type="button" onclick="showMenu('PowerTools')">電動工具</button>
-            <button type="button" onclick="showMenu('Other')">その他</button>
-        </div>
-
+        <div class="label">撮影プランをお選びください<br>※プランを選択すると<br>空き状況のカレンダーが表示されます</div>
         <div id="treatment-text" style="margin-bottom: 20px;"></div>
-
-        <div id="jewelry" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆ジュエリー（宝石）貴金属◆</span>
+        <div class="symptoms">
+            <button type="button" onclick="selectSymptom(this, null, 'basicPlan')">ベーシックプラン</button>
+            <button type="button" onclick="selectSymptom(this, null, 'maternityPlan')">マタニティプラン</button>
+            <button type="button" onclick="selectSymptom(this, null, 'weddingPlan')">ウェディングプラン</button>
+            <button type="button" onclick="selectSymptom(this, null, 'kidsPlan')">キッズバースデープラン</button>
+        </div>
+        <div class="highlight-background">
+            <span class="highlight-text">オプション</span>
+        </div>
+        <div id="irradiations">
+            <div id="basicPlan" class="options" style="display: none;">
+                <button type="button" onclick="selectirradiations(this)" data-price="6600">新婦ヘアセット6600円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">新郎ヘアセット 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">フルメイク 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="11000">衣装追加レンタル（ウェディングドレス） 11000円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（メンズ衣装） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（マタニティドレス） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">花の装飾追加レンタル 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="1100">人数追加（5名以上一人につき） 1100円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="1100">時間追加（10分） 1100円</button>
             </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ジュエリー（宝石）貴金属：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ジュエリー（宝石）貴金属：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ジュエリー（宝石）貴金属：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ジュエリー（宝石）貴金属：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ジュエリー（宝石）貴金属：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ジュエリー（宝石）貴金属：5点以上買取</button>
+            <div id="maternityPlan" class="options" style="display: none;">
+                <button type="button" onclick="selectirradiations(this)" data-price="6600">新婦ヘアセット 6600円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">新郎ヘアセット 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">フルメイク 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（メンズ衣装） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（マタニティドレス） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">花の装飾追加レンタル 5500円</button>
+            </div>
+            <div id="weddingPlan" class="options" style="display: none;">
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">新郎ヘアセット 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">フルメイク 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="11000">衣装追加レンタル（ウェディングドレス） 11000円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（メンズ衣装） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">花の装飾追加レンタル 5500円</button>
+            </div>
+            <div id="kidsPlan" class="options" style="display: none;">
+                <button type="button" onclick="selectirradiations(this)" data-price="11000">衣装追加レンタル（ウェディングドレス） 11000円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（メンズ衣装） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">衣装追加レンタル（マタニティドレス） 5500円</button>
+                <button type="button" onclick="selectirradiations(this)" data-price="5500">花の装飾追加レンタル 5500円</button>
             </div>
         </div>
 
-        <div id="brandbag" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆ブランドバック◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランドバック：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランドバック：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランドバック：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランドバック：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランドバック：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランドバック：5点以上買取<br>（※種類によってはお預かりになります）</button>
-            </div>
-        </div>
-
-        <div id="branditems" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆ブランド品◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド品：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド品：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド品：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド品：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド品：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド品：5点以上買取</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">ブランド品：オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">靴</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">衣類</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">アクセサリー</button>
-            </div>
-        </div>
-
-        <div id="Brandnamewatches" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆ブランド腕時計◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド腕時計：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド腕時計：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド腕時計：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド腕時計：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド腕時計：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ブランド腕時計：5点以上買取</button>
-            </div>
-        </div>
-
-        <div id="tradeablecoupon" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆金券、商品券類◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">金券・商品券500枚以上</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">金券、商品券類：オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">バラ切手50枚以内</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">バラ切手51枚以上</button>
-            </div>
-        </div>
-
-        <div id="alcohol" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆お酒◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お酒：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お酒：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お酒：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お酒：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お酒：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お酒：5点以上買取</button>
-            </div>
-        </div>
-
-        <div id="smartphone" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆スマートフォン◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">スマートフォン：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">スマートフォン：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">スマートフォン：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">スマートフォン：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">スマートフォン：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">スマートフォン：5点以上買取</button>
-            </div>
-        </div>
-
-        <div id="PowerTools" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆電動工具◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">電動工具：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">電動工具：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">電動工具：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">電動工具：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">電動工具：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">電動工具：5点以上買取</button>
-            </div>
-        </div>
-
-        <div id="Other" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆その他◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">その他：1点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">その他：2点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">その他：3点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">その他：4点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">その他：5点買取</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">その他：5点以上買取</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">その他：オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">電動自転車バッテリー</button>
-            </div>
-        </div>
-
-        <div class="label">希望日時<br>（買取内容選択後に選択ください）</div>
         <div class="calendar-container">
             <div class="week-button-container">
-                <button class="week-button" onclick="previousWeek()">前の週</button>
+                <button class="week-button" onclick="previousWeek()">← 前の週</button>
                 <span class="current-month" id="currentMonth">月</span>
-                <button class="week-button" onclick="nextWeek()">翌週</button>
+                <button class="week-button" onclick="nextWeek()">次の週→</button>
             </div>
             <div id="calendar1" class="calendar">
                 <table>
@@ -475,6 +372,15 @@
             </div>
         </div>
 
+        <div class="label">お客様名※必須</div>
+        <input type="text" id="name" placeholder="お名前を入力してください">
+
+        <div class="label">電話番号※必須</div>
+        <input type="tel" id="phone" placeholder="電話番号を入力してください">
+
+        <div class="label">メールアドレス※必須</div>
+        <input type="text" id="mail" placeholder="メールアドレスを入力してください">
+
         <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
@@ -493,7 +399,7 @@
         let availabilityCache = {};
         let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
         let totalAmount = 0; // 合計金額を格納する変数
-        let menuPrice = 0; // 買取内容の価格
+        let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -518,68 +424,30 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '靴': 30,
-            '衣類': 30,
-            'アクセサリー': 30,
-            'バラ切手50枚以内': 30,
-            'バラ切手51枚以上': 60,
-            '電動自転車バッテリー': 30
+            '新婦ヘアセット6600円': 40,
+            '新郎ヘアセット5500円': 20,
+            'フルメイク5500円': 40,
+            '衣装追加レンタル（ウェディングドレス）11000円': 15,
+            '衣装追加レンタル（メンズ衣装）5500円': 15,
+            '衣装追加レンタル（マタニティドレス）5500円': 15,
+            '花の装飾追加レンタル5500円': 0,
+            '人数追加（5名以上希望の方一人につき）1100円': 0,
+            '時間追加（10分）1100円': 10,
+            '時間追加（20分）2200円': 20,
+            '時間追加（30分）3300円': 30,
+            '時間追加（40分）4400円': 40,
+            '時間追加（50分）5500円': 50,
+            '時間追加（60分）6600円': 60
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'ジュエリー（宝石）貴金属：1点買取': 30,
-            'ジュエリー（宝石）貴金属：2点買取': 30,
-            'ジュエリー（宝石）貴金属：3点買取': 30,
-            'ジュエリー（宝石）貴金属：4点買取': 30,
-            'ジュエリー（宝石）貴金属：5点買取': 30,
-            'ジュエリー（宝石）貴金属：5点以上買取': 60,
-            'ブランドバック：1点買取': 30,
-            'ブランドバック：2点買取': 30,
-            'ブランドバック：3点買取': 60,
-            'ブランドバック：4点買取': 60,
-            'ブランドバック：5点買取': 60,
-            'ブランドバック：5点以上買取（※種類によってはお預かりになります）': 60,
-            'ブランド品：1点買取': 30,
-            'ブランド品：1点買取': 30,
-            'ブランド品：1点買取': 30,
-            'ブランド品：1点買取': 30,
-            'ブランド品：1点買取': 60,
-            'ブランド品：5点以上買取': 60,
-            'ブランド腕時計：1点買取': 30,
-            'ブランド腕時計：2点買取': 30,
-            'ブランド腕時計：3点買取': 60,
-            'ブランド腕時計：4点買取': 60,
-            'ブランド腕時計：5点買取': 60,
-            'ブランド腕時計：5点以上買取': 90,
-            '金券・商品券500枚以上': 60,
-            'お酒：1点買取': 30,
-            'お酒：2点買取': 30,
-            'お酒：3点買取': 30,
-            'お酒：4点買取': 30,
-            'お酒：5点買取': 30,
-            'お酒：5点以上買取': 60,
-            'スマートフォン：1点買取': 30,
-            'スマートフォン：2点買取': 30,
-            'スマートフォン：3点買取': 60,
-            'スマートフォン：4点買取': 60,
-            'スマートフォン：5点買取': 60,
-            'スマートフォン：5点以上買取': 90,
-            '電動工具：1点買取': 30,
-            '電動工具：2点買取': 30,
-            '電動工具：3点買取': 30,
-            '電動工具：4点買取': 30,
-            '電動工具：5点買取': 30,
-            '電動工具：5点以上買取': 60,
-            'その他：1点買取': 30,
-            'その他：2点買取': 30,
-            'その他：3点買取': 60,
-            'その他：4点買取': 60,
-            'その他：5点買取': 60,
-            'その他：5点以上買取': 90
+            'ベーシックプラン': 120,
+            'マタニティプラン': 180,
+            'ウェディングプラン': 270,
+            'キッズバースデープラン': 150
         };
-
 
         let selectedMenuTime = 0;
 
@@ -587,10 +455,10 @@
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
 
-            // 買取内容が選択されていたら、各買取内容を改行して表示
+            // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:red;"><strong>【買取内容】</strong></span><br>${selectedSymptom.join('<br>')}`
-                : '・買取内容が未選択です';
+                ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>${selectedSymptom.join('<br>')}`
+                : '・メニューが未選択です';
 
             // オプションが選択されていたら、各オプションを改行して表示
             const irradiationsText = irradiationsCount
@@ -621,11 +489,7 @@
         <hr>
         <p>${irradiationsText}</p>
         <hr>
-        <p>${totalTimeText}</p>
-        <hr>
         <p>${selectedDateText}</p>
-        <hr>
-        <p>${totalAmountText}</p>
         <hr>
     `;
         }
@@ -642,6 +506,25 @@
             button.addEventListener('click', updateDisplayInfo);
         });
 
+document.querySelectorAll('.symptoms button').forEach(button => {
+    button.addEventListener('click', () => {
+        const calendarContainer = document.querySelector('.calendar-container');
+
+        // 選択されたメニューがあればカレンダーを表示
+        if (document.querySelectorAll('.symptoms button.active').length > 0) {
+            calendarContainer.style.display = 'block';
+        } else {
+            // 選択が解除された場合、カレンダーを非表示
+            calendarContainer.style.display = 'none';
+        }
+    });
+});
+
+// 初期状態でカレンダーを非表示にする
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('.calendar-container').style.display = 'none';
+});
+
 
         // 日付セルのクリックイベントで希望日時を更新
         document.querySelectorAll('.calendar td').forEach(cell => {
@@ -651,73 +534,98 @@
             });
         });
 
-        function selectSymptom(button, treatmentId) {
+        function showOptions(planId) {
+        // すべてのオプションを非表示
+        const allOptions = document.querySelectorAll('.options');
+        allOptions.forEach(option => option.style.display = 'none');
+
+        // 指定されたプランのオプションを表示
+        const selectedOptions = document.getElementById(planId);
+        if (selectedOptions) {
+            selectedOptions.style.display = 'block';
+        }
+    }
+
+    function selectOption(button) {
+        // 選択されたオプションの処理（例: 価格の取得など）
+        const price = button.getAttribute('data-price');
+        console.log(`選択されたオプション: ${button.textContent}, 価格: ${price}円`);
+    }
+
+    function selectSymptom(button, treatmentId, planId) {
     // 選択された日時をリセット
     selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    // ボタンの選択状態を切り替える
+    button.classList.toggle('active');
 
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+    // 選択されたオプションを取得
+    const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
 
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、買取内容時間を0にリセット
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択された買取内容をリセット
-                menuPrice = 0; // 買取内容価格をリセット
-            } else {
-                // 1つだけ選択状態にする
-                if (updatedSelectedButtons.length > 1) {
-                    updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active'); // クリックしたボタンだけを選択
-                }
-
-                // 選択された買取内容の時間を取得して保存
-                const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // 買取内容時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択された買取内容名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // 買取内容の価格を取得
-            }
-
-            console.log('選択された買取内容の時間:', selectedMenuTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
-
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else {
-                treatmentText.innerHTML = '';
-            }
-
-            // 選択された買取内容の名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択された買取内容名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // 買取内容の価格を取得
-
-            // 表示を更新
-            updateDisplayInfo();
+    if (updatedSelectedButtons.length === 0) {
+        // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
+        selectedMenuTime = 0;
+        selectedSymptom = null;
+        menuPrice = 0;
+    } else {
+        if (updatedSelectedButtons.length > 1) {
+            updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active'); // クリックしたボタンだけを選択
         }
+
+        const selectedMenu = button.textContent;
+        selectedMenuTime = menuTimes[selectedMenu] || 0;
+        selectedSymptom = [selectedMenu];
+        menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;
+    }
+
+    console.log('選択されたメニューの時間:', selectedMenuTime);
+
+    // カレンダーを更新
+    fetchAvailability(currentDate);
+
+    // トリートメントテキストを表示
+    const treatmentText = document.getElementById('treatment-text');
+
+    if (treatmentId === 'treatment1') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
+    } else if (treatmentId === 'treatment2') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
+    } else if (treatmentId === 'treatment3') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
+    } else if (treatmentId === 'treatment4') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
+    } else if (treatmentId === 'treatment5') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
+    } else if (treatmentId === 'treatment6') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
+    } else if (treatmentId === 'treatment7') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
+    } else if (treatmentId === 'treatment8') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+    } else if (treatmentId === 'treatment9') {
+        treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+    } else {
+        treatmentText.innerHTML = '';
+    }
+
+    // プランに基づくオプションを表示
+    if (planId) {
+        const allOptions = document.querySelectorAll('.options');
+        allOptions.forEach(option => option.style.display = 'none');
+
+        const selectedOptions = document.getElementById(planId);
+        if (selectedOptions) {
+            selectedOptions.style.display = 'block';
+        }
+    } else {
+        console.error('planIdが指定されていません');
+    }
+
+    // 表示を更新
+    updateDisplayInfo();
+}
+
 
         function selectirradiations(button) {
     // 選択された日時をリセット
@@ -756,6 +664,7 @@
             updateDisplayInfo();
         }
 
+
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
             updateDisplayInfo(); // 表示を更新
@@ -777,39 +686,6 @@
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
-        }
-
-        function showMenu(menu) {
-            // すべての買取内容ボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // 選択された買取内容セクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
-
-            // 対応する買取内容ボタンを選択状態にする
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                    button.classList.add('active');
-                }
-            });
-
-            // 選択された買取内容セクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // 買取内容とオプションをリセット
-            selectedSymptom = '';      // 買取内容のリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // 買取内容の価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
         }
 
         function selectDate(cell) {
@@ -841,6 +717,7 @@
     const formData = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
+        mail: document.getElementById('mail').value.trim(),
         visitCount: visitCount,
         selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
         irradiationsCount: irradiationsCount,
@@ -860,7 +737,7 @@
     }
 
     if (!formData.selectedSymptom) {
-        alert('買取内容を選択してください。');
+        alert('メニューを選択してください。');
         return;
     }
 
@@ -869,20 +746,20 @@
         return;
     }
 
-    // LINEトークにメッセージを送信
-    liff.sendMessages([{
-        type: 'text',
-        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n買取内容：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-    }]).then(() => {
-        /* メッセージ送信成功時の処理 */
-        alert('当日キャンセルは無いようにお願いいたします。');
-        /* LIFFウィンドウを閉じる */
-        liff.closeWindow();
-    }).catch((err) => {
-        /* メッセージ送信失敗時の処理 */
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nメールアドレス：${formData.mail}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
@@ -904,7 +781,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbwXLPa4lbo9gkrf7gAz3brdBUAar4-mozrVozquC1aagnGF239sPjuVhbYSMlqYMRiM/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -936,13 +813,18 @@
             const calendar = document.getElementById('calendar1');
             const table = calendar.querySelector('table tbody');
 
-            const times = [
-                '10:00', '10:30', '11:00', '11:30',
-                '12:00', '12:30', '13:00', '13:30',
-                '14:00', '14:30', '15:00', '15:30',
-                '16:00', '16:30', '17:00', '17:30',
-                '18:00', '18:30', '19:00'
-            ];
+const times = [
+    '10:30',
+    '11:00', '11:30',
+    '12:00', '12:30',
+    '13:00', '13:30',
+    '14:00', '14:30',
+    '15:00', '15:30',
+    '16:00', '16:30',
+    '17:00', '17:30',
+    '18:00', '18:30',
+    '19:00', '19:30', '20:00'
+];
 
             if (table.rows.length === 0) {
                 for (const time of times) {
@@ -1008,7 +890,7 @@
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
-// 買取内容時間と訪問回数の時間を合計して、終了時間を設定
+// メニュー時間と訪問回数の時間を合計して、終了時間を設定
 slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
 // 終了時間が翌日 (0時以降) になる場合は✕に設定
@@ -1018,8 +900,8 @@ if (slotEnd.getDate() !== slotStart.getDate()) {
     continue;
 }
 
-// 18時以降に終了する予約を不可にする (17:30は可)
-if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 0) {
+// 19:30以降に終了する予約を不可にする (19:30は可)
+if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 30) {
     cell.textContent = '✕';
     cell.classList.add('unavailable');
     continue;
@@ -1029,7 +911,18 @@ if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 0) {
     continue;
 }
 
-// ここで終了時間を使った条件処理を行う
+// 現在時刻が09:00以降かどうかを判定
+const nineAM = new Date();
+nineAM.setHours(9, 0, 0, 0); // 今日の09:00を設定
+const isAfterNineAM = now >= nineAM;
+
+// 09:00以降であればその日のセルをすべて×に設定
+if (isAfterNineAM && day.toDateString() === now.toDateString()) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+}
+
 // 例えば、リアルタイムで既に過ぎた時間帯は×にする
 if (slotStart < now) {
     cell.textContent = '✕';
@@ -1069,6 +962,11 @@ if (slotStart < now) {
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 日曜日で、営業日ではない場合
+                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
