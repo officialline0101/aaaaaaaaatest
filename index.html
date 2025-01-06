@@ -738,32 +738,39 @@
             updateDisplayInfo();
         }
 
-        function selectDate(cell) {
-            // "unavailable" クラスが付いている場合はクリックを無効化
-            if (cell.classList.contains('unavailable')) {
-                return; // 何もせずに終了
-            }
+function selectDate(cell) {
+    // "unavailable" クラスが付いている場合はクリックを無効化
+    if (cell.classList.contains('unavailable')) {
+        return; // 何もせずに終了
+    }
 
-            // 既に選択されているセルの選択を解除
-            const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(td => td.classList.remove('selected'));
+    // 既に選択されているセルの選択を解除
+    const cells = document.querySelectorAll('.calendar td');
+    cells.forEach(td => td.classList.remove('selected'));
 
-            // 新しいセルを選択状態にする
-            cell.classList.add('selected');
+    // 新しいセルを選択状態にする
+    cell.classList.add('selected');
 
-            // 選択された日付と時間を取得
-            const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-            const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-            const date = new Date(selectedDay);
+    // 選択された日付と時間を取得
+    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+    const selectedTime = cell.parentElement.firstChild.textContent.trim(); // 時間
 
-            // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+    // 日付をDateオブジェクトに変換
+    let date = new Date(selectedDay);
 
-            // 希望日時を即座に更新
-            updateDisplayInfo();
-        }
+    // 時間が24:00～25:00の場合、日付を1日前に変更
+    if (selectedTime === "24:00" || selectedTime === "25:00") {
+        date.setDate(date.getDate() - 1); // 1日前に設定
+    }
 
-        function submitForm() {
+    // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
+    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+
+    // 希望日時を即座に更新
+    updateDisplayInfo();
+}
+
+function submitForm() {
     const formData = {
         name1: document.getElementById('name1').value.trim(),
         dateofbirth1: document.getElementById('dateofbirth1').value.trim(), // 生年月日を取得
