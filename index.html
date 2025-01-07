@@ -344,7 +344,7 @@
 
 <body>
     <div class="container">
-        <h1>４占屋伊千夜<br>予約フォーム</h1>
+        <h1>３占屋伊千夜<br>予約フォーム</h1>
         <div class="info-text">より詳細な予約はチャットにてお願いします<br>例：4名様以上、ひとり60分以上、<br>深夜1〜3時の予約等</div>
         <div class="label2">お名前　※必須</div>
         <input type="text" id="name1" placeholder="お名前を入力してください">
@@ -888,17 +888,24 @@
 function normalizeTime(date) {
     const normalizedDate = new Date(date);
     const hours = normalizedDate.getHours();
-
-    // 24:00, 24:30, 25:00を当日として扱う
-    if (hours >= 24 && hours <= 26) {
-        normalizedDate.setHours(hours); // そのまま当日の時間として扱う
-    }
-    // 深夜時間帯（0時〜5時）の処理
-    else if (hours >= 0 && hours <= 5) {
+    if (hours >= 0 && hours <= 5) { // 深夜（0時～5時）は27時扱い
         normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
-        normalizedDate.setHours(hours + 24); // 時間を24時以上に変換
+        normalizedDate.setHours(hours + 24); // 時間を27時表記に変換
     }
     return normalizedDate;
+}
+
+// 現在時刻をチェックし、27時を過ぎたらカレンダーの日付を翌日に進める
+function checkAndUpdateDate() {
+    const now = new Date();
+    const normalizedNow = normalizeTime(now); // 現在時刻を正規化
+
+    // 正規化された時刻が27時を超えた場合
+    if (normalizedNow.getHours() >= 27) {
+        currentDate.setDate(currentDate.getDate() + 1); // 翌日に日付を進める
+        updateCalendarHeader(currentDate); // カレンダーのヘッダーを更新
+        updateCalendar(availabilityCache[currentDate.toISOString()], businessDays); // カレンダーを更新
+    }
 }
 
 // updateCalendar関数の修正箇所
@@ -921,8 +928,8 @@ function updateCalendar(availability, businessDays) {
         '21:00', '21:30',
         '22:00', '22:30',
         '23:00', '23:30',
-        '24:00', '24:30',
-        '25:00'
+        '00:00', '00:30',
+        '01:00'
     ];
 
     if (table.rows.length === 0) {
