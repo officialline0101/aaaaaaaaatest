@@ -329,7 +329,7 @@
 
 <body>
     <div class="container">
-        <h1>占屋伊千夜<br>予約フォーム</h1>
+        <h1>2占屋伊千夜<br>予約フォーム</h1>
         <div class="info-text">より詳細な予約はチャットにてお願いします<br>例：4名様以上、ひとり60分以上、<br>深夜1〜3時の予約等</div>
         <div class="label2">お名前　※必須</div>
         <input type="text" id="name1" placeholder="お名前を入力してください">
@@ -857,20 +857,24 @@ async function fetchAvailability(date) {
             }
         }
 
-// 時間を正規化する関数（27時までを当日として扱う）
+// 時間を正規化する関数（27時までを当日として扱う、24:00～25:00を前日扱いにする）
 function normalizeTime(date) {
     const normalizedDate = new Date(date);
     const hours = normalizedDate.getHours();
 
-    if (hours >= 24 && hours <= 25) {
-        // 24:00～25:00を前日として扱う
-        normalizedDate.setDate(normalizedDate.getDate() - 3); // 日付を1日前に
-        normalizedDate.setHours(hours - 24); // 時間を0:00～1:00に変換
-    } else if (hours >= 0 && hours <= 5) {
+    if (hours === 0) {
+        const minutes = normalizedDate.getMinutes();
+        if (minutes === 0) {
+            // 24:00として扱うケース（日付を一日前にする）
+            normalizedDate.setDate(normalizedDate.getDate() - 1);
+            normalizedDate.setHours(24);
+        }
+    } else if (hours > 0 && hours <= 5) {
         // 深夜（0時～5時）は27時扱い
         normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
         normalizedDate.setHours(hours + 24); // 時間を27時表記に変換
     }
+
     return normalizedDate;
 }
 
