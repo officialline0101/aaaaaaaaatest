@@ -738,43 +738,32 @@
             updateDisplayInfo();
         }
 
-function selectDate(cell) {
-    // "unavailable" クラスが付いている場合はクリックを無効化
-    if (cell.classList.contains('unavailable')) {
-        return; // 何もせずに終了
-    }
+        function selectDate(cell) {
+            // "unavailable" クラスが付いている場合はクリックを無効化
+            if (cell.classList.contains('unavailable')) {
+                return; // 何もせずに終了
+            }
 
-    // 既に選択されているセルの選択を解除
-    const cells = document.querySelectorAll('.calendar td');
-    cells.forEach(td => td.classList.remove('selected'));
+            // 既に選択されているセルの選択を解除
+            const cells = document.querySelectorAll('.calendar td');
+            cells.forEach(td => td.classList.remove('selected'));
 
-    // 新しいセルを選択状態にする
-    cell.classList.add('selected');
+            // 新しいセルを選択状態にする
+            cell.classList.add('selected');
 
-    // 選択された日付と時間を取得
-    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-    const selectedTime = cell.parentElement.firstChild.textContent.trim(); // 時間 (例: "24:30")
-    const date = new Date(selectedDay);
+            // 選択された日付と時間を取得
+            const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+            const selectedTime = cell.parentElement.firstChild.textContent; // 時間
+            const date = new Date(selectedDay);
 
-    // 時間部分を解析
-    const [hours, minutes] = selectedTime.split(':').map(Number);
+            // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
+            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
 
-    // 24:00～25:00 の場合は日付を1日前にする
-    if (hours >= 24) {
-        date.setDate(date.getDate() - 1); // 日付を1日前に変更
-        date.setHours(hours - 24, minutes); // 時間を正規化 (例: 24:30 → 00:30)
-    } else {
-        date.setHours(hours, minutes); // 通常の時間設定
-    }
+            // 希望日時を即座に更新
+            updateDisplayInfo();
+        }
 
-    // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
-
-    // 希望日時を即座に更新
-    updateDisplayInfo();
-}
-
-function submitForm() {
+        function submitForm() {
     const formData = {
         name1: document.getElementById('name1').value.trim(),
         dateofbirth1: document.getElementById('dateofbirth1').value.trim(), // 生年月日を取得
@@ -872,7 +861,13 @@ async function fetchAvailability(date) {
 function normalizeTime(date) {
     const normalizedDate = new Date(date);
     const hours = normalizedDate.getHours();
-    if (hours >= 0 && hours <= 5) { // 深夜（0時～5時）は27時扱い
+
+    if (hours >= 24 && hours <= 25) {
+        // 24:00～25:00を前日として扱う
+        normalizedDate.setDate(normalizedDate.getDate() - 1); // 日付を一日前に
+        normalizedDate.setHours(hours - 24); // 時間を0:00～1:00に変換
+    } else if (hours >= 0 && hours <= 5) {
+        // 深夜（0時～5時）は27時扱い
         normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
         normalizedDate.setHours(hours + 24); // 時間を27時表記に変換
     }
