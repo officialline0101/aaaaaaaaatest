@@ -344,7 +344,7 @@
 
 <body>
     <div class="container">
-        <h1>３占屋伊千夜<br>予約フォーム</h1>
+        <h1>４占屋伊千夜<br>予約フォーム</h1>
         <div class="info-text">より詳細な予約はチャットにてお願いします<br>例：4名様以上、ひとり60分以上、<br>深夜1〜3時の予約等</div>
         <div class="label2">お名前　※必須</div>
         <input type="text" id="name1" placeholder="お名前を入力してください">
@@ -889,10 +889,14 @@ function normalizeTime(date) {
     const normalizedDate = new Date(date);
     const hours = normalizedDate.getHours();
 
-    if (hours >= 24) {
-        // 24:00以降の時間を前日として扱う
-        normalizedDate.setDate(normalizedDate.getDate() - 1);
-        normalizedDate.setHours(hours - 24);
+    // 24:00, 24:30, 25:00を当日として扱う
+    if (hours >= 24 && hours <= 26) {
+        normalizedDate.setHours(hours); // そのまま当日の時間として扱う
+    }
+    // 深夜時間帯（0時〜5時）の処理
+    else if (hours >= 0 && hours <= 5) {
+        normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
+        normalizedDate.setHours(hours + 24); // 時間を24時以上に変換
     }
     return normalizedDate;
 }
