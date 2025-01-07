@@ -329,7 +329,7 @@
 
 <body>
     <div class="container">
-        <h1>2占屋伊千夜<br>予約フォーム</h1>
+        <h1>３占屋伊千夜<br>予約フォーム</h1>
         <div class="info-text">より詳細な予約はチャットにてお願いします<br>例：4名様以上、ひとり60分以上、<br>深夜1〜3時の予約等</div>
         <div class="label2">お名前　※必須</div>
         <input type="text" id="name1" placeholder="お名前を入力してください">
@@ -857,18 +857,34 @@ async function fetchAvailability(date) {
             }
         }
 
-// 時間を正規化する関数（27時までを当日として扱い、それ以降は前日として扱う）
+// 時間を正規化する関数（27時までを当日として扱う）
 function normalizeTime(date) {
     const normalizedDate = new Date(date);
     const hours = normalizedDate.getHours();
-    if (hours >= 0 && hours < 6) { // 深夜（0時～5時）は前日扱い
+
+    // 深夜時間帯（0時〜5時）の処理
+    if (hours >= 0 && hours <= 5) {
         normalizedDate.setDate(normalizedDate.getDate() - 1); // 前日として扱う
-        normalizedDate.setHours(hours + 24); // 時間を24時以降の表記に変換
+        normalizedDate.setHours(hours + 24); // 時間を24時以上に変換
+    } else if (hours >= 24 && hours <= 26) {
+        normalizedDate.setDate(normalizedDate.getDate() - 1); // 24:00, 24:30, 25:00も前日扱い
     }
     return normalizedDate;
 }
 
-// カレンダーの内容を更新する関数
+// 現在時刻をチェックし、27時を過ぎたらカレンダーの日付を翌日に進める
+function checkAndUpdateDate() {
+    const now = new Date();
+    const normalizedNow = normalizeTime(now); // 現在時刻を正規化
+
+    // 正規化された時刻が27時を超えた場合
+    if (normalizedNow.getHours() >= 27) {
+        currentDate.setDate(currentDate.getDate() + 1); // 翌日に日付を進める
+        updateCalendarHeader(currentDate); // カレンダーのヘッダーを更新
+        updateCalendar(availabilityCache[currentDate.toISOString()], businessDays); // カレンダーを更新
+    }
+}
+
 function updateCalendar(availability, businessDays) {
     const calendar = document.getElementById('calendar1');
     const table = calendar.querySelector('table tbody');
@@ -888,7 +904,8 @@ function updateCalendar(availability, businessDays) {
         '21:00', '21:30',
         '22:00', '22:30',
         '23:00', '23:30',
-        '24:00', '24:30', '25:00'
+        '24:00', '24:30',
+        '25:00'
     ];
 
     // テーブルの行を作成（初回のみ）
@@ -909,38 +926,39 @@ function updateCalendar(availability, businessDays) {
         }
     }
 
-    // 各セルを空白にリセット
-    for (let row of table.rows) {
-        for (let i = 1; i < row.cells.length; i++) {
-            row.cells[i].textContent = '';
-            row.cells[i].removeAttribute('data-date');
-            row.cells[i].classList.remove('available', 'unavailable', 'selected');
-        }
-    }
+            // テーブルのヘッダーを更新
+            updateCalendarHeader(currentDate);
 
-    // 現在の日時を取得
-    const now = new Date();
-
-    // テーブルの内容を更新
-    for (let i = 0; i < 7; i++) {
-        const day = new Date(currentDate);
-        day.setDate(day.getDate() + i);
-
-        for (let j = 0; j < times.length; j++) {
-            const cell = table.rows[j].cells[i + 1];
-            const slotStart = new Date(day);
-            const [hour, minute] = times[j].split(':').map(Number);
-            slotStart.setHours(hour, minute, 0, 0);
-
-            // 正規化された時間で前日扱い
-            const normalizedSlotStart = normalizeTime(slotStart);
-
-            // 深夜セルの場合、data-date に前日の日付を設定
-            if (normalizedSlotStart.getDate() < day.getDate()) {
-                cell.setAttribute('data-date', normalizedSlotStart.toISOString());
-            } else {
-                cell.setAttribute('data-date', slotStart.toISOString());
+            // 各セルを空白にリセットし、クラスもリセット
+            for (let row of table.rows) {
+                for (let i = 1; i < row.cells.length; i++) {
+                    row.cells[i].textContent = '';
+                    row.cells[i].removeAttribute('data-date');
+                    row.cells[i].classList.remove('available', 'unavailable', 'selected');
+                }
             }
+
+
+            // 現在の日時を取得
+            const now = new Date();
+
+            // テーブルの内容を更新
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(currentDate);
+                day.setDate(day.getDate() + i);
+
+                let businessEventTimes = []; // 営業日のイベント時間帯を記録する配列
+
+                availability.forEach(slot => {
+                    const eventStart = new Date(slot.startTime);
+                    const eventEnd = new Date(slot.endTime);
+                    if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
+                        businessEventTimes.push({ start: eventStart, end: eventEnd });
+                    }
+                });
+
+                for (let j = 0; j < times.length; j++) {
+                    const cell = table.rows[j].cells[i + 1];
 
                     // すでにセルが✕の場合はスキップする
                     if (cell.textContent === '✕') {
