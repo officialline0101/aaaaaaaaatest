@@ -42,7 +42,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #58453b;
+            background-color: #38c4b7;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -106,7 +106,7 @@
             padding: 15px;
             border: none;
             border-radius: 4px;
-            background-color: #81001a;
+            background-color: #16b7d2;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -166,7 +166,7 @@
         }
 
         .calendar td.selected {
-            background-color: #13ca5e;
+            background-color: #16b7d2;
             /* 選択されたカレンダーのセルの背景色を緑色に設定 */
             color: #fff;
             /* 選択されたセルのテキスト色を白に設定 */
@@ -329,18 +329,20 @@
         }
 
         .info-text {
-    margin-top: 20px;
-    /* 上の余白 */
-    margin-bottom: 10px; /* 下に白い隙間を追加 */
-    font-size: 13px;
-    color: #000000;
-    line-height: 1.5;
-    text-align: center;
-    word-wrap: break-word;
-    background-color: #eef9f5; /* 青っぽい背景色を追加 */
-    padding: 10px;
-    border-radius: 4px;
-}
+            margin-top: 20px;
+            /* 上の余白 */
+            margin-bottom: 10px;
+            /* 下に白い隙間を追加 */
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.5;
+            text-align: center;
+            word-wrap: break-word;
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            padding: 10px;
+            border-radius: 4px;
+        }
 
         /* 携帯端末向けのレスポンシブデザイン */
         @media (max-width: 768px) {
@@ -363,6 +365,8 @@
         .symptoms button,
         .options button {
             display: block;
+            font-weight: bold;
+            /* 太文字に設定 */
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -383,7 +387,7 @@
 
         .highlight-background {
             cursor: pointer;
-            background-color: #58453b;
+            background-color: #38c4b7;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -409,12 +413,117 @@
             color: #fff;
             /* オプションテキストの色 */
         }
+
+        .spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.treatment-container {
+    text-align: center;
+    padding: 10px;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 350px;
+    margin: auto;
+}
+
+.treatment-container img {
+    max-width: 100%; /* コンテナ内で画像を最大幅に調整 */
+    height: auto; /* アスペクト比を保つ */
+    display: block; /* 余計な隙間を防ぐ */
+    margin: auto; /* 中央揃え */
+}
+
+.treatment-image {
+    text-align: center;
+    margin-top: 15px;
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    /* border: 1px solid #d4af37; 削除 */
+    border: none; /* 枠なし */
+    /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 削除 */
+    box-shadow: none; /* 影なし */
+    margin: 15px auto;
+}
+
+    .treatment-description {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #fafafa;
+        color: #555;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        font-size: 14px;
+        line-height: 1.5;
+        text-align: left;
+        max-width: 350px;
+        margin: 15px auto;
+    }
+    .treatment-price {
+        margin-top: 15px;
+        padding: 10px;
+        background: #fff;
+        color: #333;
+        border-radius: 8px;
+        border: 1px solid #d4af37;
+        font-weight: bold;
+        font-size: 15px;
+        text-align: right;
+        max-width: 350px;
+        margin: 15px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+    }
+    .spinner-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+    .title {
+    font-size: 24px;
+    color: #4A4A4A;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+        
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>shaving salon 庵<br>予約フォーム
+        <h1>エステティックサロンMARINE<br>予約フォーム
         </h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
@@ -431,77 +540,48 @@
         <div class="label">メニューをお選びください</div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="menu-sections">
-            <button type="button" onclick="showMenu('male')">ブライダルコース</button>
-            <button type="button" onclick="showMenu('female')">シェービングコース</button>
-            <button type="button" onclick="showMenu('whitening')">マッサージコース</button>
+            <button type="button" onclick="showMenu('male')">フェイシャルエステ</button>
+            <button type="button" onclick="showMenu('female')">ボディエステ</button>
         </div>
+
+        <div id="treatment-text" style="margin-bottom: 20px;"></div>
 
         <div id="male" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">◆ブライダルコース◆</span>
+                <span class="highlight-text">◆フェイシャルエステ◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">和装プラン</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">洋装プランA</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">洋装プランB</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">洋装プランC</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="4950">ハリ艶アップコース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="4400">乾燥・たるみ改善コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="5500">美白コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="1100">【簡単・お手軽・お子様連れでもOK】<br>セルフエステ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="5500">毛穴・くすみ改善コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="4400">小顔コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="7700">【エステ月2回付き 】<br>マイナス5歳肌プラン</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="2200">【初めての方にオススメ】<br>フェイシャルトリートメント</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="4400">ハリブーストエステ</button>
             </div>
             <div class="highlight-background">
-                <span class="highlight-text">ブライダルコース：オプション</span>
+                <span class="highlight-text">フェイシャルエステ<br>オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">ベーシックマッサージ(パック付き)</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">リラックスマッサージの(パック付き)</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="1100">【小鼻まわりの毛穴が気になる方にオススメ】<br>毛穴集中エステ</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="2750">ドライヘッドトリートメント</button>
             </div>
         </div>
 
         <div id="female" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">◆シェービングコース◆</span>
+                <span class="highlight-text">ボディエステ</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">リラックスコース</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">ベーシックコース</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">スピードコース</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">眉カットのみ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">襟足のみ</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">シェービングコース：オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中(キャミソールライン)</button>
-                <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">背中(腰まで)</button>
-                <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテ</button>
-                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">腕</button>
-                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック</button>
-                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック</button>
-            </div>
-        </div>
-
-        <div id="whitening" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆マッサージコース◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">リラックスマッサージ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ベーシックマッサージ</button>
-            </div>
-            <div class="highlight-background">
-                <span class="highlight-text">マッサージコース：オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中(キャミソールライン)</button>
-                <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">背中(腰まで)</button>
-                <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテ</button>
-                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">腕</button>
-                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック</button>
-                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="3850">【むくみ解消】アロマ美脚トリートメント</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="5500">【痩身エステ】スッキリ美背中コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="9900">【痩身エステ】美ボディ全身コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="3850">【肩こり解消】アロマ美背中トリートメント</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="19800">【短期集中!本気で痩せたい方】<br>痩身エステ全身コース月3回</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="6600">【癒しのオールハンド】<br>アロマボディトリートメント<br>全身美肌コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment16')" data-price="5500">【痩身エステ】ほっそり美脚コース</button>
             </div>
         </div>
 
@@ -580,32 +660,29 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '眉カット': 10,
-            '襟足': 10,
-            '背中(キャミソールライン)': 15,
-            '背中(腰まで)': 30,
-            'デコルテ': 15,
-            '腕': 30,
-            '保湿パック': 10,
-            'ベーシックマッサージ(パック付き)': 20,
-            'リラックスマッサージの(パック付き)': 30,
-            '美白パック': 15
+            '【小鼻まわりの毛穴が気になる方にオススメ】毛穴集中エステ': 10,
+            'ドライヘッドトリートメント': 45
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '和装プラン': 90,
-            '洋装プランA': 100,
-            '洋装プランB': 150,
-            '洋装プランC': 170,
-            'リラックスコース': 90,
-            'ベーシックコース': 70,
-            'スピードコース': 60,
-            '眉カットのみ': 45,
-            '襟足のみ': 45,
-            'リラックスマッサージ': 60,
-            'ベーシックマッサージ': 50
+            'ハリ艶アップコース': 120,
+            '乾燥・たるみ改善コース': 120,
+            '美白コース': 120,
+            '【簡単・お手軽・お子様連れでもOK】セルフエステ': 120,
+            '毛穴・くすみ改善コース': 120,
+            '小顔コース': 120,
+            '【エステ月2回付き 】マイナス5歳肌プラン': 120,
+            '【初めての方にオススメ】フェイシャルトリートメント': 90,
+            'ハリブーストエステ': 120,
+            '【むくみ解消】アロマ美脚トリートメント': 60,
+            '【痩身エステ】スッキリ美背中コース': 60,
+            '【痩身エステ】美ボディ全身コース': 120,
+            '【肩こり解消】アロマ美背中トリートメン': 60,
+            '【短期集中!本気で痩せたい方】痩身エステ全身コース月3回': 120,
+            '【癒しのオールハンド】アロマボディトリートメント全身美肌コース': 120,
+            '【痩身エステ】ほっそり美脚コース': 60
         };
 
 
@@ -650,6 +727,8 @@
         <p>${irradiationsText}</p>
         <hr>
         <p>${selectedDateText}</p>
+        <hr>
+        <p>${totalAmountText}</p>
         <hr>
     `;
         }
@@ -730,24 +809,160 @@
             // トリートメントテキストを表示
             const treatmentText = document.getElementById('treatment-text');
 
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+            function createTreatmentContent(title, imageUrl, description, price, time) {
+    return `
+        <div class="treatment-container">
+            <div style="font-size: 18px; font-weight: bold;">${title}</div>
+        </div>
+
+        <div class="treatment-image">
+            <div class="spinner-overlay">
+                <div class="spinner"></div>
+            </div>
+<img 
+    src="${imageUrl}" 
+    alt="${title}" 
+    style="width: 100%; height: 100%; object-fit: contain; display: none;" 
+    onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
+
+        </div>
+
+        <div class="treatment-description">${description}</div>
+
+        <div class="treatment-price">
+            <span>価格：</span><span>${price}</span><br>
+            <span>施術時間：</span><span>${time}</span>
+        </div>`;
+}
+
+if (treatmentId === 'treatment1') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ハリ艶アップコース',
+        'https://www.dropbox.com/scl/fi/gb5udw7nx5n41e7uammo7/.png?rlkey=hsjxq7xf4br6x72sr0uy54eo1&st=w1b6qh09&raw=1',
+        '1秒間に100万回の振動でお肌の細胞を整え、キメも整える超音波エステ。さらに、お肌にヒアルロン酸オイルを入れ込み、水分をたっぷり含んだジェルをのせてマスクで閉じ込めると約30倍に膨らみ、ぷるぷるお肌が実現！　施術時間60分<br>【こんな方にオススメ】<br>・スキンケアがお肌に浸透しにくく、乾燥が気になる方<br>・フェイスラインのたるみ、ほうれい線が気になる方<br>・長年シミが気になっている方',
+        '￥4,950',
+        '60分'
+    );
+} else if (treatmentId === 'treatment2') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '乾燥・たるみ改善コース',
+        'https://www.dropbox.com/scl/fi/8y5uvu2sdeq5au8q9tyo7/.png?rlkey=w27h6yh2hkvlun1wlwtf0gp9t&st=r6fy742a&raw=1',
+        '最高峰美容液を使用。オールハンドでお肌の凝り固まった筋肉をほぐし、リフトアップ！リフトアップで冬の悩みに多いしわ・たるみ・乾燥を一気に改善！デコルテトリートメント付き♪施術時間60分',
+        '￥4,400',
+        '60分'
+    );
+} else if (treatmentId === 'treatment3') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '美白コース',
+        'https://www.dropbox.com/scl/fi/43d91h92wb2ccavs0vltb/.png?rlkey=uxv37o52jlpajqal2ift0pu2m&st=1xg9wdm6&raw=1',
+        '3S CAVI(痩身機器)を使ったスペシャルエステ！小顔&美白が実感できます♪痩身エステとの組み合わせがオススメ。施術時間50分',
+        '￥5,500',
+        '60分'
+    );
+} else if (treatmentId === 'treatment4') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【簡単・お手軽・お子様連れでもOK】<br>セルフエステ',
+        'https://www.dropbox.com/scl/fi/6u6cxnzuwp3c06umotrsa/OK.png?rlkey=boog0eyt9bpuxknppitqrwptc&st=9yvlqtz9&raw=1',
+        'イオンスチームを浴びながら、サロンに置いてあるスキンケア・美顔器を使って本格エステをご自分で♪ ＋550円で、超音波セルフエステも付けられます！',
+        '￥1,100',
+        '60分'
+    );
+} else if (treatmentId === 'treatment5') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '毛穴・くすみ改善コース',
+        'https://www.dropbox.com/scl/fi/bn4zqjda7te3rz20r9vr8/.png?rlkey=fbcmc2vs9578wsal1gdp8pkg0&st=2wlei5zb&raw=1',
+        'フェイシャルマッサージで毛穴の汚れをしっかり落としたあと、約1ヶ月分の美容クリームを40℃の熱で一気に入れ込み、くすみ、むくみを除去！固まった石膏をはずすと、小顔&美白が実現！　施術時間60分',
+        '￥5,500',
+        '60分'
+    );
+} else if (treatmentId === 'treatment6') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '小顔コース',
+        'https://www.dropbox.com/scl/fi/zk2wn5jecjwvcrvqmlybq/.png?rlkey=u2kwr7mzdyfgjp2xwcjmur75s&st=g73tr58d&raw=1',
+        '電気の力でコラーゲンと美白成分をお肌の真皮にダイレクトに届けるポレーションエステ。そのあとEMSで筋肉に刺激を与え、肌の内側からハリを出します。 デコルテトリートメント付き。施術時間60分',
+        '￥4,400',
+        '60分'
+    );
+} else if (treatmentId === 'treatment7') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【エステ月2回付き】<br>マイナス5歳肌プラン',
+        'https://www.dropbox.com/scl/fi/vd7venbx3hxzxxemgxj6t/2-5.png?rlkey=602malm6zi9thn1o5rngadest&st=2b0lgesj&raw=1',
+        'シェアNo.1ふきとり用化粧水企画！4200円のふきとり用化粧水2ヶ月分サイズをプレゼント！サロンケアとホームケアでお肌の土台作りをサポート！',
+        '￥7,700',
+        '60分'
+    );
+} else if (treatmentId === 'treatment8') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【初めての方にオススメ】<br>フェイシャルトリートメント',
+        'https://www.dropbox.com/scl/fi/ykh35wb14wxy4aku73wuy/.png?rlkey=8zoonzj3wi65mtdodckmdeg0p&st=tv36ljgm&raw=1',
+        'イオンスチームを浴びながら癒しのマッサージで毛穴の奥の大掃除！血行促進で乾燥対策にも。施術時間45分',
+        '￥2,200',
+        '45分'
+    );
+} else if (treatmentId === 'treatment9') {
+    treatmentText.innerHTML = createTreatmentContent(
+        'ハリブーストエステ',
+        'https://www.dropbox.com/scl/fi/wlu23qajkc442mnfpo34k/.png?rlkey=5k22kxp8p7sh8ejcdty2gvaqr&st=pm54oume&raw=1',
+        'シワ・たるみの原因はお肌の乾燥から。<br>高保湿のクレンジングと化粧水を使用し、ディープクレンジングでお肌の老化角質わー完全に除去！<br>美容整形美容液とも言われている、ナリス最高峰美容液こセルグレースフォーミュラとルミエ美顔機でしっかりリフトアップ！',
+        '￥4,400',
+        '60分'
+    );
+} else if (treatmentId === 'treatment10') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【むくみ解消】アロマ美脚トリートメント',
+        'https://www.dropbox.com/scl/fi/q7c3hdq2jlcq9jq2of8ys/.png?rlkey=b0j1ueeege5gn62phmrpmx57r&st=1akklx7c&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥3,850',
+        '30分'
+    );
+} else if (treatmentId === 'treatment11') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【痩身エステ】スッキリ美背中コース',
+        'https://www.dropbox.com/scl/fi/x2cebzn4shy7ljvmp3dot/.png?rlkey=csu1iopip4qsfn6hzgwf71v6m&st=m3g7q5vf&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥5,500',
+        '30分'
+    );
+} else if (treatmentId === 'treatment12') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【痩身エステ】美ボディ全身コース',
+        'https://www.dropbox.com/scl/fi/5bsboyin7luucya5rczoy/.png?rlkey=wf1gytdj34xx4vqvwxp539342&st=4ciew2d8&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥9,900',
+        '60分'
+    );
+} else if (treatmentId === 'treatment13') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【肩こり解消】アロマ美背中トリートメント',
+        'https://www.dropbox.com/scl/fi/vvcvbb466je92fgo2q9rb/.png?rlkey=l7riz7tj4f5c9qvc945eljjbp&st=kmlvq7f1&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥3,850',
+        '30分'
+    );
+} else if (treatmentId === 'treatment14') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【短期集中!本気で痩せたい方】<br>痩身エステ全身コース月3回',
+        'https://www.dropbox.com/scl/fi/5bsboyin7luucya5rczoy/.png?rlkey=wf1gytdj34xx4vqvwxp539342&st=gig41rcj&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥19,800',
+        '60分'
+    );
+} else if (treatmentId === 'treatment15') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【癒しのオールハンド】<br>アロマボディトリートメント<br>全身美肌コース',
+        'https://www.dropbox.com/scl/fi/7o2nk7tp6ar0rt23u68bf/.png?rlkey=0i8yef11go2uvt27onceyveyl&st=fla8dc12&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥6,600',
+        '60分'
+    );
+} else if (treatmentId === 'treatment16') {
+    treatmentText.innerHTML = createTreatmentContent(
+        '【痩身エステ】<br>ほっそり美脚コース',
+        'https://www.dropbox.com/scl/fi/4zny160kavwz6bj0oc6o9/.png?rlkey=opm6yc6rqjib5ix7ior6ojxxy&st=7jin99vz&raw=1',
+        '別途カウンセリング時間約30分。<br>お体の様子をお伺いしながら施術を行なっていきます',
+        '￥5,500',
+        '30分'
+    );
             } else {
                 treatmentText.innerHTML = '';
             }
@@ -979,16 +1194,12 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-    '10:00', '10:15', '10:30', '10:45',
-    '11:00', '11:15', '11:30', '11:45',
-    '12:00', '12:15', '12:30', '12:45',
-    '13:00', '13:15', '13:30', '13:45',
-    '14:00', '14:15', '14:30', '14:45',
-    '15:00', '15:15', '15:30', '15:45',
-    '16:00', '16:15', '16:30', '16:45',
-    '17:00', '17:15', '17:30', '17:45',
-    '18:00'
-];
+                '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
+                '12:00', '12:30', '13:00', '13:30',
+                '14:00', '14:30', '15:00', '15:30',
+                '16:00', '16:30', '17:00', '17:30',
+                '18:00', '18:30', '19:00'
+            ];
 
             if (table.rows.length === 0) {
                 for (const time of times) {
@@ -1064,17 +1275,6 @@
                         continue;
                     }
 
-                    // 18時以降に終了する予約を不可にする (17:30は可)
-                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    } else if (slotEnd.getHours() > 18) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    }
-
                     // ここで終了時間を使った条件処理を行う
                     // 例えば、リアルタイムで既に過ぎた時間帯は×にする
                     if (slotStart < now) {
@@ -1115,21 +1315,6 @@
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 日曜日で、営業日ではない場合
-                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 日曜日で、営業日ではない場合
-                    else if (slotStart.getDay() === 1 && !isBusinessDay && businessEventTimes.length === 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 日曜日で、営業日ではない場合
-                    else if (slotStart.getDay() === 6 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
