@@ -537,13 +537,17 @@
             /* 親要素の幅を使用 */
         }
 
+        #visitReasonSection {
+    display: none;
+}
+
         .info-
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>ピスタチオあああああ<br>予約フォーム
+        <h1>ピスタチオ<br>予約フォーム
         </h1>
         <div class="label">お客様名※必須（カタカナ）</div>
         <input type="text" id="name" placeholder="カタカナでお名前を入力してください">
@@ -557,11 +561,16 @@
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
-        <div class="label">選択肢</div>
-        <div class="oneselect-buttons">
-            <button type="button" id="firstoneselect" onclick="selectoneselect(this)">選択肢1</button>
-            <button type="button" id="repeatoneselect" onclick="selectoneselect(this)">選択肢2</button>
-        </div>
+        <div id="visitReasonSection">
+    <div class="label">来店のきっかけ</div>
+    <div class="oneselect-buttons">
+        <button type="button" id="oneselect" onclick="selectoneselect(this)">ネイルブック</button>
+        <button type="button" id="twoselect" onclick="selectoneselect(this)">Instagram</button>
+        <button type="button" id="threeselect" onclick="selectoneselect(this)">X(旧Twitter)</button>
+        <button type="button" id="fourselect" onclick="selectoneselect(this)">ご紹介クーポン</button>
+        <button type="button" id="fiveselect" onclick="selectoneselect(this)">その他</button>
+    </div>
+</div>
 
         <div class="label">ネイルオフの有無</div>
         <div class="nail-buttons">
@@ -711,7 +720,7 @@
         let oneselectCount = '';
         let nailCount = '';
         let gelCount = '';
-        let selectedSymptom = [];  // 配列として定義
+        let selectedSymptom = '';  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
@@ -791,7 +800,7 @@
 
             // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>・')}`
+                ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>・${selectedMenu.join('<br>・')}`
                 : '・メニューが未選択です';
 
             // オプションが選択されていたら、各オプションを改行して表示
@@ -876,8 +885,8 @@
 
             // 選択されたオプションを取得
             const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
-            selectedSymptom = Array.from(updatedSelectedButtons).map(btn => btn.textContent.trim());
-            selectedSymptom = selectedSymptom.join(', ');
+            selectedMenu = Array.from(updatedSelectedButtons).map(btn => btn.textContent.trim());
+            selectedSymptom = selectedMenu.join(', ');
 
             // メニュー時間と価格をリセット
             selectedMenuTime = 0;
@@ -1158,7 +1167,7 @@
 
             // メニュー選択をリセット
             document.querySelectorAll('.symptoms button').forEach(btn => btn.classList.remove('active'));
-            selectedSymptom = [];
+            selectedSymptom = '';
             menuPrice = 0;
 
             // オプションの選択をリセット
@@ -1213,29 +1222,35 @@
         }
 
         function selectVisit(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+        // 選択された日時をリセット
+        selectedFullDate = '';
 
-            document.getElementById('firstVisit').classList.remove('active');
-            document.getElementById('repeatVisit').classList.remove('active');
-            element.classList.add('active');
-            visitCount = element.innerText;
+        document.getElementById('firstVisit').classList.remove('active');
+        document.getElementById('repeatVisit').classList.remove('active');
+        element.classList.add('active');
+        visitCount = element.innerText;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedVisitTime = visitTimes[visitCount];
-
-            console.log('選択された訪問回数の時間:', selectedVisitTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
+        // "1回目"の場合は「来店のきっかけ」を表示、それ以外は非表示
+        const visitReasonSection = document.getElementById('visitReasonSection');
+        if (visitCount === "1回目") {
+            visitReasonSection.style.display = "block";
+        } else {
+            visitReasonSection.style.display = "none";
         }
+
+        // カレンダーを更新するために取得する日付を渡す
+        fetchAvailability(currentDate);
+    }
 
         function selectoneselect(element) {
             // 選択された日時をリセット
             selectedFullDate = '';
 
-            document.getElementById('firstoneselect').classList.remove('active');
-            document.getElementById('repeatoneselect').classList.remove('active');
+            document.getElementById('oneselect').classList.remove('active');
+            document.getElementById('twoselect').classList.remove('active');
+            document.getElementById('threeselect').classList.remove('active');
+            document.getElementById('fourselect').classList.remove('active');
+            document.getElementById('fiveselect').classList.remove('active');
             element.classList.add('active');
             visitCount = element.innerText;
             oneselectCount = element.innerText;
