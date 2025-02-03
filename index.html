@@ -60,6 +60,7 @@
         }
 
         .visit-buttons,
+        .student-buttons,
         .symptoms,
         .menu-sections,
         .irradiations {
@@ -70,6 +71,7 @@
         }
 
         .visit-buttons button,
+        .student-buttons button,
         .symptoms button,
         .menu-sections button,
         .irradiations button {
@@ -85,6 +87,7 @@
         }
 
         .visit-buttons button.active,
+        .student-buttons button.active,
         .symptoms button.active,
         .menu-sections button.active,
         .irradiations button.active {
@@ -330,29 +333,86 @@
 
         .info-text {
             margin-top: 20px;
-            /* 下にずらすスペース */
+            /* 上の余白 */
+            margin-bottom: 10px;
+            /* 下に白い隙間を追加 */
             font-size: 13px;
-            /* 読みやすいサイズ */
             color: #000000;
-            /* 説明文らしい落ち着いた色 */
             line-height: 1.5;
-            /* テキスト間の高さを適切に設定 */
             text-align: center;
-            /* 中央揃え */
             word-wrap: break-word;
-            /* 長いテキストの折り返しを強制 */
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            padding: 10px;
+            border-radius: 4px;
         }
 
         /* 携帯端末向けのレスポンシブデザイン */
         @media (max-width: 768px) {
             .info-text {
-                font-size: 10px;
+                font-size: 11.5px;
                 /* スマホでは少し小さく */
-                margin-top: 15px;
+                margin-top: 10px;
                 /* 上下のマージンを調整 */
-                line-height: 1.4;
+                line-height: 2.0;
                 /* テキストの高さ調整 */
             }
+        }
+
+        .symptoms,
+        .options {
+            display: block;
+            /* ボタンを縦並びに */
+        }
+
+        .symptoms button,
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f7f7f7;
+            cursor: pointer;
+            box-sizing: border-box;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .symptoms button.active,
+        .options button.active {
+            background-color: #444;
+            color: #fff;
+        }
+
+        .highlight-background {
+            cursor: pointer;
+            background-color: #ab83e6;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 18px;
+            /* テキストを読みやすく */
+            display: flex;
+            justify-content: center;
+            /* オプションを中央寄せ */
+            align-items: center;
+            position: relative;
+            /* プラス記号を右端に配置 */
+        }
+
+        .symptoms,
+        .options {
+            display: block;
+            /* ボタンを縦並びに */
+        }
+
+        .highlight-text {
+            font-weight: bold;
+            display: inline-block;
+            color: #fff;
+            /* オプションテキストの色 */
         }
     </style>
 </head>
@@ -372,6 +432,12 @@
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">女性</button>
         </div>
 
+        <div class="label">学生ですか？※必須</div>
+        <div class="student-buttons">
+            <button type="button" id="firststudent" onclick="selectstudent(this)">学生です</button>
+            <button type="button" id="repeatstudent" onclick="selectstudent(this)">成人です</button>
+        </div>
+
         <div class="label">メニューをお選びください</div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="menu-sections">
@@ -380,19 +446,21 @@
             <button type="button" onclick="showMenu('whitening')">女性脱毛</button>
         </div>
 
+        <div id="treatment-text" style="margin-bottom: 20px;"></div>
+
         <div id="male" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">◆ブライダルコース◆</span>
+                <span class="highlight-text">◆男性脱毛◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">カウンセリング</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">全身脱毛/VIO込み</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">全身脱毛/VIO抜きの全身</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">上半身コース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">下半身コース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お顔コース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ＶＩＯコース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お好きなパーツ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">カウンセリング</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">全身脱毛/VIO込み</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">全身脱毛/VIO抜きの全身</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">上半身コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">下半身コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">お顔コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">ＶＩＯコース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">お好きなパーツ</button>
             </div>
         </div>
 
@@ -401,10 +469,10 @@
                 <span class="highlight-text">◆女性　フェイシャル◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">新規限定　アドバンスコース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">二回目以降　キープメンバーコース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">二回目以降　ビジターコース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">二回目以降　美肌レッスン</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">新規限定　アドバンスコース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="15000">二回目以降　キープメンバーコース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="15000">二回目以降　ビジターコース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="15000">二回目以降　美肌レッスン</button>
             </div>
         </div>
 
@@ -413,14 +481,14 @@
                 <span class="highlight-text">◆女性脱毛◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">カウンセリング</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">全身脱毛/VIO込み</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">全身脱毛/VIO抜きの全身</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">上半身コース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">下半身コース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お顔コース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">ＶＩＯコース</button>
-                <button type="button" onclick="selectSymptom(this)" data-price="15000">お好きなパーツ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment13')" data-price="15000">カウンセリング</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment14')" data-price="15000">全身脱毛/VIO込み</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment15')" data-price="15000">全身脱毛/VIO抜きの全身</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment16')" data-price="15000">上半身コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment17')" data-price="15000">下半身コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment18')" data-price="15000">お顔コース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment19')" data-price="15000">ＶＩＯコース</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment20')" data-price="15000">お好きなパーツ</button>
             </div>
         </div>
 
@@ -468,6 +536,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
+        let studentCount = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -525,6 +594,7 @@
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+            const studentCountText = studentCount ? `・<span style="color:red;"><strong>学生ですか？</strong></span>：${studentCount}` : '・学生ですか？が未選択です';
 
             // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
@@ -556,6 +626,8 @@
         <hr>
         <p>${visitCountText}</p>
         <hr>
+        <p>${studentCountText}</p>
+        <hr>
         <p>${selectedSymptomText}</p>
         <hr>
         <p>${selectedDateText}</p>
@@ -566,6 +638,9 @@
         // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
         document.getElementById('name').addEventListener('input', updateDisplayInfo);
         document.querySelectorAll('.visit-buttons button').forEach(button => {
+            button.addEventListener('click', updateDisplayInfo);
+        });
+        document.querySelectorAll('.student-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
         document.querySelectorAll('.symptoms button').forEach(button => {
@@ -730,6 +805,24 @@
             fetchAvailability(currentDate);
         }
 
+        function selectstudent(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('firststudent').classList.remove('active');
+            document.getElementById('repeatstudent').classList.remove('active');
+            element.classList.add('active');
+            studentCount = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedstudentTime = studentTimes[studentCount];
+
+            console.log('選択された訪問回数の時間:', selectedstudentTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
         function showMenu(menu) {
             // すべてのメニューボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
@@ -793,6 +886,7 @@
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
+                studentCount: studentCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 irradiationsCount: irradiationsCount,
                 dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
@@ -815,6 +909,11 @@
                 return;
             }
 
+            if (!formData.studentCount) {
+                alert('学生を選択してください。');
+                return;
+            }
+
             if (!formData.selectedSymptom) {
                 alert('メニューを選択してください。');
                 return;
@@ -828,7 +927,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n指名：山形容子\nお名前：${formData.name}\n電話番号：${formData.phone}\nご性別：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n指名：山形容子\nお名前：${formData.name}\n電話番号：${formData.phone}\nご性別：${formData.visitCount}\n学生ですか？：${formData.studentCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
@@ -860,7 +959,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycby530-poI9BynaLlAtK_7q4ym4WWtzdfpYVVazO87e8yiZDpXlHDnqaroFpLcBtp9I/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbzQ8A5k-0EE_9prCbvsoB41GF4BoXCLMe8axKA7KqgQfR5UGkl6unn1wjgYkz9ftVRE/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
