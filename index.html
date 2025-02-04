@@ -270,6 +270,8 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
     <script>
+        let selectedSymptom = [];  // 配列として定義
+        let selectedpriority = [];  // 配列として定義
 
                     // LIFF初期化
                     document.addEventListener('DOMContentLoaded', function () {
@@ -373,6 +375,8 @@
             const message2 = document.getElementById('message2').value;
             const message3 = document.getElementById('message3').value;
             const message4 = document.getElementById('message4').value;
+            selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+            selectedpriority: selectedpriority && selectedpriority.length > 0 ? selectedpriority : null // 空の選択肢をチェック
 
             /* フォームデータをオブジェクトにまとめる */
             const formData = {
@@ -385,7 +389,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【名前】：${formData.message}\n【電話番号】：${formData.message2}\n【住所】：${formData.message3}\n【生年月日】：${formData.message4}`
+                text: `≪アンケート≫\n【名前】：${formData.message}\n【電話番号】：${formData.message2}\n【住所】：${formData.message3}\n【生年月日】：${formData.message4}\n【生年月日】：${formData.selectedSymptom}\n【生年月日】：${formData.selectedpriority}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
