@@ -453,17 +453,20 @@
         }
 
         function selectmenu(element) {
+            const menuText = element.innerText;
 
-            document.getElementById('onemenu').classList.remove('active');
-            document.getElementById('twomenu').classList.remove('active');
-            document.getElementById('threemenu').classList.remove('active');
-            document.getElementById('fourmenu').classList.remove('active');
-            document.getElementById('fivemenu').classList.remove('active');
-            document.getElementById('sixmenu').classList.remove('active');
-            document.getElementById('sevenmenu').classList.remove('active');
+            // activeクラスのトグル
+            element.classList.toggle('active');
 
-            element.classList.add('active');
-            menuCount = element.innerText;
+            if (element.classList.contains('active')) {
+                // 選択された場合に配列に追加
+                if (!menuCount.includes(menuText)) {
+                    menuCount.push(menuText);
+                }
+            } else {
+                // 選択解除された場合に配列から削除
+                menuCount = menuCount.filter(menu => menu !== menuText);
+            }
         }
 
         function submitForm() {
@@ -480,7 +483,7 @@
             deliveryCount: deliveryCount;
             gelnailsCount: gelnailsCount;
             budgetyCount: budgetyCount;
-            menuCount: menuCount;
+            menuCount: menuCount.join(', ') // 選択されたメニューをカンマ区切りで結合
 
             /* フォームデータをオブジェクトにまとめる */
             const formData = {
