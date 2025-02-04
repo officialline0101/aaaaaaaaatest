@@ -453,21 +453,18 @@
         }
 
         function selectmenu(element) {
-            const menuText = element.innerText;
+        const menuText = element.innerText;
+        
+        // ボタンの選択状態の切り替え
+        element.classList.toggle('active');
 
-            // activeクラスのトグル
-            element.classList.toggle('active');
-
-            if (element.classList.contains('active')) {
-                // 選択された場合に配列に追加
-                if (!menuCount.includes(menuText)) {
-                    menuCount.push(menuText);
-                }
-            } else {
-                // 選択解除された場合に配列から削除
-                menuCount = menuCount.filter(menu => menu !== menuText);
-            }
+        // 選択されたメニューの管理
+        if (element.classList.contains('active')) {
+            menuCount.push(menuText);
+        } else {
+            menuCount = menuCount.filter(item => item !== menuText);
         }
+    }
 
         function submitForm() {
             /* フォームの入力値を取得 */
@@ -483,7 +480,7 @@
             deliveryCount: deliveryCount;
             gelnailsCount: gelnailsCount;
             budgetyCount: budgetyCount;
-            menuCount: menuCount.join(', ') // 選択されたメニューをカンマ区切りで結合
+            menuCount: menuCount.join(', ')
 
             /* フォームデータをオブジェクトにまとめる */
             const formData = {
