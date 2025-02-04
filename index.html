@@ -44,7 +44,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #13ca5e;
+            background-color: #88705a;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -63,22 +63,28 @@
             box-sizing: border-box;
         }
 
-        .symptoms,
         .priority-buttons,
-        .menu-sections,
-        .irradiations,
-        .mr-buttons {
+        .demand-buttons,
+        .chance-buttons,
+        .Introduction-buttons,
+        .delivery-buttons,
+        .gelnails-buttons,
+        .budgety-buttons,
+        .menu-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
 
-        .symptoms button,
         .priority-buttons button,
-        .menu-sections button,
-        .irradiations button,
-        .mr-buttons button {
+        .demand-buttons button,
+        .chance-buttons button,
+        .Introduction-buttons button,
+        .delivery-buttons button,
+        .gelnails-buttons button,
+        .budgety-buttons button,
+        .menu-buttons button {
             flex: 1;
             padding: 10px;
             border: 1px solid #ccc;
@@ -90,11 +96,14 @@
             white-space: nowrap;
         }
 
-        .symptoms button.active,
         .priority-buttons button.active,
-        .menu-sections button.active,
-        .irradiations button.active,
-        .mr-buttons button.active {
+        .demand-buttons button.active,
+        .chance-buttons button.active,
+        .Introduction-buttons button.active,
+        .delivery-buttons button.active,
+        .gelnails-buttons button.active,
+        .budgety-buttons button.active,
+        .menu-buttons button.active {
             background-color: #444;
             color: #fff;
         }
@@ -113,7 +122,7 @@
             padding: 15px;
             border: none;
             border-radius: 4px;
-            background-color: #ff4c4c;
+            background-color: #322a25;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -245,10 +254,24 @@
         <div class="label">生年月日（例　2000年1月1日）</div>
         <textarea id="message4" rows="1" placeholder="メッセージを入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">ご来店回数※必須</div>
+        <div class="label">サロンに求める最も優先度が高いものは何ですか？</div>
         <div class="priority-buttons">
-            <button type="button" id="firstpriority" onclick="selectpriority(this)">1回目</button>
-            <button type="button" id="repeatpriority" onclick="selectpriority(this)">2回目以降</button>
+            <button type="button" id="onepriority" onclick="selectpriority(this)">スピード</button>
+            <button type="button" id="twopriority" onclick="selectpriority(this)">クオリティ</button>
+            <button type="button" id="threepriority" onclick="selectpriority(this)">居心地</button>
+            <button type="button" id="fourpriority" onclick="selectpriority(this)">細やかな説明</button>
+            <button type="button" id="fivepriority" onclick="selectpriority(this)">価格</button>
+            <button type="button" id="sixpriority" onclick="selectpriority(this)">特になし</button>
+        </div>
+
+        <div class="label">サロンに求めるものをもう一つ教えてください。<br>（特になしと答えた人は特になしを選択してください。）</div>
+        <div class="demand-buttons">
+            <button type="button" id="onedemand" onclick="selectdemand(this)">スピード</button>
+            <button type="button" id="twodemand" onclick="selectdemand(this)">クオリティ</button>
+            <button type="button" id="threedemand" onclick="selectdemand(this)">居心地</button>
+            <button type="button" id="fourdemand" onclick="selectdemand(this)">細やかな説明</button>
+            <button type="button" id="fivedemand" onclick="selectdemand(this)">価格</button>
+            <button type="button" id="sixdemand" onclick="selectdemand(this)">特になし</button>
         </div>
 
         <button class="submit-button" onclick="submitForm()">アンケート送信</button> <!-- フォーム送信ボタン -->
@@ -256,23 +279,27 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
     <script>
-        let selectedSymptom = [];  // 配列として定義
-        let selectedpriority = [];  // 配列として定義
-        let visitCount = '';
         let priorityCount = '';
+        let demandCount = '';
+        let chanceCount = '';
+        let IntroductionCount = '';
+        let deliveryCount = '';
+        let gelnailsCount = '';
+        let budgetyCount = '';
+        let menuCount = '';
 
-                    // LIFF初期化
-                    document.addEventListener('DOMContentLoaded', function () {
-                        liff.init({
-                            liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
-                        }).then(() => {
-                            // LIFF初期化成功時の処理
-                            console.log('LIFF初期化成功');
-                        }).catch((err) => {
-                            // LIFF初期化失敗時の処理
-                            console.error('LIFF初期化失敗', err);
-                        });
-                    });
+        // LIFF初期化
+        document.addEventListener('DOMContentLoaded', function () {
+            liff.init({
+                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
+            }).then(() => {
+                // LIFF初期化成功時の処理
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                // LIFF初期化失敗時の処理
+                console.error('LIFF初期化失敗', err);
+            });
+        });
 
         // プレースホルダーを非表示にする関数
         function hidePlaceholder(placeholderId) {
@@ -288,13 +315,128 @@
         }
 
         function selectpriority(element) {
+
+            document.getElementById('onepriority').classList.remove('active');
+            document.getElementById('twopriority').classList.remove('active');
+            document.getElementById('threepriority').classList.remove('active'); // 修正
+            document.getElementById('fourpriority').classList.remove('active');
+            document.getElementById('fivepriority').classList.remove('active');
+            document.getElementById('sixpriority').classList.remove('active');
+
+            element.classList.add('active');
+            priorityCount = element.innerText;
+        }
+
+        function selectdemand(element) {
+
+            document.getElementById('onedemand').classList.remove('active');
+            document.getElementById('twodemand').classList.remove('active');
+            document.getElementById('threedemand').classList.remove('active'); // 修正
+            document.getElementById('fourdemand').classList.remove('active');
+            document.getElementById('fivedemand').classList.remove('active');
+            document.getElementById('sixdemand').classList.remove('active');
+
+            element.classList.add('active');
+            demandCount = element.innerText;
+        }
+
+        function selectchance(element) {
             // 選択された日時をリセット
             selectedFullDate = '';
 
-            document.getElementById('firstpriority').classList.remove('active');
-            document.getElementById('repeatpriority').classList.remove('active');
+            document.getElementById('onechance').classList.remove('active');
+            document.getElementById('twochance').classList.remove('active');
+            document.getElementById('threechance').classList.remove('active');
+            document.getElementById('fourchance').classList.remove('active');
+            document.getElementById('fivechance').classList.remove('active');
+            document.getElementById('sixchance').classList.remove('active');
             element.classList.add('active');
-            priorityCount = element.innerText;
+            chanceCount = element.innerText;
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        function selectIntroduction(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('oneIntroduction').classList.remove('active');
+            document.getElementById('twoIntroduction').classList.remove('active');
+            document.getElementById('threeIntroduction').classList.remove('active');
+            document.getElementById('fourIntroduction').classList.remove('active');
+            document.getElementById('fiveIntroduction').classList.remove('active');
+            document.getElementById('sixIntroduction').classList.remove('active');
+            element.classList.add('active');
+            IntroductionCount = element.innerText;
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        function selectdelivery(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('onedelivery').classList.remove('active');
+            document.getElementById('twodelivery').classList.remove('active');
+            document.getElementById('threedelivery').classList.remove('active');
+            document.getElementById('fourdelivery').classList.remove('active');
+            document.getElementById('fivedelivery').classList.remove('active');
+            document.getElementById('sixdelivery').classList.remove('active');
+            element.classList.add('active');
+            deliveryCount = element.innerText;
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        function selectgelnails(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('onegelnails').classList.remove('active');
+            document.getElementById('twogelnails').classList.remove('active');
+            document.getElementById('threegelnails').classList.remove('active');
+            document.getElementById('fourgelnails').classList.remove('active');
+            document.getElementById('fivev').classList.remove('active');
+            document.getElementById('sixgelnails').classList.remove('active');
+            element.classList.add('active');
+            gelnailsCount = element.innerText;
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        function selectbudget(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('onebudget').classList.remove('active');
+            document.getElementById('twobudget').classList.remove('active');
+            document.getElementById('threebudget').classList.remove('active');
+            document.getElementById('fourbudget').classList.remove('active');
+            document.getElementById('fivebudget').classList.remove('active');
+            document.getElementById('sixbudget').classList.remove('active');
+            element.classList.add('active');
+            budgetCount = element.innerText;
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        function selectmenu(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('onemenu').classList.remove('active');
+            document.getElementById('twomenu').classList.remove('active');
+            document.getElementById('threemenu').classList.remove('active');
+            document.getElementById('fourmenu').classList.remove('active');
+            document.getElementById('fivemenu').classList.remove('active');
+            document.getElementById('sixmenu').classList.remove('active');
+            element.classList.add('active');
+            menu = element.innerText;
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
@@ -306,7 +448,15 @@
             const message2 = document.getElementById('message2').value;
             const message3 = document.getElementById('message3').value;
             const message4 = document.getElementById('message4').value;
-            priorityCount: priorityCount
+            const message5 = document.getElementById('message5').value;
+            priorityCount: priorityCount;
+            demandCount: demandCount;
+            chanceCount: chanceCount;
+            IntroductionCount: IntroductionCount;
+            deliveryCount: deliveryCount;
+            gelnailsCount: gelnailsCount;
+            budgetCount: budgetCount;
+            menuCount: menuCount
 
             /* フォームデータをオブジェクトにまとめる */
             const formData = {
@@ -314,13 +464,21 @@
                 message2,
                 message3,
                 message4,
-                priorityCount
+                message5,
+                priorityCount,
+                demandCount,
+                chanceCount,
+                IntroductionCount,
+                deliveryCount,
+                gelnailsCount,
+                budgetyCount,
+                menuCount
             };
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【名前】：${formData.message}\n【電話番号】：${formData.message2}\n【住所】：${formData.message3}\n【生年月日】：${formData.message4}\n【生年月日】：${formData.priorityCount}`
+                text: `≪アンケート≫\n【名前】：${formData.message}\n【電話番号】：${formData.message2}\n【住所】：${formData.message3}\n【生年月日】：${formData.message4}\n【サロンに求める最も優先度が高いものは何ですか？】：${formData.priorityCount}\n【サロンに求めるものをもう一つ教えてください。】：${formData.demandCount}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
