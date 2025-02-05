@@ -242,10 +242,10 @@
     <div class="container">
         <h1>ゆびノさき<br>アンケート</h1>
         <div class="info-text">以下全て入力後<br>【アンケート送信】ボタンを押してください。</div>
-        <div class="label">お名前フルネームで教えてください<br>（例　大阪　太郎　オオサカ　タロウ）</div>
+        <div class="label">お名前フルネームで教えてください<br>（例　大阪　太郎　おおさか　たろう）</div>
         <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">お電話を教えてください。<br>（ハイフン入れてお願いします。）</div>
+        <div class="label">お電話を教えてください。<br>（ハイフンは入れないでください。）</div>
         <textarea id="message2" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
         <div class="label">ご住所を教えてください。</div>
@@ -298,7 +298,7 @@
             <button type="button" id="sixIntroduction" onclick="selectIntroduction(this)">ゆびノさきネイルスクール</button>
         </div>
 
-        <div class="label">クーポンやお得な情報を配信してもよろしいでしょうか？</div>
+        <div class="label">近日で特別なイベントはありますか？</div>
         <div class="delivery-buttons">
             <button type="button" id="onedelivery" onclick="selectdelivery(this)">はい</button>
             <button type="button" id="twodelivery" onclick="selectdelivery(this)">いいえ</button>
@@ -441,36 +441,36 @@
         }
 
         function selectbudgety(element) {
+            const budgetyName = element.innerText;
 
-            document.getElementById('onebudgety').classList.remove('active');
-            document.getElementById('twobudgety').classList.remove('active');
-            document.getElementById('threebudgety').classList.remove('active');
-            document.getElementById('fourbudgety').classList.remove('active');
-            document.getElementById('fivebudgety').classList.remove('active');
-
-            element.classList.add('active');
-            budgetyCount = element.innerText;
+            if (element.classList.contains('active')) {
+                element.classList.remove('active');
+                budgetyCount = budgetyCount.filter(budgety => budgety !== budgetyName);
+            } else {
+                element.classList.add('active');
+                budgetyCount.push(budgetyName);
+            }
         }
 
         function selectmenu(element) {
-        const menuName = element.innerText;
+            const menuName = element.innerText;
 
-        if (element.classList.contains('active')) {
-            element.classList.remove('active');
-            menuCount = menuCount.filter(menu => menu !== menuName);
-        } else {
-            element.classList.add('active');
-            menuCount.push(menuName);
+            if (element.classList.contains('active')) {
+                element.classList.remove('active');
+                menuCount = menuCount.filter(menu => menu !== menuName);
+            } else {
+                element.classList.add('active');
+                menuCount.push(menuName);
+            }
         }
-    }
 
-    function submitForm() {
-        const message = document.getElementById('message').value;
-        const message2 = document.getElementById('message2').value;
-        const message3 = document.getElementById('message3').value;
-        const message4 = document.getElementById('message4').value;
-        const message5 = document.getElementById('message5').value;
-        priorityCount: priorityCount;
+        function submitForm() {
+            const message = document.getElementById('message').value;
+            const message2 = document.getElementById('message2').value;
+            const message3 = document.getElementById('message3').value;
+            const message4 = document.getElementById('message4').value;
+            const message5 = document.getElementById('message5').value;
+            priorityCount: priorityCount;
             demandCount: demandCount;
             chanceCount: chanceCount;
             IntroductionCount: IntroductionCount;
@@ -479,8 +479,8 @@
             budgetyCount: budgetyCount;
             menuCount: menuCount;
 
-        const formData = {
-            message,
+            const formData = {
+                message,
                 message2,
                 message3,
                 message4,
@@ -492,8 +492,8 @@
                 deliveryCount,
                 gelnailsCount,
                 budgetyCount,
-            menuCount: menuCount.join('\n・') // 改行区切りにする
-        };
+                menuCount: menuCount.join('\n・') // 改行区切りにする
+            };
 
             // フォームデータのチェック
             if (!formData.message) {
@@ -551,7 +551,7 @@
 
             // フォームデータのチェック
             if (!formData.deliveryCount) {
-                alert('クーポンやお得な情報を配信してもよろしいでしょうか？をご選択ください。');
+                alert('近日で特別なイベントはありますか？をご選択ください。');
                 return;
             }
 
