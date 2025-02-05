@@ -240,7 +240,7 @@
 
 <body>
     <div class="container">
-        <h1>ゆびノさき<br>アンケート</h1>
+        <h1>ゆびノさき1<br>アンケート</h1>
         <div class="info-text">以下全て入力後<br>【アンケート送信】ボタンを押してください。</div>
         <div class="label">お名前フルネームで教えてください<br>（例　大阪　太郎　オオサカ　タロウ）</div>
         <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
@@ -453,32 +453,51 @@
         }
 
         function selectmenu(element) {
-        const menuName = element.innerText;
 
-        if (element.classList.contains('active')) {
-            element.classList.remove('active');
-            menuCount = menuCount.filter(menu => menu !== menuName);
-        } else {
-            element.classList.add('active');
-            menuCount.push(menuName);
-        }
-    }
+    document.getElementById('onemenu').classList.remove('active');
+    document.getElementById('twomenu').classList.remove('active');
+    document.getElementById('threemenu').classList.remove('active');
+    document.getElementById('fourmenu').classList.remove('active');
+    document.getElementById('fivemenu').classList.remove('active');
+    document.getElementById('sixmenu').classList.remove('active');
+    document.getElementById('sevenmenu').classList.remove('active');
 
-    function submitForm() {
-        const message = document.getElementById('message').value;
-        const message2 = document.getElementById('message2').value;
-        const message3 = document.getElementById('message3').value;
-        const message4 = document.getElementById('message4').value;
-        const message5 = document.getElementById('message5').value;
+    element.classList.add('active');
+    menuCount = element.innerText;
+}
 
-        const formData = {
-            message,
-            message2,
-            message3,
-            message4,
-            message5,
-            menuCount: menuCount.join('、') // 配列を「、」区切りで結合
-        };
+        function submitForm() {
+            /* フォームの入力値を取得 */
+            const message = document.getElementById('message').value;
+            const message2 = document.getElementById('message2').value;
+            const message3 = document.getElementById('message3').value;
+            const message4 = document.getElementById('message4').value;
+            const message5 = document.getElementById('message5').value;
+            priorityCount: priorityCount;
+            demandCount: demandCount;
+            chanceCount: chanceCount;
+            IntroductionCount: IntroductionCount;
+            deliveryCount: deliveryCount;
+            gelnailsCount: gelnailsCount;
+            budgetyCount: budgetyCount;
+            menuCount: menuCount;
+
+            /* フォームデータをオブジェクトにまとめる */
+            const formData = {
+                message,
+                message2,
+                message3,
+                message4,
+                message5,
+                priorityCount,
+                demandCount,
+                chanceCount,
+                IntroductionCount,
+                deliveryCount,
+                gelnailsCount,
+                budgetyCount,
+                menuCount
+            };
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
