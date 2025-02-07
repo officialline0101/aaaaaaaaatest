@@ -68,7 +68,6 @@
         .chance-buttons,
         .Introduction-buttons,
         .delivery-buttons,
-        .gelnails-buttons,
         .budgety-buttons,
         .menu-buttons {
             display: flex;
@@ -82,7 +81,6 @@
         .chance-buttons button,
         .Introduction-buttons button,
         .delivery-buttons button,
-        .gelnails-buttons button,
         .budgety-buttons button,
         .menu-buttons button {
             flex: 1;
@@ -101,7 +99,6 @@
         .chance-buttons button.active,
         .Introduction-buttons button.active,
         .delivery-buttons button.active,
-        .gelnails-buttons button.active,
         .budgety-buttons button.active,
         .menu-buttons button.active {
             background-color: #444;
@@ -175,33 +172,59 @@
             transition: all 0.3s ease;
         }
 
-        .info-text {
-            margin-top: 20px;
-            /* 上の余白 */
-            margin-bottom: 10px;
-            /* 下に白い隙間を追加 */
-            font-size: 13px;
-            color: #000000;
-            line-height: 1.5;
-            text-align: center;
-            word-wrap: break-word;
-            background-color: #eef9f5;
-            /* 青っぽい背景色を追加 */
-            padding: 10px;
-            border-radius: 4px;
-        }
+/* 基本スタイル */
+.info-text {
+    margin: 20px 0;
+    font-family: "Noto Sans JP", "Roboto", sans-serif;
+    font-size: 14px;
+    color: #333; /* 読みやすい濃い文字色 */
+    background-color: #f8f9fa;
+    line-height: 1.8;
+    text-align: left;
+    word-wrap: break-word;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    max-width: 800px; /* 横幅制限 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影を追加 */
+    overflow-y: auto; /* 長文スクロール対応 */
+}
 
-        /* 携帯端末向けのレスポンシブデザイン */
-        @media (max-width: 768px) {
-            .info-text {
-                font-size: 11.5px;
-                /* スマホでは少し小さく */
-                margin-top: 10px;
-                /* 上下のマージンを調整 */
-                line-height: 2.0;
-                /* テキストの高さ調整 */
-            }
-        }
+/* 見出しスタイル */
+.info-text h1 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.info-text h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+/* 強調テキスト */
+.info-text strong {
+    color: #007bff;
+}
+
+/* モバイル向け調整 */
+@media (max-width: 768px) {
+    .info-text {
+        font-size: 13px;
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    .info-text h1 {
+        font-size: 16px;
+    }
+
+    .info-text h2 {
+        font-size: 14px;
+    }
+}
 
         .info-textmemo {
             margin-top: 20px;
@@ -272,6 +295,9 @@
             <button type="button" id="sevemdemand" onclick="selectdemand(this)">その他（来店動機）</button>
         </div>
 
+        <div class="label">"知人の紹介"を選択された方はご記入ください。</div>
+        <textarea id="message7" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+
         <div class="label">来店頻度<br>(ネイルサロンにどのくらいの頻度で通っているか)</div>
         <div class="chance-buttons">
             <button type="button" id="onechance" onclick="selectchance(this)">2週間に1度(頻度)</button>
@@ -297,17 +323,14 @@
             <button type="button" id="twodelivery" onclick="selectdelivery(this)">薬品アレルギー無し</button>
         </div>
 
-        <div class="label">現時点で補強・長さ出ししている箇所の有無<br>(しているのであれば詳細記入枠)</div>
-        <div class="gelnails-buttons">
-            <button type="button" id="onegelnails" onclick="selectgelnails(this)">有り(補強・長さ出し)</button>
-            <button type="button" id="twogelnails" onclick="selectgelnails(this)">無し(補強・長さ出し)</button>
-        </div>
+        <div class="label">現在補強または長さ出ししている箇所がある方は、<br>左右それぞれの本数をご記入ください。<br>(分かる範囲で結構です)</div>
+        <textarea id="message8" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">"有り"を選択された方は、詳細をご記入ください。</div>
-        <textarea id="message6" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
-
-        <div class="label">重要項目の同意(最後重要項目の表示の下に)</div>
-        <div class="info-text">ここに重要項目のテキストを表示</div>
+        <div class="label">重要項目の同意</div>
+        <div class="info-text">①トークでのご予約の受付・変更・キャンセルについては承っておりません。全てTELにてお願いいたします😊✨ <br>
+            ②お直しのお問い合わせに関しましては、トークに詳細と合わせ状態のお写真なども添えていただけるとスムーズなやり取りとご案内ができます。また、TELでも承っており、その場でのご案内が可能です。<br>※トークの場合、施術対応中などでご返信が遅くなることがございます。
+            <br>③お持ち込みネイルのお問い合わせに関しましては、リピーター様のみ受付ており、全てこちらのLINEにてご対応させて頂きます。 ご予約される前にこちらのLINEに持ち込みデザイン画像とご要望の送信をお願い致します。持ち込みデザインについてのご相談をさせていただきます。また、施術にかかるお時間、料金、ご予約時選択するメニュー等なども合わせてご連絡させていただきます。 
+            <br>④LINEお問い合わせのご対応時間について 営業時間中の10:00〜20:00とさせていただきます。 それ以外の時間のご返信は致しかねますことご了承を願います。 また、営業時間中につきましても施術対応中などにより返信が遅くなる場合がありますことも重ねてご了承を願います。</div>
         <div class="budgety-buttons">
             <button type="button" id="onebudgety" onclick="selectbudgety(this)">同意する</button>
             <button type="button" id="twobudgety" onclick="selectbudgety(this)">同意しない</button>
@@ -323,7 +346,6 @@
         let chanceCount = '';
         let IntroductionCount = '';
         let deliveryCount = '';
-        let gelnailsCount = '';
         let budgetyCount = '';
         let menuCount = [];
 
@@ -403,16 +425,6 @@
             deliveryCount = element.innerText;
         }
 
-        function selectgelnails(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.gelnails-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
-
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            gelnailsCount = element.innerText;
-        }
-
         function selectbudgety(element) {
             // 単一選択項目の処理コード
             const buttons = document.querySelectorAll('.budgety-buttons button');
@@ -429,13 +441,13 @@
             const message3 = document.getElementById('message3').value;
             const message4 = document.getElementById('message4').value;
             const message5 = document.getElementById('message5').value;
-            const message6 = document.getElementById('message6').value;
+            const message7 = document.getElementById('message7').value;
+            const message8 = document.getElementById('message8').value;
             priorityCount: priorityCount;
             demandCount: demandCount;
             chanceCount: chanceCount;
             IntroductionCount: IntroductionCount;
             deliveryCount: deliveryCount;
-            gelnailsCount: gelnailsCount;
             budgetyCount: budgetyCount;
 
             const formData = {
@@ -444,13 +456,13 @@
                 message3,
                 message4,
                 message5,
-                message6,
+                message7,
+                message8,
                 priorityCount,
                 demandCount,
                 chanceCount,
                 IntroductionCount,
                 deliveryCount,
-                gelnailsCount,
                 budgetyCount,
             };
 
@@ -498,31 +510,19 @@
 
             // フォームデータのチェック
             if (!formData.chanceCount) {
-                alert('来店頻度(ネイルサロンにどのくらいの頻度で通っているか)をご選択ください。');
+                alert('来店頻度をご選択ください。');
                 return;
             }
 
             // フォームデータのチェック
-            if (!formData.message6) {
-                alert('過去施術(過去にサロンで受けたことがある施術)をご選択ください。');
+            if (!formData.formData.IntroductionCount) {
+                alert('過去施術をご選択ください。');
                 return;
             }
 
             // フォームデータのチェック
-            if (!formData.IntroductionCount) {
+            if (!formData.formData.deliveryCount) {
                 alert('薬品/ネイルでのアレルギーをご選択ください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.deliveryCount) {
-                alert('現時点で補強・長さ出ししている箇所の有無(しているのであれば詳細記入枠)をご選択ください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.gelnailsCount) {
-                alert('(しているのであれば詳細記入枠)を入力してください。');
                 return;
             }
 
@@ -535,7 +535,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前】\n・${formData.message2}\n\n【生年月日】\n・${formData.message3}\n\n【電話番号】\n・${formData.message4}\n\n【お住まい】\n・${formData.message5}\n\n【ご職業】\n・${formData.priorityCount}\n\n【来店動機】\n・${formData.demandCount}\n\n【来店頻度】\n・${formData.chanceCount}\n\n【過去施術】\n・${formData.IntroductionCount}\n\n【薬品/ネイルでのアレルギー】\n・${formData.deliveryCount}\n\n【補強・長さ出し】\n・${formData.gelnailsCount}\n\n【補強・長さ出し詳細】\n・${formData.message6}\n\n【重要項目の同意】\n・${formData.budgetyCount}`
+                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前】\n・${formData.message2}\n\n【生年月日】\n・${formData.message3}\n\n【電話番号】\n・${formData.message4}\n\n【お住まい】\n・${formData.message5}\n\n【ご職業】\n・${formData.priorityCount}\n\n【来店動機】\n・${formData.demandCount}\n\n【知人の紹介名】\n・${formData.message7}\n\n【来店頻度】\n・${formData.chanceCount}\n\n【過去施術】\n・${formData.IntroductionCount}\n\n【薬品/ネイルでのアレルギー】\n・${formData.deliveryCount}\n\n【長さ出し左右本数】\n・${formData.message8}\n\n【重要項目の同意】\n・${formData.budgetyCount}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
