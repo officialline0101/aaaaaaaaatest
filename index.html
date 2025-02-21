@@ -354,6 +354,7 @@
                 /* テキストの高さ調整 */
             }
         }
+
         .symptoms,
         .options {
             display: block;
@@ -403,7 +404,7 @@
             /* ボタンを縦並びに */
         }
 
-                .highlight-text {
+        .highlight-text {
             font-weight: bold;
             display: inline-block;
             color: #fff;
@@ -828,10 +829,9 @@
             // 選択されたメニューセクションを表示
             document.querySelectorAll('.menu-section').forEach(section => {
                 section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
             });
 
-            // 対応するメニューボタンを選択状態にする
+            // 対応するメニューボタンを選択状態にする（リセットせず維持）
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
                     button.classList.add('active');
@@ -841,14 +841,7 @@
             // 選択されたメニューセクションを表示
             document.getElementById(menu).classList.add('active');
 
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
+            // メニュー情報のリセット処理を削除し、選択状態を維持する
             updateDisplayInfo();
         }
 
