@@ -42,7 +42,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #583962;
+            background-color: #88705a;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -106,7 +106,7 @@
             padding: 15px;
             border: none;
             border-radius: 4px;
-            background-color: #4d6a78;
+            background-color: #88705a;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -361,7 +361,7 @@
 
 <body>
     <div class="container">
-        <h1>モイスティーヌ武蔵ヶ丘サロン<br>渡邊予約フォーム
+        <h1>YOSAPARK feliz<br>予約フォーム
         </h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
@@ -378,11 +378,11 @@
         <div class="label">メニューをお選びください</div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">afterフォロー</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">スキンケア体験</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">カウンセリング</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">極上プレミアムコース</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">痩身脂肪燃焼コース</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">水素まみれコース</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">ペアで痩身コース</button>
         </div>
-
 
         <div class="label">希望日時</div>
         <div class="calendar-container">
@@ -451,7 +451,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '1回目': 0,
+            '1回目': 20,
             '2回目以降': 0
         };
 
@@ -459,15 +459,16 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '眉カット〈30分〉': 0
+            'ベーシックマッサージ(パック付き)〈30分〉': 0
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'afterフォロー': 90,
-            'スキンケア体験': 120,
-            'カウンセリング': 60
+            '極上プレミアムコース': 150,
+            '痩身脂肪燃焼コース': 150,
+            '水素まみれコース': 150,
+            'ペアで痩身コース': 150
         };
 
 
@@ -508,8 +509,6 @@
         <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
-        <hr>
-        <p>${totalTimeText}</p>
         <hr>
         <p>${selectedDateText}</p>
         <hr>
@@ -742,7 +741,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n渡邊指名\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -807,6 +806,7 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
+                '09:00', '09:30',
                 '10:00', '10:30',
                 '11:00', '11:30',
                 '12:00', '12:30',
@@ -815,7 +815,9 @@
                 '15:00', '15:30',
                 '16:00', '16:30',
                 '17:00', '17:30',
-                '18:00'
+                '18:00', '18:30',
+                '19:00', '19:30',
+                '20:00'
             ];
 
             if (table.rows.length === 0) {
@@ -932,11 +934,6 @@
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 日曜日で、営業日ではない場合
-                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
