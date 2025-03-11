@@ -42,7 +42,7 @@
             margin-bottom: 10px;
             padding: 10px;
             font-weight: bold;
-            background-color: #88705a;
+            background-color: #5572d9;
             color: white;
             border-radius: 4px;
             text-align: center;
@@ -106,7 +106,7 @@
             padding: 15px;
             border: none;
             border-radius: 4px;
-            background-color: #88705a;
+            background-color: #5572d9;
             color: #fff;
             font-size: 18px;
             cursor: pointer;
@@ -166,7 +166,7 @@
         }
 
         .calendar td.selected {
-            background-color: #13ca5e;
+            background-color: #5572d9;
             /* 選択されたカレンダーのセルの背景色を緑色に設定 */
             color: #fff;
             /* 選択されたセルのテキスト色を白に設定 */
@@ -361,7 +361,7 @@
 
 <body>
     <div class="container">
-        <h1>YOSAPARK feliz<br>予約フォーム
+        <h1>酸素カプセルサロン　Re:covery<br>カプセル予約フォーム
         </h1>
         <div class="label">お客様名※必須</div>
         <input type="text" id="name" placeholder="お名前を入力してください">
@@ -378,10 +378,9 @@
         <div class="label">メニューをお選びください</div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">極上プレミアムコース</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">痩身脂肪燃焼コース</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">水素まみれコース</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">ペアで痩身コース</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">50分</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">80分</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">100分（回数券お持ちの方のみ）</button>
         </div>
 
         <div class="label">希望日時</div>
@@ -428,7 +427,6 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
-        let selectedMenu = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -452,7 +450,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '1回目': 20,
+            '1回目': 0,
             '2回目以降': 0
         };
 
@@ -466,10 +464,9 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '極上プレミアムコース': 150,
-            '痩身脂肪燃焼コース': 150,
-            '水素まみれコース': 150,
-            'ペアで痩身コース': 150
+            '50分': 50,
+            '80分': 80,
+            '100分（回数券お持ちの方のみ）': 100
         };
 
 
@@ -510,6 +507,8 @@
         <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
+        <hr>
+        <p>${totalTimeText}</p>
         <hr>
         <p>${selectedDateText}</p>
         <hr>
@@ -682,49 +681,6 @@
             fetchAvailability(currentDate);
         }
 
-        function showMenu(menu) {
-            // `treatment-text` を非表示にする
-            document.getElementById("treatment-text").style.display = "none";
-
-            // 選択されたメニューの名前を取得
-            let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
-            if (selectedButton) {
-                selectedMenu = selectedButton.innerText;
-            }
-
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // 選択されたメニューセクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
-
-            // 対応するメニューボタンを選択状態にする
-            if (selectedButton) {
-                selectedButton.classList.add('active');
-            }
-
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // `treatment-text` の内容をリセット
-            document.getElementById("treatment-text").innerHTML = "";
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
             if (cell.classList.contains('unavailable')) {
@@ -755,7 +711,6 @@
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
-                selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 irradiationsCount: irradiationsCount,
                 dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
@@ -786,10 +741,10 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom},${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n予約：カプセル\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。');
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
                 /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
@@ -851,18 +806,19 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '09:00', '09:30',
-                '10:00', '10:30',
-                '11:00', '11:30',
-                '12:00', '12:30',
-                '13:00', '13:30',
-                '14:00', '14:30',
-                '15:00', '15:30',
-                '16:00', '16:30',
-                '17:00', '17:30',
-                '18:00', '18:30',
-                '19:00', '19:30',
-                '20:00'
+                '09:00', '09:15', '09:30', '09:45',
+                '10:00', '10:15', '10:30', '10:45',
+                '11:00', '11:15', '11:30', '11:45',
+                '12:00', '12:15', '12:30', '12:45',
+                '13:00', '13:15', '13:30', '13:45',
+                '14:00', '14:15', '14:30', '14:45',
+                '15:00', '15:15', '15:30', '15:45',
+                '16:00', '16:15', '16:30', '16:45',
+                '17:00', '17:15', '17:30', '17:45',
+                '18:00', '18:15', '18:30', '18:45',
+                '19:00', '19:15', '19:30', '19:45',
+                '20:00', '20:15', '20:30', '20:45',
+                '21:00'
             ];
 
             if (table.rows.length === 0) {
@@ -893,7 +849,6 @@
                     row.cells[i].classList.remove('available', 'unavailable', 'selected');
                 }
             }
-
 
             // 現在の日時を取得
             const now = new Date();
@@ -934,6 +889,17 @@
 
                     // 終了時間が翌日 (0時以降) になる場合は✕に設定
                     if (slotEnd.getDate() !== slotStart.getDate()) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
+
+                    // 18時以降に終了する予約を不可にする (17:30は可)
+                    if (slotEnd.getHours() === 21 && slotEnd.getMinutes() > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    } else if (slotEnd.getHours() > 21) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
@@ -988,7 +954,7 @@
                         cell.classList.add('available');
                     }
                     // それ以外の条件
-                    else if (count === 0) {
+                    else if (count <= 1) {
                         cell.textContent = '◯';
                         cell.classList.add('available');
                     } else {
