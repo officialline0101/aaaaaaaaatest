@@ -829,42 +829,48 @@
         });
 
         function selectSymptom(button, treatmentId) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+    // 選択された日時をリセット
+    selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    // ボタンの選択状態を切り替える
+    button.classList.toggle('active');
 
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+    // 選択されたオプションを取得
+    let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
 
-            // メニュー時間と価格をリセット
-            selectedMenuTime = 0;
-            selectedSymptom = [];
-            menuPrice = 0;
+    // もし選択数が3を超えたら、最新のボタン選択を解除
+    if (updatedSelectedButtons.length > 3) {
+        button.classList.remove('active');
+        return; // 処理を中断
+    }
 
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
-            } else {
-                // 選択された各ボタンについて処理
-                updatedSelectedButtons.forEach((btn) => {
-                    const selectedMenu = btn.textContent;
-                    selectedMenuTime += menuTimes[selectedMenu] || 0; // 各メニューの時間を合計
-                    selectedSymptom.push(selectedMenu); // 選択されたメニューを配列に追加
-                    menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0; // 各メニューの価格を合計
-                });
-            }
+    // メニュー時間と価格をリセット
+    selectedMenuTime = 0;
+    selectedSymptom = [];
+    menuPrice = 0;
 
-            console.log('選択されたメニューの時間:', selectedMenuTime);
+    if (updatedSelectedButtons.length === 0) {
+        // すべてのボタンの選択が解除された場合
+        selectedMenuTime = 0;
+        selectedSymptom = null; // 選択されたメニューをリセット
+        menuPrice = 0; // メニュー価格をリセット
+    } else {
+        // 選択された各ボタンについて処理
+        updatedSelectedButtons.forEach((btn) => {
+            const selectedMenu = btn.textContent;
+            selectedMenuTime += menuTimes[selectedMenu] || 0; // 各メニューの時間を合計
+            selectedSymptom.push(selectedMenu); // 選択されたメニューを配列に追加
+            menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0; // 各メニューの価格を合計
+        });
+    }
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
+    console.log('選択されたメニューの時間:', selectedMenuTime);
 
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+
+    // トリートメントテキストを表示
+    const treatmentText = document.getElementById('treatment-text');
 
             function createTreatmentContent(title, imageUrl, description, price, time) {
     return `
