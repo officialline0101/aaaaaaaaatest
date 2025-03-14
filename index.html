@@ -1,23 +1,104 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>予約フォーム</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #e7e7e7;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
-    margin: 0;
-    padding-top: 5px;
-    overflow-x: hidden;
-    transform: translateX(-20px); /* 右にずらす */
-}
+        /* 右端の細いナビ */
+        .side-nav {
+            position: absolute; /* スクロール追従のため absolute */
+            right: 5px; /* ほぼ右端 */
+            top: 100px; /* 初期位置 */
+            background: #1e1e2d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            border-radius: 10px 0 0 10px;
+            z-index: 1000;
+            transition: top 0.2s ease-out;
+            width: 35px; /* さらに細く */
+        }
+
+        .side-nav a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 10px 0;
+            padding: 8px;
+            transition: background 0.3s, transform 0.2s;
+            border-radius: 8px;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+        }
+
+        .side-nav a i {
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+
+        .side-nav a:hover {
+            background: #357ac4;
+            transform: scale(1.1);
+        }
+
+        v
+
+        /* フォーム全体 */
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        /* セクションのスタイル */
+        .section {
+            padding: 20px;
+        }
+
+        /* 入力フィールド */
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        /* 予約ボタン */
+        .submit-button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .submit-button:hover {
+            background: #357ac4;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e7e7e7;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-top: 5px;
+            overflow-x: hidden;
+            transform: translateX(-20px);
+            /* 右にずらす */
+        }
 
         .container {
             background-color: #fdfdfd;
@@ -591,26 +672,71 @@ body {
             box-shadow: 0 2px 6px rgba(47, 103, 167, 0.2);
             /* 影も控えめに */
         }
+
+    /* ナビゲーションバー */
+    .sidebar {
+        position: fixed;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #1e1e2d;
+        padding: 10px;
+        border-radius: 10px 0 0 10px;
+        z-index: 1000;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 15px;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 10px;
+        background: #4a90e2;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+        background: #357ac4;
+    }
+
+    /* スクロール用のセクション */
+    .section {
+        padding: 50px 10px;
+        margin-top: 30px;
+    }
     </style>
 </head>
 
 <body>
+    <!-- 右側の追従ナビ -->
+    <div class="side-nav" id="sideNav">
+        <a href="#section-name"><i class="fas fa-user"></i></a>
+        <a href="#section-phone"><i class="fas fa-phone"></i></a>
+        <a href="#section-visit"><i class="fas fa-store"></i></a>
+        <a href="#section-menu"><i class="fas fa-utensils"></i></a>
+        <a href="#section-date"><i class="fas fa-calendar-alt"></i></a>
+        <a href="#section-message"><i class="fas fa-comment"></i></a>
+    </div>
+
     <div class="container">
         <h1>予約フォームA<br>予約フォーム
         </h1>
-        <div class="label">お客様名<span class="required">必須</span></div>
+        <div class="label" div id="section-name">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
-        <div class="label">電話番号<span class="required">必須</span></div>
+        <div class="label" div id="section-phone">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
-        <div class="label">ご来店回数<span class="required">必須</span></div>
+        <div class="label"div id="section-visit">ご来店回数<span class="required">必須</span></div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目〈30分〉</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降〈0分〉</button>
         </div>
 
-        <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
+        <div class="label" id="course" div id="section-menu">メニューをお選びください<span class="required">必須</span></div>
         <div class="info-text">※メニューを選択すると<br>空き状況のカレンダーが表示されます</div>
         <div class="menu-sections">
             <button type="button" onclick="showMenu('male')">ブライダルコース</button>
@@ -626,17 +752,23 @@ body {
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">和装プラン〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">洋装プランA〈60分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">洋装プランB〈120分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">洋装プランC〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')"
+                    data-price="15000">洋装プランA〈60分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')"
+                    data-price="15000">洋装プランB〈120分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment4')"
+                    data-price="15000">洋装プランC〈30分〉</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">ブライダルコース：オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">ベーシックマッサージ</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">リラックスマッサージ</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">ベーシックマッサージ</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">リラックスマッサージ</button>
             </div>
         </div>
 
@@ -645,22 +777,33 @@ body {
                 <span class="highlight-text">◆シェービングコース◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">リラックスコース〈60分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">ベーシックコース〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">スピードコース〈90分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')"
+                    data-price="15000">リラックスコース〈60分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')"
+                    data-price="15000">ベーシックコース〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')"
+                    data-price="15000">スピードコース〈90分〉</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">シェービングコース：オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中</button>
-                <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">腕〈30分〉</button>
-                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック〈30分〉</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">襟足〈30分〉</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">背中</button>
+                <button type="button" id="yonirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">背中(腰まで)〈30分〉</button>
+                <button type="button" id="goirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">デコルテ〈30分〉</button>
+                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">腕〈30分〉</button>
+                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">保湿パック〈30分〉</button>
+                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">美白パック〈30分〉</button>
             </div>
         </div>
 
@@ -669,25 +812,35 @@ body {
                 <span class="highlight-text">◆マッサージコース◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">リラックスマッサージ〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ベーシックマッサージ〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')"
+                    data-price="15000">リラックスマッサージ〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')"
+                    data-price="15000">ベーシックマッサージ〈30分〉</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">マッサージコース：オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中</button>
-                <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">腕〈30分〉</button>
-                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック〈30分〉</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">襟足〈30分〉</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">背中</button>
+                <button type="button" id="yonirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">背中(腰まで)〈30分〉</button>
+                <button type="button" id="goirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">デコルテ〈30分〉</button>
+                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">腕〈30分〉</button>
+                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">保湿パック〈30分〉</button>
+                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)"
+                    data-price="15000">美白パック〈30分〉</button>
             </div>
         </div>
 
-        <div class="label">希望日時<span class="required">必須</span></div>
+        <div class="label" div id="section-date">希望日時<span class="required">必須</span></div>
         <div class="calendar-container">
             <!-- 月を独立して配置 -->
             <div class="current-month-container">
@@ -730,7 +883,7 @@ body {
             </div>
         </div>
 
-        <div class="labelContent">メッセージ<br>（質問等お気軽にご記入ください）</div>
+        <div class="labelContent" div id="section-message">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="labelContent">ご予約内容</div>
@@ -798,6 +951,8 @@ body {
             'スピードコース〈90分〉': 90
         };
 
+        let selectedMenuTime = 0;
+
         // 入力内容をローカルストレージに保存
         function saveInput(id) {
             const value = document.getElementById(id).value;
@@ -813,7 +968,27 @@ body {
             if (savedPhone) document.getElementById('phone').value = savedPhone;
         });
 
-        let selectedMenuTime = 0;
+        // スムーズスクロール
+        document.querySelectorAll('.side-nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // スクロール追従処理
+        window.addEventListener('scroll', function () {
+            let sideNav = document.getElementById('sideNav');
+            let scrollY = window.scrollY || document.documentElement.scrollTop;
+            sideNav.style.top = (scrollY + 100) + "px"; // スクロール量に合わせて移動
+        });
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
