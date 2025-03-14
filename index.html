@@ -76,12 +76,15 @@
         .label {
             display: block;
             margin-bottom: 10px;
-            padding: 10px;
+            padding: 3px;
             font-weight: 600;
             background-color: #13ca5e;
             color: white;
             border-radius: 6px;
             text-align: center;
+            /* 中央揃え */
+            text-indent: 20px;
+            /* テキストを右に20pxずらす */
             position: relative;
             overflow: hidden;
         }
@@ -113,6 +116,26 @@
             /* もう1本のライン */
             border-radius: 50%;
             opacity: 0.6;
+        }
+
+        /* 必須マークのスタイル */
+        .required {
+            color: red;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .required-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #13ca5e;
+            font-weight: bold;
+            font-size: 0.9em;
+            border-radius: 4px;
+            padding: 2px 6px;
+            border: 2px solid #13ca5e;
         }
 
         input[type="text"],
@@ -277,7 +300,7 @@
             font-size: 16px;
             font-weight: bold;
             color: #444;
-            margin-top: 10px;
+            margin-top: 20px;
             /* 下にずらす */
             display: inline-block;
             /* margin-top を適用しやすくする */
@@ -559,6 +582,37 @@
             /* ここで枠線を指定 */
             outline-offset: 2px;
         }
+
+        /* 必須マークのスタイル */
+        .required {
+            color: #fffb00;
+            /* ゴールド（黄色） */
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-left: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            /* 強めの影で視認性アップ */
+            vertical-align: 0.4em;
+            /* 位置を少し上に調整 */
+        }
+
+        .current-month {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #13ca5e;
+            /* 鮮やかなブルーで目立たせる */
+            color: #fff;
+            /* 白文字でコントラストUP */
+            padding: 5px 20px;
+            /* ボックスのサイズを調整 */
+            border-radius: 10px;
+            /* 角をしっかり丸く */
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(47, 103, 167, 0.3);
+            /* 光が差すような優しい影 */
+        }
     </style>
 </head>
 
@@ -566,19 +620,19 @@
     <div class="container">
         <h1>予約フォームA<br>予約フォーム
         </h1>
-        <div class="label">お客様名※必須</div>
+        <div class="label">お客様名<span class="required">＊</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
-        <div class="label">電話番号※必須</div>
+        <div class="label">電話番号<span class="required">＊</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
-        <div class="label">ご来店回数※必須</div>
+        <div class="label">ご来店回数<span class="required">＊</span></div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目〈30分〉</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降〈0分〉</button>
         </div>
 
-        <div class="label" id="course">メニューをお選びください</div>
+        <div class="label" id="course">メニューをお選びください<span class="required">＊</span></div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="menu-sections">
             <button type="button" onclick="showMenu('male')">ブライダルコース</button>
@@ -594,23 +648,17 @@
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">和装プラン〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')"
-                    data-price="15000">洋装プランA〈60分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')"
-                    data-price="15000">洋装プランB〈120分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')"
-                    data-price="15000">洋装プランC〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">洋装プランA〈60分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">洋装プランB〈120分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">洋装プランC〈30分〉</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">ブライダルコース：オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">ベーシックマッサージ</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">リラックスマッサージ</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">ベーシックマッサージ</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">リラックスマッサージ</button>
             </div>
         </div>
 
@@ -619,33 +667,22 @@
                 <span class="highlight-text">◆シェービングコース◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment5')"
-                    data-price="15000">リラックスコース〈60分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')"
-                    data-price="15000">ベーシックコース〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')"
-                    data-price="15000">スピードコース〈90分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">リラックスコース〈60分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">ベーシックコース〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">スピードコース〈90分〉</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">シェービングコース：オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="yonirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="goirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">美白パック〈30分〉</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足〈30分〉</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中</button>
+                <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">背中(腰まで)〈30分〉</button>
+                <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテ〈30分〉</button>
+                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">腕〈30分〉</button>
+                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック〈30分〉</button>
+                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック〈30分〉</button>
             </div>
         </div>
 
@@ -654,40 +691,34 @@
                 <span class="highlight-text">◆マッサージコース◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment8')"
-                    data-price="15000">リラックスマッサージ〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')"
-                    data-price="15000">ベーシックマッサージ〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">リラックスマッサージ〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ベーシックマッサージ〈30分〉</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">マッサージコース：オプション</span>
             </div>
             <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="yonirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="goirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">美白パック〈30分〉</button>
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="15000">襟足〈30分〉</button>
+                <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="15000">背中</button>
+                <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="15000">背中(腰まで)〈30分〉</button>
+                <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテ〈30分〉</button>
+                <button type="button" id="rokuirradiations" onclick="selectirradiations(this)" data-price="15000">腕〈30分〉</button>
+                <button type="button" id="sitiirradiations" onclick="selectirradiations(this)" data-price="15000">保湿パック〈30分〉</button>
+                <button type="button" id="hatiirradiations" onclick="selectirradiations(this)" data-price="15000">美白パック〈30分〉</button>
             </div>
         </div>
 
-        <div class="label">希望日時</div>
+        <div class="label">希望日時<span class="required">＊</span></div>
         <div class="calendar-container">
+            <!-- 月を独立して配置 -->
+            <div class="current-month-container">
+                <span class="current-month" id="currentMonth">月</span>
+            </div>
+
             <!-- 月移動ボタンを週移動ボタンの上に配置 -->
             <div class="month-button-container">
                 <button class="month-button" onclick="previousmonth()">前の月</button>
-                <span class="current-month" id="currentMonth">月</span>
                 <button class="month-button" onclick="nextmonth()">翌月</button>
             </div>
 
@@ -695,6 +726,7 @@
                 <button class="week-button" onclick="previousWeek()">前の週</button>
                 <button class="week-button" onclick="nextWeek()">翌週</button>
             </div>
+
             <div id="calendar1" class="calendar">
                 <table>
                     <thead>
@@ -714,10 +746,12 @@
                     </tbody>
                 </table>
             </div>
+
             <div class="loading-spinner" id="loadingSpinner">
                 <div class="spinner"></div>
             </div>
         </div>
+
 
         <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
@@ -806,24 +840,24 @@
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
-            const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-            const selectedMenuText = selectedMenu ? `・<span style="color:red;"><strong>コース</strong></span>：${selectedMenu}` : '・コースが未選択です';
+            const visitCountText = visitCount ? `・<span style="color:#13ca5e;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+            const selectedMenuText = selectedMenu ? `・<span style="color:#13ca5e;"><strong>コース</strong></span>：${selectedMenu}` : '・コースが未選択です';
 
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
+                ? `<span style="color:#13ca5e;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
                 : '・メニューが未選択です';
 
             const irradiationsText = irradiationsCount
-                ? `<span style="color:red;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
+                ? `<span style="color:#13ca5e;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
                 : '・オプション無し';
 
             let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
             let hours = Math.floor(totalMinutes / 60);
             let minutes = totalMinutes % 60;
-            let totalTimeText = `・<span style="color:red;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
+            let totalTimeText = `・<span style="color:#13ca5e;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
 
-            const totalAmountText = `・<span style="color:red;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
-            const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
+            const totalAmountText = `・<span style="color:#13ca5e;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
+            const selectedDateText = selectedFullDate ? `・<span style="color:#13ca5e;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
 
             // 修正ボタン付きのHTMLを作成
             document.getElementById('displayInfo').innerHTML = `
@@ -1303,11 +1337,11 @@
                     }
 
                     // 18時以降に終了する予約を不可にする (17:30は可)
-                    if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 0) {
+                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
-                    } else if (slotEnd.getHours() > 19) {
+                    } else if (slotEnd.getHours() > 18) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
