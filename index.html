@@ -515,7 +515,7 @@
             <button type="button" onclick="showMenu('FaceType')">顔タイプ診断メニュー</button>
         </div>
 
-        <div id="treatment-text" style="margin-bottom: 20px;"></div>
+        <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
 
         <div id="beautifuleyebrows" class="menu-section">
             <div class="highlight-background">
@@ -763,12 +763,15 @@
 
             // 選択されたオプションを取得
             const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+            const treatmentText = document.getElementById('treatment-text');
 
             if (updatedSelectedButtons.length === 0) {
                 // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
                 selectedMenuTime = 0;
                 selectedSymptom = null; // 選択されたメニューをリセット
                 menuPrice = 0; // メニュー価格をリセット
+                treatmentText.style.display = 'none';
+                return; // ここで処理を終了
             } else {
                 // 1つだけ選択状態にする
                 if (updatedSelectedButtons.length > 1) {
@@ -787,9 +790,6 @@
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
-
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
 
             function createTreatmentContent(title, imageUrl, description, price, time) {
                 return `
@@ -904,6 +904,12 @@
             } else {
                 treatmentText.innerHTML = '';
             }
+
+            // `treatment-text` を選択されたボタンの直後に移動
+            button.parentNode.insertBefore(treatmentText, button.nextSibling);
+
+            // トリートメントテキストを表示
+            treatmentText.style.display = 'block';
 
             // 選択されたメニューの名前と価格を取得
             const symptomName = button.textContent;  // ボタンのテキストを取得
