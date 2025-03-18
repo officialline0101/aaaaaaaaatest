@@ -1258,40 +1258,43 @@
         }
 
         function selectDate(cell) {
-            // "unavailable" クラスが付いている場合はクリックを無効化
-            if (cell.classList.contains('unavailable')) {
-                return; // 何もせずに終了
-            }
+    // "unavailable" クラスが付いている場合はクリックを無効化
+    if (cell.classList.contains('unavailable')) {
+        return; // 何もせずに終了
+    }
 
-            // 既に選択されているセルの選択を解除
-            const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(td => td.classList.remove('selected'));
+    // 既に選択されているセルの選択を解除
+    const cells = document.querySelectorAll('.calendar td');
+    cells.forEach(td => td.classList.remove('selected'));
 
-            // 新しいセルを選択状態にする
-            cell.classList.add('selected');
+    // 新しいセルを選択状態にする
+    cell.classList.add('selected');
 
-            // 選択された日付と時間を取得
-            const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-            const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-            const date = new Date(selectedDay);
+    // 選択された日付と時間を取得
+    const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
+    const selectedTime = cell.parentElement.firstChild.textContent; // 時間
+    const date = new Date(selectedDay);
 
-            // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-            const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
-            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日（${dayOfWeek}）${selectedTime}`;
+    // 日付部分を「○○年○○月○○日（曜日） ○○:○○」形式に変換 (曜日を含める)
+    const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+    selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日（${dayOfWeek}）${selectedTime}`;
 
-            // 希望日時を即座に更新
-            updateDisplayInfo();
-        }
+    // 希望日時を即座に更新
+    updateDisplayInfo();
+}
 
-        function submitForm() {
-            const formData = {
-                visitCount: visitCount,
-                selectedSymptom: selectedSymptom,
-                secondsecondanniversaryCount: secondsecondanniversaryCount,
-                irradiationsCount: irradiationsCount,
-                dates: [selectedFullDate],
-                message: document.getElementById('message').value
-            };
+function submitForm() {
+    const formData = {
+        visitCount: visitCount,
+        selectedSymptom: selectedSymptom,
+        secondsecondanniversaryCount: secondsecondanniversaryCount,
+        irradiationsCount: irradiationsCount,
+        dates: [selectedFullDate],
+        message: document.getElementById('message').value
+    };
+
+    // 曜日を除いた日付形式を作成
+    const dateWithoutDayOfWeek = formData.dates[0].replace(/（.*?）/, '');
 
             // フォームデータのチェック
             if (!formData.selectedSymptom) {
@@ -1299,20 +1302,20 @@
                 return;
             }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nご性別：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルはくれぐれもお控えくださいますようお願いいたします。（キャンセル料のお支払い対象となります。）');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\nご性別：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${dateWithoutDayOfWeek}\nメッセージ：${formData.message}`
+    }]).then(() => {
+        /* メッセージ送信成功時の処理 */
+        alert('当日キャンセルはくれぐれもお控えくださいますようお願いいたします。（キャンセル料のお支払い対象となります。）');
+        /* LIFFウィンドウを閉じる */
+        liff.closeWindow();
+    }).catch((err) => {
+        /* メッセージ送信失敗時の処理 */
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
