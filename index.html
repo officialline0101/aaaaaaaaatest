@@ -621,6 +621,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
+        let selectedMenu = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -671,7 +672,6 @@
             'あなただけの魅力ファッション診断': 119
         };
 
-
         let selectedMenuTime = 0;
 
                 // 入力内容をローカルストレージに保存
@@ -692,6 +692,7 @@
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+            const selectedMenuText = selectedMenu ? `<span style="color:#ff8ca7;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
 
             // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
@@ -722,6 +723,8 @@
         <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
         <hr>
         <p>${visitCountText}</p>
+        <hr>
+        <p>${selectedMenu}</p>
         <hr>
         <p>${selectedSymptomText}</p>
         <hr>
@@ -996,6 +999,12 @@
         }
 
         function showMenu(menu) {
+            // 選択されたメニューの名前を取得
+            let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
+            if (selectedButton) {
+                selectedMenu = selectedButton.innerText;
+            }
+
             // すべてのメニューボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 button.classList.remove('active');
@@ -1061,6 +1070,7 @@
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
+                selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 irradiationsCount: irradiationsCount,
                 dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
@@ -1091,7 +1101,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
