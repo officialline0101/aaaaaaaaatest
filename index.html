@@ -1053,6 +1053,16 @@
             const calendar = document.getElementById('calendar1');
             const table = calendar.querySelector('table tbody');
 
+            // 時刻を24時間形式で変換する関数
+            function convertTo24HourFormat(time) {
+                const [hour, minute] = time.split(':').map(Number);
+                if (hour < 3) {
+                    // 0時～2時を24時以降に変換
+                    return `${hour + 24}:${minute < 10 ? '0' + minute : minute}`;
+                }
+                return time;
+            }
+
             // カレンダーの時間帯リスト
             const times = [
                 '18:00', '18:15', '18:30', '18:45',
@@ -1066,11 +1076,13 @@
                 '02:00'
             ];
 
+            // テーブルの行を生成する際に24時間形式に変換して表示
             if (table.rows.length === 0) {
                 for (const time of times) {
                     const row = document.createElement('tr');
                     const timeCell = document.createElement('td');
-                    timeCell.textContent = time;
+                    // 表示する時間を24時間形式に変換
+                    timeCell.textContent = convertTo24HourFormat(time);
                     row.appendChild(timeCell);
 
                     for (let i = 0; i < 7; i++) {
@@ -1094,7 +1106,6 @@
                     row.cells[i].classList.remove('available', 'unavailable', 'selected');
                 }
             }
-
 
             // 現在の日時を取得
             const now = new Date();
@@ -1133,9 +1144,36 @@
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
                     slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
+                    // 深夜3時から4時に終了する予約を不可にする
+                    if (slotEnd.getHours() === 3 && slotEnd.getMinutes() > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    } else if (slotEnd.getHours() > 3 && slotEnd.getHours() < 9) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
+
+                    // 30分後の時刻を計算
+                    const thirtyMinutesLater = new Date(now.getTime() + 15 * 60 * 1000);
+
+                    // 時間を26時～30時に変換する関数
+                    function normalizeTime(date) {
+                        const hours = date.getHours();
+                        const normalizedHours = hours < 6 ? hours + 24 : hours;
+                        const normalizedDate = new Date(date);
+                        normalizedDate.setHours(normalizedHours);
+                        return normalizedDate;
+                    }
+
+                    // slotStartも正規化
+                    const normalizedSlotStart = normalizeTime(slotStart);
+                    const normalizedThirtyMinutesLater = normalizeTime(thirtyMinutesLater);
+
                     // ここで終了時間を使った条件処理を行う
-                    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
-                    if (slotStart < now) {
+                    // 例えば、リアルタイムで既に過ぎた時間帯や30分以内のスロットは×にする
+                    if (normalizedSlotStart < normalizedThirtyMinutesLater) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
@@ -1161,10 +1199,15 @@
                         return acc;
                     }, 0);
 
-                    // 営業日のイベント時間内に他のイベントがある場合
-                    if (isBusinessEventTime && count > 0) {
+                    // 営業日のイベント時間内に他のイベントが3つ以上ある場合
+                    if (isBusinessEventTime && count >= 3) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
+                    }
+                    // 営業日のイベント時間内に他のイベントが1～2つある場合
+                    else if (isBusinessEventTime && count > 0) {
+                        cell.textContent = '◯';
+                        cell.classList.add('available');
                     }
                     // 営業日のイベント時間（他のイベントがない場合）
                     else if (isBusinessEventTime) {
@@ -1181,13 +1224,20 @@
                         cell.textContent = '◯';
                         cell.classList.add('available');
                     }
-                    // それ以外の条件
-                    else if (count <= 0) {
-                        cell.textContent = '◯';
-                        cell.classList.add('available');
-                    } else {
+                    // それ以外の条件：イベントが3つ以上の場合は✕
+                    else if (count >= 3) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
+                    }
+                    // それ以外の条件：イベントが1～2個の場合は◯
+                    else if (count > 0) {
+                        cell.textContent = '◯';
+                        cell.classList.add('available');
+                    }
+                    // その他、イベントがない場合
+                    else {
+                        cell.textContent = '◯';
+                        cell.classList.add('available');
                     }
 
                     cell.setAttribute('data-date', slotStart.toISOString());
