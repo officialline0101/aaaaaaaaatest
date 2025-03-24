@@ -986,19 +986,23 @@
                 return;
             }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号：${formData.phone}\n\n予約：仮予約\n\nお迎え先：\n ${formData.message1}\n\nお帰り先：\n ${formData.message2}\n\n希望日時：\n ${formData.dates[0]}\n\nメッセージ：\n${formData.message3}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
+// QRコード生成用のURL
+const phoneUrl = `https://api.qrserver.com/v1/create-qr-code/?data=tel:${formData.phone}&size=200x200`;
+
+// LINEトークにメッセージを送信
+liff.sendMessages([{
+    type: 'text',
+    text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号（QRコード）：\n${formData.phone}\n${phoneUrl}\n\n予約：仮予約\n\nお迎え先：\n${formData.message1}\n\nお帰り先：\n${formData.message2}\n\n希望日時：\n${formData.dates[0]}\n\nメッセージ：\n${formData.message3}`
+}]).then(() => {
+    /* メッセージ送信成功時の処理 */
+    alert('当日キャンセルは無いようにお願いいたします。');
+    /* LIFFウィンドウを閉じる */
+    liff.closeWindow();
+}).catch((err) => {
+    /* メッセージ送信失敗時の処理 */
+    console.error('メッセージの送信に失敗しました', err);
+});
+
         }
 
         function formatDate(dateStr) {
