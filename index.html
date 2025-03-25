@@ -529,7 +529,7 @@
         <div class="label">電話番号</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">電話番号</div>
+        <div class="label">年齢</div>
         <input type="tel" id="age" placeholder="電話番号を入力してください">
 
         <div class="label">大学</div>
@@ -573,9 +573,6 @@
 
         <div class="label">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
-
-        <div class="label">入力内容</div>
-        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
 
         <button class="submit-button" onclick="submitForm()">予約を行う</button>
     </div>
@@ -779,9 +776,9 @@
             const formData = {
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                name: document.getElementById('name').value.trim(),
+                age: document.getElementById('age').value.trim(),
+                university: document.getElementById('university').value.trim(),
+                schoolyear: document.getElementById('schoolyear').value.trim(),
                 dates: [
                     document.getElementById('date1').value,
                     document.getElementById('date2').value,
@@ -801,6 +798,23 @@
                 return;
             }
 
+            // フォームデータのチェック
+            if (!formData.age) {
+                alert('年齢を入力してください。');
+                return;
+            }
+
+            if (!formData.university) {
+                alert('大学を入力してください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.schoolyear) {
+                alert('学年を入力してください。');
+                return;
+            }
+
             if (!formData.dates[0]) {
                 alert('第1希望日※必須を選択してください。');
                 return;
@@ -809,7 +823,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号：${formData.phone}\n\n年齢：${formData.age}\n\n大学：${formData.university}\n\n学年：${formData.schoolyear}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n≪お名前≫\n・${formData.name}\n\n≪電話番号≫\n・${formData.phone}\n\n≪年齢≫\n・${formData.age}\n\≪大学≫\n・${formData.university}\n\n≪学年≫\n・${formData.schoolyear}\n\n【希望日時】\n≪第一希望日≫\n・${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n・${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n・${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n・${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
