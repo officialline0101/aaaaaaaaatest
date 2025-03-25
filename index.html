@@ -516,7 +516,6 @@
             visibility: hidden;
             opacity: 0;
         }
-
     </style>
 </head>
 
@@ -530,14 +529,14 @@
         <div class="label">電話番号</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください">
 
-        <div class="label">年齢</div>
-        <input type="text" id="name" placeholder="年齢を入力してください">
+        <div class="label">電話番号</div>
+        <input type="tel" id="age" placeholder="電話番号を入力してください">
 
         <div class="label">大学</div>
-        <input type="text" id="name" placeholder="大学を入力してください">
+        <input type="text" id="university" placeholder="大学を入力してください">
 
         <div class="label">学年</div>
-        <input type="text" id="name" placeholder="学年を入力してください">
+        <input type="text" id="schoolyear" placeholder="学年を入力してください">
 
         <div class="highlight-background">
             <span class="highlight-text">第1希望日※必須</span>
@@ -585,11 +584,9 @@
     <script>
         let visitCount = '';
         let highschoolCount = '';
-        let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
-        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
         let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
@@ -644,6 +641,10 @@
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const age = document.getElementById('age').value;
+            const university = document.getElementById('university').value;
+            const schoolyear = document.getElementById('schoolyear').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
 
             // メニューが選択されていたら、各メニューを改行して表示
@@ -688,10 +689,15 @@
             // displayInfo要素に情報を表示
             document.getElementById('displayInfo').innerHTML = `
         <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
+        <p>・<span style="color:red;"><strong>電話番号</strong></span>：${phone}</p>
+        <p>・<span style="color:red;"><strong>年齢</strong></span>：${age}</p>
+        <p>・<span style="color:red;"><strong>大学</strong></span>：${university}</p>
+        <p>・<span style="color:red;"><strong>学年</strong></span>：${schoolyear}</p>
         <hr>
         <p>${visitCountText}</p>
         <hr>
         <p>${selectedSymptomText}</p>
+        、
         <hr>
         <p>${selectedDate1Text}</p>
         <hr>
@@ -744,42 +750,6 @@
             updateDisplayInfo(); // 表示を更新
         }
 
-        function selectVisit(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
-
-            document.getElementById('firstVisit').classList.remove('active');
-            document.getElementById('repeatVisit').classList.remove('active');
-            element.classList.add('active');
-            visitCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedVisitTime = visitTimes[visitCount];
-
-            console.log('選択された訪問回数の時間:', selectedVisitTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
-        function selecthighschool(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
-
-            document.getElementById('firsthighschool').classList.remove('active');
-            document.getElementById('repeathighschool').classList.remove('active');
-            element.classList.add('active');
-            highschoolCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedhighschoolTime = highschoolTimes[highschoolCount];
-
-            console.log('選択された訪問回数の時間:', selectedhighschoolTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
             if (cell.classList.contains('unavailable')) {
@@ -806,46 +776,47 @@
         }
 
         function submitForm() {
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        visitCount: visitCount,
-        highschoolCount: highschoolCount,
-        dates: [
-            document.getElementById('date1').value, 
-            document.getElementById('date2').value, 
-            document.getElementById('date3').value
-        ],
-        message: document.getElementById('message').value.trim()
-    };
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                name: document.getElementById('name').value.trim(),
+                dates: [
+                    document.getElementById('date1').value,
+                    document.getElementById('date2').value,
+                    document.getElementById('date3').value
+                ],
+                message: document.getElementById('message').value.trim()
+            };
 
-    // フォームデータのチェック
-    if (!formData.name) {
-        alert('お名前を入力してください。');
-        return;
-    }
+            // フォームデータのチェック
+            if (!formData.name) {
+                alert('お名前を入力してください。');
+                return;
+            }
 
-    if (!formData.phone) {
-        alert('電話番号を入力してください。');
-        return;
-    }
+            if (!formData.phone) {
+                alert('電話番号を入力してください。');
+                return;
+            }
 
-    if (!formData.dates[0]) {
-        alert('第1希望日※必須を選択してください。');
-        return;
-    }
+            if (!formData.dates[0]) {
+                alert('第1希望日※必須を選択してください。');
+                return;
+            }
 
-    // LINEトークにメッセージを送信
-    liff.sendMessages([{
-        type: 'text',
-        text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号：${formData.phone}\n\nご来店回数：${formData.visitCount}\n\n高校生以下ですか？：${formData.highschoolCount}\n\nメニュー：${formData.selectedSymptom}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
-    }]).then(() => {
-        alert('当日キャンセルは無いようにお願いいたします。');
-        liff.closeWindow();
-    }).catch((err) => {
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号：${formData.phone}\n\n年齢：${formData.age}\n\n大学：${formData.university}\n\n学年：${formData.schoolyear}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+            }]).then(() => {
+                alert('当日キャンセルは無いようにお願いいたします。');
+                liff.closeWindow();
+            }).catch((err) => {
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(datetime) {
             /* 日時文字列が空の場合は空文字を返す */
