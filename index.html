@@ -416,13 +416,13 @@
 
 <body>
     <div class="container">
-        <h1>LANI 茨木店<br>予約フォーム
+        <h1>LANI 堀江店<br>予約フォーム
         </h1>
         <div class="label">お客様名※必須</div>
-        <input type="text" id="name" placeholder="お名前を入力してください">
+        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
         <div class="label">電話番号※必須</div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください">
+        <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
         <div class="label">ご来店回数※必須</div>
         <div class="visit-buttons">
@@ -467,16 +467,17 @@
             <button type="button" onclick="selectSymptom(this, 'treatment32')" data-price="18700">カット&縮毛矯正 ￥18,700</button>
             <button type="button" onclick="selectSymptom(this, 'treatment33')" data-price="22000">カット＆髪質改善酸性矯正 ￥22,000</button>
         </div>
-        <div class="highlight-background">
-            <span class="highlight-text">オプション</span>
-        </div>
-        <div class="irradiations">
-            <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="5500">【オプション】<br>カット（S・B込み）￥5,500</button>
-            <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="3300">【オプション】<br>小学生カット ￥3,300</button>
-            <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="132000">【オプション】<br>カット&カラー ￥13,200</button>
-            <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="8800">【オプション】<br>ワンメイク（全体）カラー（S・B込み）￥8,800</button>
-            <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="2750">【オプション】<br>キッズカット（小学生未満）￥2,750</button>
-        </div>
+    </div>
+    <div class="highlight-background">
+        <span class="highlight-text">オプション</span>
+    </div>
+    <div class="irradiations">
+        <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="5500">カット（S・B込み）￥5,500</button>
+        <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="3300">小学生カット ￥3,300</button>
+        <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="132000">カット&カラー ￥13,200</button>
+        <button type="button" id="yonirradiations" onclick="selectirradiations(this)" data-price="8800">ワンメイク（全体）カラー（S・B込み）￥8,800</button>
+        <button type="button" id="goirradiations" onclick="selectirradiations(this)" data-price="2750">キッズカット（小学生未満）￥2,750</button>
+    </div>
 
         <div class="label">希望日時</div>
         <div class="calendar-container">
@@ -553,11 +554,11 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '【オプション】カット（S・B込み）￥5,500': 60,
-            '【オプション】小学生カット ￥3,300': 30,
-            '【オプション】カット&カラー ￥13,200': 120,
-            '【オプション】ワンメイク（全体）カラー（S・B込み）￥8,800': 60,
-            '【オプション】キッズカット（小学生未満）￥2,750': 30
+            'カット（S・B込み）￥5,500': 60,
+            '小学生カット ￥3,300': 30,
+            'カット&カラー ￥13,200': 120,
+            'ワンメイク（全体）カラー（S・B込み）￥8,800': 60,
+            'キッズカット（小学生未満）￥2,750': 30
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
@@ -599,6 +600,21 @@
         };
 
         let selectedMenuTime = 0;
+
+        // 入力内容をローカルストレージに保存
+        function saveInput(id) {
+            const value = document.getElementById(id).value;
+            localStorage.setItem(id, value);
+        }
+
+        // ページが読み込まれたときに前回の入力内容を復元
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedName = localStorage.getItem('name');
+            const savedPhone = localStorage.getItem('phone');
+
+            if (savedName) document.getElementById('name').value = savedName;
+            if (savedPhone) document.getElementById('phone').value = savedPhone;
+        });
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
@@ -719,7 +735,7 @@
                     menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0; // 各メニューの価格を合計
                 });
                         // 選択されたメニューを "、" で区切って文字列化
-                        selectedSymptom = selectedMenu.join('、');
+        selectedSymptom = selectedMenu.join('、');
             }
 
             console.log('選択されたメニューの時間:', selectedMenuTime);
@@ -769,7 +785,7 @@
             // 選択されたオプションを取得
             const selectedButtons = document.querySelectorAll('.irradiations button.active');
             const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiations.join(', ');
+            irradiationsCount = selectedIrradiations.join('、 ');
 
             // すべてのオプションの価格を再計算
             optionsPrice = 0; // 全体をリセットして再計算
@@ -880,7 +896,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n茨木店\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}、${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n堀江店\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}、${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -912,7 +928,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbzHCjepJOn_C2EsDmsgfq62AlbI-7vUhLrJQVDsTKjg4MYaQeNAvtPh71z2ekdo_R4ZIQ/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbxSh46OBXPHoviYL8VQgmX9QdphUB2qXZmqnA2byzLHG6aiVhottoX1SNEwxdiGO69YNQ/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -945,19 +961,18 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '09:00', '09:30',
-                '10:00', '10:30',
-                '11:00', '11:30',
-                '12:00', '12:30',
-                '13:00', '13:30',
-                '14:00', '14:30',
-                '15:00', '15:30',
-                '16:00', '16:30',
-                '17:00', '17:30',
-                '18:00', '18:30',
-                '19:00', '19:30',
-                '20:00', '20:30'
-            ];
+    '10:00', '10:30',
+    '11:00', '11:30',
+    '12:00', '12:30',
+    '13:00', '13:30',
+    '14:00', '14:30',
+    '15:00', '15:30',
+    '16:00', '16:30',
+    '17:00', '17:30',
+    '18:00', '18:30',
+    '19:00', '19:30',
+    '20:00', '20:30'
+];
 
 
             if (table.rows.length === 0) {
@@ -1049,12 +1064,12 @@ oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
                     }
 
                     // 18時以降に終了する予約を不可にする (火水木金のみ)
-                    if ([2, 3, 4, 5].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 20 && slotEnd.getMinutes() > 30) {
+                    if ([2, 4, 5].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
+                        if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 30) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                             continue;
-                        } else if (slotEnd.getHours() > 20) {
+                        } else if (slotEnd.getHours() > 19) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                             continue;
@@ -1062,12 +1077,12 @@ oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
                     }
 
                     // 18時以降に終了する予約を不可にする (火水木金のみ)
-                    if ([1].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 14 && slotEnd.getMinutes() > 30) {
+                    if ([3].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
+                        if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 30) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                             continue;
-                        } else if (slotEnd.getHours() > 14) {
+                        } else if (slotEnd.getHours() > 19) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                             continue;
@@ -1076,7 +1091,7 @@ oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
 
                     // 18時以降に終了する予約を不可にする (火水木金のみ)
                     if ([0].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 30) {
+                        if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                             continue;
@@ -1089,7 +1104,7 @@ oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
 
                     // 18時以降に終了する予約を不可にする (火水木金のみ)
                     if ([6].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 30) {
+                        if (slotEnd.getHours() === 19 && slotEnd.getMinutes() > 0) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                             continue;
@@ -1143,6 +1158,11 @@ if (slotStart < nowPlus2Hours) {
                     }
                     // 営業日で、指定されている時間以外の時間は×
                     else if (businessEventTimes.length > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 日曜日で、営業日ではない場合
+                    else if (slotStart.getDay() === 1 && !isBusinessDay && businessEventTimes.length === 0) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
