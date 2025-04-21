@@ -725,6 +725,13 @@
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
+        <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
+
+        <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
+        <div class="symptoms">
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">30分個別無料zoom相談会</button>
+        </div>
+
         <div class="label">希望日時<span class="required">必須</span></div>
         <div class="calendar-container">
             <!-- 月を独立して配置 -->
@@ -815,7 +822,7 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '小顔骨気コース（60分）': 120,
+            '30分個別無料zoom相談会': 30,
             '上半身＋小顔骨気コース（90分）': 150,
             '極上全身骨気スペシャルコース（120分）': 180,
             '極上全身骨気プラチナコース（150分）': 210
@@ -1182,7 +1189,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
