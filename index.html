@@ -892,11 +892,20 @@
         });
 
         const savedGender = localStorage.getItem('selectedGender');
-    if (savedGender) {
-        if (savedGender === '男性') document.getElementById('maleVisit').classList.add('active');
-        if (savedGender === '女性') document.getElementById('womanVisit').classList.add('active');
-        if (savedGender === 'その他') document.getElementById('othersVisit').classList.add('active');
+if (savedGender) {
+    if (savedGender === '男性') {
+        document.getElementById('maleVisit').classList.add('active');
+        visitCount = '男性'; // ←これ追加
     }
+    if (savedGender === '女性') {
+        document.getElementById('womanVisit').classList.add('active');
+        visitCount = '女性'; // ←これ追加
+    }
+    if (savedGender === 'その他') {
+        document.getElementById('othersVisit').classList.add('active');
+        visitCount = 'その他'; // ←これ追加
+    }
+}
 
         // スムーズスクロール
         document.querySelectorAll('.side-nav a').forEach(anchor => {
@@ -1281,6 +1290,11 @@
             // フォームデータのチェック
             if (!formData.name) {
                 alert('お名前を入力してください。');
+                return;
+            }
+
+            if (!formData.visitCount) {
+                alert('性別を入力してください。');
                 return;
             }
 
