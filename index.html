@@ -1,719 +1,125 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アンケートフォーム</title>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <style>
-        /* 右端の細いナビ（固定） */
-        .side-nav {
-            position: fixed;
-            /* 画面スクロールしても固定 */
-            right: -5px;
-            /* さらに右へ */
-            top: 80%;
-            /* 画面中央に固定 */
-            transform: translateY(-50%) translateX(15px);
-            /* 中央配置と右ずらし */
-            background: #00a583;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4px;
-            border-radius: 10px 0 0 10px;
-            z-index: 1000;
-            width: 35px;
-            /* さらに細く */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>スマホ画像ギャラリー</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/css/glide.core.min.css" />
+  <style>
+    body {
+      margin: 0;
+      background-color: #fefefe;
+      font-family: 'Helvetica Neue', sans-serif;
+      color: #333;
+    }
 
-        .side-nav a:active {
-            transform: scale(1.0);
-            /* タップした後に元のサイズに戻す */
-        }
+    header {
+      background: #00aaff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
 
-        .side-nav a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            font-size: 10px;
-            margin: 5px 0;
-            padding: 5px;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 5px;
-            width: 30px;
-            height: 30px;
-            text-align: center;
-        }
+    .glide {
+      width: 100%;
+      max-width: 600px;
+      margin: 30px auto;
+    }
 
-        .side-nav a span {
-            font-size: 24px;
-            /* 矢印をさらに大きく */
-            position: absolute;
-            left: -0px;
-            /* 左端に寄せる */
-            top: 13px;
-            /* さらに下へ */
-        }
+    .glide__slide img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      cursor: zoom-in;
+      transition: transform 0.2s ease;
+    }
 
-        /* スマホ用の微調整 */
-        @media (max-width: 600px) {
-            .side-nav {
-                right: 2px;
-                /* スマホではさらに右端に */
-                width: 30px;
-                /* もっと細く */
-            }
+    .glide__slide img:active {
+      transform: scale(1.05);
+    }
 
-            .side-nav a {
-                width: 28px;
-                height: 28px;
-            }
+    .caption {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 8px;
+    }
 
-            .side-nav a i {
-                font-size: 12px;
-                /* スマホではもっと小さく */
-            }
-        }
+    .loader {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #00aaff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 100px auto;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            margin: 0;
-            padding-top: 20px;
-        }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
 
-        .container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        h1 {
-            background: linear-gradient(135deg, #00a583, #00745c);
-            color: white;
-            padding: 20px;
-            border-radius: 0 15px 0px 45px;
-            text-align: center;
-            display: block;
-            margin: -20px -15px 20px -15px;
-            font-size: 26px;
-            font-weight: 600;
-            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .label {
-            display: block;
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #00a583;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            /* 中央揃え */
-            position: relative;
-            overflow: hidden;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .required-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            color: #00a583;
-            font-weight: bold;
-            font-size: 0.9em;
-            border-radius: 4px;
-            padding: 2px 6px;
-            border: 2px solid #00a583;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .priority-buttons,
-        .demand-buttons,
-        .chance-buttons,
-        .Introduction-buttons,
-        .delivery-buttons,
-        .budgety-buttons,
-        .menu-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .priority-buttons button,
-        .demand-buttons button,
-        .chance-buttons button,
-        .Introduction-buttons button,
-        .delivery-buttons button,
-        .budgety-buttons button,
-        .menu-buttons button {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            box-sizing: border-box;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .priority-buttons button.active,
-        .demand-buttons button.active,
-        .chance-buttons button.active,
-        .Introduction-buttons button.active,
-        .delivery-buttons button.active,
-        .budgety-buttons button.active,
-        .menu-buttons button.active {
-            background-color: #444;
-            color: #fff;
-        }
-
-        .date-inputs input[type="datetime-local"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 4px;
-            background-color: #322a25;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .menu-section {
-            display: none;
-        }
-
-        .menu-section.active {
-            display: block;
-        }
-
-        .current-month {
-            font-size: 16px;
-            font-weight: bold;
-            color: #444;
-        }
-
-        .menu-section {
-            display: none;
-        }
-
-        .menu-section.active {
-            display: block;
-        }
-
-        #repairLabel,
-        #repairButtons {
-            display: none;
-        }
-
-        .highlight-background {
-            background-color: #f9f9d6;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            margin-top: 10px;
-            /* 上に余白を追加 */
-        }
-
-        .datetime-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            color: #aaa;
-            font-size: 16px;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        /* 基本スタイル */
-        .info-text {
-            margin: 20px 0;
-            font-family: "Noto Sans JP", "Roboto", sans-serif;
-            font-size: 14px;
-            color: #333;
-            /* 読みやすい濃い文字色 */
-            background-color: #f8f9fa;
-            line-height: 1.8;
-            text-align: left;
-            word-wrap: break-word;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            max-width: 800px;
-            /* 横幅制限 */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            /* 軽い影を追加 */
-            overflow-y: auto;
-            /* 長文スクロール対応 */
-        }
-
-        /* 見出しスタイル */
-        .info-text h1 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .info-text h2 {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 15px;
-            margin-bottom: 8px;
-        }
-
-        /* 強調テキスト */
-        .info-text strong {
-            color: #007bff;
-        }
-
-        /* モバイル向け調整 */
-        @media (max-width: 768px) {
-            .info-text {
-                font-size: 13px;
-                padding: 15px;
-                max-width: 100%;
-            }
-
-            .info-text h1 {
-                font-size: 16px;
-            }
-
-            .info-text h2 {
-                font-size: 14px;
-            }
-        }
-
-        .info-textmemo {
-            margin-top: 20px;
-            /* 上の余白 */
-            margin-bottom: 10px;
-            /* 下に白い隙間を追加 */
-            font-size: 13px;
-            color: #000000;
-            line-height: 1.5;
-            text-align: center;
-            word-wrap: break-word;
-            background-color: #eef9f5;
-            /* 青っぽい背景色を追加 */
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        /* 携帯端末向けのレスポンシブデザイン */
-        @media (max-width: 768px) {
-            .info-textmemo {
-                font-size: 11.5px;
-                /* スマホでは少し小さく */
-                margin-top: 10px;
-                /* 上下のマージンを調整 */
-                line-height: 2.0;
-                /* テキストの高さ調整 */
-            }
-        }
-
-        /* 100点の予約フォームCSS */
-
-        input:focus,
-        textarea:focus {
-            border-color: #00a583;
-            outline: none;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-        }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #00a583;
-            color: #000000;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            background-color: #e9e9e9;
-            transform: scale(1.05);
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            background-color: #00a583;
-        }
-
-        .submit-button:hover {
-            background-color: #00a583;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            input,
-            button {
-                font-size: 14px;
-            }
-        }
-
-        button.active {
-            outline: 2px solid #696969;
-            /* ここで枠線を指定 */
-            outline-offset: 2px;
-        }
-
-        /* 必須マークのスタイル */
-        .required {
-            color: #ffffff;
-            /* ゴールド（黄色） */
-            font-weight: lighter;
-            /* 文字を細くする */
-            font-size: 0.6em;
-            margin-left: 5px;
-            vertical-align: 0.8em;
-            /* 位置を少し上に調整 */
-
-            /* 白色背景の四角形 */
-            background-color: rgb(255, 15, 15);
-            padding: 0 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-        }
-
-        .current-month {
-            text-align: center;
-            display: block;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, -10px);
-            /* Y方向に上げる */
-            background-color: #00a583;
-            color: #fff;
-            padding: 3px 12px;
-            /* ボックスのパディングを縮小 */
-            border-radius: 8px;
-            /* 角の丸みを少し減少 */
-            font-size: 1.4rem;
-            /* フォントサイズを小さく */
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(47, 103, 167, 0.2);
-            /* 影も控えめに */
-        }
-
-        /* ナビゲーションバー */
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #1e1e2d;
-            padding: 10px;
-            border-radius: 10px 0 0 10px;
-            z-index: 1000;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px;
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 10px;
-            background: #00a583;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-
-        .sidebar a:hover {
-            background: #00a583;
-        }
-
-        /* スクロール用のセクション */
-        .section {
-            padding: 50px 10px;
-            margin-top: 30px;
-        }
-
-        .menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-}
-
-.menu-buttons button {
-  width: 100%;
-  box-sizing: border-box; /* パディングやボーダーを含めて100%にするため */
-  padding: 12px; /* ボタン内の余白（お好みで） */
-  font-size: 16px; /* 見やすく調整 */
-}
-
-/* 全体的なフォーム要素の統一スタイル */
-.form-group {
-  margin-bottom: 20px;
-}
-
-/* カスタムセレクト */
-.custom-select {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #fff;
-  color: #333;
-  cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='16' height='10' viewBox='0 0 16 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23666' d='M1 1l7 7 7-7' stroke='%23666' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-size: 12px 8px;
-}
-
-/* フォーカス時の視認性 */
-.custom-select:focus {
-  border-color: #0078d7;
-  box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.2);
-  outline: none;
-}
-
-/* モバイル対応 */
-@media (max-width: 600px) {
-  .custom-select {
-    font-size: 18px;
-    padding: 14px;
-  }
-    </style>
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>長崎県農業共済組合<br>アンケートフォーム</h1>
-        <div class="info-text">以下全て入力後【アンケート送信】ボタンを押してください。</div>
-        <div class="label">お名前をご記入下さい。</div>
-        <textarea id="message" rows="1" placeholder="ご記入下さい"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">お電話番号をご記入下さい。</div>
-        <input type="tel" id="message2" placeholder="電話番号を入力してください" pattern="\d{10,11,12}" inputmode="tel">
+<header>画像ギャラリー</header>
 
-        <div class="form-group">
-            <label for="message3" class="label">お住まいの市町をご選択ください</label>
-            <select id="message3" class="custom-select" required>
-              <option value="" disabled selected>選択してください</option>
-              <option value="長崎市">長崎市</option>
-            <option value="佐世保市">佐世保市</option>
-            <option value="島原市">島原市</option>
-            <option value="諫早市">諫早市</option>
-            <option value="大村市">大村市</option>
-            <option value="平戸市">平戸市</option>
-            <option value="松浦市">松浦市</option>
-            <option value="対馬市">対馬市</option>
-            <option value="壱岐市">壱岐市</option>
-            <option value="五島市">五島市</option>
-            <option value="西海市">西海市</option>
-            <option value="雲仙市">雲仙市</option>
-            <option value="南島原市">南島原市</option>
-            <option value="長与町">長与町</option>
-            <option value="時津町">時津町</option>
-            <option value="東彼杵町">東彼杵町</option>
-            <option value="川棚町">川棚町</option>
-            <option value="波佐見町">波佐見町</option>
-            <option value="小値賀町">小値賀町</option>
-            <option value="佐々町">佐々町</option>
-            <option value="新上五島町">新上五島町</option>
-            </select>
-          </div>                 
+<div id="loader" class="loader"></div>
 
-        <div class="label">組合員コードをご記入下さい</div>
-        <textarea id="message4" rows="1" placeholder="ご記入下さい"></textarea> <!-- メッセージ入力フィールド -->
+<div class="glide hidden" id="gallery">
+  <div class="glide__track" data-glide-el="track">
+    <ul class="glide__slides">
+      <li class="glide__slide">
+        <img src="https://www.dropbox.com/scl/fi/d12njcq9x8icd29crkupm/....png?rlkey=4u9wcbk757ysqnpepavwlxsm3&st=ayaklhiz&raw=1" alt="画像1">
+        <div class="caption">画像1の説明</div>
+      </li>
+      <li class="glide__slide">
+        <img src="https://www.dropbox.com/scl/fi/d12njcq9x8icd29crkupm/....png?rlkey=4u9wcbk757ysqnpepavwlxsm3&st=ayaklhiz&raw=1" alt="画像2">
+        <div class="caption">画像2の説明</div>
+      </li>
+      <li class="glide__slide">
+        <img src="https://www.dropbox.com/scl/fi/d12njcq9x8icd29crkupm/....png?rlkey=4u9wcbk757ysqnpepavwlxsm3&st=ayaklhiz&raw=1" alt="画像3">
+        <div class="caption">画像3の説明</div>
+      </li>
+    </ul>
+  </div>
+</div>
 
-        <div class="label">加入している、（もしくは気になっている）<br>共済事業の種類</div>
-        <div class="menu-buttons">
-            <button type="button" id="onemenu" onclick="selectmenu(this)">収入保険（加入中）</button>
-            <button type="button" id="twomenu" onclick="selectmenu(this)">収入保険（検討中）</button>
-            <button type="button" id="threemenu" onclick="selectmenu(this)">農作物共済</button>
-            <button type="button" id="fourmenu" onclick="selectmenu(this)">家畜共済</button>
-            <button type="button" id="fivemenu" onclick="selectmenu(this)">果樹共済</button>
-            <button type="button" id="sixmenu" onclick="selectmenu(this)">畑作物共済</button>
-            <button type="button" id="sevenmenu" onclick="selectmenu(this)">農機具共済</button>
-            <button type="button" id="sevenmenu" onclick="selectmenu(this)">建物共済</button>
-        </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/glide.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // ローディング解除と表示
+    const loader = document.getElementById("loader");
+    const gallery = document.getElementById("gallery");
 
-        <div class="info-text">※ご記入いただいた内容は情報発信に活用させて頂きます。</div>
-        <button class="submit-button" onclick="submitForm()" div id="section-message">アンケート送信</button>
-    </div>
-
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
-    <script>
-        let menuCount = [];
-
-        // LIFF初期化
-        document.addEventListener('DOMContentLoaded', function () {
-            liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力
-            }).then(() => {
-                // LIFF初期化成功時の処理
-                console.log('LIFF初期化成功');
-            }).catch((err) => {
-                // LIFF初期化失敗時の処理
-                console.error('LIFF初期化失敗', err);
-            });
-        });
-
-        // プレースホルダーを非表示にする関数
-        function hidePlaceholder(placeholderId) {
-            document.getElementById(placeholderId).style.display = 'none';
+    // 画像すべて読み込み完了したら表示
+    const images = document.querySelectorAll("img");
+    let loadedCount = 0;
+    images.forEach(img => {
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === images.length) {
+          loader.classList.add("hidden");
+          gallery.classList.remove("hidden");
+          new Glide('.glide', {
+            type: 'carousel',
+            perView: 1
+          }).mount();
         }
+      };
+      img.onerror = () => {
+        img.src = "https://placehold.co/600x400?text=画像が読み込めません";
+      };
+    });
+  });
+</script>
 
-        // プレースホルダーを表示する関数（入力がない場合）
-        function showPlaceholder(inputId, placeholderId) {
-            const input = document.getElementById(inputId);
-            if (!input.value) {
-                document.getElementById(placeholderId).style.display = 'inline';
-            }
-        }
-
-        function selectmenu(element) {
-            // 複数選択項目の処理コード
-            const menuName = element.innerText;
-
-            if (element.classList.contains('active')) {
-                element.classList.remove('active');
-                menuCount = menuCount.filter(menu => menu !== menuName);
-            } else {
-                element.classList.add('active');
-                menuCount.push(menuName);
-            }
-        }
-
-        function submitForm() {
-            const message = document.getElementById('message').value;
-            const message2 = document.getElementById('message2').value;
-            const message3 = document.getElementById('message3').value;
-            const message4 = document.getElementById('message4').value;
-
-            const formData = {
-                message,
-                message2,
-                message3,
-                message4,
-                menuCount: menuCount.join('\n・') // 改行区切りにする
-            };
-
-            // フォームデータのチェック
-            if (!formData.message) {
-                alert('ご来店日を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.message2) {
-                alert('お名前を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.message3) {
-                alert('生年月日を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.message4) {
-                alert('電話番号を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.menuCount) {
-                alert('加入している、（もしくは気になっている）共済事業の種類をご選択ください。');
-                return;
-            }
-
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `≪アンケート≫\n【お名前】\n・${formData.message}\n\n【電話番号】\n・${formData.message2}\n\n【お住まい】\n・${formData.message3}\n\n【組合員コード】\n・${formData.message4}\n\n【共済事業の種類】\n・${formData.menuCount}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('アンケートご記入ありがとうございます。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
-
-    </script>
 </body>
-
 </html>
