@@ -174,6 +174,7 @@
 
         .visit-buttons,
         .second-buttons,
+        .long-buttons,
         .symptoms,
         .menu-sections,
         .irradiations {
@@ -185,6 +186,7 @@
 
         .visit-buttons button,
         .symptoms button,
+        .long-buttons button,
         .second-buttons button,
         .menu-sections button,
         .irradiations button {
@@ -201,6 +203,7 @@
 
         .visit-buttons button.active,
         .symptoms button.active,
+        .long-buttons button.active,
         .second-buttons button.active,
         .menu-sections button.active,
         .irradiations button.active {
@@ -791,10 +794,15 @@
                 <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="3300">持ち込みデザイン4本アート</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="14800">持ち込みデザイン10本アート</button>
             </div>
-            <div class="label">ご来店回数<span class="required">必須</span></div>
+            <div class="label">長さだしを希望ですか？<span class="required">必須</span></div>
+            <div class="long-buttons">
+                <button type="button" id="firstlong" onclick="selectlong(this)">はい</button>
+                <button type="button" id="repeatlong" onclick="selectlong(this)">いいえ</button>
+            </div>
+            <div class="label">オフ有りですか？<span class="required">必須</span></div>
             <div class="second-buttons">
-                <button type="button" id="firstsecondanniversary" onclick="selectsecondanniversary(this)">利用する</button>
-                <button type="button" id="repeatsecondanniversary" onclick="selectsecondanniversary(this)">利用しない</button>
+                <button type="button" id="firstsecondanniversary" onclick="selectsecondanniversary(this)">はい</button>
+                <button type="button" id="repeatsecondanniversary" onclick="selectsecondanniversary(this)">いいえ</button>
             </div>
         </div>
 
@@ -803,9 +811,16 @@
                 <span class="highlight-text">フット</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="4900">全顔脱毛</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="2800">1パーツ脱毛体験</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="4800">メンズフェイシャル</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="4900">定額フットジェル</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="2800">ワンカラー+親指アート</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="4800">マグネット・オーロラ・ミラー・フラッシュ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="2800">ワンカラーフットジェル</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="4800">巻き爪リフト</button>
+            </div>
+            <div class="label">オフ有りですか？<span class="required">必須</span></div>
+            <div class="second-buttons">
+                <button type="button" id="firstsecondanniversary" onclick="selectsecondanniversary(this)">はい</button>
+                <button type="button" id="repeatsecondanniversary" onclick="selectsecondanniversary(this)">いいえ</button>
             </div>
         </div>
 
@@ -903,6 +918,7 @@
     <script>
         let visitCount = '';
         let secondsecondanniversaryCount = '';
+        let secondlongCount = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -1191,6 +1207,21 @@ if (treatmentId === 'treatment1') {
             fetchAvailability(currentDate);
         }
 
+        function selectlong(element) {
+            document.getElementById('firstlong').classList.remove('active');
+            document.getElementById('repeatlong').classList.remove('active');
+            element.classList.add('active');
+            secondlongCount = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedlongTime = secondTimes[secondlongCount];
+
+            console.log('選択された訪問回数の時間:', selectedlongTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
         function selectirradiations(button) {
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
@@ -1374,6 +1405,7 @@ if (treatmentId === 'treatment1') {
                 visitCount: visitCount,
                 selectedSymptom: selectedSymptom,
                 secondsecondanniversaryCount: secondsecondanniversaryCount,
+                secondsecondanniversaryCount: secondlongCount,
                 irradiationsCount: irradiationsCount,
                 dates: [selectedFullDate],
                 message: document.getElementById('message').value
@@ -1388,7 +1420,7 @@ if (treatmentId === 'treatment1') {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n長さだし：${formData.secondsecondanniversaryCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n長さだし：${formData.secondsecondanniversaryCount}\nオフ有り：${formData.secondsecondanniversaryCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
