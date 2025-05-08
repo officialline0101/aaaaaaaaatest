@@ -1382,26 +1382,26 @@ for (let i = 0; i < 7; i++) {
         const isBusinessEventTime = businessEventTimes.some(event => {
             return slotStart < event.end && event.start < slotEnd;
         });
+        
+        let maxOverlapping = 0;
 
-        let overLimit = false;
+        // ⭐ checkTime <= slotEnd で最後まで含める
+        for (let checkTime = new Date(slotStart.getTime()); checkTime <= slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 10)) {
+            const overlapping = availability.reduce((acc, slot) => {
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+                if (slot.title !== "営業日" && eventStart <= checkTime && eventEnd > checkTime) {
+                    acc++;
+                }
+                return acc;
+            }, 0);
 
-// 10分刻みで最大重なり数を取得
-for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 10)) {
-    const overlapping = availability.reduce((acc, slot) => {
-        const eventStart = new Date(slot.startTime);
-        const eventEnd = new Date(slot.endTime);
-        if (slot.title !== "営業日" && eventStart <= checkTime && eventEnd > checkTime) {
-            acc++;
+            if (overlapping > maxOverlapping) {
+                maxOverlapping = overlapping;
+            }
         }
-        return acc;
-    }, 0);
 
-    // 予約を仮に入れた場合の重なり数を確認
-    if ((overlapping + 1) >= 3) {
-        overLimit = true;
-        break;
-    }
-}
+        const overLimit = (maxOverlapping + 1) >= 3;
 
         // ⭐ 利用可否の最終判断（◯ or ✕）を決定するロジック
         if (isBusinessEventTime) {
