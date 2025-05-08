@@ -858,7 +858,7 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'もみほぐし60分': 60,
+            'もみほぐし60分': 0,
             'もみほぐし80分': 80,
             'もみほぐし100分': 100,
             'もみほぐし120分': 120
@@ -1385,38 +1385,29 @@ for (let i = 0; i < 7; i++) {
         
         let overLimit = false;
 
-// 10分刻みで予約時間中を確認
-for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 5)) {
-    const overlapping = availability.reduce((acc, slot) => {
+const relevantEvents = availability.filter(slot => {
+    const eventStart = new Date(slot.startTime);
+    const eventEnd = new Date(slot.endTime);
+    return slot.title !== "営業日" && eventStart < slotEnd && eventEnd > slotStart;
+});
+
+for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 1)) {
+    let overlapping = 1; // 仮予約1件分を初めからカウント
+
+    relevantEvents.forEach(slot => {
         const eventStart = new Date(slot.startTime);
         const eventEnd = new Date(slot.endTime);
-        if (slot.title !== "営業日" && eventStart <= checkTime && eventEnd > checkTime) {
-            acc++;
+        if (eventStart <= checkTime && eventEnd > checkTime) {
+            overlapping++;
         }
-        return acc;
-    }, 0);
+    });
 
-    if (overlapping + 1 >= 3) {
+    if (overlapping >= 3) {
         overLimit = true;
         break;
     }
 }
 
-// 最後の終了時間を個別確認
-if (!overLimit) {
-    const overlappingAtEnd = availability.reduce((acc, slot) => {
-        const eventStart = new Date(slot.startTime);
-        const eventEnd = new Date(slot.endTime);
-        if (slot.title !== "営業日" && eventStart <= slotEnd && eventEnd > slotEnd) {
-            acc++;
-        }
-        return acc;
-    }, 0);
-
-    if (overlappingAtEnd + 1 >= 3) {
-        overLimit = true;
-    }
-}
 
         // ⭐ 利用可否の最終判断（◯ or ✕）を決定するロジック
         if (isBusinessEventTime) {
