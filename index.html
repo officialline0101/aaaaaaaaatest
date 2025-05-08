@@ -1225,7 +1225,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwkqNr51I3rJTZ9WR7YJGmtz-wfNQcI5jJRu-ySPDxT-rCsHH9BITbquuhUvotxY8Tc/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbw3oaJIf08Cda4Qja1AxdfQiaJFjX--l1Ff7lZnzymhJnd3Ybkl1-9IHuRRaEBTAd0A/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -1300,144 +1300,140 @@
                 }
             }
 
+// 現在の日時を取得
+const now = new Date();
 
-            // 現在の日時を取得
-            const now = new Date();
+// テーブルの内容を1週間分ループで更新
+for (let i = 0; i < 7; i++) {
+    const day = new Date(currentDate);
+    day.setDate(day.getDate() + i); // 指定日のi日後
 
-            // テーブルの内容を更新
-            for (let i = 0; i < 7; i++) {
-                const day = new Date(currentDate);
-                day.setDate(day.getDate() + i);
+    let businessEventTimes = []; // 営業日のイベント時間帯を格納する配列
 
-                let businessEventTimes = []; // 営業日のイベント時間帯を記録する配列
-
-                availability.forEach(slot => {
-                    const eventStart = new Date(slot.startTime);
-                    const eventEnd = new Date(slot.endTime);
-                    if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
-                        businessEventTimes.push({ start: eventStart, end: eventEnd });
-                    }
-                });
-
-                for (let j = 0; j < times.length; j++) {
-                    const cell = table.rows[j].cells[i + 1];
-
-                    // すでにセルが✕の場合はスキップする
-                    if (cell.textContent === '✕') {
-                        continue;
-                    }
-
-                    const slotStart = new Date(day);
-                    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
-
-                    const slotEnd = new Date(slotStart);
-                    let menuDuration = selectedMenuTime || 0;
-                    let visitDuration = selectedVisitTime || 0;
-                    let irradiationsDuration = selectedirradiationsTime || 0;
-
-                    // メニュー時間と訪問回数の時間を合計して、終了時間を設定
-                    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
-
-                    // 終了時間が翌日 (0時以降) になる場合は✕に設定
-                    if (slotEnd.getDate() !== slotStart.getDate()) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    }
-
-                    // 18時以降に終了する予約を不可にする (火水木金のみ)
-                    if ([0, 1, 2, 4, 5, 6].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 20 && slotEnd.getMinutes() > 0) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        } else if (slotEnd.getHours() > 20) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        }
-                    }
-
-                    // 18時以降に終了する予約を不可にする (火水木金のみ)
-                    if ([3].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 22 && slotEnd.getMinutes() > 0) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        } else if (slotEnd.getHours() > 22) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        }
-                    }
-
-                    // ここで終了時間を使った条件処理を行う
-                    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
-                    if (slotStart < now) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        continue;
-                    }
-
-                    const isBusinessDay = businessDays.some(businessDay => {
-                        const businessDayStart = new Date(businessDay.start);
-                        const businessDayEnd = new Date(businessDay.end);
-                        return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
-                    });
-
-                    const isBusinessEventTime = businessEventTimes.some(event => {
-                        return slotStart < event.end && event.start < slotEnd;
-                    });
-
-// 🔥ここから重要：slotStart～slotEndの間で3つ以上重なる瞬間があるか？
-let overLimit = false;
-
-// 1分刻みでチェック
-for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 10)) {
-    const overlapping = availability.reduce((acc, slot) => {
+    // availabilityの中から営業日イベントを抽出して格納
+    availability.forEach(slot => {
         const eventStart = new Date(slot.startTime);
         const eventEnd = new Date(slot.endTime);
-        if (slot.title !== "営業日" && eventStart <= checkTime && checkTime < eventEnd) {
-            acc++;
+        if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
+            businessEventTimes.push({ start: eventStart, end: eventEnd });
         }
-        return acc;
-    }, 0);
+    });
 
-    if (overlapping >= 2) { // ここが2になったら、これ以上入れたら3つ目になる
-        overLimit = true;
-        break;
-    }
-}
+    // 各時間帯（例：10:00, 10:30, ...）に対して処理
+    for (let j = 0; j < times.length; j++) {
+        const cell = table.rows[j].cells[i + 1]; // テーブルの該当セル取得
 
-        if (isBusinessEventTime && overLimit) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        else if (isBusinessEventTime) {
-            cell.textContent = '◯';
-            cell.classList.add('available');
-        }
-        else if (businessEventTimes.length > 0) {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
-        }
-        else if (isBusinessDay && !overLimit) {
-            cell.textContent = '◯';
-            cell.classList.add('available');
-        }
-        else if (!overLimit) {
-            cell.textContent = '◯';
-            cell.classList.add('available');
-        }
-        else {
-            cell.textContent = '✕';
-            cell.classList.add('unavailable');
+        // すでに✕が入っていたらスキップ
+        if (cell.textContent === '✕') {
+            continue;
         }
 
-        cell.setAttribute('data-date', slotStart.toISOString());
-                }
+        // スロットの開始時間設定
+        const slotStart = new Date(day);
+        slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
+
+        // スロットの終了時間をメニュー合計時間で算出
+        const slotEnd = new Date(slotStart);
+        let menuDuration = selectedMenuTime || 0;
+        let visitDuration = selectedVisitTime || 0;
+        let irradiationsDuration = selectedirradiationsTime || 0;
+        slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+
+        // 日をまたぐ場合は利用不可
+        if (slotEnd.getDate() !== slotStart.getDate()) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+        }
+
+        // 通常曜日（木曜以外）：20時以降に終了する場合は✕
+        if ([0,1,2,4,5,6].includes(slotEnd.getDay())) {
+            if (slotEnd.getHours() === 20 && slotEnd.getMinutes() > 0 || slotEnd.getHours() > 20) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+                continue;
             }
         }
+
+        // 木曜日のみ：22時以降に終了する場合は✕
+        if ([3].includes(slotEnd.getDay())) {
+            if (slotEnd.getHours() === 22 && slotEnd.getMinutes() > 0 || slotEnd.getHours() > 22) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+                continue;
+            }
+        }
+
+        // ⭐ 当日の場合、現在時刻より前の時間帯は✕
+        if (i === 0 && slotStart < now) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+        }
+
+        // 指定時間帯が営業日内かを判定
+        const isBusinessDay = businessDays.some(businessDay => {
+            const businessDayStart = new Date(businessDay.start);
+            const businessDayEnd = new Date(businessDay.end);
+            return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
+        });
+
+        // 営業イベントと時間帯が重なっているかを判定
+        const isBusinessEventTime = businessEventTimes.some(event => {
+            return slotStart < event.end && event.start < slotEnd;
+        });
+
+        // 重複予約チェック：10分単位で確認
+        let overLimit = false;
+        for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 10)) {
+            const overlapping = availability.reduce((acc, slot) => {
+                const eventStart = new Date(slot.startTime);
+                const eventEnd = new Date(slot.endTime);
+                if (slot.title !== "営業日" && eventStart <= checkTime && checkTime < eventEnd) {
+                    acc++;
+                }
+                return acc;
+            }, 0);
+            // 既存の予約数が2件以上（自分を含めて3件以上）になる場合は上限オーバー
+            if ((overlapping + 1) >= 3) {
+                overLimit = true;
+                break;
+            }
+        }
+
+        // ⭐ 利用可否の最終判断（◯ or ✕）を決定するロジック
+        if (isBusinessEventTime) {
+            // 営業イベント中で上限オーバー → ✕／それ以外 → ◯
+            if (overLimit) {
+                cell.textContent = '✕';
+                cell.classList.add('unavailable');
+            } else {
+                cell.textContent = '◯';
+                cell.classList.add('available');
+            }
+        } else if (businessEventTimes.length > 0) {
+            // 当日に営業イベントがあるが、時間外 → ✕
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+        } else if (isBusinessDay && !overLimit) {
+            // 通常の営業日で上限未満 → ◯
+            cell.textContent = '◯';
+            cell.classList.add('available');
+        } else if (!overLimit) {
+            // 営業日でなくても上限未満なら → ◯
+            cell.textContent = '◯';
+            cell.classList.add('available');
+        } else {
+            // その他（上限オーバー） → ✕
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+        }
+
+        // セルにこの時間帯のデータ属性を追加（ISO形式の日時）
+        cell.setAttribute('data-date', slotStart.toISOString());
+    }
+}
+}
 
         function updateCalendarHeader(date) {
             const headerRow = document.getElementById('calendar-header');
