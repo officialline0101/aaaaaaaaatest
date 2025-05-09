@@ -748,7 +748,7 @@
     </div>
 
     <div class="container">
-        <h1>おそうじ本舗大仙店a<br>予約フォーム
+        <h1>おそうじ本舗大仙店<br>予約フォーム
         </h1>
         <div class="label">お名前（漢字フルネーム）<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -1353,58 +1353,59 @@
         }
 
         function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                namefurigana: document.getElementById('namefurigana').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                zyuuyo: document.getElementById('zyuuyo').value.trim(),
-                meka: document.getElementById('meka').value.trim(),
-                nensuu: document.getElementById('nensuu').value.trim(),
-                visitCount: visitCount,
-                selectedMenu: selectedMenu,
-                highschoolCount: highschoolCount,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value,
-                    document.getElementById('date3').value
-                ],
-                message: document.getElementById('message').value.trim(),
-                message2: document.getElementById('message2').value.trim()
-            };
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        namefurigana: document.getElementById('namefurigana').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        zyuuyo: document.getElementById('zyuuyo').value.trim(),
+        meka: document.getElementById('meka').value.trim(),
+        nensuu: document.getElementById('nensuu').value.trim(),
+        visitCount: visitCount,
+        selectedMenu: selectedMenu,
+        highschoolCount: highschoolCount,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+        dates: [
+            document.getElementById('date1').value,
+            document.getElementById('date2').value,
+            document.getElementById('date3').value
+        ],
+        message: document.getElementById('message').value.trim(),
+        message2: document.getElementById('message2').value.trim()
+    };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
+    if (!formData.phone) {
+        alert('電話番号を入力してください。');
+        return;
+    }
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
+    if (!formData.dates[0]) {
+        alert('第1希望日※必須を選択してください。');
+        return;
+    }
 
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
-            }
+    // データがない場合は空白にする
+    const meka = formData.meka ? formData.meka : '';
+    const nensuu = formData.nensuu ? formData.nensuu : '';
+    const message2 = formData.message2 ? formData.message2 : '';
+    const visitCount = formData.visitCount ? formData.visitCount : '';
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
-
-            if (!formData.dates[0]) {
-                alert('第1希望日※必須を選択してください。');
-                return;
-            }
-
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒${formData.selectedMenu}\n\n≪メニュー≫\n⇒${formData.selectedSymptom}\n≪メーカー≫\n⇒${formData.meka}\n≪年数≫\n⇒${formData.nensuu}\n≪気になるところ≫\n⇒${formData.message2}\n≪駐車場の有無≫\n⇒${formData.visitCount}\n\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`
-            }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒${formData.selectedMenu}\n≪メニュー≫\n⇒${formData.selectedSymptom}\n≪メーカー≫\n⇒${meka}\n≪年数≫\n⇒${nensuu}\n≪気になるところ≫\n⇒${message2}\n≪駐車場の有無≫\n⇒${visitCount}\n\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`
+    }]).then(() => {
+        alert('当日キャンセルは無いようにお願いいたします。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(datetime) {
             /* 日時文字列が空の場合は空文字を返す */
