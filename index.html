@@ -1393,14 +1393,14 @@
         return;
     }
 
-    // 必要な項目だけメッセージに追加
-    let optionalFields = '';
-    if (formData.meka) optionalFields += `≪メーカー≫\n⇒${formData.meka}\n`;
-    if (formData.nensuu) optionalFields += `≪年数≫\n⇒${formData.nensuu}\n`;
-    if (formData.message2) optionalFields += `≪気になるところ≫\n⇒${formData.message2}\n`;
-    if (formData.visitCount) optionalFields += `≪駐車場の有無≫\n⇒${formData.visitCount}\n`;
+    // 各項目の表示を条件分岐
+    const mekaText = formData.meka ? `≪メーカー≫\n⇒${formData.meka}\n` : '';
+    const nensuuText = formData.nensuu ? `≪年数≫\n⇒${formData.nensuu}\n` : '';
+    const message2Text = formData.message2 ? `≪気になるところ≫\n⇒${formData.message2}\n` : '';
+    const visitCountText = formData.visitCount ? `≪駐車場の有無≫\n⇒${formData.visitCount}\n` : '';
 
-    const messageText = `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒${formData.selectedMenu}\n≪メニュー≫\n⇒${formData.selectedSymptom}\n${optionalFields}\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`;
+    // LINEトークメッセージ作成
+    const messageText = `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒${formData.selectedMenu}\n≪メニュー≫\n⇒${formData.selectedSymptom}\n${mekaText}${nensuuText}${message2Text}${visitCountText}\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`;
 
     liff.sendMessages([{
         type: 'text',
