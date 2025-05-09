@@ -911,6 +911,7 @@
     <script>
         let visitCount = '';
         let highschoolCount = '';
+        let selectedMenu = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -1290,6 +1291,12 @@
                 button.classList.remove('active');
             });
 
+            // 選択されたメニューの名前を取得
+            let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
+            if (selectedButton) {
+                selectedMenu = selectedButton.innerText;
+            }
+
             // 選択されたメニューセクションを表示
             document.querySelectorAll('.menu-section').forEach(section => {
                 section.classList.remove('active');
@@ -1354,6 +1361,7 @@
                 meka: document.getElementById('meka').value.trim(),
                 nensuu: document.getElementById('nensuu').value.trim(),
                 visitCount: visitCount,
+                selectedMenu: selectedMenu,
                 highschoolCount: highschoolCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 dates: [
@@ -1389,7 +1397,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー≫\n⇒${formData.selectedSymptom}\n≪メーカー≫\n⇒${formData.meka}\n≪年数≫\n⇒${formData.nensuu}\n≪気になるところ≫\n⇒${formData.message2}\n≪駐車場の有無≫\n⇒${formData.visitCount}\n\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`
+                text: `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒${formData.selectedMenu}\n\n≪メニュー≫\n⇒${formData.selectedSymptom}\n≪メーカー≫\n⇒${formData.meka}\n≪年数≫\n⇒${formData.nensuu}\n≪気になるところ≫\n⇒${formData.message2}\n≪駐車場の有無≫\n⇒${formData.visitCount}\n\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
