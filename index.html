@@ -1442,13 +1442,22 @@
     }
 
     // 各項目の表示を条件分岐
-    const mekaText = formData.meka ? `≪メーカー≫\n⇒${formData.meka}\n` : '';
+    const mekaText = formData.meka ? `【エアコンクリーニング情報】<br>≪メーカー≫\n⇒${formData.meka}\n` : '';
     const nensuuText = formData.nensuu ? `≪年数≫\n⇒${formData.nensuu}\n` : '';
     const message2Text = formData.message2 ? `≪気になるところ≫\n⇒${formData.message2}\n` : '';
     const visitCountText = formData.visitCount ? `≪駐車場の有無≫\n⇒${formData.visitCount}\n` : '';
 
-    // LINEトークメッセージ作成
-    const messageText = `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒${formData.selectedMenu}\n≪メニュー≫\n⇒${formData.selectedSymptom}\n${mekaText}${nensuuText}${message2Text}${visitCountText}\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`;
+// メニューと症状のテキスト整形
+const selectedMenuText = Array.isArray(formData.selectedMenu)
+    ? formData.selectedMenu.map(item => `・${item}`).join('\n')
+    : `・${formData.selectedMenu}`;
+
+const selectedSymptomText = Array.isArray(formData.selectedSymptom)
+    ? formData.selectedSymptom.map(item => `・${item}`).join('\n')
+    : `・${formData.selectedSymptom}`;
+
+// メッセージ本文
+const messageText = `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒\n${selectedMenuText}\n≪メニュー≫\n⇒\n${selectedSymptomText}\n${mekaText}${nensuuText}${message2Text}${visitCountText}\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`;
 
     liff.sendMessages([{
         type: 'text',
