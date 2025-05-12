@@ -939,7 +939,7 @@
     <script>
         let visitCount = '';
         let highschoolCount = '';
-        let selectedMenu = '';
+        let selectedMenu = [];
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -1331,49 +1331,32 @@
             fetchAvailability(currentDate);
         }
 
-        function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
+function showMenu(menu) {
+    const button = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
+    const section = document.getElementById(menu);
 
-            // 選択されたメニューの名前を取得
-            let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
-            if (selectedButton) {
-                selectedMenu = selectedButton.innerText;
-            }
+    if (!button || !section) return;
 
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
+    const isActive = button.classList.contains('active');
 
-            // 選択されたメニューセクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-            });
+    if (isActive) {
+        // すでに選択されていたら解除する（必要なら削除しないようにしてもOK）
+        button.classList.remove('active');
+        section.classList.remove('active');
+        selectedMenu = selectedMenu.filter(item => item !== button.innerText);
+    } else {
+        // 選択されていなければ追加
+        button.classList.add('active');
+        section.classList.add('active');
+        selectedMenu.push(button.innerText);
+    }
 
-            // 対応するメニューボタンを選択状態にする
-            if (selectedButton) {
-                selectedButton.classList.add('active');
-            }
+    // その他の情報はリセットしないようにする（初期化したくないなら以下は削除）
+    document.getElementById("treatment-text").innerHTML = "";
 
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // `treatment-text` の内容をリセット
-            document.getElementById("treatment-text").innerHTML = "";
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
+    // 表示を更新
+    updateDisplayInfo();
+}
 
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
@@ -1442,7 +1425,7 @@
     }
 
     // 各項目の表示を条件分岐
-    const mekaText = formData.meka ? `【エアコンクリーニング情報】<br>≪メーカー≫\n⇒${formData.meka}\n` : '';
+    const mekaText = formData.meka ? `\n【エアコンクリーニング情報】\n≪メーカー≫\n⇒${formData.meka}\n` : '';
     const nensuuText = formData.nensuu ? `≪年数≫\n⇒${formData.nensuu}\n` : '';
     const message2Text = formData.message2 ? `≪気になるところ≫\n⇒${formData.message2}\n` : '';
     const visitCountText = formData.visitCount ? `≪駐車場の有無≫\n⇒${formData.visitCount}\n` : '';
@@ -1457,7 +1440,7 @@ const selectedSymptomText = Array.isArray(formData.selectedSymptom)
     : `・${formData.selectedSymptom}`;
 
 // メッセージ本文
-const messageText = `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n⇒\n${selectedMenuText}\n≪メニュー≫\n⇒\n${selectedSymptomText}\n${mekaText}${nensuuText}${message2Text}${visitCountText}\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`;
+const messageText = `【予約フォーム】\n≪お名前≫\n⇒${formData.name}\n\n≪お名前（ふりがな）≫\n⇒${formData.namefurigana}\n\n≪電話番号≫\n⇒${formData.phone}\n\n≪ご依頼住所≫\n⇒${formData.zyuuyo}\n\n≪平日or休日≫\n⇒${formData.highschoolCount}\n\n≪メニュー項目≫\n${selectedMenuText}\n≪メニュー≫\n${selectedSymptomText}\n${mekaText}${nensuuText}${message2Text}${visitCountText}\n【希望日時】\n≪第一希望日≫\n⇒${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n⇒${formatDate(formData.dates[1])}\n\n≪三希望日≫\n⇒${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`;
 
     liff.sendMessages([{
         type: 'text',
