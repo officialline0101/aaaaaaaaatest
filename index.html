@@ -772,8 +772,8 @@
 
         <div class="label">ご来店回数<span class="required">必須</span></div>
         <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目〈30分〉</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降〈0分〉</button>
+            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
         <div class="label">メニュー<span class="required">必須</span></div>
@@ -784,7 +784,7 @@
         </div>
 
         <div class="highlight-background">
-            <div class="label">希望日時<span class="required">必須</span></div>
+            <div class="label">第1希望日<span class="required">必須</span></div>
         </div>
 
         <!-- カスタム placeholder 表示用 -->
@@ -795,7 +795,7 @@
         </div>
 
         <div class="highlight-background">
-            <span class="highlight-text">第2希望日※必須</span>
+            <span class="highlight-text">第2希望日<span class="required">必須</span></span>
         </div>
 
         <!-- カスタム placeholder 表示用 -->
@@ -1156,45 +1156,60 @@ function selectYoyaku(element) {
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                visitCount: visitCount,
-                yoyakuCount: yoyakuCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value,
-                    document.getElementById('date3').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        visitCount: visitCount,
+        yoyakuCount: Array.isArray(yoyakuCount) ? yoyakuCount : [yoyakuCount],  // ここで配列化
+        dates: [
+            document.getElementById('date1').value,
+            document.getElementById('date2').value,
+            document.getElementById('date3').value
+        ],
+        message: document.getElementById('message').value.trim()
+    };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
+    // フォームデータのチェック
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
 
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
-            }
+    if (!formData.phone) {
+        alert('電話番号を入力してください。');
+        return;
+    }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n≪お名前≫\n${formData.name}\n≪電話番号≫\n${formData.phone}\n≪ご来店回数≫\n${formData.visitCount}\n≪メニュー≫\n${formData.yoyakuCount}\n\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n≪メッセージ≫\n${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    if (!formData.yoyakuCount) {
+        alert('メニューを入力してください。');
+        return;
+    }
+
+    if (!formData.dates[0]) {
+        alert('第1希望日を入力してください。');
+        return;
+    }
+
+    if (!formData.dates[1]) {
+        alert('第2希望日を入力してください。');
+        return;
+    }
+
+    // メニュー表示を改行付きに整形
+    const menuText = formData.yoyakuCount.join('\n・');
+
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\n≪お名前≫\n${formData.name}\n\n≪電話番号≫\n${formData.phone}\n\n≪ご来店回数≫\n${formData.visitCount}\n\n≪メニュー≫\n・${menuText}\n\n【希望日時】\n≪ｃｃ≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n${formData.message}`
+    }]).then(() => {
+        alert('当日キャンセルは無いようにお願いいたします。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
