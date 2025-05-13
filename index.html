@@ -173,6 +173,7 @@
         }
 
         .visit-buttons,
+        .yoyaku-buttons,
         .symptoms,
         .menu-sections,
         .irradiations {
@@ -183,6 +184,7 @@
         }
 
         .visit-buttons button,
+        .yoyaku-buttons button,
         .symptoms button,
         .menu-sections button,
         .irradiations button {
@@ -198,6 +200,7 @@
         }
 
         .visit-buttons button.active,
+        .yoyaku-buttons button.active,
         .symptoms button.active,
         .menu-sections button.active,
         .irradiations button.active {
@@ -774,10 +777,10 @@
         </div>
 
         <div class="label">メニュー<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">スタジオ予約60分</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">ロケ予約60分</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">証明写真予約10分</button>
+        <div class="yoyaku-buttons">
+            <button type="button" id="firstYoyaku" onclick="selectYoyaku(this)">スタジオ予約60分</button>
+            <button type="button" id="repeatYoyaku" onclick="selectYoyaku(this)">ロケ予約60分</button>
+            <button type="button" id="sanYoyaku" onclick="selectYoyaku(this)">証明写真予約10分</button>
         </div>
 
         <div class="highlight-background">
@@ -825,6 +828,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
+        let yoyakuCount = [];
         let selectedMenu = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
@@ -900,19 +904,48 @@
             });
         });
 
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+
+            if (isNaN(date)) {
+                return '無効な日時です'; // 無効な日付の場合のエラーメッセージ
+            }
+
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // 月は0から始まるため+1
+            const day = date.getDate();
+            const hours = date.getHours();
+            const minutes = String(date.getMinutes()).padStart(2, '0'); // 分を2桁に整形
+
+            return `${year}年${month}月${day}日　${hours}時${minutes}分`;
+        }
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
             const visitCountText = visitCount ? `<span style="color:#13ca5e;"><strong>【ご来店回数】</strong></span><br>・${visitCount}` : '・来店回数が未選択です';
-            const selectedMenuText = selectedMenu ? `<span style="color:#13ca5e;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
+const yoyakuCountText = Array.isArray(yoyakuCount) && yoyakuCount.length > 0
+    ? `<span style="color:#13ca5e;"><strong>【メニュー】</strong></span><br>` + yoyakuCount.map(item => `・${item}`).join('<br>')
+    : '・メニューが未選択です';
 
-            const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:#13ca5e;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
-                : '・メニューが未選択です';
 
-            const irradiationsText = irradiationsCount
-                ? `<span style="color:#13ca5e;"><strong>【オプション】</strong></span><br>・${irradiationsCount.split(', ').join('<br>・')}`
-                : '・オプション無し';
+            // 第1希望日が選択された場合の表示
+            const selectedDate1 = document.getElementById('date1').value;
+            const selectedDate1Text = selectedDate1
+                ? `・<span style="color:red;"><strong>第1希望日</strong></span>：${formatDateTime(selectedDate1)}`
+                : '・第1希望日が未選択です';
+
+            // 第2希望日が選択された場合の表示
+            const selectedDate2 = document.getElementById('date2').value;
+            const selectedDate2Text = selectedDate2
+                ? `・<span style="color:red;"><strong>第2希望日</strong></span>：${formatDateTime(selectedDate2)}`
+                : '・第2希望日が未選択です';
+
+            // 第3希望日が選択された場合の表示
+            const selectedDate3 = document.getElementById('date3').value;
+            const selectedDate3Text = selectedDate3
+                ? `・<span style="color:red;"><strong>第3希望日</strong></span>：${formatDateTime(selectedDate3)}`
+                : '・第3希望日が未選択です';
 
             let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
             let hours = Math.floor(totalMinutes / 60);
@@ -920,7 +953,6 @@
             let totalTimeText = `<span style="color:#13ca5e;"><strong>【所要時間】</strong></span><br>・${hours > 0 ? hours + '時間' : ''}${minutes}分`;
 
             const totalAmountText = `<span style="color:#13ca5e;"><strong>【合計金額】</strong></span><br>・¥${menuPrice + optionsPrice}`;
-            const selectedDateText = selectedFullDate ? `<span style="color:#13ca5e;"><strong>【希望日時】</strong></span><br>・${selectedFullDate}` : '・日時が未選択です';
 
             // 修正ボタン付きのHTMLを作成
             document.getElementById('displayInfo').innerHTML = `
@@ -930,36 +962,33 @@
         </div>
         <hr>
         <div class="info-row">
+            <p><span style="color:#13ca5e;"><strong>【電話番号】</strong></span><br>・${phone}</p>
+            <button class="edit-button" onclick="scrollToElement('phone')">修正する</button>
+        </div>
+        <hr>
+        <div class="info-row">
             <p>${visitCountText}</p>
             <button class="edit-button" onclick="scrollToElement('firstVisit')">修正する</button>
         </div>
         <hr>
         <div class="info-row">
-            <p>${selectedMenuText}</p>
-            <button class="edit-button" onclick="scrollToElement('course')">修正する</button>
+            <p>${yoyakuCountText}</p>
+            <button class="edit-button" onclick="scrollToElement('firstYoyaku')">修正する</button>
         </div>
         <hr>
         <div class="info-row">
-            <p>${selectedSymptomText}</p>
-            <button class="edit-button" onclick="scrollToElement('male'); scrollToElement('female'); scrollToElement('whitening');">修正する</button>
+            <p>${selectedDate1Text}</p>
+            <button class="edit-button" onclick="scrollToElement('date1')">修正する</button>
         </div>
         <hr>
         <div class="info-row">
-            <p>${irradiationsText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstirradiations')">修正する</button>
+            <p>${selectedDate2Text}</p>
+            <button class="edit-button" onclick="scrollToElement('date2')">修正する</button>
         </div>
         <hr>
         <div class="info-row">
-            <p>${totalTimeText}</p>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedDateText}</p>
-            <button class="edit-button" onclick="scrollToElement('calendar1')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${totalAmountText}</p>
+            <p>${selectedDate3Text}</p>
+            <button class="edit-button" onclick="scrollToElement('date3')">修正する</button>
         </div>
         <hr>
     `;
@@ -978,15 +1007,14 @@
         document.querySelectorAll('.visit-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
-        document.querySelectorAll('.menu-sections button').forEach(button => {
+        document.querySelectorAll('.yoyaku-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
-        document.querySelectorAll('.symptoms button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.irradiations button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
+
+        // 第一希望日、第二希望日、第三希望日でupdateDisplayInfoを呼び出す
+        document.getElementById('date1').addEventListener('change', updateDisplayInfo);
+        document.getElementById('date2').addEventListener('change', updateDisplayInfo);
+        document.getElementById('date3').addEventListener('change', updateDisplayInfo);
 
         document.querySelectorAll('.symptoms button').forEach(button => {
             button.addEventListener('click', () => {
@@ -1075,6 +1103,34 @@
             fetchAvailability(currentDate);
         }
 
+function selectYoyaku(element) {
+    const value = element.innerText;
+
+    // 選択済みかどうかをチェック
+    const index = yoyakuCount.indexOf(value);
+
+    if (index > -1) {
+        // すでに選択されていたら解除
+        yoyakuCount.splice(index, 1);
+        element.classList.remove('active');
+    } else {
+        // 選択されていなければ追加
+        yoyakuCount.push(value);
+        element.classList.add('active');
+    }
+
+    // 選択されたすべての訪問回数に対応する時間を合計する（必要であれば）
+    let totalSelectedTime = 0;
+    for (const count of yoyakuCount) {
+        if (yoyakuTimes[count]) {
+            totalSelectedTime += yoyakuTimes[count];
+        }
+    }
+    selectedYoyakuTime = totalSelectedTime;
+
+    fetchAvailability(currentDate);
+}
+
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
             if (cell.classList.contains('unavailable')) {
@@ -1105,10 +1161,15 @@
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
+                menuCount: menuCount,
                 selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 irradiationsCount: irradiationsCount,
-                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+                dates: [
+                    document.getElementById('date1').value,
+                    document.getElementById('date2').value,
+                    document.getElementById('date3').value
+                ],
                 message: document.getElementById('message').value.trim()
             };
 
@@ -1136,7 +1197,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nnメニュー：${formData.yoyakuCount}\n希望日時：\n ${formData.dates[0]}\n希望日時：\n ${formData.dates[1]}\n希望日時：\n ${formData.dates[2]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
