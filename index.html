@@ -818,12 +818,6 @@ button.active {
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">リピーター様</button>
         </div>
 
-        <div class="label">高校生以下ですか？</div>
-        <div class="highschool-buttons">
-            <button type="button" id="firsthighschool" onclick="selecthighschool(this)">はい</button>
-            <button type="button" id="repeathighschool" onclick="selecthighschool(this)">いいえ</button>
-        </div>
-
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="menu-sections">
@@ -916,7 +910,6 @@ button.active {
     <script>
         let visitCount = '';
         let selectedMenu = '';
-        let highschoolCount = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -1307,24 +1300,6 @@ button.active {
             fetchAvailability(currentDate);
         }
 
-        function selecthighschool(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
-
-            document.getElementById('firsthighschool').classList.remove('active');
-            document.getElementById('repeathighschool').classList.remove('active');
-            element.classList.add('active');
-            highschoolCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedhighschoolTime = highschoolTimes[highschoolCount];
-
-            console.log('選択された訪問回数の時間:', selectedhighschoolTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
         function showMenu(menu) {
             // すべてのメニューボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
@@ -1401,7 +1376,6 @@ button.active {
                 phone: document.getElementById('phone').value.trim(),
                 yoyakusitaihi: document.getElementById('yoyakusitaihi').value.trim(),
                 visitCount: visitCount,
-                highschoolCount: highschoolCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 dates: [
                     document.getElementById('date1').value,
