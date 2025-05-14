@@ -803,12 +803,13 @@ button.active {
     </div>
 
     <div class="container">
-        <h1>Lumiere<br>予約フォーム
+        <h1>よしだの魔法<br>予約フォーム
         </h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
         <div class="label">電話番号<span class="required">必須</span></div>
+        <div class="info-text">※急な変更連絡の際にご連絡いたします。</div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
         <div class="label">ご来店回数<span class="required">必須</span></div>
@@ -843,7 +844,14 @@ button.active {
                 <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">シャイニングコース50分</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">スペシャルコース50分</button>
             </div>
+            <div class="highlight-background">
+                <span class="highlight-text">ブライダルコース：オプション</span>
+            </div>
+            <div class="irradiations">
+                <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">デコルテプラス＋15分</button>
+            </div>
         </div>
+
 
         <div id="shinyskin" class="menu-section">
             <div class="highlight-background">
@@ -859,6 +867,14 @@ button.active {
 
         <div class="highlight-background">
             <div class="kibounitizi">希望日時<span class="required">必須</span></div>
+        </div>
+
+            <div class="info-text">月曜日〜土曜日営業<br>午前10：00〜12：00<br>午後14：00〜16：00<br>上記時間外をご希望の場合のみご記入下さい。</div>
+
+        <input type="text" id="yoyakusitaihi" placeholder="希望日時を入力してください">
+
+        <div class="highlight-background">
+            <span class="kibounitizi">第1希望日<span class="required">必須</span></span>
         </div>
 
         <!-- カスタム placeholder 表示用 -->
@@ -912,7 +928,7 @@ button.active {
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2006896977-1oJmD3Xx'
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1001,6 +1017,7 @@ button.active {
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
+            const yoyakusitaihi = document.getElementById('yoyakusitaihi').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
             const selectedMenuText = selectedMenu ? `<span style="color:#13ca5e;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
 
@@ -1072,6 +1089,11 @@ button.active {
         </div>
         <hr>
         <div class="info-row">
+            <p><span style="color:#13ca5e;"><strong>【営業外希望日時】</strong></span><br>・${yoyakusitaihi}</p>
+            <button class="edit-button" onclick="scrollToElement('yoyakusitaihi')">修正する</button>
+        </div>
+        <hr>
+        <div class="info-row">
             <p>${selectedDate1Text}</p>
             <button class="edit-button" onclick="scrollToElement('date1')">修正する</button>
         </div>
@@ -1103,6 +1125,7 @@ button.active {
 
         // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
         document.getElementById('name').addEventListener('input', updateDisplayInfo);
+        document.getElementById('yoyakusitaihi').addEventListener('input', updateDisplayInfo);
         document.querySelectorAll('.visit-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
@@ -1172,9 +1195,6 @@ button.active {
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
-
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
 
             function createTreatmentContent(title, imageUrl, description, price, time) {
                 return `
@@ -1379,6 +1399,7 @@ button.active {
             const formData = {
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
+                yoyakusitaihi: document.getElementById('yoyakusitaihi').value.trim(),
                 visitCount: visitCount,
                 highschoolCount: highschoolCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
@@ -1419,7 +1440,7 @@ button.active {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号：${formData.phone}\n\nご来店回数：${formData.visitCount}\n\n高校生以下ですか？：${formData.highschoolCount}\n\nメニュー：${formData.selectedSymptom}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n\n電話番号：${formData.phone}\n\nご来店回数：${formData.visitCount}\n\n高校生以下ですか？：${formData.highschoolCount}\n\nメニュー：${formData.selectedSymptom}\n\n【希望日時】\n営業時間外希望\n${formData.selectedSymptom}\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
