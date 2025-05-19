@@ -1158,7 +1158,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n指名：山崎\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n指名：山﨑\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n指名：山崎\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -1223,7 +1223,7 @@
             const table = calendar.querySelector('table tbody');
 
             const times = [
-                '09:00', '09:30',
+                '09:30',
                 '10:00', '10:30',
                 '11:00', '11:30',
                 '12:00', '12:30',
@@ -1364,20 +1364,26 @@ const relevantEvents = availability.filter(slot => {
     return slot.title !== "営業日" && eventStart < slotEnd && eventEnd > slotStart;
 });
 
+// 開始時刻から終了時刻まで、1分ずつずらしながらループ（重なりチェック用）
 for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTime.setMinutes(checkTime.getMinutes() + 1)) {
-    let overlapping = 1; // 仮予約1件分を初めからカウント
 
+    let overlapping = 1; // 仮予約（今チェック中の1件）を最初からカウントに含める
+
+    // すべての関連イベント（同じ日や同じメニューなど）をチェック
     relevantEvents.forEach(slot => {
-        const eventStart = new Date(slot.startTime);
-        const eventEnd = new Date(slot.endTime);
+        const eventStart = new Date(slot.startTime); // イベントの開始時間を取得
+        const eventEnd = new Date(slot.endTime);     // イベントの終了時間を取得
+
+        // checkTime（今見ている1分）に、他のイベントがかぶっているかをチェック
         if (eventStart <= checkTime && eventEnd > checkTime) {
-            overlapping++;
+            overlapping++; // 重なっているイベントがあるのでカウントを1つ追加
         }
     });
 
-    if (overlapping >= 3) {
-        overLimit = true;
-        break;
+    // 同時に重なっている予約が3件以上ある場合は上限オーバーとする
+    if (overlapping >= 4) {
+        overLimit = true; // 上限を超えたフラグを立てる
+        break; // これ以上チェックせずにループを抜ける
     }
 }
 
