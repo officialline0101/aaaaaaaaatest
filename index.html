@@ -968,19 +968,19 @@ const selectedSymptomText = selectedSymptom.length > 0
             // 第1希望日が選択された場合の表示
             const selectedDate1 = document.getElementById('date1').value;
             const selectedDate1Text = selectedDate1
-                ? `・<span style="color:#13ca5e;"><strong>第1希望日</strong></span>：${formatDateTime(selectedDate1)}`
+                ? `<span style="color:#13ca5e;"><strong>【第1希望日】</strong></span><br>・${formatDateTime(selectedDate1)}`
                 : '・第1希望日が未選択です';
 
             // 第2希望日が選択された場合の表示
             const selectedDate2 = document.getElementById('date2').value;
             const selectedDate2Text = selectedDate2
-                ? `・<span style="color:#13ca5e;"><strong>第2希望日</strong></span>：${formatDateTime(selectedDate2)}`
+                ? `<span style="color:#13ca5e;"><strong>【第2希望日】</strong></span><br>・${formatDateTime(selectedDate2)}`
                 : '・第2希望日が未選択です';
 
             // 第3希望日が選択された場合の表示
             const selectedDate3 = document.getElementById('date3').value;
             const selectedDate3Text = selectedDate3
-                ? `・<span style="color:#13ca5eｓ;"><strong>第3希望日</strong></span>：${formatDateTime(selectedDate3)}`
+                ? `<span style="color:#13ca5e;"><strong>【第3希望日】</strong></span><br>・${formatDateTime(selectedDate3)}`
                 : '・第3希望日が未選択です';
 
             // 修正ボタン付きのHTMLを作成
@@ -1359,7 +1359,7 @@ if (selectedSymptom && selectedSymptom.length > 0) {
 
 const selectedSymptomText = selectedSymptom.length > 0
     ? `${
-        selectedSymptom.map(symptom => `《${symptom.category}》${symptom.name}`).join('<br>・')
+        selectedSymptom.map(symptom => `《${symptom.category}》${symptom.name}`).join('\n・')
       }`
     : '・メニューが未選択です';
 
@@ -1369,7 +1369,7 @@ const irradiationsText = formData.irradiationsCount || 'なし';
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪お名前≫：${formData.name}\n≪電話番号≫：${formData.phone}\n≪ご来店回数≫：${formData.visitCount}\n\n≪メニュー≫\n${selectedSymptomText}\n\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫⇒${formData.message}`
+                text: `【予約フォーム】\n≪お名前≫：${formData.name}\n≪電話番号≫：${formData.phone}\n≪ご来店回数≫：${formData.visitCount}\n\n≪メニュー≫\n・${selectedSymptomText}\n\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n⇒${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
