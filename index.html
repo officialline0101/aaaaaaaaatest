@@ -1338,7 +1338,7 @@ if (selectedSymptom && selectedSymptom.length > 0) {
 
 // selectedSymptomを文字列に整形
 const selectedSymptomText = formData.selectedSymptom
-  ? formData.selectedSymptom.map(item => `《${item.category}》${item.name}`).join(',')
+  ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
   : 'メニュー未選択';
 
 // irradiationsCountの整形（nullチェック）
@@ -1346,7 +1346,7 @@ const irradiationsText = formData.irradiationsCount || 'なし';
 
 liff.sendMessages([{
     type: 'text',
-    text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：\n${selectedSymptomText}\nオプション：\n${irradiationsText}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
+    text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：\n${selectedSymptomText},${irradiationsText}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
 }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
