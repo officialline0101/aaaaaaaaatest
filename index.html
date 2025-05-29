@@ -508,19 +508,19 @@
         </div>
 
         <div class="label">症状</div>
-        <div class="priority-buttons">
-            <button type="button" id="onepriority" onclick="selectpriority(this)">妊婦</button>
-            <button type="button" id="twopriority" onclick="selectpriority(this)">産後</button>
-            <button type="button" id="threepriority" onclick="selectpriority(this)">頭痛</button>
-            <button type="button" id="fourpriority" onclick="selectpriority(this)">外反母趾</button>
-            <button type="button" id="fivepriority" onclick="selectpriority(this)">姿勢</button>
-            <button type="button" id="fivepriority" onclick="selectpriority(this)">足爪</button>
+        <div class="demand-buttons">
+            <button type="button" id="onedemand" onclick="selectdemand(this)">妊婦</button>
+            <button type="button" id="twodemand" onclick="selectdemand(this)">産後</button>
+            <button type="button" id="threedemand" onclick="selectdemand(this)">頭痛</button>
+            <button type="button" id="fourdemand" onclick="selectdemand(this)">外反母趾</button>
+            <button type="button" id="fivedemand" onclick="selectdemand(this)">姿勢</button>
+            <button type="button" id="sixdemand" onclick="selectdemand(this)">足爪</button>
         </div>
 
         <div class="label">通院状態</div>
-        <div class="priority-buttons">
-            <button type="button" id="onepriority" onclick="selectpriority(this)">現在も通院中</button>
-            <button type="button" id="twopriority" onclick="selectpriority(this)">現在は通院していない</button>
+        <div class="chance-buttons">
+            <button type="button" id="onechance" onclick="selectchance(this)">現在も通院中</button>
+            <button type="button" id="twochance" onclick="selectchance(this)">現在は通院していない</button>
         </div>
 
         <div class="label">当院に通ってくれている理由<br> ex.院が明るい等</div>
@@ -663,77 +663,47 @@
 
             // フォームデータのチェック
             if (!formData.message) {
-                alert('ご来店日を入力してください。');
+                alert('当院に通ってくれている理由を入力してください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.message2) {
-                alert('お名前を入力してください。');
+                alert('通院をやめた理由を入力してください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.message3) {
-                alert('生年月日を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.message4) {
-                alert('電話番号を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.message5) {
-                alert('お住まいを入力してください。');
+                alert('要望・ご意見を入力してください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.priorityCount) {
-                alert('ご職業をご選択ください。');
+                alert('年代をご選択ください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.demandCount) {
-                alert('来店動機をご選択ください。');
+                alert('症状をご選択ください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.chanceCount) {
-                alert('来店頻度をご選択ください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.IntroductionCount) {
-                alert('過去施術をご選択ください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.deliveryCount) {
-                alert('薬品/ネイルでのアレルギーをご選択ください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.budgetyCount) {
-                alert('重要項目の同意をご選択ください。');
+                alert('要望・ご意見をご選択ください。');
                 return;
             }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前】\n・${formData.message2}\n\n【生年月日】\n・${formData.message3}\n\n【電話番号】\n・${formData.message4}\n\n【お住まい】\n・${formData.message5}\n\n【ご職業】\n・${formData.priorityCount}\n\n【来店動機】\n・${formData.demandCount}\n\n【知人の紹介名】\n・${formData.message7}\n\n【来店頻度】\n・${formData.chanceCount}\n\n【過去施術】\n・${formData.IntroductionCount}\n\n【薬品/ネイルでのアレルギー】\n・${formData.deliveryCount}\n\n【長さ出し左右本数】\n・${formData.message8}\n\n【重要項目の同意】\n・${formData.budgetyCount}`
+                text: `≪アンケート≫\n【当院に通ってくれている理由】\n・${formData.message}\n\n【通院をやめた理由】\n・${formData.message2}\n\n【要望・ご意見】\n・${formData.message3}\n\n【年代】\n・${formData.priorityCount}\n\n【通院状態】\n・${formData.chanceCount}\n\n【症状】\n・${formData.demandCount}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
-                alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
+                alert('ご記入ありがとうございます。');
                 /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
