@@ -1923,31 +1923,37 @@
                         continue;
                     }
 
-                    // 18時以降に終了する予約を不可にする (火水木金のみ)
-                    if ([1, 2, 3, 4, 5, 6].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 17 && slotEnd.getMinutes() > 0) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        } else if (slotEnd.getHours() > 17) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        }
-                    }
+// 17時または21時に終了する予約を不可にする（火水木金土日のみ）
+if ([1, 2, 3, 4, 5, 6].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5, 土:6
+    const endHour = slotEnd.getHours();
+    const endMin = slotEnd.getMinutes();
 
-                    // 18時以降に終了する予約を不可にする (火水木金のみ)
-                    if ([0].includes(slotEnd.getDay())) { // 火:2, 水:3, 木:4, 金:5
-                        if (slotEnd.getHours() === 16 && slotEnd.getMinutes() > 0) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        } else if (slotEnd.getHours() > 16) {
-                            cell.textContent = '✕';
-                            cell.classList.add('unavailable');
-                            continue;
-                        }
-                    }
+    if ((endHour === 17 && endMin > 0) || endHour > 17 && endHour < 21) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    } else if (endHour === 21 && endMin > 0) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    }
+}
+
+// 日曜日だけで16時または21時に終了する予約を不可にする
+if (slotEnd.getDay() === 0) { // 日曜日
+    const endHour = slotEnd.getHours();
+    const endMin = slotEnd.getMinutes();
+
+    if ((endHour === 16 && endMin > 0) || (endHour > 16 && endHour < 21)) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    } else if (endHour === 21 && endMin > 0) {
+        cell.textContent = '✕';
+        cell.classList.add('unavailable');
+        continue;
+    }
+}
 
                     // ここで終了時間を使った条件処理を行う
                     // 例えば、リアルタイムで既に過ぎた時間帯は×にする
