@@ -1385,16 +1385,24 @@ function selectirradiations(button) {
                 return;
             }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n≪お名前≫\n・${formData.name}\n\n≪お名前よみがな≫\n・${formData.nameyomigana}\n\n≪電話番号≫\n・${formData.phone}\n\n≪ご予約内容≫\n・${formData.selectedSymptom}\n≪選択肢≫\n・${formData.irradiationsCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n・${formData.message}`
-            }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
+// LINEトークにメッセージを送信
+let message = `【予約フォーム】\n≪お名前≫\n・${formData.name}\n\n≪お名前よみがな≫\n・${formData.nameyomigana}\n\n≪電話番号≫\n・${formData.phone}\n\n≪ご予約内容≫\n・${formData.selectedSymptom}`;
+
+if (formData.irradiationsCount && formData.irradiationsCount.trim() !== '') {
+    message += `\n≪選択肢≫\n・${formData.irradiationsCount}`;
+}
+
+message += `\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n・${formData.message}`;
+
+liff.sendMessages([{
+    type: 'text',
+    text: message
+}]).then(() => {
+    alert('当日キャンセルは無いようにお願いいたします。');
+    liff.closeWindow();
+}).catch((err) => {
+    console.error('メッセージの送信に失敗しました', err);
+});
         }
 
         function formatDate(datetime) {
