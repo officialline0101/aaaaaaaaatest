@@ -1286,6 +1286,7 @@
                 nameyomigana: document.getElementById('nameyomigana').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                irradiationsCount: irradiationsCount,
                 dates: [
                     document.getElementById('date1').value,
                     document.getElementById('date2').value,
@@ -1324,7 +1325,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪お名前≫\n・${formData.name}\n\n≪お名前よみがな≫\n・${formData.nameyomigana}\n\n≪電話番号≫\n・${formData.phone}\n\n≪ご予約内容≫\n・${formData.selectedSymptom}≪選択肢≫\n・${formData.irradiationsCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n・${formData.message}`
+                text: `【予約フォーム】\n≪お名前≫\n・${formData.name}\n\n≪お名前よみがな≫\n・${formData.nameyomigana}\n\n≪電話番号≫\n・${formData.phone}\n\n≪ご予約内容≫\n・${formData.selectedSymptom}\n≪選択肢≫\n・${formData.irradiationsCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\n≪メッセージ≫\n・${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
