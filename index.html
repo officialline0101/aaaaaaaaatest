@@ -746,6 +746,22 @@
             /* タップ時の視覚的フィードバック */
             outline: none;
         }
+
+.remove-button {
+    background-color: #e74c3c; /* 赤色 */
+    color: white; /* 文字色は白 */
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.remove-button:hover {
+    background-color: #c0392b; /* ホバー時に少し濃く */
+}
+
     </style>
 </head>
 
@@ -1222,13 +1238,14 @@
 // メニュー名一覧を表示（✕ボタン付き）
 const selectedMenusDisplay = document.getElementById("selected-menus-display");
 if (selectedSymptom && selectedSymptom.length > 0) {
-    selectedMenusDisplay.innerHTML = `【選択中のメニュー(最大3つまで)】<br>` +
-        selectedSymptom.map((item, index) =>
-            `<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                <span>《${item.category}》${item.name}</span>
-                <button style="margin-left: 8px; background-color: red; color: white;" onclick="removeSymptom(${index})">✕</button>
-            </div>`
-        ).join('');
+selectedMenusDisplay.innerHTML = `【選択中のメニュー(最大3つまで)】<br>` +
+    selectedSymptom.map((item, index) =>
+        `<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+            <span>《${item.category}》${item.name}</span>
+            <button class="remove-button" onclick="removeSymptom(${index})">✕</button>
+        </div>`
+    ).join('');
+
     selectedMenusDisplay.style.display = 'block';
 } else {
     selectedMenusDisplay.innerHTML = '';
@@ -1284,22 +1301,21 @@ function selectSymptomDummy() {
         selectedSymptom.push({ category, name: selectedMenuName });
     });
 
-    const selectedMenusDisplay = document.getElementById("selected-menus-display");
-    if (selectedSymptom.length > 0) {
-        selectedMenusDisplay.innerHTML = `【選択中のメニュー(最大3つまで)】<br>` +
-            selectedSymptom.map((item, index) =>
-                `<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                    <span>・《${item.category}》${item.name}</span>
-                    <button style="margin-left: 8px;" onclick="removeSymptom(${index})">✕</button>
-                </div>`
-            ).join('');
-        selectedMenusDisplay.style.display = 'block';
-    } else {
-        selectedMenusDisplay.innerHTML = '';
-        selectedMenusDisplay.style.display = 'none';
-    }
+const selectedMenusDisplay = document.getElementById("selected-menus-display");
+if (selectedSymptom.length > 0) {
+    selectedMenusDisplay.innerHTML = `【選択中のメニュー(最大3つまで)】<br>` +
+        selectedSymptom.map((item, index) =>
+            `<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                <span>・《${item.category}》${item.name}</span>
+                <button class="remove-button" style="margin-left: 8px;" onclick="removeSymptom(${index})">✕</button>
+            </div>`
+        ).join('');
+    selectedMenusDisplay.style.display = 'block';
+} else {
+    selectedMenusDisplay.innerHTML = '';
+    selectedMenusDisplay.style.display = 'none';
 }
-
+}
 
         function selectirradiations(button) {
             // 選択された日時をリセット
