@@ -608,8 +608,7 @@
         let visitreservationCount = '';
         let informationCount = '';
         let priorityCount = []; // 選択された優先度のリスト
-        let demandCount = '';
-        let chanceCount = '';
+        let chanceCount = []; // 選択された優先度のリスト
         let IntroductionCount = '';
         let deliveryCount = '';
         let budgetyCount = '';
@@ -660,25 +659,45 @@ function selectpriority(element) {
     console.log(priorityCount); // 確認用
 }
 
-        function selectdemand(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.demand-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+function selectdemand(element) {
+    const text = element.innerText;
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            demandCount = element.innerText;
+    // active クラスの切り替え（トグル）
+    element.classList.toggle('active');
+
+    // 配列に追加または削除
+    if (element.classList.contains('active')) {
+        // 重複チェックしてから追加
+        if (!demandCount.includes(text)) {
+            demandCount.push(text);
         }
+    } else {
+        // 非アクティブなら削除
+        demandCount = demandCount.filter(item => item !== text);
+    }
 
-        function selectchance(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.chance-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+    console.log(demandCount); // 確認用
+}
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            chanceCount = element.innerText;
+function selectchance(element) {
+    const text = element.innerText;
+
+    // active クラスの切り替え（トグル）
+    element.classList.toggle('active');
+
+    // 配列に追加または削除
+    if (element.classList.contains('active')) {
+        // 重複チェックしてから追加
+        if (!chanceCount.includes(text)) {
+            chanceCount.push(text);
         }
+    } else {
+        // 非アクティブなら削除
+        chanceCount = chanceCount.filter(item => item !== text);
+    }
+
+    console.log(chanceCount); // 確認用
+}
 
         function selectIntroduction(element) {
             // 単一選択項目の処理コード
@@ -798,11 +817,14 @@ function selectpriority(element) {
 const priorityText = formData.priorityCount && formData.priorityCount.length
   ? '\n' + formData.priorityCount.map(item => `・${item}`).join('\n')
   : '';
-
     const message4Text = formData.message4 ? `\n・${formData.message4}` : '';
-    const demandText = formData.demandCount ? `\n・${formData.demandCount}` : '';
+const demandText = formData.demandCount && formData.demandCount.length
+  ? '\n' + formData.demandCount.map(item => `・${item}`).join('\n')
+  : '';
     const message5Text = formData.message5 ? `\n・${formData.message5}` : '';
-    const chanceText = formData.chanceCount ? `\n・${formData.chanceCount}` : '';
+const chanceText = formData.chanceCount && formData.chanceCount.length
+  ? '\n' + formData.chanceCount.map(item => `・${item}`).join('\n')
+  : '';
     const message7Text = formData.message7 ? `\n・${formData.message7}` : '';
 
     // LINEトークにメッセージを送信
