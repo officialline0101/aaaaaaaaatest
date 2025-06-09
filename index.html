@@ -605,11 +605,11 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
     <script>
-        let visitreservationCount = '';
+        let visitreservationCount = []; // 配列に変更して複数値を保持
         let informationCount = '';
-        let priorityCount = '';
-        let demandCount = '';
-        let chanceCount = '';
+        let priorityCount = []; // 選択された優先度のリスト
+        let demandCount = []; // 選択された内容を格納する配列
+        let chanceCount = []; // 複数選択対応のため配列に変更
         let IntroductionCount = '';
         let deliveryCount = '';
         let budgetyCount = '';
@@ -640,35 +640,51 @@
             }
         }
 
-        function selectpriority(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.priority-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+function selectpriority(element) {
+    const value = element.innerText;
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            priorityCount = element.innerText;
+    // クラスのトグル処理
+    element.classList.toggle('active');
+
+    // 選択状態に応じて追加 or 削除
+    if (element.classList.contains('active')) {
+        if (!priorityCount.includes(value)) {
+            priorityCount.push(value);
         }
+    } else {
+        // 選択解除された場合は配列から削除
+        priorityCount = priorityCount.filter(item => item !== value);
+    }
 
-        function selectdemand(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.demand-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+function selectdemand(element) {
+    const value = element.innerText;
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            demandCount = element.innerText;
+    // activeクラスの切り替え（選択 or 非選択）
+    element.classList.toggle('active');
+
+    if (element.classList.contains('active')) {
+        // まだ入っていない場合のみ追加
+        if (!demandCount.includes(value)) {
+            demandCount.push(value);
         }
+    } else {
+        // 選択解除 → 配列から削除
+        demandCount = demandCount.filter(item => item !== value);
+    }
 
-        function selectchance(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.chance-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+function selectchance(element) {
+    const value = element.innerText;
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            chanceCount = element.innerText;
+    // activeクラスのトグルで選択・解除
+    element.classList.toggle('active');
+
+    if (element.classList.contains('active')) {
+        if (!chanceCount.includes(value)) {
+            chanceCount.push(value);
         }
+    } else {
+        chanceCount = chanceCount.filter(item => item !== value);
+    }
 
         function selectIntroduction(element) {
             // 単一選択項目の処理コード
@@ -690,15 +706,19 @@
             deliveryCount = element.innerText;
         }
 
-        function selectvisitreservation(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.visitreservation-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+function selectvisitreservation(element) {
+    const value = element.innerText;
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            visitreservationCount = element.innerText;
+    // activeクラスをトグルで切り替え
+    element.classList.toggle('active');
+
+    if (element.classList.contains('active')) {
+        if (!visitreservationCount.includes(value)) {
+            visitreservationCount.push(value);
         }
+    } else {
+        visitreservationCount = visitreservationCount.filter(item => item !== value);
+    }
 
         function selectinformation(element) {
             // 単一選択項目の処理コード
