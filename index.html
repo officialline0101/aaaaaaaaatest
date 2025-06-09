@@ -792,20 +792,17 @@
     const chanceText = formData.chanceCount ? `\n・${formData.chanceCount}` : '';
     const message7Text = formData.message7 ? `\n・${formData.message7}` : '';
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `≪アンケート≫\n【氏名（漢字）】\n・${formData.message}\n\n【氏名（カナ）】\n・${formData.message2}\n\n【生年月日】\n・${formData.message3}\n\n【気になるお悩み】\n・${formData.priorityCount}\n・${formData.message4}\n\n【興味を持ったきっかけ】\n・${formData.demandCount}\n・${formData.message5}\n\n【受けてみたいメニュー】\n・${formData.chanceCount}\n・${formData.message7}\n\n【年齢層】\n・${formData.IntroductionCount}\n\n【性別】\n・${formData.deliveryCount}\n\n【受け取りたい情報】\n・${formData.visitreservationCount}\n\n【ご来院について】\n・${formData.informationCount}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `≪アンケート≫\n【氏名（漢字）】\n・${formData.message}\n\n【氏名（カナ）】\n・${formData.message2}\n\n【生年月日】\n・${formData.message3}\n\n【気になるお悩み】${priorityText}${message4Text}\n\n【興味を持ったきっかけ】${demandText}${message5Text}\n\n【受けてみたいメニュー】${chanceText}${message7Text}\n\n【年齢層】\n・${formData.IntroductionCount}\n\n【性別】\n・${formData.deliveryCount}\n\n【受け取りたい情報】\n・${formData.visitreservationCount}\n\n【ご来院について】\n・${formData.informationCount}`
+    }]).then(() => {
+        alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
     </script>
 </body>
