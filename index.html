@@ -631,11 +631,11 @@
             width: 100%;
             padding: 15px;
             font-size: 18px;
-            background-color: #dc3545;
+            background-color: #008acb;
         }
 
         .submit-button:hover {
-            background-color: #c82333;
+            background-color: #008acb;
         }
 
         @media (max-width: 768px) {
@@ -684,7 +684,7 @@
             left: 50%;
             transform: translate(-50%, -10px);
             /* Y方向に上げる */
-            background-color: #13ca5e;
+            background-color: #008acb;
             color: #fff;
             padding: 3px 12px;
             /* ボックスのパディングを縮小 */
@@ -780,6 +780,20 @@
         #menuSections {
             display: none;
         }
+
+#selected-menus-display {
+  display: none; /* 最初は非表示 */
+  font-weight: bold;
+  margin-top: 12px;
+  padding: 12px 16px;
+  background-color: #f5f5f5;
+  border-left: 4px solid #008acb;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  word-break: break-word;
+}
     </style>
 </head>
 
@@ -794,7 +808,7 @@
     </div>
 
     <div class="container">
-        <h1 class="title">SUBE SUBE<<br>予約フォーム</h1>
+        <h1 class="title">SUBE SUBE<br>予約フォーム</h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
@@ -1192,32 +1206,49 @@ const selectedSymptomText = selectedSymptom.length > 0
             // 選択された日時をリセット
             selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+            // クリックしたボタンの `data-id` を取得
+            let selectedId = button.getAttribute('data-id');
 
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
-            const treatmentText = document.getElementById('treatment-text');
-
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
-                treatmentText.style.display = 'none';
-                return; // ここで処理を終了
+            // クリックしたボタンがすでに `active` なら解除
+            if (button.classList.contains('active')) {
+                button.classList.remove('active');
             } else {
-                // 1つだけ選択状態にする
-                if (updatedSelectedButtons.length > 1) {
-                    updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active'); // クリックしたボタンだけを選択
+                // すでに選択されているボタンを取得（`active` のボタン）
+                let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+
+                // もし選択数が3を超えたら、新しい選択をキャンセル
+                if (updatedSelectedButtons.length >= 3) {
+                    return;
                 }
 
-                // 選択されたメニューの時間を取得して保存
-                const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+                // クリックしたボタンだけ `active` を付与
+                button.classList.add('active');
+            }
+
+            // 現在選択されているボタンを取得（もう一度更新）
+            let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+            const treatmentText = document.getElementById('treatment-text');
+            const selectedMenuNameDiv = document.getElementById('selected-menu-name');
+
+            // メニュー時間と価格をリセット
+            selectedMenuTime = 0;
+            selectedSymptom = [];
+            menuPrice = 0;
+
+            if (updatedSelectedButtons.length === 0) {
+                // すべてのボタンの選択が解除された場合
+                selectedMenuTime = 0;
+                selectedSymptom = null;
+                menuPrice = 0;
+            } else {
+                // 選択された各ボタンについて処理
+updatedSelectedButtons.forEach((btn) => {
+    const selectedMenuName = btn.textContent;
+    const category = btn.getAttribute('data-category'); // 追加
+    selectedSymptom.push({ category, name: selectedMenuName }); // ← 変更
+    selectedMenuTime += menuTimes[selectedMenuName] || 0;
+    menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
+});
             }
 
             console.log('選択されたメニューの時間:', selectedMenuTime);
@@ -1247,20 +1278,26 @@ const selectedSymptomText = selectedSymptom.length > 0
                 treatmentText.innerHTML = '';
             }
 
-            // `treatment-text` を選択されたボタンの直後に移動
-            button.parentNode.insertBefore(treatmentText, button.nextSibling);
+    // 移動させる
+    button.parentNode.insertBefore(document.getElementById("treatment-text"), button.nextSibling);
 
-            // トリートメントテキストを表示
-            treatmentText.style.display = 'block';
+// メニュー名一覧を表示
+const selectedMenusDisplay = document.getElementById("selected-menus-display");
+if (selectedSymptom && selectedSymptom.length > 0) {
+    const formattedList = selectedSymptom
+        .map(item => `・《${item.category}》${item.name}`)
+        .join('<br>');
+    selectedMenusDisplay.innerHTML = `【選択中のメニュー(最大3つまで)】<br>${formattedList}`;
+    selectedMenusDisplay.style.display = 'block';
+} else {
+    selectedMenusDisplay.innerHTML = '';
+    selectedMenusDisplay.style.display = 'none';
+}
 
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+    treatmentText.style.display = 'block';
 
-            // 表示を更新
-            updateDisplayInfo();
-        }
+    updateDisplayInfo();
+}
 
         function selectirradiations(button) {
             // 選択された日時をリセット
@@ -1510,7 +1547,7 @@ const irradiationsText = formData.irradiationsCount || 'なし';
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nご指名：${formData.nominationCount}\nメニュー：${selectedSymptomText}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n【指名】：${formData.visitCount}\nご来店回数：${formData.nominationCount}\nメニュー：${selectedSymptomText}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
