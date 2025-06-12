@@ -202,6 +202,7 @@
         }
 
         .visit-buttons,
+        .seibetu-buttons,
         .symptoms,
         .menu-sections,
         .irradiations {
@@ -212,6 +213,7 @@
         }
 
         .visit-buttons button,
+        .seibetu-buttons button,
         .symptoms button,
         .menu-sections button,
         .irradiations button {
@@ -227,6 +229,7 @@
         }
 
         .visit-buttons button.active,
+        .seibetu-buttons button.active,
         .symptoms button.active,
         .menu-sections button.active,
         .irradiations button.active {
@@ -762,10 +765,10 @@
         </h1>
         <div class="labeltyuuou">🔷代表者情報🔷</div>
         <div class="label">お客様名<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+        <input type="text" id="DAIname" placeholder="お名前を入力してください" oninput="saveInput('DAIname')">
 
         <div class="label">ふりがな<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="ふりがなを入力してください" oninput="saveInput('name')">
+        <input type="text" id="DAInamehurigana" placeholder="ふりがなを入力してください" oninput="saveInput('DAInamehurigana')">
 
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
@@ -778,18 +781,18 @@
 
         <div class="labeltyuuou">🔷撮影者情報🔷</div>
         <div class="label">お客様名<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+        <input type="text" id="SATUname" placeholder="お名前を入力してください" oninput="saveInput('SATUname')">
 
         <div class="label">ふりがな<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="ふりがなを入力してください" oninput="saveInput('name')">
+        <input type="text" id="SATUnamehurigana" placeholder="ふりがなを入力してください" oninput="saveInput('SATUnamehurigana')">
+
+        <div class="label">生年月日<span class="required">必須</span></div>
+        <input type="tel" id="dateofbirth" placeholder="生年月日を入力してください" oninput="saveInput('dateofbirth')">
 
         <div class="label">性別<span class="required">必須</span></div>
-        <input type="tel" id="phone" placeholder="生年月日を入力してください" oninput="saveInput('phone')">
-
-        <div class="label">ご来店回数<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">男</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">女</button>
+        <div class="seibetu-buttons">
+            <button type="button" id="firstSeibetu" onclick="selectSeibetu(this)">男</button>
+            <button type="button" id="repeatSeibetu" onclick="selectSeibetu(this)">女</button>
         </div>
 
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
@@ -869,6 +872,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
         let visitCount = '';
+        let seibetuCount = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
@@ -941,11 +945,19 @@
 
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
-            const savedName = localStorage.getItem('name');
+            const savedDAIname = localStorage.getItem('DAIname');
+            const savedDAInamehurigana = localStorage.getItem('DAInamehurigana');
             const savedPhone = localStorage.getItem('phone');
+            const savedSATUname = localStorage.getItem('SATUname');
+            const savedSATUnamehurigana = localStorage.getItem('SATUnamehurigana');
+            const saveddateofbirth = localStorage.getItem('dateofbirth');
 
-            if (savedName) document.getElementById('name').value = savedName;
+            if (savedDAIname) document.getElementById('DAIname').value = savedDAIname;
+            if (savedDAInamehurigana) document.getElementById('DAInamehurigana').value = savedDAInamehurigana;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
+            if (savedSATUname) document.getElementById('SATUname').value = savedSATUname;
+            if (savedSATUnamehurigana) document.getElementById('SATUnamehurigana').value = savedSATUnamehurigana;
+            if (saveddateofbirth) document.getElementById('dateofbirth').value = saveddateofbirth;
         });
 
         // スムーズスクロール
@@ -980,9 +992,12 @@
         }
 
         function updateDisplayInfo() {
-            const name = document.getElementById('name').value;
-            const visitCountText = visitCount ? `・<span style="color:#13ca5e;"><strong>ご来店回数</strong></span><br>・${visitCount}` : '・来店回数が未選択です';
-
+            const DAIname = document.getElementById('DAIname').value;
+            const phone = document.getElementById('phone').value;
+            const SATUname = document.getElementById('SATUname').value;
+            const dateofbirth = document.getElementById('dateofbirth').value;
+            const visitCountText = visitCount ? `<span style="color:#13ca5e;"><strong>【ご来店回数】</strong></span><br>・${visitCount}` : '・来店回数が未選択です';
+            const seibetuCountText = seibetuCount ? `<span style="color:#13ca5e;"><strong>【性別】</strong></span><br>・${seibetuCount}` : '・性別が未選択です';
             // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
                 ? `<span style="color:#13ca5e;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
@@ -1026,8 +1041,13 @@
             // 修正ボタン付きのHTMLを作成
             document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
-            <p><span style="color:#13ca5e;"><strong>【お名前】</strong></span><br>・${name}</p>
-            <button class="edit-button" onclick="scrollToElement('name')">修正する</button>
+            <p><span style="color:#13ca5e;"><strong>【お名前】</strong></span><br>・${DAIname}</p>
+            <button class="edit-button" onclick="scrollToElement('DAIname')">修正する</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="color:#13ca5e;"><strong>【電話番号】</strong></span><br>・${phone}</p>
+            <button class="edit-button" onclick="scrollToElement('phone')">修正する</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1036,8 +1056,23 @@
         </div>
         <hr>
         <div class="info-row">
+            <p><span style="color:#13ca5e;"><strong>【お名前】</strong></span><br>・${SATUname}</p>
+            <button class="edit-button" onclick="scrollToElement('SATUname')">修正する</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="color:#13ca5e;"><strong>【生年月日】</strong></span><br>・${dateofbirth}</p>
+            <button class="edit-button" onclick="scrollToElement('dateofbirth')">修正する</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p>${seibetuCountText}</p>
+            <button class="edit-button" onclick="scrollToElement('firstSeibetu')">修正する</button>
+        </div>
+        <hr>
+        <div class="info-row">
             <p>${selectedSymptomText}</p>
-            <button class="edit-button" onclick="scrollToElement('beautifuleyebrows'); scrollToElement('shinyskin'); scrollToElement('Cosmetologyasawhole');">修正する</button>
+            <button class="edit-button" onclick="scrollToElement('course');">修正する</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1072,7 +1107,7 @@
         }
 
         // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
-        document.getElementById('name').addEventListener('input', updateDisplayInfo);
+        document.getElementById('DAIname').addEventListener('input', updateDisplayInfo);
         document.querySelectorAll('.visit-buttons button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
@@ -1247,6 +1282,24 @@
             fetchAvailability(currentDate);
         }
 
+        function selectSeibetu(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
+            document.getElementById('firstSeibetu').classList.remove('active');
+            document.getElementById('repeatSeibetu').classList.remove('active');
+            element.classList.add('active');
+            seibetuCount = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedSeibetuTime =seibetuTimes[seibetuCount];
+
+            console.log('選択された訪問回数の時間:', selectedseibetuTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
             if (cell.classList.contains('unavailable')) {
@@ -1277,6 +1330,7 @@
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
+                seibetuCount: seibetuCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 irradiationsCount: irradiationsCount,
                 dates: [
@@ -1311,7 +1365,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.DAIname}\nふりがな：${formData.DAInamehurigana}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nお名前：${formData.SATUname}\nふりがな：${formData.SATUnamehurigana}\n生年月日：${formData.dateofbirth}\nご来店回数：${formData.seibetuCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
