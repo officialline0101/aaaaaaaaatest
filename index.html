@@ -17,7 +17,7 @@
             /* 画面中央に固定 */
             transform: translateY(-50%) translateX(13px);
             /* 中央配置と右ずらし */
-            background: #13ca5e;
+            background: #779d5a;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -104,7 +104,7 @@
         }
 
         h1 {
-            background: linear-gradient(135deg, #13ca5e, #0fa958);
+            background: linear-gradient(135deg, #779d5a, #53723b);
             color: white;
             padding: 20px;
             border-radius: 0 15px 0px 45px;
@@ -123,7 +123,7 @@
             margin-bottom: 10px;
             padding: 3px;
             font-weight: 600;
-            background-color: #13ca5e;
+            background-color: #779d5a;
             color: white;
             border-radius: 6px;
             font-size: 18px;
@@ -140,7 +140,7 @@
             margin-bottom: 10px;
             padding: 3px;
             font-weight: 600;
-            background-color: #13ca5e;
+            background-color: #779d5a;
             color: white;
             border-radius: 6px;
             font-size: 18px;
@@ -164,12 +164,12 @@
             align-items: center;
             justify-content: center;
             background: white;
-            color: #13ca5e;
+            color: #779d5a;
             font-weight: bold;
             font-size: 0.9em;
             border-radius: 4px;
             padding: 2px 6px;
-            border: 2px solid #13ca5e;
+            border: 2px solid #779d5a;
         }
 
         input[type="text"],
@@ -296,7 +296,7 @@
         }
 
         .calendar td.selected {
-            background-color: #13ca5e;
+            background-color: #779d5a;
             color: #fff;
         }
 
@@ -516,7 +516,7 @@
 
         .highlight-background {
             cursor: pointer;
-            background-color: #13ca5e;
+            background-color: #779d5a;
             padding: 10px;
             border-radius: 6px;
             font-size: 18px;
@@ -579,7 +579,7 @@
 
         input:focus,
         textarea:focus {
-            border-color: #13ca5e;
+            border-color: #779d5a;
             outline: none;
             box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
         }
@@ -588,7 +588,7 @@
             padding: 12px;
             border: none;
             border-radius: 6px;
-            background-color: #13ca5e;
+            background-color: #779d5a;
             color: #000000;
             font-size: 16px;
             cursor: pointer;
@@ -604,11 +604,11 @@
             width: 100%;
             padding: 15px;
             font-size: 18px;
-            background-color: #dc3545;
+            background-color: #799d55;
         }
 
         .submit-button:hover {
-            background-color: #c82333;
+            background-color: #799d55;
         }
 
         @media (max-width: 768px) {
@@ -657,7 +657,7 @@
             left: 50%;
             transform: translate(-50%, -10px);
             /* Y方向に上げる */
-            background-color: #13ca5e;
+            background-color: #779d5a;
             color: #fff;
             padding: 3px 12px;
             /* ボックスのパディングを縮小 */
@@ -717,9 +717,9 @@
     </div>
 
     <div class="container">
-        <h1>Anne.Logistics<br>予約フォーム
+        <h1>Atelier Anne.<br>予約フォーム
         </h1>
-        <div class="label">お名前<span class="required">必須</span></div>
+        <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
         <div class="label">電話番号<span class="required">必須</span></div>
@@ -730,7 +730,7 @@
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">ZOOM面接</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">前撮り説明会打ち合わせZOOM</button>
         </div>
 
         <div class="label">希望日時<span class="required">必須</span></div>
@@ -826,7 +826,7 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'ZOOM面接': 30
+            '前撮り説明会打ち合わせZOOM': 30
         };
 
 
@@ -1144,7 +1144,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -1292,6 +1292,17 @@
 
                     // 終了時間が翌日 (0時以降) になる場合は✕に設定
                     if (slotEnd.getDate() !== slotStart.getDate()) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
+
+                    // 18時以降に終了する予約を不可にする (17:30は可)
+                    if (slotEnd.getHours() === 20 && slotEnd.getMinutes() > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    } else if (slotEnd.getHours() > 20) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                         continue;
