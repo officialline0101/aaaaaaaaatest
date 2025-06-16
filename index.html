@@ -11,7 +11,7 @@
             position: fixed; /* 画面スクロールしても固定 */
             right: -5px; /* さらに右へ */
             top: 80%; /* 画面中央に固定 */
-            transform: translateY(-50%) translateX(20px); /* 中央配置と右ずらし */
+            transform: translateY(-50%) translateX(13px); /* 中央配置と右ずらし */
             background: #88705a;
             display: flex;
             flex-direction: column;
@@ -1233,17 +1233,21 @@ if (updatedSelectedButtons.length === 0) {
                 treatmentText.innerHTML = '';
             }
 
-            // トリートメントテキストを表示
-            treatmentText.style.display = 'block';
+    // `treatment-text` を選択されたボタンの直後に移動
+    button.parentNode.insertBefore(treatmentText, button.nextSibling);
 
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+    // 選択されたメニューの名前と価格を取得
+    const symptomName = button.textContent;  // ボタンのテキストを取得
+    selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
+    menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
 
-            // 表示を更新
-            updateDisplayInfo();
-        }
+    // メニュー変更後にカレンダーを表示
+    const calendarContainer = document.querySelector('.calendar-container');
+    calendarContainer.style.display = 'block';
+
+    // 表示を更新
+    updateDisplayInfo();
+}
 
         function selectirradiations(button) {
             // 選択された日時をリセット
