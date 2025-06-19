@@ -825,7 +825,7 @@
                 <button type="button" onclick="selectSymptom(this, 'treatment28')" data-price="15000">トリプルセットメニュー</button>
             </div>
         </div>
-        
+
         <div id="oilmassage" class="menu-section">
             <div class="highlight-background">
                 <span class="highlight-text">◆オイルマッサージ◆</span>
@@ -834,14 +834,13 @@
                 <button type="button" onclick="selectSymptom(this, 'treatment21')" data-price="15000">オイルマッサージ</button>
             </div>
         </div>
-        
+
         <div id="monitor" class="menu-section">
             <div class="highlight-background">
                 <span class="highlight-text">◆まつ毛エクステ◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment24')"
-                    data-price="15000">まつ毛エクステ</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment24')" data-price="15000">まつ毛エクステ</button>
             </div>
         </div>
 
@@ -1033,7 +1032,7 @@
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
-            const visitCountText = visitCount ? `・<span style="color:#605b55;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+            const visitCountText = visitCount ? `<span style="color:#605b55;"><strong>【ご来店回数】</strong></span><br>・${visitCount}` : '・来店回数が未選択です';
             const selectedMenuText = selectedMenu ? `<span style="color:#605b55;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
 
             // メニューが選択されていたら、各メニューを改行して表示
@@ -1046,13 +1045,13 @@
                 ? `<span style="color:#605b55;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
                 : '・オプション無し';
 
-                // 特定のメニューが選択されている場合、selectedVisitTimeを0に設定
-    if (selectedSymptom.includes('【期間限定モニター募集】まつ毛パーマ') || selectedSymptom.includes('【期間限定モニター募集】オイルリンパマッサージ')) {
-        selectedVisitTime = 0;
-    } else {
-        // 通常の訪問回数ごとの時間設定に基づいて設定
-        selectedVisitTime = visitTimes[visitCount] || 0;
-    }
+            // 特定のメニューが選択されている場合、selectedVisitTimeを0に設定
+            if (selectedSymptom.includes('【期間限定モニター募集】まつ毛パーマ') || selectedSymptom.includes('【期間限定モニター募集】オイルリンパマッサージ')) {
+                selectedVisitTime = 0;
+            } else {
+                // 通常の訪問回数ごとの時間設定に基づいて設定
+                selectedVisitTime = visitTimes[visitCount] || 0;
+            }
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
@@ -1069,7 +1068,7 @@
             const totalAmountText = `・<span style="color:#605b55;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
 
             // 希望日時が選択された場合の表示
-            const selectedDateText = selectedFullDate ? `・<span style="color:#605b55;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
+            const selectedDateText = selectedFullDate ? `<span style="color:#605b55;"><strong>【希望日時】</strong></span><br>・${selectedFullDate}` : '・日時が未選択です';
 
 
             // 修正ボタン付きのHTMLを作成
@@ -1125,6 +1124,25 @@
             button.addEventListener('click', updateDisplayInfo);
         });
 
+        document.querySelectorAll('.symptoms button').forEach(button => {
+            button.addEventListener('click', () => {
+                const calendarContainer = document.querySelector('.calendar-container');
+
+                // 選択されたメニューがあればカレンダーを表示
+                if (document.querySelectorAll('.symptoms button.active').length > 0) {
+                    calendarContainer.style.display = 'block';
+                } else {
+                    // 選択が解除された場合、カレンダーを非表示
+                    calendarContainer.style.display = 'none';
+                }
+            });
+        });
+
+        // 初期状態でカレンダーを非表示にする
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('.calendar-container').style.display = 'none';
+        });
+
         // 日付セルのクリックイベントで希望日時を更新
         document.querySelectorAll('.calendar td').forEach(cell => {
             cell.addEventListener('click', () => {
@@ -1134,6 +1152,9 @@
         });
 
         function selectSymptom(button, treatmentId) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
+
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
 
@@ -1146,6 +1167,8 @@
                 selectedMenuTime = 0;
                 selectedSymptom = null; // 選択されたメニューをリセット
                 menuPrice = 0; // メニュー価格をリセット
+                treatmentText.style.display = 'none';
+                return; // ここで処理を終了
             } else {
                 // 1つだけ選択状態にする
                 if (updatedSelectedButtons.length > 1) {
@@ -1368,6 +1391,7 @@
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 visitCount: visitCount,
+                selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom,
                 irradiationsCount: irradiationsCount,
                 dates: [selectedFullDate],
@@ -1375,15 +1399,30 @@
             };
 
             // フォームデータのチェック
-            if (!formData.name || !formData.phone || !formData.selectedSymptom || !formData.dates[0]) {
-                alert('お名前・電話番号・メニュー・希望日時すべてご記入ください。');
+            if (!formData.name) {
+                alert('お名前を入力してください。');
+                return;
+            }
+
+            if (!formData.phone) {
+                alert('電話番号を入力してください。');
+                return;
+            }
+
+            if (!formData.selectedSymptom) {
+                alert('メニューを選択してください。');
+                return;
+            }
+
+            if (!formData.dates) {
+                alert('希望日時を選択してください。');
                 return;
             }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
@@ -1484,7 +1523,6 @@
                 }
             }
 
-
             // 現在の日時を取得
             const now = new Date();
 
@@ -1581,37 +1619,37 @@
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
                     }
-// 月曜日の14:00以降は常に✕
-else if (
-    slotStart.getDay() === 1 && // 月曜日
-    (
-        slotStart.getHours() >= 14
-    )
-) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-}
-// 火曜日の16:00以降は常に✕
-else if (
-    slotStart.getDay() === 2 &&
-    (
-        slotStart.getHours() > 16 || // 17:00以降
-        (slotStart.getHours() === 16 && slotStart.getMinutes() >= 0) // 16:00〜16:59
-    )
-) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-}
-// 水曜日の16:00～16:30は常に✕
-else if (
-    slotStart.getDay() === 3 &&
-    (
-        (slotStart.getHours() === 16 && slotStart.getMinutes() >= 0 && slotStart.getMinutes() <= 29)
-    )
-) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-}
+                    // 月曜日の14:00以降は常に✕
+                    else if (
+                        slotStart.getDay() === 1 && // 月曜日
+                        (
+                            slotStart.getHours() >= 14
+                        )
+                    ) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 火曜日の16:00以降は常に✕
+                    else if (
+                        slotStart.getDay() === 2 &&
+                        (
+                            slotStart.getHours() > 16 || // 17:00以降
+                            (slotStart.getHours() === 16 && slotStart.getMinutes() >= 0) // 16:00〜16:59
+                        )
+                    ) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
+                    // 水曜日の16:00～16:30は常に✕
+                    else if (
+                        slotStart.getDay() === 3 &&
+                        (
+                            (slotStart.getHours() === 16 && slotStart.getMinutes() >= 0 && slotStart.getMinutes() <= 29)
+                        )
+                    ) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                    }
                     // 営業日でかつ他のイベントがない場合
                     else if (isBusinessDay && count === 0) {
                         cell.textContent = '◯';
