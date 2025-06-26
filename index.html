@@ -1443,6 +1443,7 @@
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         visitCount: visitCount,
+        selectedMenu: selectedMenu,
         selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
         irradiationsCount: irradiationsCount,
         dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
@@ -1475,7 +1476,7 @@ const irradiationText = formData.irradiationsCount ? `,${formData.irradiationsCo
 
 liff.sendMessages([{
     type: 'text',
-    text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}${irradiationText}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+    text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom}${irradiationText}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
 }]).then(() => {
     alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
     liff.closeWindow();
