@@ -1243,10 +1243,8 @@ updatedSelectedButtons.forEach((btn) => {
         }
 
         function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
+            // `treatment-text` を非表示にする
+            document.getElementById("treatment-text").style.display = "none";
 
             // 選択されたメニューの名前を取得
             let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
@@ -1319,6 +1317,7 @@ updatedSelectedButtons.forEach((btn) => {
                 Number: document.getElementById('Number').value.trim(),
                 child: document.getElementById('child').value.trim(),
                 highschoolCount: highschoolCount,
+                selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 dates: [
                     document.getElementById('date1').value,
@@ -1351,7 +1350,7 @@ updatedSelectedButtons.forEach((btn) => {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n【お名前】\n・${formData.name}\n【電話番号】\n・${formData.phone}\n\nメニュー】\n・${formData.selectedSymptom}\n\n来店人数\n・${formData.Number}\n\nお子様人数\n・${formData.child}\n\nテラス席\n・${formData.highschoolCount}\n\n【希望日時】\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n【お名前】\n・${formData.name}\n【電話番号】\n・${formData.phone}\n\n【コース】\n・${formData.selectedMenu}\n\n【メニュー】\n・${formData.selectedSymptom}\n\n【来店人数】\n・${formData.Number}\n\n【お子様人数】\n・${formData.child}\n\nテラス席\n・${formData.highschoolCount}\n\n【希望日時】\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
