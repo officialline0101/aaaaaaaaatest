@@ -837,84 +837,8 @@
             <button type="button" id="repeathighschool" onclick="selecthighschool(this)">いいえ</button>
         </div>
 
-        <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
-        <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
-        <div class="menu-sections">
-            <button type="button" onclick="showMenu('beautifuleyebrows')">美眉メニュー</button>
-            <button type="button" onclick="showMenu('shinyskin')">ツヤ肌メニュー</button>
-            <button type="button" onclick="showMenu('Cosmetologyasawhole')">美容整体メニュー</button>
-            <button type="button" onclick="showMenu('SmallFaceBrainWashing')">小顔脳洗浄メニュー</button>
-            <button type="button" onclick="showMenu('mugwort')">よもぎ蒸しメニュー</button>
-            <button type="button" onclick="showMenu('FaceType')">顔タイプ診断メニュー</button>
-        </div>
 
-        <div id="treatment-text" style="margin-bottom: 20px;"></div>
-
-        <div id="beautifuleyebrows" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆美眉メニュー◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')"
-                    data-price="1">ハリウッドブロウリフト(HBL)</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">眉デザインWAX</button>
-            </div>
-        </div>
-
-        <div id="shinyskin" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆ツヤ肌メニュー◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment3')"
-                    data-price="15000">セルマン-ツヤ玉トリートメント-</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">フェイシャルWAX</button>
-            </div>
-        </div>
-
-        <div id="Cosmetologyasawhole" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆美容整体メニュー◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">整体クイックコース
-                    30分</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">整体全身コース
-                    60分</button>
-            </div>
-        </div>
-
-        <div id="SmallFaceBrainWashing" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆小顔脳洗浄メニュー◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="1">デフォルトコース 60分</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="1">オイルコース 90分</button>
-            </div>
-        </div>
-
-        <div id="mugwort" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆よもぎ蒸しメニュー◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="1">よもぎクイックコース 30分</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="1">よもぎじっくりコース
-                    50分</button>
-            </div>
-        </div>
-
-        <div id="FaceType" class="menu-section">
-            <div class="highlight-background">
-                <span class="highlight-text">◆顔タイプ診断メニュー◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment11')"
-                    data-price="15000">あなただけの魅力ファッション診断</button>
-            </div>
-        </div>
-
+        
         <div class="highlight-background">
             <div class="kibounitizi">希望日時<span class="required">必須</span></div>
         </div>
@@ -1098,7 +1022,7 @@
             // 第3希望日が選択された場合の表示
             const selectedDate3 = document.getElementById('date3').value;
             const selectedDate3Text = selectedDate3
-                ? `・<span style="color:#13ca5eｓ;"><strong>第3希望日</strong></span>：${formatDateTime(selectedDate3)}`
+                ? `・<span style="color:#13ca5e;"><strong>第3希望日</strong></span>：${formatDateTime(selectedDate3)}`
                 : '・第3希望日が未選択です';
 
 
@@ -1327,23 +1251,20 @@
             updateDisplayInfo(); // 表示を更新
         }
 
-        function selectVisit(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+// 訪問回数の選択（初回・リピート）
+function selectVisit(element) {
+    document.querySelectorAll('.visit-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    visitCount = element.innerText;
 
-            document.getElementById('firstVisit').classList.remove('active');
-            document.getElementById('repeatVisit').classList.remove('active');
-            element.classList.add('active');
-            visitCount = element.innerText;
+    // 選択された訪問回数に対応する時間を取得
+    selectedVisitTime = visitTimes[visitCount];
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedVisitTime = visitTimes[visitCount];
+    console.log('選択された訪問回数の時間:', selectedVisitTime);
 
-            console.log('選択された訪問回数の時間:', selectedVisitTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
 
         function selecthighschool(element) {
             // 選択された日時をリセット
