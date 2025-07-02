@@ -185,6 +185,7 @@
         }
 
         .visit-buttons,
+        .Caesareansection-buttons,
         .hairmakeup-buttons,
         .kimono-buttons,
         .preparationphoto-buttons,
@@ -200,6 +201,7 @@
         }
 
         .visit-buttons button,
+        .Caesareansection-buttons button,
         .hairmakeup-buttons button,
         .kimono-buttons button,
         .preparationphoto-buttons button,
@@ -220,6 +222,7 @@
         }
 
         .visit-buttons button.active,
+        .Caesareansection-buttons button.active,
         .hairmakeup-buttons button.active,
         .kimono-buttons button.active,
         .preparationphoto-buttons button.active,
@@ -876,9 +879,9 @@
         </div>
 
             <div class="label">自然分娩 or 帝王切開</div>
-            <div class="Freshflowerphotography-buttons">
-                <button type="button" onclick="selectFreshflowerphotography(this)">自然分娩</button>
-                <button type="button" onclick="selectFreshflowerphotography(this)">帝王切開</button>
+            <div class="Caesareansection-buttons">
+                <button type="button" onclick="selectCaesareansection(this)">自然分娩</button>
+                <button type="button" onclick="selectCaesareansection(this)">帝王切開</button>
             </div>
 
             <div class="label">お子様のお名前（任意）</div>
@@ -893,12 +896,12 @@
 
             <div class="labelContent">ご兄弟情報<br>※いらっしゃらない場合は未記入で大丈夫です。（任意）</div>
             <div class="info-text">ご兄弟のお名前</div>
-            <input type="tel" id="mugwortparticipants" placeholder="ご兄弟のお名前をご記入ください">
+            <input type="text" id="mugwortparticipants" placeholder="ご兄弟のお名前をご記入ください">
             <div class="info-text">ご兄弟の性別</div>
-            <div class="Freshflowerphotography-buttons">
-                <button type="button" onclick="selectFreshflowerphotography(this)">男性</button>
-                <button type="button" onclick="selectFreshflowerphotography(this)">女性</button>
-                <button type="button" onclick="selectFreshflowerphotography(this)">相談したい</button>
+            <div class="kimono-buttons">
+                <button type="button" onclick="selectkimono(this)">男性</button>
+                <button type="button" onclick="selectkimono(this)">女性</button>
+                <button type="button" onclick="selectkimono(this)">相談したい</button>
             </div>
             <div class="info-text">ご兄弟の年齢</div>
             <input type="tel" id="mugwortparticipants" placeholder="ご兄弟の年齢をご記入ください">
@@ -907,10 +910,10 @@
             <input type="text" id="mugwortshrinename" placeholder="撮影に参加される方の人数と続柄をご記入ください">
 
             <div class="label">生花撮影ご希望の有無（スタジオのみ）（任意）</div>
-            <div class="Freshflowerphotography-buttons">
-                <button type="button" onclick="selectFreshflowerphotography(this)">有り</button>
-                <button type="button" onclick="selectFreshflowerphotography(this)">無し</button>
-                <button type="button" onclick="selectFreshflowerphotography(this)">相談したい</button>
+            <div class="hairmakeup-buttons">
+                <button type="button" onclick="selecthairmakeup(this)">有り</button>
+                <button type="button" onclick="selecthairmakeup(this)">無し</button>
+                <button type="button" onclick="selecthairmakeup(this)">相談したい</button>
             </div>
 
             <div class="label">大人ヘアメイクご希望の有無<span class="required">必須</span></div>
@@ -964,6 +967,7 @@
         let visitCount = '';
         let hairmakeupCount = '';
         let kimonoCount = '';
+        let CaesareansectionCount = '';
         let preparationphotoCount = '';
         let FreshflowerphotographyCount = '';
         let selectedMenu = '';
@@ -1397,6 +1401,21 @@ function selectkimono(element) {
 }
 
 // 訪問回数の選択（初回・リピート）
+function selectCaesareansection(element) {
+    document.querySelectorAll('.Caesareansection-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    CaesareansectionCount = element.innerText;
+
+    // 選択された訪問回数に対応する時間を取得
+    selectedCaesareansectionTime = CaesareansectionTimes[CaesareansectionCount];
+
+    console.log('選択された訪問回数の時間:', selectedCaesareansectionTime);
+
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
+
+// 訪問回数の選択（初回・リピート）
 function selectpreparationphoto(element) {
     document.querySelectorAll('.preparationphoto-buttons button').forEach(btn => btn.classList.remove('active'));
     element.classList.add('active');
@@ -1507,7 +1526,7 @@ function selectpreparationphoto(element) {
         mugwortsiblinginfo: document.getElementById('mugwortsiblinginfo').value.trim(),
         mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
         mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
-        visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount,
+        visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount, CaesareansectionCount,
                 dates: [
                     document.getElementById('date1').value,
                     document.getElementById('date2').value,
@@ -1536,7 +1555,7 @@ function selectpreparationphoto(element) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n祈祷されるお子様\n・${formData.mugwortmainkid}\n\n付き添いご兄弟\n・${formData.mugwortsiblinginfo}\n\n撮影に参加される方\n・${formData.mugwortparticipants}\n\n同行撮影\n・${formData.mugwortshrinename}\n\n生花撮影\n・${formData.FreshflowerphotographyCount}\n\nお支度風景\n・${formData.preparationphotoCount}\n\n着物レンタル\n・${formData.kimonoCount}\n\nお支度ご希望\n・${formData.hairmakeupCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n出産予定日\n・${formatDate(formData.dates[0])}\n\n自然分娩 or 帝王切開\n・${formData.CaesareansectionCount}\n\nお子様のお名前\n・${formData.mugwortsiblinginfo}\n\nお子様の性別\n・${formData.FreshflowerphotographyCount}\n\nご兄弟のお名前\n・${formData.mugwortparticipants}\n\nご兄弟の性別\n・${formData.kimonoCount}\n\nご兄弟の年齢\n・${formData.mugwortparticipants}\n\n撮影に参加される方\n・${formData.mugwortshrinename}\n\n生花撮影\n・${formData.hairmakeupCount}\n\n大人ヘアメイク\n・${formData.preparationphotoCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
