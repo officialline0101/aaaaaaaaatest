@@ -884,8 +884,8 @@
                 <button type="button" onclick="selectCaesareansection(this)">帝王切開</button>
             </div>
 
-            <div class="label">お子様のお名前（任意）</div>
-            <textarea id="mugwortsiblinginfo" placeholder="お子様のお名前"></textarea>
+        <div class="label">お子様のお名前（任意）<span class="required">必須</span></div>
+        <input type="text" id="mugwortsiblinginfo" placeholder="お子様のお名前（任意）を入力してください">
 
             <div class="label">お子様の性別<span class="required">必須</span></div>
             <div class="Freshflowerphotography-buttons">
@@ -955,9 +955,6 @@
 
         <div class="labelContent">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
-
-        <div class="labelContent">ご予約内容</div>
-        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
 
         <button class="submit-button" onclick="submitForm()" div id="section-message">予約を行う</button>
     </div>
@@ -1515,7 +1512,6 @@ function selectpreparationphoto(element) {
             selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
 
             // 希望日時を即座に更新
-            updateDisplayInfo();
         }
 
         function submitForm() {
@@ -1526,7 +1522,7 @@ function selectpreparationphoto(element) {
         mugwortsiblinginfo: document.getElementById('mugwortsiblinginfo').value.trim(),
         mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
         mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
-        visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount,
+        visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount, CaesareansectionCount,
                 dates: [
                     document.getElementById('date1').value,
                     document.getElementById('date2').value,
@@ -1555,7 +1551,7 @@ function selectpreparationphoto(element) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n出産予定日\n・${formatDate(formData.dates[0])}\n\n自然分娩 or 帝王切開\n・${formData.CaesareansectionCount}\n\nお子様のお名前\n・${formData.mugwortsiblinginfo}\n\nお子様の性別\n・${formData.FreshflowerphotographyCount}\n\nご兄弟のお名前\n・${formData.mugwortparticipants}\n\nご兄弟の性別\n・${formData.kimonoCount}\n\nご兄弟の年齢\n・${formData.mugwortparticipants}\n\n撮影に参加される方\n・${formData.mugwortshrinename}\n\n生花撮影\n・${formData.hairmakeupCount}\n\n大人ヘアメイク\n・${formData.preparationphotoCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n出産予定日\n・${formatDate(formData.dates[3])}\n\n自然分娩 or 帝王切開\n・${formData.CaesareansectionCount}\n\nお子様のお名前\n・${formData.mugwortsiblinginfo}\n\nお子様の性別\n・${formData.FreshflowerphotographyCount}\n\nご兄弟のお名前\n・${formData.mugwortparticipants}\n\nご兄弟の性別\n・${formData.kimonoCount}\n\nご兄弟の年齢\n・${formData.mugwortparticipants}\n\n撮影に参加される方\n・${formData.mugwortshrinename}\n\n生花撮影\n・${formData.hairmakeupCount}\n\n大人ヘアメイク\n・${formData.preparationphotoCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
