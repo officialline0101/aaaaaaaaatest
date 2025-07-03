@@ -186,6 +186,7 @@
         }
 
         .visit-buttons,
+        .childsgender-buttons,
         .Caesareansection-buttons,
         .hairmakeup-buttons,
         .kimono-buttons,
@@ -202,6 +203,7 @@
         }
 
         .visit-buttons button,
+        .childsgender-buttons button,
         .Caesareansection-buttons button,
         .hairmakeup-buttons button,
         .kimono-buttons button,
@@ -223,6 +225,7 @@
         }
 
         .visit-buttons button.active,
+        .childsgender-buttons button.active,
         .Caesareansection-buttons button.active,
         .hairmakeup-buttons button.active,
         .kimono-buttons button.active,
@@ -927,7 +930,7 @@
             <button type="button" id="firstVisit" onclick="selectVisit(this)">ミニプラン 　37,000円+税</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタンダードプラン 　50,000円+税</button>
             <button type="button" id="sanVisit" onclick="selectVisit(this)">プレミアムプラン 　67,000円+税</button>
-            <button type="button" id="sanVisit" onclick="selectVisit(this)">赤ちゃんのいる暮らしプラン　37,000円+税</button>
+            <button type="button" id="yonVisit" onclick="selectVisit(this)">赤ちゃんのいる暮らしプラン　37,000円+税</button>
         </div>
 
         <div class="highlight-background">
@@ -966,7 +969,7 @@
         <input type="tel" id="birthweight" placeholder="出生体重を入力してください">
 
         <div class="label">ご兄弟のお名前（任意）</div>
-        <input type="text" id="Brother's name" placeholder="例：祖母2人、父、母 など">
+        <input type="text" id="Brothersname" placeholder="例：祖母2人、父、母 など">
 
         <div class="label">お子様の性別（任意）</div>
         <div class="childsgender-buttons">
@@ -1038,6 +1041,7 @@
         let hairmakeupCount = '';
         let kimonoCount = '';
         let preparationphotoCount = '';
+        let childsgenderCount = '';
         let FreshflowerphotographyCount = '';
         let selectedMenu = '';
         let CaesareansectionCount = '';
@@ -1127,6 +1131,21 @@
             selectedVisitTime = visitTimes[visitCount];
 
             console.log('選択された訪問回数の時間:', selectedVisitTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        // 訪問回数の選択（初回・リピート）
+        function selectchildsgender(element) {
+            document.querySelectorAll('.childsgender-buttons button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            childsgenderCount = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedchildsgenderTime = childsgenderTimes[childsgenderCount];
+
+            console.log('選択された訪問回数の時間:', selectedchildsgenderTime);
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
@@ -1302,10 +1321,8 @@
                 phone: document.getElementById('phone').value.trim(),
                 birthweight: document.getElementById('birthweight').value.trim(),
                 Businessaddress: document.getElementById('Businessaddress').value.trim(),
-                ziyuusonota: document.getElementById('ziyuusonota').value.trim(),
                 nameplate: document.getElementById('nameplate').value.trim(),
                 childsname: document.getElementById('childsname').value.trim(),
-                mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
                 visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount, childsgenderCount, CaesareansectionCount,
                 dates: [
                     document.getElementById('date1').value,
@@ -1335,7 +1352,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n${formData.ziyuusonota}\n\nお子様のお誕生日\n・${formatDate(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.Participateintheshooting}\n\nご兄弟の性別\n・${formData.CaesareansectionCount}\n\n出生体重\n・${formData.birthweight}\n\nお子様のお名前\n・${formData.childsname}\n\n撮影に参加される方\n・${formData.mugwortshrinename}\n\n生花撮影\n・${formData.kimonoCount}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n\nお子様のお誕生日\n・${formatDate(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.Participateintheshooting}\n\nご兄弟の性別\n・${formData.CaesareansectionCount}\n\n出生体重\n・${formData.birthweight}\n\nお子様のお名前\n・${formData.childsname}\n\n生花撮影\n・${formData.kimonoCount}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
