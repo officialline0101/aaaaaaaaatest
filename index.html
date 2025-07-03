@@ -118,39 +118,21 @@
             overflow: hidden;
         }
 
-        .label {
-            display: block;
-            margin-top: 3px;
-            /* ← 追加 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #13ca5e;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .labelnigyou {
-            display: block;
-            margin-top: 3px;
-            /* ← 追加 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #13ca5e;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 0px;
-            position: relative;
-            overflow: hidden;
-        }
+.label {
+    display: block;
+    margin-top: 3px;         /* ← 追加 */
+    margin-bottom: 10px;
+    padding: 3px;
+    font-weight: 600;
+    background-color: #13ca5e;
+    color: white;
+    border-radius: 6px;
+    font-size: 18px;
+    text-align: center;
+    text-indent: 40px;
+    position: relative;
+    overflow: hidden;
+}
 
         .labelContent {
             display: block;
@@ -203,6 +185,7 @@
         }
 
         .visit-buttons,
+        .Caesareansection-buttons,
         .hairmakeup-buttons,
         .kimono-buttons,
         .preparationphoto-buttons,
@@ -218,6 +201,7 @@
         }
 
         .visit-buttons button,
+        .Caesareansection-buttons button,
         .hairmakeup-buttons button,
         .kimono-buttons button,
         .preparationphoto-buttons button,
@@ -238,6 +222,7 @@
         }
 
         .visit-buttons button.active,
+        .Caesareansection-buttons button.active,
         .hairmakeup-buttons button.active,
         .kimono-buttons button.active,
         .preparationphoto-buttons button.active,
@@ -834,30 +819,26 @@
             background-color: #ff4f4f;
         }
 
-        /* time入力欄 */
-        #mugwortreservationtime {
-            width: 100%;
-            /* スマホ画面いっぱいに広げる */
-            padding: 1em;
-            /* タップしやすく内側余白を増やす */
-            font-size: 1rem;
-            /* 入力しやすい文字サイズ */
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff;
-            box-sizing: border-box;
-            appearance: none;
-            /* iOS Safariで余計なスタイルを消す */
-            -webkit-appearance: none;
-            transition: border-color 0.3s;
-        }
+/* time入力欄 */
+#mugwortreservationtime {
+    width: 100%;             /* スマホ画面いっぱいに広げる */
+    padding: 1em;            /* タップしやすく内側余白を増やす */
+    font-size: 1rem;         /* 入力しやすい文字サイズ */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    box-sizing: border-box;
+    appearance: none;        /* iOS Safariで余計なスタイルを消す */
+    -webkit-appearance: none;
+    transition: border-color 0.3s;
+}
 
-        /* フォーカス時の装飾 */
-        #mugwortreservationtime:focus {
-            border-color: #00a683;
-            outline: none;
-            background-color: #f9fefc;
-        }
+/* フォーカス時の装飾 */
+#mugwortreservationtime:focus {
+    border-color: #00a683;
+    outline: none;
+    background-color: #f9fefc;
+}
     </style>
 </head>
 
@@ -871,13 +852,10 @@
     </div>
 
     <div class="container">
-        <h1>すずき写真事務所<br>お宮参り
+        <h1>すずき写真事務所<br>スタジオ ニューボーンフォト  
         </h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
-
-        <div class="label">ご住所<span class="required">必須</span></div>
-        <input type="text" id="Yourresidentialaddress" placeholder="ご住所を入力してください" oninput="saveInput('Yourresidentialaddress')">
 
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
@@ -885,55 +863,66 @@
         <div class="label">プランをお選びください<span class="required">必須</span></div>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">お参り同行プラン 47000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタジオお宮参りプラン 37000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">お参り同行+スタジオ2シーン 67000円+税</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">ミニプラン 　37,000円+税</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタンダードプラン 　50,000円+税</button>
+            <button type="button" id="repeatVisit" onclick="selectVisit(this)">プレミアムプラン 　67,000円+税</button>
         </div>
 
-        <div class="labelnigyou">祈祷されるお子様<br>（お名前・月齢・性別）<span class="required">必須</span></div>
-        <textarea id="mugwortmainkid" placeholder="例：山田太郎・3ヶ月・男の子など 複数いれば全員分ご記入ください。"></textarea>
-
-        <div class="labelnigyou">付き添いご兄弟の<br>お名前、年齢、性別を<br>ご記入ください（任意）</div>
-        <textarea id="mugwortsiblinginfo" placeholder="お名前・年齢・性別をご記入ください。"></textarea>
-
-        <div class="labelnigyou">撮影に参加される方の<br>人数と続柄（任意）</div>
-        <input type="text" id="mugwortparticipants" placeholder="例：祖母2人、父、母 など">
-
-        <div class="labelnigyou">同行撮影の方は<br>お参りされる神社名（任意）</div>
-        <input type="text" id="mugwortshrinename" placeholder="神社名をご記入ください">
-
-        <div class="label">ご祈祷の予約時間（任意）</div>
-        <input type="time" id="mugwortreservationtime">
-
-        <div class="labelnigyou">生花撮影ご希望の有無<br>（スタジオのみ）（任意）</div>
-        <div class="Freshflowerphotography-buttons">
-            <button type="button" onclick="selectFreshflowerphotography(this)">有り</button>
-            <button type="button" onclick="selectFreshflowerphotography(this)">無し</button>
-            <button type="button" onclick="selectFreshflowerphotography(this)">相談したい</button>
+        <div class="highlight-background">
+            <div class="kibounitizi">出産予定日 or 出産日<span class="required">必須</span></div>
         </div>
 
-        <div class="labelnigyou">お支度風景撮影ご希望の有無<span class="required">必須</span></div>
-        <div class="preparationphoto-buttons">
-            <button type="button" onclick="selectpreparationphoto(this)">有り</button>
-            <button type="button" onclick="selectpreparationphoto(this)">無し</button>
-            <button type="button" onclick="selectpreparationphoto(this)">相談したい</button>
+        <!-- カスタム placeholder 表示用 -->
+        <div class="datetime-wrapper" style="text-align: center;">
+            <span class="placeholder" id="placeholder4">⇩タップして日時を入力⇩</span>
+            <input type="datetime-local" id="date4" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
         </div>
 
-        <div class="label">着物レンタル希望の有無<span class="required">必須</span></div>
-        <div class="kimono-buttons">
-            <button type="button" onclick="selectkimono(this)">有り</button>
-            <button type="button" onclick="selectkimono(this)">無し</button>
-            <button type="button" onclick="selectkimono(this)">相談したい</button>
-        </div>
+            <div class="label">自然分娩 or 帝王切開</div>
+            <div class="Caesareansection-buttons">
+                <button type="button" onclick="selectCaesareansection(this)">自然分娩</button>
+                <button type="button" onclick="selectCaesareansection(this)">帝王切開</button>
+            </div>
 
-        <div class="label">お支度ご希望の有無<span class="required">必須</span></div>
-        <div class="hairmakeup-buttons">
-            <button type="button" onclick="selecthairmakeup(this)">有り</button>
-            <button type="button" onclick="selecthairmakeup(this)">無し</button>
-            <button type="button" onclick="selecthairmakeup(this)">相談したい</button>
-        </div>
+        <div class="label">お子様のお名前（任意）<span class="required">必須</span></div>
+        <input type="text" id="mugwortsiblinginfo" placeholder="お子様のお名前（任意）を入力してください">
 
+            <div class="label">お子様の性別<span class="required">必須</span></div>
+            <div class="Freshflowerphotography-buttons">
+                <button type="button" onclick="selectFreshflowerphotography(this)">男</button>
+                <button type="button" onclick="selectFreshflowerphotography(this)">女</button>
+                <button type="button" onclick="selectFreshflowerphotography(this)">わからない</button>
+            </div>
 
+            <div class="labelContent">ご兄弟情報<br>※いらっしゃらない場合は未記入で大丈夫です。（任意）</div>
+            <div class="info-text">ご兄弟のお名前</div>
+            <input type="text" id="mugwortmainkid" placeholder="ご兄弟のお名前をご記入ください">
+            <div class="info-text">ご兄弟の性別</div>
+            <div class="kimono-buttons">
+                <button type="button" onclick="selectkimono(this)">男性</button>
+                <button type="button" onclick="selectkimono(this)">女性</button>
+                <button type="button" onclick="selectkimono(this)">相談したい</button>
+            </div>
+            <div class="info-text">ご兄弟の年齢</div>
+            <input type="tel" id="mugwortparticipants" placeholder="ご兄弟の年齢をご記入ください">
 
+            <div class="label">撮影に参加される方の人数と続柄（任意）</div>
+            <input type="text" id="mugwortshrinename" placeholder="撮影に参加される方の人数と続柄をご記入ください">
+
+            <div class="label">生花撮影ご希望の有無（スタジオのみ）（任意）</div>
+            <div class="hairmakeup-buttons">
+                <button type="button" onclick="selecthairmakeup(this)">有り</button>
+                <button type="button" onclick="selecthairmakeup(this)">無し</button>
+                <button type="button" onclick="selecthairmakeup(this)">相談したい</button>
+            </div>
+
+            <div class="label">大人ヘアメイクご希望の有無<span class="required">必須</span></div>
+            <div class="preparationphoto-buttons">
+                <button type="button" onclick="selectpreparationphoto(this)">有り</button>
+                <button type="button" onclick="selectpreparationphoto(this)">無し</button>
+                <button type="button" onclick="selectpreparationphoto(this)">相談したい</button>
+            </div>
+        
         <div class="highlight-background">
             <div class="kibounitizi">希望日時<span class="required">必須</span></div>
         </div>
@@ -975,6 +964,7 @@
         let visitCount = '';
         let hairmakeupCount = '';
         let kimonoCount = '';
+        let CaesareansectionCount = '';
         let preparationphotoCount = '';
         let FreshflowerphotographyCount = '';
         let selectedMenu = '';
@@ -1040,11 +1030,9 @@
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
             const savedName = localStorage.getItem('name');
-            const savedYourresidentialaddress = localStorage.getItem('Yourresidentialaddress');
             const savedPhone = localStorage.getItem('phone');
 
             if (savedName) document.getElementById('name').value = savedName;
-            if (savedYourresidentialaddress) document.getElementById('Yourresidentialaddress').value = savedYourresidentialaddress;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
         });
 
@@ -1349,80 +1337,95 @@
             updateDisplayInfo(); // 表示を更新
         }
 
-        // 訪問回数の選択（初回・リピート）
-        function selectVisit(element) {
-            document.querySelectorAll('.visit-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            visitCount = element.innerText;
+// 訪問回数の選択（初回・リピート）
+function selectVisit(element) {
+    document.querySelectorAll('.visit-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    visitCount = element.innerText;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedVisitTime = visitTimes[visitCount];
+    // 選択された訪問回数に対応する時間を取得
+    selectedVisitTime = visitTimes[visitCount];
 
-            console.log('選択された訪問回数の時間:', selectedVisitTime);
+    console.log('選択された訪問回数の時間:', selectedVisitTime);
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
 
-        // 訪問回数の選択（初回・リピート）
-        function selectFreshflowerphotography(element) {
-            document.querySelectorAll('.Freshflowerphotography-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            FreshflowerphotographyCount = element.innerText;
+// 訪問回数の選択（初回・リピート）
+function selectFreshflowerphotography(element) {
+    document.querySelectorAll('.Freshflowerphotography-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    FreshflowerphotographyCount = element.innerText;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedFreshflowerphotographyTime = FreshflowerphotographyTimes[FreshflowerphotographyCount];
+    // 選択された訪問回数に対応する時間を取得
+    selectedFreshflowerphotographyTime = FreshflowerphotographyTimes[FreshflowerphotographyCount];
 
-            console.log('選択された訪問回数の時間:', selectedFreshflowerphotographyTime);
+    console.log('選択された訪問回数の時間:', selectedFreshflowerphotographyTime);
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
 
-        // 訪問回数の選択（初回・リピート）
-        function selecthairmakeup(element) {
-            document.querySelectorAll('.hairmakeup-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            hairmakeupCount = element.innerText;
+// 訪問回数の選択（初回・リピート）
+function selecthairmakeup(element) {
+    document.querySelectorAll('.hairmakeup-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    hairmakeupCount = element.innerText;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedhairmakeupTime = hairmakeupTimes[hairmakeupCount];
+    // 選択された訪問回数に対応する時間を取得
+    selectedhairmakeupTime = hairmakeupTimes[hairmakeupCount];
 
-            console.log('選択された訪問回数の時間:', selectedhairmakeupTime);
+    console.log('選択された訪問回数の時間:', selectedhairmakeupTime);
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
 
-        // 訪問回数の選択（初回・リピート）
-        function selectkimono(element) {
-            document.querySelectorAll('.kimono-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            kimonoCount = element.innerText;
+// 訪問回数の選択（初回・リピート）
+function selectkimono(element) {
+    document.querySelectorAll('.kimono-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    kimonoCount = element.innerText;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedkimonoTime = kimonoTimes[kimonoCount];
+    // 選択された訪問回数に対応する時間を取得
+    selectedkimonoTime = kimonoTimes[kimonoCount];
 
-            console.log('選択された訪問回数の時間:', selectedkimonoTime);
+    console.log('選択された訪問回数の時間:', selectedkimonoTime);
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
 
-        // 訪問回数の選択（初回・リピート）
-        function selectpreparationphoto(element) {
-            document.querySelectorAll('.preparationphoto-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            preparationphotoCount = element.innerText;
+// 訪問回数の選択（初回・リピート）
+function selectCaesareansection(element) {
+    document.querySelectorAll('.Caesareansection-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    CaesareansectionCount = element.innerText;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedpreparationphotoTime = preparationphotoTimes[preparationphotoCount];
+    // 選択された訪問回数に対応する時間を取得
+    selectedCaesareansectionTime = CaesareansectionTimes[CaesareansectionCount];
 
-            console.log('選択された訪問回数の時間:', selectedpreparationphotoTime);
+    console.log('選択された訪問回数の時間:', selectedCaesareansectionTime);
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
+
+// 訪問回数の選択（初回・リピート）
+function selectpreparationphoto(element) {
+    document.querySelectorAll('.preparationphoto-buttons button').forEach(btn => btn.classList.remove('active'));
+    element.classList.add('active');
+    preparationphotoCount = element.innerText;
+
+    // 選択された訪問回数に対応する時間を取得
+    selectedpreparationphotoTime = preparationphotoTimes[preparationphotoCount];
+
+    console.log('選択された訪問回数の時間:', selectedpreparationphotoTime);
+
+    // カレンダーを更新するために取得する日付を渡す
+    fetchAvailability(currentDate);
+}
 
         function selecthighschool(element) {
             // 選択された日時をリセット
@@ -1509,36 +1512,29 @@
             selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
 
             // 希望日時を即座に更新
-            updateDisplayInfo();
         }
 
         function submitForm() {
             const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                mugwortmainkid: document.getElementById('mugwortmainkid').value.trim(),
-                Yourresidentialaddress: document.getElementById('Yourresidentialaddress').value.trim(),
-                mugwortsiblinginfo: document.getElementById('mugwortsiblinginfo').value.trim(),
-                mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
-                mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
-                mugwortreservationtime: document.getElementById('mugwortreservationtime').value.trim(),
-                visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount,
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        mugwortmainkid: document.getElementById('mugwortmainkid').value.trim(),
+        mugwortsiblinginfo: document.getElementById('mugwortsiblinginfo').value.trim(),
+        mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
+        mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
+        visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount, CaesareansectionCount,
                 dates: [
                     document.getElementById('date1').value,
                     document.getElementById('date2').value,
-                    document.getElementById('date3').value
+                    document.getElementById('date3').value,
+                    document.getElementById('date4').value
                 ],
-                message: document.getElementById('message').value.trim()
-            };
+        message: document.getElementById('message').value.trim()
+      };
 
             // フォームデータのチェック
             if (!formData.name) {
                 alert('お名前を入力してください。');
-                return;
-            }
-
-            if (!formData.Yourresidentialaddress) {
-                alert('ご住所を入力してください');
                 return;
             }
 
@@ -1555,7 +1551,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪お宮参り≫\n\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟祈祷されるお子様｠\n・${formData.mugwortmainkid}\n\n｟付き添いご兄弟\n・${formData.mugwortsiblinginfo}\n\n｟撮影に参加される方\n・${formData.mugwortparticipants}\n\n同行撮影｠\n・${formData.mugwortshrinename}\n\n｟ご祈祷の予約時間｠\n・${formData.mugwortreservationtime}\n\n｟生花撮影｠\n・${formData.FreshflowerphotographyCount}\n\n｟お支度風景｠\n・${formData.preparationphotoCount}\n\n｟着物レンタル｠\n・${formData.kimonoCount}\n\n｟お支度ご希望｠\n・${formData.hairmakeupCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
+                text: `【予約フォーム】\n≪スタジオ ニューボーンフォト≫\n\n｟お名前｠\n・${formData.name}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟出産予定日｠\n・${formatDate(formData.dates[3])}\n\n｟自然分娩 or 帝王切開｠\n・${formData.CaesareansectionCount}\n\n｟お子様のお名前｠\n・${formData.mugwortsiblinginfo}\n\n｟お子様の性別｠\n・${formData.FreshflowerphotographyCount}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟撮影に参加される方｠\n・${formData.mugwortshrinename}\n\n｟生花撮影｠\n・${formData.hairmakeupCount}\n\n｟大人ヘアメイク｠\n・${formData.preparationphotoCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
