@@ -839,6 +839,23 @@
     outline: none;
     background-color: #f9fefc;
 }
+
+        .labelnigyou {
+            display: block;
+            margin-top: 3px;
+            /* ← 追加 */
+            margin-bottom: 10px;
+            padding: 3px;
+            font-weight: 600;
+            background-color: #13ca5e;
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+            text-align: center;
+            text-indent: 0px;
+            position: relative;
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -856,6 +873,9 @@
         </h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+
+        <div class="label">ご住所<span class="required">必須</span></div>
+        <input type="text" id="Yourresidentialaddress" placeholder="ご住所を入力してください" oninput="saveInput('Yourresidentialaddress')">
 
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
@@ -878,13 +898,13 @@
             <input type="datetime-local" id="date4" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
         </div>
 
-            <div class="label">自然分娩 or 帝王切開</div>
+            <div class="labelContent">自然分娩 or 帝王切開</div>
             <div class="Caesareansection-buttons">
                 <button type="button" onclick="selectCaesareansection(this)">自然分娩</button>
                 <button type="button" onclick="selectCaesareansection(this)">帝王切開</button>
             </div>
 
-        <div class="label">お子様のお名前（任意）<span class="required">必須</span></div>
+        <div class="label">お子様のお名前（任意）</div>
         <input type="text" id="mugwortsiblinginfo" placeholder="お子様のお名前（任意）を入力してください">
 
             <div class="label">お子様の性別<span class="required">必須</span></div>
@@ -893,6 +913,9 @@
                 <button type="button" onclick="selectFreshflowerphotography(this)">女</button>
                 <button type="button" onclick="selectFreshflowerphotography(this)">わからない</button>
             </div>
+
+        <div class="label">出生体重（任意）</div>
+        <input type="tel" id="birthweight" placeholder="出生体重を入力してください">
 
             <div class="labelContent">ご兄弟情報<br>※いらっしゃらない場合は未記入で大丈夫です。（任意）</div>
             <div class="info-text">ご兄弟のお名前</div>
@@ -906,10 +929,10 @@
             <div class="info-text">ご兄弟の年齢</div>
             <input type="tel" id="mugwortparticipants" placeholder="ご兄弟の年齢をご記入ください">
 
-            <div class="label">撮影に参加される方の人数と続柄（任意）</div>
+            <div class="labelnigyou">撮影に参加される方の<br>人数と続柄（任意）</div>
             <input type="text" id="mugwortshrinename" placeholder="撮影に参加される方の人数と続柄をご記入ください">
 
-            <div class="label">生花撮影ご希望の有無（スタジオのみ）（任意）</div>
+            <div class="labelnigyou">生花撮影ご希望の有無<br>（スタジオのみ）（任意）</div>
             <div class="hairmakeup-buttons">
                 <button type="button" onclick="selecthairmakeup(this)">有り</button>
                 <button type="button" onclick="selecthairmakeup(this)">無し</button>
@@ -1030,9 +1053,11 @@
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
             const savedName = localStorage.getItem('name');
+            const savedYourresidentialaddress = localStorage.getItem('Yourresidentialaddress');
             const savedPhone = localStorage.getItem('phone');
 
             if (savedName) document.getElementById('name').value = savedName;
+            if (savedYourresidentialaddress) document.getElementById('Yourresidentialaddress').value = savedYourresidentialaddress;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
         });
 
@@ -1518,7 +1543,9 @@ function selectpreparationphoto(element) {
             const formData = {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
+        birthweight: document.getElementById('birthweight').value.trim(),
         mugwortmainkid: document.getElementById('mugwortmainkid').value.trim(),
+        Yourresidentialaddress: document.getElementById('Yourresidentialaddress').value.trim(),
         mugwortsiblinginfo: document.getElementById('mugwortsiblinginfo').value.trim(),
         mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
         mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
@@ -1538,6 +1565,11 @@ function selectpreparationphoto(element) {
                 return;
             }
 
+            if (!formData.Yourresidentialaddress) {
+                alert('ご住所を入力してください');
+                return;
+            }
+
             if (!formData.phone) {
                 alert('電話番号を入力してください。');
                 return;
@@ -1551,7 +1583,7 @@ function selectpreparationphoto(element) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪スタジオ ニューボーンフォト≫\n\n｟お名前｠\n・${formData.name}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟出産予定日｠\n・${formatDate(formData.dates[3])}\n\n｟自然分娩 or 帝王切開｠\n・${formData.CaesareansectionCount}\n\n｟お子様のお名前｠\n・${formData.mugwortsiblinginfo}\n\n｟お子様の性別｠\n・${formData.FreshflowerphotographyCount}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟撮影に参加される方｠\n・${formData.mugwortshrinename}\n\n｟生花撮影｠\n・${formData.hairmakeupCount}\n\n｟大人ヘアメイク｠\n・${formData.preparationphotoCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
+                text: `【予約フォーム】\n≪スタジオ ニューボーンフォト≫\n\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟出産予定日｠\n・${formatDate(formData.dates[3])}\n\n｟自然分娩 or 帝王切開｠\n・${formData.CaesareansectionCount}\n\n｟お子様のお名前｠\n・${formData.mugwortsiblinginfo}\n\n｟お子様の性別｠\n・${formData.FreshflowerphotographyCount}\n\n｟お子様のお名前｠\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟撮影に参加される方｠\n・${formData.mugwortshrinename}\n\n｟生花撮影｠\n・${formData.hairmakeupCount}\n\n｟大人ヘアメイク｠\n・${formData.preparationphotoCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
