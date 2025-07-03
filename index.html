@@ -828,6 +828,35 @@
             /* はみ出た中身を隠す（枠から出ないようにする） */
         }
 
+        .kibounitizinini {
+            display: block;
+            /* ブロック要素として表示。幅いっぱいに広がるよ！ */
+            margin-bottom: 1px;
+            /* 下に10pxのスペースをあける（余白） */
+            padding: 3px;
+            /* 内側に3pxのスペースをつける（中身がくっつかないように） */
+            font-weight: 600;
+            /* 文字を少し太くする（600は太さの目安） */
+            background-color: #13ca5e;
+            /* 背景の色をくすんだ緑にする */
+            color: white;
+            /* 文字の色を白にする */
+            border-radius: 6px;
+            /* 角を6pxだけ丸くする（ふんわりした見た目に） */
+            font-size: 20px;
+            /* 文字の大きさを18pxにする（ちょっと大きめ） */
+            text-align: center;
+            /* 文字を中央に揃える */
+            /* ↑ 中央揃えにしています */
+            text-indent: 40px;
+            /* 最初の行だけ、文字を右に20pxずらす */
+            /* ↑ テキストの先頭をちょっと右にずらしてるよ！ */
+            position: relative;
+            /* 子要素を自由に配置できるようにする準備（位置調整） */
+            overflow: hidden;
+            /* はみ出た中身を隠す（枠から出ないようにする） */
+        }
+
         .info-row {
             display: flex;
             justify-content: space-between;
@@ -929,7 +958,7 @@
         </div>
 
         <div class="highlight-background">
-            <span class="kibounitizi">第2希望日<span class="required">必須</span></span>
+            <span class="kibounitizinini">第2希望日《任意》</span>
         </div>
 
         <!-- カスタム placeholder 表示用 -->
@@ -939,7 +968,7 @@
         </div>
 
         <div class="highlight-background">
-            <span class="kibounitizi">第3希望日※任意</span>
+            <span class="kibounitizinini">第3希望日《任意》</span>
         </div>
 
         <!-- カスタム placeholder 表示用 -->
@@ -1099,12 +1128,27 @@
 
             // フォームデータのチェック
             if (!formData.name) {
-                alert('お名前を入力してください。');
+                alert('お名前を入力してください');
+                return;
+            }
+
+            if (!formData.Yourresidentialaddress) {
+                alert('ご住所を入力してください');
                 return;
             }
 
             if (!formData.phone) {
-                alert('電話番号を入力してください。');
+                alert('電話番号を入力してください');
+                return;
+            }
+
+            if (!formData.visitCount) {
+                alert('プランをお選びください');
+                return;
+            }
+
+            if (!formData.Businessaddress) {
+                alert('撮影内容を入力してください');
                 return;
             }
 
@@ -1116,7 +1160,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟撮影内容｠\n・${formData.Businessaddress}\n\n【希望日時】\n・｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n・｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n・｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
+                text: `【出張撮影/その他の撮影】\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟撮影内容｠\n・${formData.Businessaddress}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
