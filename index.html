@@ -1152,12 +1152,16 @@ lastSelectedTime = cell.parentElement.firstChild.textContent;
             fetchAvailability(currentDate);
         }
 
-let selectedCellList = [];
+let selectedCellList = []; // { key: "2025-07-10_10:00", date: ISO文字列, time: "10:00" }
 
 function selectDate(cell) {
     if (cell.classList.contains('unavailable')) return;
 
-    // 初期表示の「〇」を保持（最初にだけ設定）
+    const cellDate = cell.getAttribute('data-date');
+    const selectedTime = cell.parentElement.firstChild.textContent;
+    const cellKey = `${cellDate.split('T')[0]}_${selectedTime}`;
+
+    // 初期表示の「〇」を保持
     if (!cell.hasAttribute('data-original')) {
         cell.setAttribute('data-original', cell.textContent);
     }
@@ -1166,15 +1170,7 @@ function selectDate(cell) {
     if (cell.classList.contains('selected')) {
         cell.classList.remove('selected');
         cell.textContent = cell.getAttribute('data-original');
-        
-        // 順序付き配列から削除
-        selectedCellList = selectedCellList.filter(c => c !== cell);
-
-        // 番号振り直し
-        selectedCellList.forEach((c, index) => {
-            c.textContent = (index + 1).toString();
-        });
-
+        selectedCellList = selectedCellList.filter(item => item.key !== cellKey);
     } else {
         if (selectedCellList.length >= 3) {
             alert('選択は最大3件までです。');
@@ -1182,16 +1178,36 @@ function selectDate(cell) {
         }
 
         cell.classList.add('selected');
-        selectedCellList.push(cell); // 順序保持用配列に追加
-        cell.textContent = selectedCellList.length.toString();
+        selectedCellList.push({
+            key: cellKey,
+            date: cellDate,
+            time: selectedTime
+        });
     }
 
-    // 選択内容を更新
-    const selectedDates = selectedCellList.map(c => {
-        const selectedDay = c.getAttribute('data-date');
-        const selectedTime = c.parentElement.firstChild.textContent;
-        const date = new Date(selectedDay);
-        return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+    // 番号振り直し
+    const allCells = document.querySelectorAll('.calendar td');
+    allCells.forEach(c => {
+        if (c.classList.contains('selected')) {
+            c.textContent = c.getAttribute('data-original');
+        }
+    });
+    selectedCellList.forEach((item, index) => {
+        const target = [...allCells].find(c => {
+            return (
+                c.getAttribute('data-date') === item.date &&
+                c.parentElement.firstChild.textContent === item.time
+            );
+        });
+        if (target) {
+            target.textContent = (index + 1).toString();
+        }
+    });
+
+    // 選択内容更新
+    const selectedDates = selectedCellList.map(item => {
+        const date = new Date(item.date);
+        return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${item.time}`;
     });
 
     selectedFullDate = selectedDates.join('\n');
@@ -1446,6 +1462,16 @@ function selectDate(cell) {
                     }
 
                     cell.setAttribute('data-date', slotStart.toISOString());
+
+                    const cellKey = `${slotStart.toISOString().split('T')[0]}_${times[j]}`;
+const matched = selectedCellList.find(item => item.key === cellKey);
+if (matched) {
+    cell.classList.add('selected');
+    const order = selectedCellList.findIndex(item => item.key === cellKey) + 1;
+    cell.textContent = order.toString();
+} else {
+    cell.textContent = '◯';
+}
                 }
             }
         }
