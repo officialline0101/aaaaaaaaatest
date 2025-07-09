@@ -1231,65 +1231,65 @@
                 }
             });
 
-            // 選択内容更新
-            const selectedDates = selectedCellList.map(item => {
-                const date = new Date(item.date);
-                return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${item.time}`;
-            });
+// ▼ 選択内容更新（希望日時の表示を整形）
+const selectedDates = selectedCellList.map((item, index) => {
+    const date = new Date(item.date);
+    const formatted = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${item.time}`;
+    const label = ['第一希望', '第二希望', '第三希望'][index] || `第${index + 1}希望`;
+    return `・${label}：${formatted}`;
+});
 
-            selectedFullDate = selectedDates.join('\n');
-            updateDisplayInfo();
+selectedFullDate = selectedDates; // ← 改行区切りではなく配列で保持
+updateDisplayInfo();
+
         }
 
-function submitForm() {
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
-        irradiationsCount: irradiationsCount,
-        dates: selectedFullDate && selectedFullDate.length > 0 ? selectedFullDate : null,
-        message: document.getElementById('message').value.trim()
-    };
+        function submitForm() {
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                irradiationsCount: irradiationsCount,
+                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+                message: document.getElementById('message').value.trim()
+            };
 
-    if (!formData.name) {
-        alert('お名前を入力してください。');
-        return;
-    }
+            // フォームデータのチェック
+            if (!formData.name) {
+                alert('お名前を入力してください。');
+                return;
+            }
 
-    if (!formData.phone) {
-        alert('電話番号を入力してください。');
-        return;
-    }
+            if (!formData.phone) {
+                alert('電話番号を入力してください。');
+                return;
+            }
 
-    if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
-        return;
-    }
+            if (!formData.selectedSymptom) {
+                alert('メニューを選択してください。');
+                return;
+            }
 
-    if (!formData.dates) {
-        alert('希望日時を選択してください。');
-        return;
-    }
+            if (!formData.dates) {
+                alert('希望日時を選択してください。');
+                return;
+            }
 
-    // 希望日時の整形
-    let formattedDates = '';
-    const labels = ['第一希望', '第二希望', '第三希望'];
-    formData.dates.forEach((date, index) => {
-        formattedDates += `・${labels[index] || 'その他希望'}：${date}\n`;
-    });
-
-    // LINEに送信
-    liff.sendMessages([{
-        type: 'text',
-        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formattedDates}メッセージ：${formData.message}`
-    }]).then(() => {
-        alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-        liff.closeWindow();
-    }).catch((err) => {
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0].join('\n')}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
