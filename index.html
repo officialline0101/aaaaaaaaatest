@@ -945,23 +945,24 @@
             let totalTimeText = `<span style="color:#13ca5e;"><strong>【所要時間】</strong></span><br>・${hours > 0 ? hours + '時間' : ''}${minutes}分`;
 
             const totalAmountText = `<span style="color:#13ca5e;"><strong>【合計金額】</strong></span><br>・¥${menuPrice + optionsPrice}`;
-            const hopeLabels = ["第一希望", "第二希望", "第三希望", "第四希望", "第五希望"];
+const hopeLabels = ["第一希望", "第二希望", "第三希望", "第四希望", "第五希望"];
 
-            let selectedDateText = '・日時が未選択です';
-            if (selectedFullDate) {
-                const parts = selectedFullDate.trim().split(/\s+/); // 空白で分割
-                const pairs = [];
+let selectedDateText = '・日時が未選択です';
+if (selectedFullDate) {
+    const parts = selectedFullDate.trim().split(/\s+/); // 空白で分割
+    const pairs = [];
 
-                // 2つずつ（日付＋時間）で1セットにする
-                for (let i = 0; i < parts.length - 1; i += 2) {
-                    pairs.push(`${parts[i]} ${parts[i + 1]}`);
-                }
+    // 2つずつ（日付＋時間）で1セットにする
+    for (let i = 0; i < parts.length - 1; i += 2) {
+        pairs.push(`${parts[i]} ${parts[i + 1]}`);
+    }
 
-                selectedDateText = `<span style="color:#13ca5e;"><strong>【希望日時】</strong></span><br>` +
-                    pairs.map((datetime, index) =>
-                        `${datetime}`
-                    ).join('<br>');
-            }
+    selectedDateText = `<span style="color:#13ca5e;"><strong>【希望日時】</strong></span><br>` +
+        pairs.map((datetime, index) =>
+            `${datetime.replace(/ /g, '<br>')}`
+        ).join('<br>');
+}
+
             // 修正ボタン付きのHTMLを作成
             document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
