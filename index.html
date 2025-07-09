@@ -1241,6 +1241,13 @@
             updateDisplayInfo();
         }
 
+// 日時の整形（希望1〜3をラベル付きで表示）
+function formatDates(datesArray) {
+    if (!Array.isArray(datesArray)) return '・日時が未選択です';
+    const labels = ['第一希望', '第二希望', '第三希望'];
+    return datesArray.map((date, index) => `・${labels[index]}：${date}`).join('\n');
+}
+
 function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
@@ -1248,7 +1255,7 @@ function submitForm() {
         visitCount: visitCount,
         selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
         irradiationsCount: irradiationsCount,
-        dates: selectedFullDate && selectedFullDate.length > 0 ? selectedFullDate : null,
+        dates: selectedFullDate && selectedFullDate.length > 0 ? selectedFullDate : null, // 修正済み
         message: document.getElementById('message').value.trim()
     };
 
@@ -1256,39 +1263,25 @@ function submitForm() {
         alert('お名前を入力してください。');
         return;
     }
-
     if (!formData.phone) {
         alert('電話番号を入力してください。');
         return;
     }
-
     if (!formData.selectedSymptom) {
         alert('メニューを選択してください。');
         return;
     }
-
     if (!formData.dates) {
         alert('希望日時を選択してください。');
         return;
     }
 
-    // 希望日時に「第一希望」「第二希望」…を付けて整形
-    const formattedDates = formData.dates.map((date, index) => {
-        const label = ['第一希望', '第二希望', '第三希望'][index] || `第${index + 1}希望`;
-        return `・${label}：${date}`;
-    }).join('\n');
+    // 希望日時を整形して表示
+    const formattedDates = formatDates(formData.dates);
 
     liff.sendMessages([{
         type: 'text',
-        text:
-`【予約フォーム】
-お名前：${formData.name}
-電話番号：${formData.phone}
-ご来店回数：${formData.visitCount}
-メニュー：${formData.selectedSymptom},${formData.irradiationsCount}
-希望日時：
-${formattedDates}
-メッセージ：${formData.message}`
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formattedDates}\nメッセージ：${formData.message}`
     }]).then(() => {
         alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
         liff.closeWindow();
@@ -1296,6 +1289,7 @@ ${formattedDates}
         console.error('メッセージの送信に失敗しました', err);
     });
 }
+
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
