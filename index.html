@@ -315,6 +315,19 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            transform-origin: center center;
+        }
+
+        .week-button:hover {
+            background-color: #444444;
+            transform: scale(1.15);
+            /* ドーン！ってくらい拡大🔥 */
+        }
+
+        .week-button:active {
+            transform: scale(0.95);
+            /* クリックした瞬間にギュッと縮む💥 */
         }
 
         .month-button-container {
@@ -332,6 +345,17 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+        }
+
+        .month-button:hover {
+            background-color: #444444;
+            transform: scale(1.15);
+            /* ドーン！ってくらい拡大🔥 */
+        }
+
+        .month-button:active {
+            transform: scale(0.95);
+            /* クリックした瞬間にギュッと縮む💥 */
         }
 
         .current-month {
@@ -756,9 +780,12 @@
             <span class="highlight-text">ブライダルコース：オプション</span>
         </div>
         <div class="irradiations">
-            <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="1500">眉〈30分〉</button>
-            <button type="button" id="repeatirradiations" onclick="selectirradiations(this)" data-price="150">シック〈30分〉</button>
-            <button type="button" id="sanirradiations" onclick="selectirradiations(this)" data-price="150">リラ〈30分〉</button>
+            <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
+                data-price="1500">眉〈30分〉</button>
+            <button type="button" id="repeatirradiations" onclick="selectirradiations(this)"
+                data-price="150">シック〈30分〉</button>
+            <button type="button" id="sanirradiations" onclick="selectirradiations(this)"
+                data-price="150">リラ〈30分〉</button>
         </div>
 
         <div class="label">希望日時<span class="required">必須</span></div>
@@ -918,23 +945,23 @@
             let totalTimeText = `<span style="color:#13ca5e;"><strong>【所要時間】</strong></span><br>・${hours > 0 ? hours + '時間' : ''}${minutes}分`;
 
             const totalAmountText = `<span style="color:#13ca5e;"><strong>【合計金額】</strong></span><br>・¥${menuPrice + optionsPrice}`;
-const hopeLabels = ["第一希望", "第二希望", "第三希望", "第四希望", "第五希望"];
+            const hopeLabels = ["第一希望", "第二希望", "第三希望", "第四希望", "第五希望"];
 
-let selectedDateText = '・日時が未選択です';
-if (selectedFullDate) {
-  const parts = selectedFullDate.trim().split(/\s+/); // 空白で分割
-  const pairs = [];
+            let selectedDateText = '・日時が未選択です';
+            if (selectedFullDate) {
+                const parts = selectedFullDate.trim().split(/\s+/); // 空白で分割
+                const pairs = [];
 
-  // 2つずつ（日付＋時間）で1セットにする
-  for (let i = 0; i < parts.length - 1; i += 2) {
-    pairs.push(`${parts[i]} ${parts[i + 1]}`);
-  }
+                // 2つずつ（日付＋時間）で1セットにする
+                for (let i = 0; i < parts.length - 1; i += 2) {
+                    pairs.push(`${parts[i]} ${parts[i + 1]}`);
+                }
 
-  selectedDateText = `<span style="color:#13ca5e;"><strong>【希望日時】</strong></span><br>` +
-    pairs.map((datetime, index) =>
-      `・${hopeLabels[index] || `第${index + 1}希望`}：${datetime}`
-    ).join('<br>');
-}
+                selectedDateText = `<span style="color:#13ca5e;"><strong>【希望日時】</strong></span><br>` +
+                    pairs.map((datetime, index) =>
+                        `・${hopeLabels[index] || `第${index + 1}希望`}：${datetime}`
+                    ).join('<br>');
+            }
             // 修正ボタン付きのHTMLを作成
             document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
@@ -1018,8 +1045,8 @@ if (selectedFullDate) {
                 selectDate(cell);
                 updateDisplayInfo();  // 日付を選択したら即座に表示を更新
                 // グローバルで選択セルの情報を保存
-lastSelectedDate = cell.getAttribute('data-date');
-lastSelectedTime = cell.parentElement.firstChild.textContent;
+                lastSelectedDate = cell.getAttribute('data-date');
+                lastSelectedTime = cell.parentElement.firstChild.textContent;
             });
         });
 
@@ -1152,114 +1179,114 @@ lastSelectedTime = cell.parentElement.firstChild.textContent;
             fetchAvailability(currentDate);
         }
 
-let selectedCellList = []; // { key: "2025-07-10_10:00", date: ISO文字列, time: "10:00" }
+        let selectedCellList = []; // { key: "2025-07-10_10:00", date: ISO文字列, time: "10:00" }
 
-function selectDate(cell) {
-    if (cell.classList.contains('unavailable')) return;
+        function selectDate(cell) {
+            if (cell.classList.contains('unavailable')) return;
 
-    const cellDate = cell.getAttribute('data-date');
-    const selectedTime = cell.parentElement.firstChild.textContent;
-    const cellKey = `${cellDate.split('T')[0]}_${selectedTime}`;
+            const cellDate = cell.getAttribute('data-date');
+            const selectedTime = cell.parentElement.firstChild.textContent;
+            const cellKey = `${cellDate.split('T')[0]}_${selectedTime}`;
 
-    // 初期表示の「〇」を保持
-    if (!cell.hasAttribute('data-original')) {
-        cell.setAttribute('data-original', cell.textContent);
-    }
-
-    // 解除処理
-    if (cell.classList.contains('selected')) {
-        cell.classList.remove('selected');
-        cell.textContent = cell.getAttribute('data-original');
-        selectedCellList = selectedCellList.filter(item => item.key !== cellKey);
-    } else {
-        if (selectedCellList.length >= 3) {
-            alert('選択は最大3件までです。');
-            return;
-        }
-
-        cell.classList.add('selected');
-        selectedCellList.push({
-            key: cellKey,
-            date: cellDate,
-            time: selectedTime
-        });
-    }
-
-    // 番号振り直し
-    const allCells = document.querySelectorAll('.calendar td');
-    allCells.forEach(c => {
-        if (c.classList.contains('selected')) {
-            c.textContent = c.getAttribute('data-original');
-        }
-    });
-    selectedCellList.forEach((item, index) => {
-        const target = [...allCells].find(c => {
-            return (
-                c.getAttribute('data-date') === item.date &&
-                c.parentElement.firstChild.textContent === item.time
-            );
-        });
-        if (target) {
-            target.textContent = (index + 1).toString();
-        }
-    });
-
-    // 選択内容更新
-    const selectedDates = selectedCellList.map(item => {
-        const date = new Date(item.date);
-        return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${item.time}`;
-    });
-
-    selectedFullDate = selectedDates.join('\n');
-    updateDisplayInfo();
-}
-
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                visitCount: visitCount,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                irradiationsCount: irradiationsCount,
-                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
-                message: document.getElementById('message').value.trim()
-            };
-
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
+            // 初期表示の「〇」を保持
+            if (!cell.hasAttribute('data-original')) {
+                cell.setAttribute('data-original', cell.textContent);
             }
 
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
+            // 解除処理
+            if (cell.classList.contains('selected')) {
+                cell.classList.remove('selected');
+                cell.textContent = cell.getAttribute('data-original');
+                selectedCellList = selectedCellList.filter(item => item.key !== cellKey);
+            } else {
+                if (selectedCellList.length >= 3) {
+                    alert('選択は最大3件までです。');
+                    return;
+                }
+
+                cell.classList.add('selected');
+                selectedCellList.push({
+                    key: cellKey,
+                    date: cellDate,
+                    time: selectedTime
+                });
             }
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
-
-            if (!formData.dates) {
-                alert('希望日時を選択してください。');
-                return;
-            }
-
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
+            // 番号振り直し
+            const allCells = document.querySelectorAll('.calendar td');
+            allCells.forEach(c => {
+                if (c.classList.contains('selected')) {
+                    c.textContent = c.getAttribute('data-original');
+                }
             });
+            selectedCellList.forEach((item, index) => {
+                const target = [...allCells].find(c => {
+                    return (
+                        c.getAttribute('data-date') === item.date &&
+                        c.parentElement.firstChild.textContent === item.time
+                    );
+                });
+                if (target) {
+                    target.textContent = (index + 1).toString();
+                }
+            });
+
+            // 選択内容更新
+            const selectedDates = selectedCellList.map(item => {
+                const date = new Date(item.date);
+                return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${item.time}`;
+            });
+
+            selectedFullDate = selectedDates.join('\n');
+            updateDisplayInfo();
         }
+
+function submitForm() {
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        visitCount: visitCount,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+        irradiationsCount: irradiationsCount,
+        dates: selectedFullDate && selectedFullDate.length > 0 ? selectedFullDate : null,
+        message: document.getElementById('message').value.trim()
+    };
+
+    // 入力チェック
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
+
+    if (!formData.phone) {
+        alert('電話番号を入力してください。');
+        return;
+    }
+
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
+
+    if (!formData.dates) {
+        alert('希望日時を選択してください。');
+        return;
+    }
+
+    // ✅ 希望日時の整形：第一希望〜第三希望に番号をつけて改行付きで作成
+    const formattedDates = formData.dates.map((d, index) => `・第${['一','二','三'][index]}希望：${d}`).join('\n');
+
+    // LINE送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formattedDates}\nメッセージ：${formData.message}`
+    }]).then(() => {
+        alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
@@ -1320,7 +1347,7 @@ function selectDate(cell) {
                 '12:00', '12:30',
                 '13:00', '13:30',
                 '14:00', '14:30',
-                '15:00', '15:30', 
+                '15:00', '15:30',
                 '16:00', '16:30',
                 '17:00', '17:30',
                 '18:00'
@@ -1464,14 +1491,17 @@ function selectDate(cell) {
                     cell.setAttribute('data-date', slotStart.toISOString());
 
                     const cellKey = `${slotStart.toISOString().split('T')[0]}_${times[j]}`;
-const matched = selectedCellList.find(item => item.key === cellKey);
-if (matched) {
-    cell.classList.add('selected');
-    const order = selectedCellList.findIndex(item => item.key === cellKey) + 1;
-    cell.textContent = order.toString();
-} else {
-    cell.textContent = '◯';
-}
+                    const matched = selectedCellList.find(item => item.key === cellKey);
+
+                    if (matched) {
+                        cell.classList.add('selected');
+                        const order = selectedCellList.findIndex(item => item.key === cellKey) + 1;
+                        cell.textContent = order.toString();
+                    } else if (!cell.classList.contains('unavailable')) {
+                        // ✕でないセルだけ◯に戻す
+                        cell.textContent = '◯';
+                    }
+
                 }
             }
         }
