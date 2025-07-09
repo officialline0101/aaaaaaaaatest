@@ -741,7 +741,7 @@
     </div>
 
     <div class="container">
-        <h1>さｓ<br>予約フォーム
+        <h1>さｓｄさｄさ<br>予約フォーム
         </h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -1248,7 +1248,7 @@ function submitForm() {
         visitCount: visitCount,
         selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
         irradiationsCount: irradiationsCount,
-        dates: (selectedFullDate && selectedFullDate.length > 0) ? selectedFullDate : null,
+        dates: selectedFullDate && selectedFullDate.length > 0 ? selectedFullDate : null,
         message: document.getElementById('message').value.trim()
     };
 
@@ -1272,16 +1272,23 @@ function submitForm() {
         return;
     }
 
-    // ✅ 第一〜第三希望の整形
-    const formattedDates = formData.dates.map((d, i) => {
-        const label = ['第一希望', '第二希望', '第三希望'][i] || `第${i + 1}希望`;
-        return `・${label}：${d}`;
+    // 希望日時に「第一希望」「第二希望」…を付けて整形
+    const formattedDates = formData.dates.map((date, index) => {
+        const label = ['第一希望', '第二希望', '第三希望'][index] || `第${index + 1}希望`;
+        return `・${label}：${date}`;
     }).join('\n');
 
-    // 送信
     liff.sendMessages([{
         type: 'text',
-        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formattedDates}\nメッセージ：${formData.message}`
+        text:
+`【予約フォーム】
+お名前：${formData.name}
+電話番号：${formData.phone}
+ご来店回数：${formData.visitCount}
+メニュー：${formData.selectedSymptom},${formData.irradiationsCount}
+希望日時：
+${formattedDates}
+メッセージ：${formData.message}`
     }]).then(() => {
         alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
         liff.closeWindow();
