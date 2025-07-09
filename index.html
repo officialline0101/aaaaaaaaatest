@@ -1152,6 +1152,8 @@ lastSelectedTime = cell.parentElement.firstChild.textContent;
             fetchAvailability(currentDate);
         }
 
+let selectedCellList = [];
+
 function selectDate(cell) {
     if (cell.classList.contains('unavailable')) return;
 
@@ -1160,31 +1162,32 @@ function selectDate(cell) {
         cell.setAttribute('data-original', cell.textContent);
     }
 
-    // 選択解除されたとき
+    // 解除処理
     if (cell.classList.contains('selected')) {
         cell.classList.remove('selected');
-        cell.textContent = cell.getAttribute('data-original'); // 元の"〇"に戻す
+        cell.textContent = cell.getAttribute('data-original');
+        
+        // 順序付き配列から削除
+        selectedCellList = selectedCellList.filter(c => c !== cell);
 
         // 番号振り直し
-        const remainingSelected = Array.from(document.querySelectorAll('.calendar td.selected'));
-        remainingSelected.forEach((c, index) => {
+        selectedCellList.forEach((c, index) => {
             c.textContent = (index + 1).toString();
         });
 
     } else {
-        const selectedCells = document.querySelectorAll('.calendar td.selected');
-        if (selectedCells.length >= 3) {
+        if (selectedCellList.length >= 3) {
             alert('選択は最大3件までです。');
             return;
         }
 
         cell.classList.add('selected');
-        cell.textContent = (selectedCells.length + 1).toString();
+        selectedCellList.push(cell); // 順序保持用配列に追加
+        cell.textContent = selectedCellList.length.toString();
     }
 
     // 選択内容を更新
-    const updatedSelectedCells = document.querySelectorAll('.calendar td.selected');
-    const selectedDates = Array.from(updatedSelectedCells).map(c => {
+    const selectedDates = selectedCellList.map(c => {
         const selectedDay = c.getAttribute('data-date');
         const selectedTime = c.parentElement.firstChild.textContent;
         const date = new Date(selectedDay);
