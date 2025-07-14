@@ -856,6 +856,10 @@
             position: relative;
             overflow: hidden;
         }
+
+  .info-text {
+    display: block;
+  }
     </style>
 </head>
 
@@ -870,6 +874,7 @@
 
     <div class="container">
         <h1>すずき写真事務所<br>スタジオ ニューボーンフォト  
+            <div class="info-text">時刻の選択は不要です。</div>
         </h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -1075,6 +1080,19 @@
                 }
             });
         });
+
+  window.addEventListener('DOMContentLoaded', function () {
+    const ua = navigator.userAgent.toLowerCase();
+    const isLine = ua.includes("line");
+    const isMobile = ua.includes("iphone") || ua.includes("android");
+
+    if (isLine && isMobile) {
+      const infoText = document.querySelector('.info-text');
+      if (infoText) {
+        infoText.style.display = 'none';
+      }
+    }
+  });
 
         function formatDateTime(dateTimeString) {
             const date = new Date(dateTimeString);
