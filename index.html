@@ -1575,17 +1575,22 @@ let menuTimes = {
                 return;
             }
 
-            // selectedSymptomを文字列に整形
-            const selectedSymptomText = formData.selectedSymptom
-                ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
-                : 'メニュー未選択';
+// メニュー（症状）の文字列化
+const selectedSymptomText = formData.selectedSymptom
+  ? formData.selectedSymptom.map(item => item.name).join(',')   // 例: "肩こり,腰痛"
+  : 'メニュー未選択';
 
-            // irradiationsCountの整形（nullチェック）
-            const irradiationsText = formData.irradiationsCount || '';
+// 照射回数の整形（null → 空文字）
+const irradiationsText = formData.irradiationsCount || '';      // 例: "3回" or ""
+
+// ★ポイント★ どちらか片方が空でもカンマが残らないようにする
+const menuText = [selectedSymptomText, irradiationsText]        // 配列にまとめて
+  .filter(Boolean)                                              // 空文字や null を除去
+  .join(',');     
 
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${selectedSymptomText}${irradiationsText}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${menuText}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
