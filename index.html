@@ -1583,7 +1583,7 @@ function selectpreparationphoto(element) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪スタジオ ニューボーンフォト≫\n\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟出産予定日｠\n・${formatDate(formData.dates[3])}\n\n｟自然分娩 or 帝王切開｠\n・${formData.CaesareansectionCount}\n\n｟お子様のお名前｠\n・${formData.mugwortsiblinginfo}\n\n｟お子様の性別｠\n・${formData.FreshflowerphotographyCount}\n\n｟お子様のお名前｠\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟撮影に参加される方｠\n・${formData.mugwortshrinename}\n\n｟生花撮影｠\n・${formData.hairmakeupCount}\n\n｟大人ヘアメイク｠\n・${formData.preparationphotoCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
+                text: `【予約フォーム】\n≪スタジオ ニューボーンフォト≫\n\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟出産予定日｠\n・${formatDateOnly(formData.dates[3])}\n\n｟自然分娩 or 帝王切開｠\n・${formData.CaesareansectionCount}\n\n｟お子様のお名前｠\n・${formData.mugwortsiblinginfo}\n\n｟お子様の性別｠\n・${formData.FreshflowerphotographyCount}\n\n｟お子様のお名前｠\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟撮影に参加される方｠\n・${formData.mugwortshrinename}\n\n｟生花撮影｠\n・${formData.hairmakeupCount}\n\n｟大人ヘアメイク｠\n・${formData.preparationphotoCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDateWithTime(formData.dates[0])}\n\n｟第二希望日｠\n${formatDateWithTime(formData.dates[1])}\n\n｟第三希望日｠\n${formatDateWithTime(formData.dates[2])}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
@@ -1592,19 +1592,27 @@ function selectpreparationphoto(element) {
             });
         }
 
-        function formatDate(datetime) {
-            /* 日時文字列が空の場合は空文字を返す */
-            if (!datetime) return '';
-            /* 日時文字列をDateオブジェクトに変換 */
-            const date = new Date(datetime);
-            /* 年、月、日、時、分を取得しフォーマット */
-            const year = date.getFullYear();
-            const month = ('0' + (date.getMonth() + 1)).slice(-2);
-            const day = ('0' + date.getDate()).slice(-2);
-            const hours = ('0' + date.getHours()).slice(-2);
-            const minutes = ('0' + date.getMinutes()).slice(-2);
-            return `${year}年${month}月${day}日`;
-        }
+// 時間なし（出産予定日など）
+function formatDateOnly(datetime) {
+    if (!datetime) return '';
+    const date = new Date(datetime);
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}年${month}月${day}日`;
+}
+
+// 時間あり（希望日時など）
+function formatDateWithTime(datetime) {
+    if (!datetime) return '';
+    const date = new Date(datetime);
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    const hours = ('0' + date.getHours()).slice(-2);
+    const minutes = ('0' + date.getMinutes()).slice(-2);
+    return `${year}年${month}月${day}日 ${hours}:${minutes}`;
+}
     </script>
 </body>
 
