@@ -1592,10 +1592,19 @@ if (treatmentId === 'treatment1') {
                 return;
             }
 
+    // オプション項目が存在する場合のみ出力
+    let optionalText = '';
+    if (formData.secondsecondanniversaryCount || formData.secondlongCount || formData.secondshampooCount || formData.irradiationsCount) {
+        optionalText += '\n≪オフ有り≫：' + (formData.secondsecondanniversaryCount || '');
+        optionalText += '\n≪長さだし≫：' + (formData.secondlongCount || '');
+        optionalText += '\n≪アイシャンプー≫：' + (formData.secondshampooCount || '');
+        optionalText += '\n≪照射≫：' + (formData.irradiationsCount || '');
+    }
+
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n\n≪メニュー項目≫\n⇒${formData.visitCount}\n≪メニュー≫\n⇒${formData.selectedSymptom}\n\n≪オフ有り≫：${formData.secondsecondanniversaryCount}\n≪長さだし≫：${formData.secondlongCount}\n≪アイシャンプー≫：${formData.secondshampooCount}\n\n【希望日時】\n・第一希望日\n${formatDate(formData.dates[0])}\n希望時間1：${formData.Desiredtime1Count}\n\n・第二希望日\n${formatDate(formData.dates[1])}}\n希望時間2：${formData.Desiredtime2Count}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n希望時間3：${formData.Desiredtime3Count}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n\n≪メニュー項目≫\n⇒${formData.visitCount}\n≪メニュー≫\n⇒${formData.selectedSymptom}\n\n≪オフ有り≫：${formData.secondsecondanniversaryCount}\n≪長さだし≫：${formData.secondlongCount}\n≪アイシャンプー≫：${formData.secondshampooCount}\n\n【希望日時】\n・第一希望日\n${formatDate(formData.dates[0])}\n希望時間1：${formData.Desiredtime1Count}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n希望時間2：${formData.Desiredtime2Count}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n希望時間3：${formData.Desiredtime3Count}\n\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
