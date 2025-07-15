@@ -678,6 +678,174 @@
             padding: 50px 10px;
             margin-top: 30px;
         }
+
+#selected-menus-display .menu-items-wrapper {
+    display: flex;
+    flex-direction: column; /* 横並びではなく縦に並べる */
+    gap: 12px;
+}
+
+#selected-menus-display .menu-item {
+    width: 100%; /* 横幅いっぱいに */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #e0fff8;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s;
+    word-break: break-word;
+    box-sizing: border-box;
+}
+
+#selected-menus-display {
+    /* 既存のスタイルに追加でOK */
+    text-align: center;
+}
+
+#selected-menus-display::before {
+    content: "選択中のメニュー（最大3つまで）";
+    display: block; /* blockに変更して横幅いっぱいに */
+    width: 100%; /* 親要素に合わせて横幅を指定 */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 16px;
+    background-color: #bd9888;
+    color: #ffffff;
+    border: 1px solid #bd9888;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 16px;
+    text-align: center; /* テキストを中央に */
+    box-sizing: border-box; /* padding含めて100%幅に */
+}
+
+#selected-menus-display .menu-items-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+#selected-menus-display .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
+    background-color: #795546;
+    color: white; /* ← 追加 */
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-break: break-word;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.3s;
+    flex: 1 1 auto;
+    min-width: 200px;
+}
+
+#selected-menus-display .menu-item:hover {
+    background-color: #bd9888;
+}
+
+#selected-menus-display .menu-item span {
+    flex: 1;
+    margin-right: 10px;
+    word-break: break-word;
+    white-space: normal;
+}
+
+#selected-menus-display .remove-button {
+    background: none;
+    border: none;
+    color: #d32f2f;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#selected-menus-display .remove-button:hover {
+    background-color: #fbe9e7;
+    color: #b71c1c;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+#selected-menus-display .remove-button {
+    background-color: #ffebee;         /* 薄い赤背景 */
+    border: 1px solid #e57373;         /* 輪郭も赤系で */
+    color: #c62828;                    /* しっかりした赤文字 */
+    font-size: 18px;                   /* 視認性UP */
+    font-weight: bold;
+    cursor: pointer;
+    padding: 6px 10px;                /* タップ範囲拡大 */
+    line-height: 1;
+    border-radius: 8px;               /* 丸みで優しい見た目 */
+    transition: all 0.2s ease;
+    min-width: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#selected-menus-display .remove-button:hover {
+    background-color: #ffcdd2;         /* ホバーで濃く */
+    color: #b71c1c;
+    border-color: #ef5350;
+}
+
+        .datetime-input {
+            width: 100%;
+            padding: 18px;
+            /* 少し大きめにして押しやすく */
+            font-size: 18px;
+            border: 2px solid #888;
+            /* 少し濃くして視認性アップ */
+            border-radius: 8px;
+            /* 指触りの良いデザイン */
+            box-sizing: border-box;
+            background-color: #fff;
+            color: #333;
+            appearance: none;
+            /* OSに左右されにくくする */
+            touch-action: manipulation;
+            /* モバイルのタップ精度向上 */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .datetime-input:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+            /* タップ時の視覚的フィードバック */
+            outline: none;
+        }
+
+.remove-button {
+    background-color: #e74c3c; /* 赤色 */
+    color: white; /* 文字色は白 */
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.remove-button:hover {
+    background-color: #c0392b; /* ホバー時に少し濃く */
+}
     </style>
 </head>
 
@@ -720,6 +888,9 @@
             <button type="button" onclick="showMenu('facial')">フェイシャルメニュー</button>
         </div>
 
+<!-- メニュー表示エリア（選択されたメニュー名がここに出る） -->
+<div id="selected-menus-display" style="display: none; font-weight: bold; margin-top: 10px;"></div>
+
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
 
         <div id="male" class="menu-section">
@@ -727,8 +898,8 @@
                 <span class="highlight-text">眉毛メニュー</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">アイブロウWAX</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">ハリウッドブロウリフト</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment1')" data-category="眉毛メニュー" data-price="15000">アイブロウWAX</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment2')" data-category="眉毛メニュー" data-price="15000">ハリウッドブロウリフト</button>
             </div>
         </div>
 
@@ -737,9 +908,9 @@
                 <span class="highlight-text">まつげパーマ</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">ラッシュリフト(まつげパーマ)</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">ラッシュリフト＋アイブロウWAX</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">ラッシュリフト＋ハリウッドブロウリフト</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment3')" data-category="まつげパーマ" data-price="15000">ラッシュリフト(まつげパーマ)</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment4')" data-category="まつげパーマ" data-price="15000">ラッシュリフト＋アイブロウWAX</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment5')" data-category="まつげパーマ" data-price="15000">ラッシュリフト＋ハリウッドブロウリフト</button>
             </div>
         </div>
 
@@ -748,10 +919,10 @@
                 <span class="highlight-text">まつげエクステ</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">フラットラッシュ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">ボリュームラッシュ</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">バインドロック</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">リペア(付け足し)</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment6')" data-category="まつげエクステ" data-price="15000">フラットラッシュ</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment7')" data-category="まつげエクステ" data-price="15000">ボリュームラッシュ</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment8')" data-category="まつげエクステ" data-price="15000">バインドロック</button>
+                <button type="button" class="symptoms-button" onclick="selectSymptom(this, 'treatment9')" data-category="まつげエクステ" data-price="15000">リペア(付け足し)</button>
             </div>
 
             <label id="repairLabel"></label>
@@ -913,14 +1084,29 @@
             if (savedPhone) document.getElementById('phone').value = savedPhone;
         });
 
+        // スムーズスクロール
+        document.querySelectorAll('.side-nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:#bd9888;"><strong>来店回数</strong></span>：${visitCount}` : '・来店回数';
             const selectedMenuText = selectedMenu ? `・<span style="color:#bd9888;"><strong>コース</strong></span>：${selectedMenu}` : '・コースが未選択です';
 
-            const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:#bd9888;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
-                : '・メニューが未選択です';
+const selectedSymptomText = selectedSymptom.length > 0
+    ? `<span style="color:#13ca5e;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.map(item => `《${item.category}》${item.name}`).join('<br>・')}`
+    : '・メニューが未選択です';
 
             const irradiationsText = irradiationsCount
                 ? `<span style="color:#bd9888;"><strong>【本数】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
@@ -1019,74 +1205,47 @@
             });
         });
 
-        function selectSymptom(button, treatmentId) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+function selectSymptom(button, treatmentId) {
+    // 選択された日時をリセット
+    selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    const treatmentText = document.getElementById('treatment-text');
+    const selectedMenusDisplay = document.getElementById("selected-menus-display");
+    const selectedMenuNameDiv = document.getElementById('selected-menu-name');
 
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
-            const treatmentText = document.getElementById('treatment-text');
-            selectedSymptom = button.textContent;
+    // クリックしたボタンがすでに `active` なら解除
+    if (button.classList.contains('active')) {
+        button.classList.remove('active');
+    } else {
+        let updatedSelectedButtons = document.querySelectorAll('.symptoms .symptoms-button.active');
+        if (updatedSelectedButtons.length >= 3) return;
+        button.classList.add('active');
+    }
 
-            const repairLabel = document.getElementById('repairLabel');
-            const repairButtons = document.getElementById('repairButtons');
+    // ← ここで最新状態を再取得
+    let updatedSelectedButtons = document.querySelectorAll('.symptoms .symptoms-button.active');
 
-            const baindLabel = document.getElementById('baindLabel');
-            const baindButtons = document.getElementById('baindButtons');
+    // メニュー時間と価格をリセット
+    selectedMenuTime = 0;
+    selectedSymptom = [];
+    menuPrice = 0;
 
-            if (selectedSymptom === 'フラットラッシュ' || selectedSymptom === 'ボリュームラッシュ') {
-                button.insertAdjacentElement("afterend", repairLabel);
-                repairLabel.insertAdjacentElement("afterend", repairButtons);
-                repairLabel.style.display = 'block';
-                repairButtons.style.display = 'flex';
+    // ボタンがすべて解除された場合
+    if (updatedSelectedButtons.length === 0) {
+        treatmentText.style.display = 'none';
+        selectedMenusDisplay.style.display = 'none';
+        selectedMenusDisplay.innerHTML = '';
+        selectedMenuNameDiv.style.display = 'none';  // ← 忘れずここで非表示に
+        return;
             } else {
-                repairLabel.style.display = 'none';
-                repairButtons.style.display = 'none';
-            }
-
-            if (selectedSymptom === 'バインドロック') {
-                button.insertAdjacentElement("afterend", baindLabel);
-                baindLabel.insertAdjacentElement("afterend", baindButtons);
-                baindLabel.style.display = 'block';
-                baindButtons.style.display = 'flex';
-            } else {
-                baindLabel.style.display = 'none';
-                baindButtons.style.display = 'none';
-            }
-
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
-                treatmentText.style.display = 'none';
-                // repairButtons も非表示にする
-                repairLabel.style.display = 'none';
-                repairButtons.style.display = 'none';
-                // repairButtons も非表示にする
-                baindLabel.style.display = 'none';
-                rbaindButtons.style.display = 'none';
-                return; // ここで処理を終了
-            } else {
-                // 1つだけ選択状態にする
-if (updatedSelectedButtons.length > 3) {
-    // 4つ以上選択されたら、今回押したボタンの選択を戻す
-    button.classList.remove('active');
-
-    // アラートを表示して処理終了
-    alert('最大3つまで選択できます。');
-
-    return; // これ以上の処理を中断
-}
-
-                // 選択されたメニューの時間を取得して保存
-                const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+                // 選択された各ボタンについて処理
+updatedSelectedButtons.forEach((btn) => {
+    const selectedMenuName = btn.textContent;
+    const category = btn.getAttribute('data-category'); // 追加
+    selectedSymptom.push({ category, name: selectedMenuName }); // ← 変更
+    selectedMenuTime += menuTimes[selectedMenuName] || 0;
+    menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
+});
             }
 
             console.log('選択されたメニューの時間:', selectedMenuTime);
@@ -1137,20 +1296,127 @@ if (updatedSelectedButtons.length > 3) {
                 treatmentText.innerHTML = '';
             }
 
-            // `treatment-text` を選択されたボタンの直後に移動
-            button.parentNode.insertBefore(treatmentText, button.nextSibling);
+            // 移動させる
+            button.parentNode.insertBefore(document.getElementById("treatment-text"), button.nextSibling);
 
-            // トリートメントテキストを表示
+if (selectedSymptom.length > 0) {
+    selectedMenusDisplay.innerHTML = `
+        <div class="menu-items-wrapper">
+            ${selectedSymptom.map(item => `
+                <div class="menu-item">
+                    <span>《${item.category}》<br>${item.name}</span>
+                    <button class="remove-button" data-category="${item.category}" data-name="${item.name}" onclick="removeSymptom(this)">✕</button>
+                </div>
+            `).join('')}
+        </div>
+    `;
+    selectedMenusDisplay.style.display = 'block';
+} else {
+    selectedMenusDisplay.innerHTML = '';
+    selectedMenusDisplay.style.display = 'none';
+}
+
+// ラベルとボタンの要素取得
+const repairLabel = document.getElementById('repairLabel');
+const repairButtons = document.getElementById('repairButtons');
+const baindLabel = document.getElementById('baindLabel');
+const baindButtons = document.getElementById('baindButtons');
+
+// すべてのラベルとボタンを非表示
+repairLabel.style.display = 'none';
+repairButtons.style.display = 'none';
+baindLabel.style.display = 'none';
+baindButtons.style.display = 'none';
+
+// 選択中のボタンのテキストを取得
+const selectedNames = Array.from(updatedSelectedButtons).map(btn => btn.textContent);
+
+// ラベルやボタンが既に挿入されている親から remove せずに、一度表示対象の直後に再配置（display制御のみ）
+if (selectedNames.includes('フラットラッシュ') || selectedNames.includes('ボリュームラッシュ')) {
+    const targetText = selectedNames.includes('フラットラッシュ') ? 'フラットラッシュ' : 'ボリュームラッシュ';
+    const targetButton = Array.from(updatedSelectedButtons).find(btn => btn.textContent === targetText);
+
+    // 既に正しい位置にない場合のみ再配置
+    if (repairLabel.previousElementSibling !== targetButton) {
+        targetButton.insertAdjacentElement("afterend", repairLabel);
+        repairLabel.insertAdjacentElement("afterend", repairButtons);
+    }
+
+    repairLabel.style.display = 'block';
+    repairButtons.style.display = 'flex';
+}
+
+// バインドロックの処理
+if (selectedNames.includes('バインドロック')) {
+    const targetButton = Array.from(updatedSelectedButtons).find(btn => btn.textContent === 'バインドロック');
+
+    if (baindLabel.previousElementSibling !== targetButton) {
+        targetButton.insertAdjacentElement("afterend", baindLabel);
+        baindLabel.insertAdjacentElement("afterend", baindButtons);
+    }
+
+    baindLabel.style.display = 'block';
+    baindButtons.style.display = 'flex';
+}
+
+
             treatmentText.style.display = 'block';
 
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
-
-            // 表示を更新
             updateDisplayInfo();
         }
+
+function removeSymptom(button) {
+    const category = button.getAttribute('data-category');
+    const name = button.getAttribute('data-name');
+
+    // active を外す
+    const buttons = document.querySelectorAll('.symptoms button');
+    buttons.forEach(btn => {
+        if (btn.textContent === name && btn.getAttribute('data-category') === category) {
+            btn.classList.remove('active');
+        }
+    });
+
+    // selectedSymptom から削除
+    selectedSymptom = selectedSymptom.filter(item => !(item.category === category && item.name === name));
+
+    // 時間と価格を再計算
+    selectedMenuTime = 0;
+    menuPrice = 0;
+    selectedSymptom.forEach(item => {
+        selectedMenuTime += menuTimes[item.name] || 0;
+        const btn = [...document.querySelectorAll('.symptoms button')].find(
+            b => b.textContent === item.name && b.getAttribute('data-category') === item.category
+        );
+        if (btn) {
+            menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
+        }
+    });
+
+    updateSelectedMenusDisplay();
+    updateDisplayInfo();
+}
+
+function updateSelectedMenusDisplay() {
+    const selectedMenusDisplay = document.getElementById("selected-menus-display");
+
+    if (selectedSymptom.length > 0) {
+        selectedMenusDisplay.innerHTML = `
+            <div class="menu-items-wrapper">
+                ${selectedSymptom.map(item => `
+                    <div class="menu-item">
+                        <span>《${item.category}》<br>${item.name}</span>
+                        <button class="remove-button" data-category="${item.category}" data-name="${item.name}" onclick="removeSymptom(this)">✕</button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        selectedMenusDisplay.style.display = 'block';
+    } else {
+        selectedMenusDisplay.innerHTML = '';
+        selectedMenusDisplay.style.display = 'none';
+    }
+}
 
         function selectirradiations(button) {
             /* 訪問回数ボタンの選択状態をリセット */
