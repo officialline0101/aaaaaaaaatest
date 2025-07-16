@@ -832,6 +832,18 @@
             border-color: #ef5350;
         }
 
+#selected-menus-display {
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    opacity: 0 !important;
+}
+
+
         .datetime-input {
             width: 100%;
             padding: 18px;
@@ -1169,11 +1181,7 @@
             <button class="edit-button" onclick="scrollToElement('firstVisit')">修正する</button>
         </div>
         <hr>
-        <div class="info-row">
-            <p>${selectedMenuText}</p>
-            <button class="edit-button" onclick="scrollToElement('course')">修正する</button>
-        </div>
-        <hr>
+
         <div class="info-row">
             <p>${selectedSymptomText}</p>
             <button class="edit-button" onclick="scrollToElement('male'); scrollToElement('female'); scrollToElement('extensions'); scrollToElement('facial');">修正する</button>
@@ -1268,12 +1276,10 @@
             menuPrice = 0;
 
             // ボタンがすべて解除された場合
-            if (updatedSelectedButtons.length === 0) {
-                treatmentText.style.display = 'none';
-                selectedMenusDisplay.style.display = 'none';
-                selectedMenusDisplay.innerHTML = '';
-                selectedMenuNameDiv.style.display = 'none';  // ← 忘れずここで非表示に
-                return;
+if (updatedSelectedButtons.length === 0) {
+    treatmentText.style.display = 'none';
+    selectedMenuNameDiv.style.display = 'none';
+    return;
             } else {
                 // 選択された各ボタンについて処理
                 updatedSelectedButtons.forEach((btn) => {
@@ -1422,59 +1428,6 @@
             treatmentText.style.display = 'block';
 
             updateDisplayInfo();
-        }
-
-        function removeSymptom(button) {
-            const category = button.getAttribute('data-category');
-            const name = button.getAttribute('data-name');
-
-            // active を外す
-            const buttons = document.querySelectorAll('.symptoms button');
-            buttons.forEach(btn => {
-                if (btn.textContent === name && btn.getAttribute('data-category') === category) {
-                    btn.classList.remove('active');
-                }
-            });
-
-            // selectedSymptom から削除
-            selectedSymptom = selectedSymptom.filter(item => !(item.category === category && item.name === name));
-
-            // 時間と価格を再計算
-            selectedMenuTime = 0;
-            menuPrice = 0;
-            selectedSymptom.forEach(item => {
-                selectedMenuTime += menuTimes[item.name] || 0;
-                const btn = [...document.querySelectorAll('.symptoms button')].find(
-                    b => b.textContent === item.name && b.getAttribute('data-category') === item.category
-                );
-                if (btn) {
-                    menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
-                }
-            });
-
-            updateSelectedMenusDisplay();
-            updateDisplayInfo();
-        }
-
-        function updateSelectedMenusDisplay() {
-            const selectedMenusDisplay = document.getElementById("selected-menus-display");
-
-            if (selectedSymptom.length > 0) {
-                selectedMenusDisplay.innerHTML = `
-            <div class="menu-items-wrapper">
-                ${selectedSymptom.map(item => `
-                    <div class="menu-item">
-                        <span>《${item.category}》<br>${item.name}</span>
-                        <button class="remove-button" data-category="${item.category}" data-name="${item.name}" onclick="removeSymptom(this)">✕</button>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-                selectedMenusDisplay.style.display = 'block';
-            } else {
-                selectedMenusDisplay.innerHTML = '';
-                selectedMenusDisplay.style.display = 'none';
-            }
         }
 
 function selectirradiations(button) {
@@ -1659,7 +1612,7 @@ const irradiationsText = formData.irradiationsCount || '';
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n紹介者様：${formData.introduction}\nコース：${formData.selectedMenu}\nメニュー：${selectedSymptomText},${irradiationsText}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\n紹介者様：${formData.introduction}\nメニュー：${selectedSymptomText},${irradiationsText}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
