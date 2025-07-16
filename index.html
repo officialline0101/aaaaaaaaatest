@@ -473,6 +473,14 @@
             /* テキストを中央揃えにする */
         }
 
+        .highlight-texthissu {
+            display: block;
+            font-weight: 300;
+            text-align: center;
+            text-indent: 40px;
+            /* テキストを中央揃えにする */
+        }
+
         .red-circle {
             color: red;
             /* 赤色に設定 */
@@ -788,7 +796,7 @@
 
         <div id="male" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">来店引取り</span>
+                <span class="highlight-texthissu">来店引取り<span class="required">必須</span></span>
             </div>
             <div class="info-text">※色合いに関しましては下に備考欄がございますので<br>そちらに記載をお願いします。</div>
             <div class="symptoms">
@@ -798,7 +806,7 @@
                 <button type="button" onclick="selectSymptom(this)" data-category="来店引取り" data-price="15000">その他</button>
             </div>
             <div class="highlight-background">
-                <span class="highlight-text">オプション</span>
+                <span class="highlight-text">オプション<span class="required">必須</span></span>
             </div>
             <div class="irradiations">
                 <button type="button" id="firstirradiations" onclick="selectirradiations(this)" data-price="15000">予算3000円</button>
@@ -811,7 +819,7 @@
 
         <div id="female" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">婚礼相談</span>
+                <span class="highlight-texthissu">婚礼相談<span class="required">必須</span></span>
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this)" data-category="婚礼相談" data-price="15000">ブーケの相談</button>
@@ -822,7 +830,7 @@
 
         <div id="whitening" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">押し花の相談</span>
+                <span class="highlight-texthissu">押し花の相談<span class="required">必須</span></span>
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this)" data-category="押し花の相談" data-price="15000">引取り</button>
@@ -833,7 +841,7 @@
 
         <div id="flowerlesson" class="menu-section">
             <div class="highlight-background">
-                <span class="highlight-text">フラワーレッスン</span>
+                <span class="highlight-texthissu">フラワーレッスン<span class="required">必須</span></span>
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this)" data-category="フラワーレッスン" data-price="15000">基本コース</button>
@@ -855,7 +863,6 @@
 <div id="baindButtons2">
     <input type="text" id="weddingDate" placeholder="例）2025年10月10日" oninput="saveInput('weddingDate')" style="width: 100%; padding: 8px;">
 </div>
-
 
         <div class="label">希望日時<span class="required">必須</span></div>
         <div class="calendar-container">
@@ -1358,62 +1365,73 @@ if (isBaindSelected) {
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                venue: document.getElementById('venue').value.trim(),
-                weddingDate: document.getElementById('weddingDate').value.trim(),
-                visitCount: visitCount,
-                selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                irradiationsCount: irradiationsCount,
-                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        venue: document.getElementById('venue').value.trim(),
+        weddingDate: document.getElementById('weddingDate').value.trim(),
+        visitCount: visitCount,
+        selectedMenu: selectedMenu,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+        irradiationsCount: irradiationsCount,
+        dates: selectedFullDate ? [selectedFullDate] : null,
+        message: document.getElementById('message').value.trim()
+    };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
+    // 必須項目のチェック
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
 
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
-            }
+    if (!formData.phone) {
+        alert('電話番号を入力してください。');
+        return;
+    }
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
 
-            if (!formData.dates) {
-                alert('希望日時を選択してください。');
-                return;
-            }
+    if (!formData.dates) {
+        alert('希望日時を選択してください。');
+        return;
+    }
 
-            // selectedSymptomを文字列に整形
-            const selectedSymptomText = formData.selectedSymptom
-                ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
-                : 'メニュー未選択';
+    if (!formData.venue) {
+        alert('会場名を入力してください。');
+        return;
+    }
 
-            // irradiationsCountの整形（nullチェック）
-            const irradiationsText = formData.irradiationsCount || 'なし';
+    if (!formData.weddingDate) {
+        alert('挙式日を入力してください。');
+        return;
+    }
 
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n≪ISELY OSAKA≫\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${selectedSymptomText},${irradiationsText},${formData.venue},${formData.weddingDate}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // 各項目を文字列として整形（空要素は除外）
+    const selectedSymptomText = formData.selectedSymptom
+        ? formData.selectedSymptom.map(item => item.name).join(',')
+        : '';
+
+    const optionalDetails = [
+        selectedSymptomText,
+        formData.irradiationsCount,
+        formData.venue,
+        formData.weddingDate
+    ].filter(Boolean).join(','); // 空文字やnull/undefinedを除外して結合
+
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\n≪ISELY OSAKA≫\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${optionalDetails}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
+    }]).then(() => {
+        alert('当日キャンセルは無いようにお願いいたします。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
