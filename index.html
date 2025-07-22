@@ -887,7 +887,7 @@
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment21')" data-price="4000">占い教室</button>
                 <div class="info-texturanai">毎月第1、第3火曜日で希望日をご入力ください。<br>例.7月第1火曜日</div>
-                <input type="text" id="name1" placeholder="希望日を入力してください" oninput="saveInput('name1')">
+                <input type="text" id="kibounitizi" placeholder="希望日を入力してください">
             </div>
         </div>
 
@@ -1170,6 +1170,7 @@
         document.getElementById('name1').addEventListener('input', updateDisplayInfo);
         document.getElementById('name2').addEventListener('input', updateDisplayInfo);
         document.getElementById('name3').addEventListener('input', updateDisplayInfo);
+        document.getElementById('kibounitizi').addEventListener('input', updateDisplayInfo);
         document.getElementById('dateofbirth1').addEventListener('input', updateDisplayInfo);
         document.getElementById('dateofbirth2').addEventListener('input', updateDisplayInfo);
         document.getElementById('dateofbirth3').addEventListener('input', updateDisplayInfo);
@@ -1480,6 +1481,7 @@ if (treatmentId === 'treatment21') {
                 name2: document.getElementById('name2').value.trim(),
                 dateofbirth2: document.getElementById('dateofbirth2').value.trim(), // 生年月日を取得
                 name3: document.getElementById('name3').value.trim(),
+                kibounitizi: document.getElementById('kibounitizi').value.trim(),
                 dateofbirth3: document.getElementById('dateofbirth3').value.trim(), // 生年月日を取得
                 visitCount: visitCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
@@ -1507,7 +1509,7 @@ if (treatmentId === 'treatment21') {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n1人目お名前：${formData.name1}\n1人目生年月日：${formData.dateofbirth1}\n2人目お名前：${formData.name2}\n2人目生年月日：${formData.dateofbirth2}\n3人目お名前：${formData.name3}\n3人目生年月日：${formData.dateofbirth3}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\n1人目お名前：${formData.name1}\n1人目生年月日：${formData.dateofbirth1}\n2人目お名前：${formData.name2}\n2人目生年月日：${formData.dateofbirth2}\n3人目お名前：${formData.name3}\n3人目生年月日：${formData.dateofbirth3}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}${formData.kibounitizi}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
