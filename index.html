@@ -186,6 +186,9 @@
         }
 
         .visit-buttons,
+        .kibou1-buttons,
+        .kibou2-buttons,
+        .kibou3-buttons,
         .childsgender-buttons,
         .Brothersgender-buttons,
         .hairmakeup-buttons,
@@ -203,6 +206,9 @@
         }
 
         .visit-buttons button,
+        .kibou1-buttons button,
+        .kibou2-buttons button,
+        .kibou3-buttons button,
         .childsgender-buttons button,
         .Brothersgender-buttons button,
         .hairmakeup-buttons button,
@@ -225,6 +231,9 @@
         }
 
         .visit-buttons button.active,
+        .kibou1-buttons button.active,
+        .kibou2-buttons button.active,
+        .kibou3-buttons button.active,
         .childsgender-buttons button.active,
         .Brothersgender-buttons button.active,
         .hairmakeup-buttons button.active,
@@ -904,6 +913,23 @@
             outline: none;
             background-color: #f9fefc;
         }
+
+        .labelnigyou {
+            display: block;
+            margin-top: 3px;
+            /* ← 追加 */
+            margin-bottom: 10px;
+            padding: 3px;
+            font-weight: 600;
+            background-color: #a8b9a7;
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+            text-align: center;
+            text-indent: 0px;
+            position: relative;
+            overflow: hidden;
+        }
     </style>
 </head>
 
@@ -926,14 +952,24 @@
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
+        <div class="label">お伺いするご住所の<span class="required">必須</span><br>表札名(里帰りの場合)</div>
+        <input type="text" id="hyousatu" placeholder="表札名を入力してください" oninput="saveInput('hyousatu')">
+
         <div class="highlight-background">
-            <div class="kibounitizi">希望日時<span class="required">必須</span></div>
+            <div class="kibounitizi">撮影希望日<span class="required">必須</span></div>
         </div>
 
         <!-- カスタム placeholder 表示用 -->
         <div class="datetime-wrapper" style="text-align: center;">
-            <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-            <input type="datetime-local" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+            <span class="placeholder" id="placeholder1">⇩タップして日付を入力⇩</span>
+            <input type="date" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日付を入力">
+        </div>
+
+        <div class="label">希望時間<span class="required">必須</span></div>
+        <div class="kibou1-buttons">
+            <button type="button" id="firstkibou1" onclick="selectkibou1(this)">10時</button>
+            <button type="button" id="repeatkibou1" onclick="selectkibou1(this)">13時</button>
+            <button type="button" id="sankibou1" onclick="selectkibou1(this)">相談したい</button>
         </div>
 
         <div class="highlight-background">
@@ -943,7 +979,14 @@
         <!-- カスタム placeholder 表示用 -->
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
-            <input type="datetime-local" id="date2" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+            <input type="date" id="date2" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+        </div>
+
+        <div class="label">希望時間<span class="required">必須</span></div>
+        <div class="kibou2-buttons">
+            <button type="button" id="firstkibou2" onclick="selectkibou2(this)">10時</button>
+            <button type="button" id="repeatkibou2" onclick="selectkibou2(this)">13時</button>
+            <button type="button" id="sankibou2" onclick="selectkibou2(this)">相談したい</button>
         </div>
 
         <div class="highlight-background">
@@ -953,20 +996,15 @@
         <!-- カスタム placeholder 表示用 -->
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
-            <input type="datetime-local" id="date3" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+            <input type="date" id="date3" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
         </div>
 
-        <div class="label">お伺いするご住所の表札名(里帰りの場合)<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
-
-        <div class="label">プランをお選びください<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">ミニプラン 　37,000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタンダードプラン 　50,000円+税</button>
-            <button type="button" id="sanVisit" onclick="selectVisit(this)">プレミアムプラン 　67,000円+税</button>
-            <button type="button" id="yonVisit" onclick="selectVisit(this)">赤ちゃんのいる暮らしプラン　37,000円+税</button>
+        <div class="label">希望時間<span class="required">必須</span></div>
+        <div class="kibou3-buttons">
+            <button type="button" id="firstkibou3" onclick="selectkibou3(this)">10時</button>
+            <button type="button" id="repeatkibou3" onclick="selectkibou3(this)">13時</button>
+            <button type="button" id="sankibou3" onclick="selectkibou3(this)">相談したい</button>
         </div>
-
         <div class="highlight-background">
             <div class="kibounitizi">お子様のお誕生日（任意）</span></div>
         </div>
@@ -974,7 +1012,7 @@
         <!-- カスタム placeholder 表示用 -->
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder4">⇩タップして日時を入力⇩</span>
-            <input type="datetime-local" id="date4" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+            <input type="date" id="date4" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
         </div>
 
         <div class="label">自然分娩 or 帝王切開（任意）</div>
@@ -983,13 +1021,10 @@
             <button type="button" onclick="selectFreshflowerphotography(this)">帝王切開</button>
         </div>
 
-        <div class="label">出張先住所※里帰りの場合や住所と出張先が異なる場合のみ記入</div>
+        <div class="labelnigyou">出張先住所<br>※里帰りの場合や住所と<br>出張先が異なる場合のみ記入</div>
         <textarea id="Businessaddress" placeholder="出張先をご記入ください。"></textarea>
 
-        <div class="label">表札のお名前（任意）</div>
-        <textarea id="nameplate" placeholder="表札のお名前をご記入ください。"></textarea>
-
-        <div class="label">お子様のお名前※未定の場合は空白で大丈夫です（任意）</div>
+        <div class="labelnigyou">お子様のお名前※未定の<br>場合は空白で大丈夫です（任意）</div>
         <input type="text" id="childsname" placeholder="例：祖母2人、父、母 など">
 
         <div class="label">お子様の性別（任意）</div>
@@ -1014,7 +1049,7 @@
         <div class="label">ご兄弟の年齢（任意）</div>
         <input type="tel" id="Siblingsage" placeholder="例：祖母2人、父、母 など">
 
-        <div class="label">撮影に参加される方の人数と続柄（任意）</div>
+        <div class="labelnigyou">撮影に参加される方の<br>人数と続柄（任意）</div>
         <input type="text" id="Participateintheshooting" placeholder="撮影に参加される方の人数と続柄をご記入ください">
 
         <div class="label">生花撮影ご希望の有無<span class="required">必須</span></div>
@@ -1079,9 +1114,11 @@
         document.addEventListener('DOMContentLoaded', function () {
             const savedName = localStorage.getItem('name');
             const savedPhone = localStorage.getItem('phone');
+            const savedhyousatu = localStorage.getItem('hyousatu');
 
             if (savedName) document.getElementById('name').value = savedName;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
+            if (savedhyousatu) document.getElementById('hyousatu').value = savedhyousatu;
         });
 
         // スムーズスクロール
@@ -1148,6 +1185,51 @@
             selectedVisitTime = visitTimes[visitCount];
 
             console.log('選択された訪問回数の時間:', selectedVisitTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        // 訪問回数の選択（初回・リピート）
+        function selectkibou1(element) {
+            document.querySelectorAll('.kibou1-buttons button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            kibou1Count = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedkibou1Time = kibou1Times[kibou1Count];
+
+            console.log('選択された訪問回数の時間:', selectedkibou1Time);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        // 訪問回数の選択（初回・リピート）
+        function selectkibou2(element) {
+            document.querySelectorAll('.kibou2-buttons button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            kibou2Count = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedkibou2Time = kibou2Times[kibou2Count];
+
+            console.log('選択された訪問回数の時間:', selectedkibou2Time);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        // 訪問回数の選択（初回・リピート）
+        function selectkibou3(element) {
+            document.querySelectorAll('.kibou3-buttons button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            kibou3Count = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedkibou3Time = kibou3Times[kibou1Count];
+
+            console.log('選択された訪問回数の時間:', selectedkibou3Time);
 
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
@@ -1320,9 +1402,9 @@
             const formData = {
     name: document.getElementById('name').value.trim(),
     phone: document.getElementById('phone').value.trim(),
+    hyousatu: document.getElementById('hyousatu').value.trim(),
     birthweight: document.getElementById('birthweight').value.trim(),
     Businessaddress: document.getElementById('Businessaddress').value.trim(),
-    nameplate: document.getElementById('nameplate').value.trim(),
     childsname: document.getElementById('childsname').value.trim(),
     Participateintheshooting: document.getElementById('Participateintheshooting').value.trim(),
     Brothersname: document.getElementById('Brothersname').value.trim(), // ← 追加
@@ -1333,6 +1415,7 @@
     FreshflowerphotographyCount,
     childsgenderCount,
     BrothersgenderCount, // ← スペル修正
+    kibou1Count, kibou2Count, kibou3Count,
     dates: [
         document.getElementById('date1').value,
         document.getElementById('date2').value,
@@ -1361,7 +1444,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n\nお子様のお誕生日\n・${formatDate(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\n表札のお名前\n・${formData.nameplate}\n\nお子様のお名前\n・${formData.childsname}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n出生体重\n・${formData.birthweight}\n\nご兄弟のお名前\n・${formData.Brothersname}\n\nご兄弟の性別\n・${formData.BrothersgenderCount}\n\nご兄弟の年齢\n・${formData.Siblingsage}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.kimonoCount}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】：\n・第一希望日\n${formatDate(formData.dates[0])}\n\n・第二希望日\n${formatDate(formData.dates[1])}\n\n・第三希望日\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\n表札名\n・${formData.hyousatu}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n\nお子様のお誕生日\n・${formatDate(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\nお子様のお名前\n・${formData.childsname}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n出生体重\n・${formData.birthweight}\n\nご兄弟のお名前\n・${formData.Brothersname}\n\nご兄弟の性別\n・${formData.BrothersgenderCount}\n\nご兄弟の年齢\n・${formData.Siblingsage}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.kimonoCount}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDateWithTime(formData.dates[0])}\n｟希望時間1｠\n・${formData.kibou1Count}\n\n｟第二希望日｠\n${formatDateWithTime(formData.dates[1])}\n｟希望時間2｠\n・${formData.kibou2Count}\n\n｟第三希望日｠\n${formatDateWithTime(formData.dates[2])}\n｟希望時間3｠\n・${formData.kibou3Count}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
