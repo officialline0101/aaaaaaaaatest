@@ -1095,10 +1095,10 @@
         <input type="text" id="Participateintheshooting" placeholder="撮影に参加される方の人数と続柄をご記入ください">
 
         <div class="label">生花撮影ご希望の有無<span class="required">必須</span></div>
-        <div class="kimono-buttons">
-            <button type="button" onclick="selectkimono(this)">有り</button>
-            <button type="button" onclick="selectkimono(this)">無し</button>
-            <button type="button" onclick="selectkimono(this)">相談したい</button>
+        <div class="kimono4-buttons">
+            <button type="button" onclick="selectkimono4(this)">有り</button>
+            <button type="button" onclick="selectkimono4(this)">無し</button>
+            <button type="button" onclick="selectkimono4(this)">相談したい</button>
         </div>
 
         <div class="label">◎お支度ご希望の有無<span class="required">必須</span></div>
@@ -1123,6 +1123,7 @@
         let kimonoCount = '';
         let kimono2Count = '';
         let kimono3Count = '';
+        let kimono4Count = '';
         let hairmakeupCount = '';
         let preparationphotoCount = '';
         let BrothersgenderCount = '';
@@ -1403,6 +1404,21 @@
         }
 
         // 訪問回数の選択（初回・リピート）
+        function selectkimono4(element) {
+            document.querySelectorAll('.kimono4-buttons button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            kimono4Count = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedkimono4Time = kimono4Times[kimono4Count];
+
+            console.log('選択された訪問回数の時間:', selectedkimono4Time);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        // 訪問回数の選択（初回・リピート）
         function selectkimono3(element) {
             document.querySelectorAll('.kimono3-buttons button').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -1536,7 +1552,7 @@
                 mugwortmainkid3: document.getElementById('mugwortmainkid3').value.trim(), 
     visitCount,
     hairmakeupCount,
-    kimonoCount, kimono2Count, kimono3Count,
+    kimonoCount, kimono2Count, kimono3Count, kimono4Count,
     FreshflowerphotographyCount,
     childsgenderCount,
     BrothersgenderCount, // ← スペル修正
@@ -1570,7 +1586,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\n表札名\n・${formData.hyousatu}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n\nお子様のお誕生日\n・${formatDateOnly(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\nお子様のお名前\n・${formData.childsname}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n出生体重\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟二人目ご兄弟のお名前｠\n・${formData.mugwortmainkid2}\n\n｟二人目ご兄弟の性別｠\n・${formData.kimono2Count}\n\n｟二人目ご兄弟の年齢｠\n・${formData.mugwortparticipants2}\n\n｟三人目ご兄弟のお名前｠\n・${formData.mugwortmainkid3}\n\n｟三人目ご兄弟の性別｠\n・${formData.kimono3Count}\n\n｟三人目ご兄弟の年齢｠\n・${formData.mugwortparticipants3}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.kimonoCount}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDateWithTime(formData.dates[0])}\n｟希望時間1｠\n・${formData.kibou1Count}\n\n｟第二希望日｠\n${formatDateWithTime(formData.dates[1])}\n｟希望時間2｠\n・${formData.kibou2Count}\n\n｟第三希望日｠\n${formatDateWithTime(formData.dates[2])}\n｟希望時間3｠\n・${formData.kibou3Count}\n\n｟メッセージ｠\n${formData.message}`
+                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\n表札名\n・${formData.hyousatu}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n\nお子様のお誕生日\n・${formatDateOnly(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\nお子様のお名前\n・${formData.childsname}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n出生体重\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimono4Count}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟二人目ご兄弟のお名前｠\n・${formData.mugwortmainkid2}\n\n｟二人目ご兄弟の性別｠\n・${formData.kimono2Count}\n\n｟二人目ご兄弟の年齢｠\n・${formData.mugwortparticipants2}\n\n｟三人目ご兄弟のお名前｠\n・${formData.mugwortmainkid3}\n\n｟三人目ご兄弟の性別｠\n・${formData.kimono3Count}\n\n｟三人目ご兄弟の年齢｠\n・${formData.mugwortparticipants3}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.kimonoCount}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDateWithTime(formData.dates[0])}\n｟希望時間1｠\n・${formData.kibou1Count}\n\n｟第二希望日｠\n${formatDateWithTime(formData.dates[1])}\n｟希望時間2｠\n・${formData.kibou2Count}\n\n｟第三希望日｠\n${formatDateWithTime(formData.dates[2])}\n｟希望時間3｠\n・${formData.kibou3Count}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
