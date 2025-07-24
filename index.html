@@ -1072,19 +1072,23 @@ function fetchSelectedFreshflowerphotography() {
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-        Yourresidentialaddress: document.getElementById('Yourresidentialaddress').value.trim(),
-        FreshflowerphotographyCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value,
-                    document.getElementById('date3').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+  // ✅ ここで最新のチェックボックス状態を取得
+  const selectedClothes = Array.from(document.querySelectorAll('input[name="freshflowerphotography"]:checked'))
+                               .map(cb => cb.value);
+
+  const formData = {
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    Yourresidentialaddress: document.getElementById('Yourresidentialaddress').value.trim(),
+    FreshflowerphotographyCount: selectedClothes, // ✅ ここに代入
+    dates: [
+      document.getElementById('date1').value,
+      document.getElementById('date2').value,
+      document.getElementById('date3').value
+    ],
+    message: document.getElementById('message').value.trim()
+  };
 
             // フォームデータのチェック
             if (!formData.name) {
@@ -1108,16 +1112,17 @@ function fetchSelectedFreshflowerphotography() {
             }
 
             // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n≪衣装レンタル≫\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟メニュー｠\n・衣装レンタル\n\n｟ご希望のお衣装｠\n・${formData.FreshflowerphotographyCount.join("／")}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n・${formData.message}`
-            }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+
+  liff.sendMessages([{
+    type: 'text',
+    text: `【予約フォーム】\n≪衣装レンタル≫\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟メニュー｠\n・衣装レンタル\n\n｟ご希望のお衣装｠\n・${formData.FreshflowerphotographyCount.join('、')}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n・${formData.message}`
+  }]).then(() => {
+    alert('当日キャンセルは無いようにお願いいたします。');
+    liff.closeWindow();
+  }).catch((err) => {
+    console.error('メッセージの送信に失敗しました', err);
+  });
+}
 
         function formatDate(datetime) {
             /* 日時文字列が空の場合は空文字を返す */
