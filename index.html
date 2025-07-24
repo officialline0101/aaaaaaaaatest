@@ -897,7 +897,7 @@
             <input type="datetime-local" id="date3" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
         </div>
 
-<div class="label">お子様の性別<span class="required">必須</span></div>
+<div class="labelContent">ご希望のお衣装<span class="required">必須</span></div>
 <div class="checkbox-group">
   <label class="checkbox-card">
     <input type="checkbox" name="freshflowerphotography" value="七五三3歳">
@@ -1029,25 +1029,23 @@
             updateDisplayInfo(); // 表示を更新
         }
 
-  function fetchSelectedFreshflowerphotography() {
-    const checkboxes = document.querySelectorAll('input[name="freshflowerphotography"]:checked');
-    const selected = [];
-    let totalTime = 0;
+function fetchSelectedFreshflowerphotography() {
+  const checkboxes = document.querySelectorAll('input[name="freshflowerphotography"]:checked');
+  const selected = [];
+  let totalTime = 0;
 
-    checkboxes.forEach(cb => {
-      selected.push(cb.value);
-      totalTime += FreshflowerphotographyTimes[cb.value] || 0;
-    });
-
-    console.log("選択された項目:", selected);
-    console.log("合計時間:", totalTime);
-
-    fetchAvailability(currentDate); // カレンダー更新処理
-  }
-
-  document.querySelectorAll('input[name="freshflowerphotography"]').forEach(cb => {
-    cb.addEventListener('change', fetchSelectedFreshflowerphotography);
+  checkboxes.forEach(cb => {
+    selected.push(cb.value);
+    totalTime += FreshflowerphotographyTimes[cb.value] || 0;
   });
+
+  FreshflowerphotographyCount = selected; // ← これを追加！！
+
+  console.log("選択された項目:", selected);
+  console.log("合計時間:", totalTime);
+
+  fetchAvailability(currentDate); // カレンダー更新処理
+}
 
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
@@ -1112,7 +1110,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪衣装レンタル≫\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟メニュー｠\n・衣装レンタル\n\n｟お子様の性別｠\n・${formData.FreshflowerphotographyCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n・${formData.message}`
+                text: `【予約フォーム】\n≪衣装レンタル≫\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n｟メニュー｠\n・衣装レンタル\n\n｟ご希望のお衣装｠\n・${formData.FreshflowerphotographyCount.join("／")}\n\n【希望日時】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メッセージ｠\n・${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
