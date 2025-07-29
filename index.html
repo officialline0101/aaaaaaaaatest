@@ -315,6 +315,19 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            transform-origin: center center;
+        }
+
+        .week-button:hover {
+            background-color: #444444;
+            transform: scale(1.15);
+            /* ドーン！ってくらい拡大🔥 */
+        }
+
+        .week-button:active {
+            transform: scale(0.95);
+            /* クリックした瞬間にギュッと縮む💥 */
         }
 
         .month-button-container {
@@ -332,6 +345,17 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+        }
+
+        .month-button:hover {
+            background-color: #444444;
+            transform: scale(1.15);
+            /* ドーン！ってくらい拡大🔥 */
+        }
+
+        .month-button:active {
+            transform: scale(0.95);
+            /* クリックした瞬間にギュッと縮む💥 */
         }
 
         .current-month {
@@ -747,7 +771,7 @@
     </div>
 
     <div class="container">
-        <h1>モイスティーヌ武蔵ヶ丘サロン<br>高宗恵美子予約フォーム</h1>
+        <h1>モイスティーヌ武蔵ヶ丘サロン<br>渡邊予約フォーム</h1>
 
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -835,7 +859,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2006999470-bdg0zMgQ'
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1143,9 +1167,9 @@
             <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="8700">afterフォロー</button>
             <div class="info-textopop">【afterフォロー】<br>所要時間：90分</div>
             <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="6700">モイスティーヌPro（シンプル）</button>
-            <div class="info-textopop">【モイスティーヌPro（シンプル）】<br>所要時間：60分</div>
+            <div class="info-textopop">【モイスティーヌPro（シンプル）】<br>時間がない方におすすめ✨<br>美容マッサージ＋イオントリートメント<br>のお得なコースです♪<br><br>①ご予約日の2,3日前からお控えください<br>☑️お顔剃り<br>☑️パーマ/ヘアカラー<br>☑️マツエク/まつ毛パーマ<br><br>②当日はボディースーツの着用はお控えください。<br>腰、首に濡れたパフを乗せて脊髄通電をするため、<br>また、よりリラックスをして施術を受けていただくために<br>ご協力をお願いいたします。<br>所要時間：60分</div>
             <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="10900">モイスティーヌPro（フルコース）</button>
-            <div class="info-textopop">【モイスティーヌPro（フルコース）】<br>所要時間：90分</div>
+            <div class="info-textopop">【モイスティーヌPro（フルコース）】<br>店長オススメ‼️<br>より【美】を追求したい方におすすめ✨<br>美容マッサージ＋イオントリートメント<br>更に毛穴に特化したディープ洗顔付🫧<br><br>①ご予約日の2,3日前からお控えください<br>☑️お顔剃り<br>☑️パーマ/ヘアカラー<br>☑️マツエク/まつ毛パーマ<br><br>②当日はボディースーツの着用はお控えください。<br>腰、首に濡れたパフを乗せて脊髄通電をするため<br>また、よりリラックスをして施術を受けていただくために<br>ご協力をお願いいたします。<br>所要時間：90分</div>
         `;
             }
 
@@ -1184,6 +1208,7 @@
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                irradiationsCount: irradiationsCount,
                 dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
                 message: document.getElementById('message').value.trim()
             };
@@ -1217,7 +1242,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n指名：高宗恵美子\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n指名：渡邊\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
@@ -1249,7 +1274,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwptSRNzH4fuK-DUWKG9dcCH6CDu52Nu9CMeKy_FaMIq8wOorxQFudP52H76ZJvaO50kw/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbxVBDSFhp7bFGlaGJz66jNpa4oWsmngWtQ_ocovvwHxTKu4gIZ4fcnMwUynbjCmzvpOFw/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
