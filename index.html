@@ -482,45 +482,58 @@
         padding: 50px 10px;
         margin-top: 30px;
     }
+
+        /* 必須マークのスタイル */
+        .required {
+            color: #ffffff;
+            /* ゴールド（黄色） */
+            font-weight: lighter;
+            /* 文字を細くする */
+            font-size: 0.7em;
+            margin-left: 5px;
+            vertical-align: 0.8em;
+            /* 位置を少し上に調整 */
+
+            /* 白色背景の四角形 */
+            background-color: rgb(255, 15, 15);
+            padding: 0 5px;
+            border-radius: 3px;
+            margin-right: 0px;
+        }
     </style>
 </head>
 
 <body>
-    <!-- 右側の追従ナビ -->
-    <div class="side-nav" id="sideNav">
-        <a href="#section-message">
-            <span>⇩</span>
-            <i class="fas fa-comment"></i>
-        </a>
-    </div>
 
     <div class="container">
         <h1>eyelashMe<br>アンケートフォーム</h1>
         <div class="info-text">以下全て入力後【アンケート送信】ボタンを押してください。</div>
-        <div class="label">ご来店日(例:西暦記載 ○年○月○日)</div>
+        <div class="label">お名前<span class="required">必須</span></div>
         <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">お名前(漢字フルネーム/ふりがな)</div>
-        <textarea id="message2" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
-
-        <div class="label">ご職業</div>
+        <div class="label">誕生月<span class="required">必須</span></div>
         <div class="priority-buttons">
-            <button type="button" id="onepriority" onclick="selectpriority(this)"> 会社員（職業）</button>
-            <button type="button" id="twopriority" onclick="selectpriority(this)">パート・アルバイト（職業）</button>
-            <button type="button" id="threepriority" onclick="selectpriority(this)">学生（職業）</button>
-            <button type="button" id="fourpriority" onclick="selectpriority(this)">専業主婦（職業）</button>
-            <button type="button" id="fivepriority" onclick="selectpriority(this)">その他（職業）</button>
+            <button type="button" id="onepriority" onclick="selectpriority(this)">1月</button>
+            <button type="button" id="twopriority" onclick="selectpriority(this)">2月</button>
+            <button type="button" id="threepriority" onclick="selectpriority(this)">3月</button>
+            <button type="button" id="fourpriority" onclick="selectpriority(this)">4月</button>
+            <button type="button" id="fivepriority" onclick="selectpriority(this)">5月</button>
+            <button type="button" id="onepriority" onclick="selectpriority(this)">6月</button>
+            <button type="button" id="twopriority" onclick="selectpriority(this)">7月</button>
+            <button type="button" id="threepriority" onclick="selectpriority(this)">8月</button>
+            <button type="button" id="fourpriority" onclick="selectpriority(this)">9月</button>
+            <button type="button" id="fivepriority" onclick="selectpriority(this)">10月</button>
+            <button type="button" id="fourpriority" onclick="selectpriority(this)">11月</button>
+            <button type="button" id="fivepriority" onclick="selectpriority(this)">12月</button>
         </div>
 
-        <div class="label">来店動機</div>
+        <div class="label">気になるメニュー（任意）</div>
+        <textarea id="message2" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+
+        <div class="label">商品のお知らせ配信を希望しますか？<span class="required">必須</span></div>
         <div class="demand-buttons">
-            <button type="button" id="onedemand" onclick="selectdemand(this)">HP（来店動機）</button>
-            <button type="button" id="twodemand" onclick="selectdemand(this)"> Instagram（来店動機）</button>
-            <button type="button" id="threedemand" onclick="selectdemand(this)">Google等での検索（来店動機）</button>
-            <button type="button" id="fourdemand" onclick="selectdemand(this)">ホットペッパービューティー（来店動機）</button>
-            <button type="button" id="fivedemand" onclick="selectdemand(this)">知人の紹介（来店動機）</button>
-            <button type="button" id="sixdemand" onclick="selectdemand(this)">通りすがり（来店動機）</button>
-            <button type="button" id="sevemdemand" onclick="selectdemand(this)">その他（来店動機）</button>
+            <button type="button" id="onedemand" onclick="selectdemand(this)">はい</button>
+            <button type="button" id="twodemand" onclick="selectdemand(this)">いいえ</button>
         </div>
 
         <button class="submit-button" onclick="submitForm()" div id="section-message">送信</button>
@@ -592,35 +605,29 @@
 
             // フォームデータのチェック
             if (!formData.message) {
-                alert('ご来店日を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
-            if (!formData.message2) {
                 alert('お名前を入力してください。');
                 return;
             }
 
             // フォームデータのチェック
-            if (!formData.priorityCount) {
-                alert('ご職業をご選択ください。');
+            if (!formData.message2) {
+                alert('誕生日を入力してください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.demandCount) {
-                alert('来店動機をご選択ください。');
+                alert('商品のお知らせ配信をご選択ください。');
                 return;
             }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前】\n・${formData.message2}\n\n【ご職業】\n・${formData.priorityCount}\n\n【来店動機】\n・${formData.demandCount}`
+                text: `≪アンケート≫\n【お名前】\n・${formData.message}\n\n【誕生月】\n・${formData.priorityCount}\n\n【気になるメニュー前】\n・${formData.message2}\n\n【お知らせ配信】\n・${formData.demandCount}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
-                alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
+                alert('ご記入ありがとうございます。');
                 /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
