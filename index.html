@@ -1184,7 +1184,7 @@
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
-            const visitCountText = visitCount ? `<span style="color:#13ca5e;"><strong>【ご来店回数】</strong></span><br>・${visitCount}` : '・来店回数が未選択です';
+            const visitCountText = visitCount ? `<span style="color:#13ca5e;"><strong>【年齢】</strong></span><br>・${visitCount}` : '・年齢が未選択です';
             const selectedMenuText = selectedMenu ? `<span style="color:#13ca5e;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
 
             const selectedSymptomText = selectedSymptom.length > 0
@@ -1594,6 +1594,11 @@
                 return;
             }
 
+            if (!formData.visitCount) {
+                alert('年齢を入力してください。');
+                return;
+            }
+
             if (!formData.selectedSymptom) {
                 alert('メニューを選択してください。');
                 return;
@@ -1614,7 +1619,7 @@
 
             liff.sendMessages([{
                 type: 'text',
-                text: `【ご予約内容】\n\n≪お名前≫：${formData.name}\n\n≪電話番号≫：${formData.phone}\n\n≪ご来店回数≫：${formData.visitCount}\n\n≪コース≫：${formData.selectedMenu}\n≪メニュー≫\n${selectedSymptomText}\n≪オプション≫\n${irradiationsText}\n\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n≪メッセージ≫\n${formData.message}`
+                text: `【ご予約内容】\n\n≪お名前≫：${formData.name}\n\n≪電話番号≫：${formData.phone}\n\n≪年齢≫：${formData.visitCount}\n\n≪コース≫：${formData.selectedMenu}\n≪メニュー≫\n${selectedSymptomText}\n≪オプション≫\n${irradiationsText}\n\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n≪メッセージ≫\n${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
