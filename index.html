@@ -995,7 +995,7 @@
             <input type="date" id="date3" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
         </div>
 
-        <div class="label">希望時間</div>
+        <div class="labelContent">希望時間</div>
         <div class="kibou3-buttons">
             <button type="button" id="firstkibou3" onclick="selectkibou3(this)">10時</button>
             <button type="button" id="repeatkibou3" onclick="selectkibou3(this)">13時</button>
@@ -1025,9 +1025,6 @@
             <button type="button" onclick="selectFreshflowerphotography(this)">自然分娩</button>
             <button type="button" onclick="selectFreshflowerphotography(this)">帝王切開</button>
         </div>
-
-        <div class="labelnigyou">出張先住所<br>※里帰りの場合や住所と<br>出張先が異なる場合のみ記入</div>
-        <textarea id="Businessaddress" placeholder="出張先をご記入ください。"></textarea>
 
         <div class="labelnigyou">お子様のお名前<br><span style="font-size: 13px;">（決まっていれば）</span></div>
         <input type="text" id="childsname" placeholder="例：祖母2人、父、母 など">
@@ -1477,7 +1474,6 @@
     phone: document.getElementById('phone').value.trim(),
     hyousatu: document.getElementById('hyousatu').value.trim(),
     birthweight: document.getElementById('birthweight').value.trim(),
-    Businessaddress: document.getElementById('Businessaddress').value.trim(),
     childsname: document.getElementById('childsname').value.trim(),
     Participateintheshooting: document.getElementById('Participateintheshooting').value.trim(),
                 mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
@@ -1519,7 +1515,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\n表札名\n・${formData.hyousatu}\n\nプラン\n・${formData.visitCount}\n\n撮影内容\n・${formData.FreshflowerphotographyCount}\n\nお子様のお誕生日\n・${formatDateOnly(formData.dates[3])}\n\n出張先住所\n・${formData.Businessaddress}\n\nお子様のお名前\n・${formData.childsname}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n出生体重\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟二人目ご兄弟のお名前｠\n・${formData.mugwortmainkid2}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.kimono4Count}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDateWithTime(formData.dates[0])}\n｟希望時間1｠\n・${formData.kibou1Count}\n\n｟第二希望日｠\n${formatDateWithTime(formData.dates[1])}\n｟希望時間2｠\n・${formData.kibou2Count}\n\n｟第三希望日｠\n${formatDateWithTime(formData.dates[2])}\n｟希望時間3｠\n・${formData.kibou3Count}\n\n｟メッセージ｠\n${formData.message}`
+                text: `【予約フォーム】\nお名前\n・${formData.name}\n\n電話番号\n・${formData.phone}\n\n表札名\n・${formData.hyousatu}\n\nプラン\n・${formData.visitCount}\n\nお子様のお誕生日\n・${formatDateOnly(formData.dates[3])}\n\n自然分娩 or 帝王切開\n・${formData.FreshflowerphotographyCount}\n\nお子様のお名前\n・${formData.childsname}\n\nお子様の性別\n・${formData.childsgenderCount}\n\n出生体重\n・${formData.birthweight}\n\n｟ご兄弟のお名前｠\n・${formData.mugwortmainkid}\n\n｟ご兄弟の性別｠\n・${formData.kimonoCount}\n\n｟ご兄弟の年齢｠\n・${formData.mugwortparticipants}\n\n｟二人目ご兄弟のお名前｠\n・${formData.mugwortmainkid2}\n\n撮影に参加\n・${formData.Participateintheshooting}\n\n生花撮影\n・${formData.kimono4Count}\n\nお支度\n・${formData.hairmakeupCount}\n\n【希望日時】\n｟第一希望日｠\n${formatDateWithTime(formData.dates[0])}\n｟希望時間1｠\n・${formData.kibou1Count}\n\n｟第二希望日｠\n${formatDateWithTime(formData.dates[1])}\n｟希望時間2｠\n・${formData.kibou2Count}\n\n｟第三希望日｠\n${formatDateWithTime(formData.dates[2])}\n｟希望時間3｠\n・${formData.kibou3Count}\n\n｟メッセージ｠\n${formData.message}`
             }]).then(() => {
                 alert('お問合せありがとうございます。追って担当者から返信をさせて頂きます。');
                 liff.closeWindow();
