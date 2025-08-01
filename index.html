@@ -985,8 +985,8 @@
                 <button type="button" onclick="selectSymptom(this)" data-category="エアコンクリーニング" data-price="21000">高性能機種(¥21,000)</button>
             </div>
 
-        <div class="labelhidariyose">型式番号</div>
-        <input type="tel" id="Modelnumber" placeholder="型式番号を入力してください">
+        <div class="labelhidariyose">エアコンの型式番号</div>
+        <input type="tel" id="EakonModelnumber" placeholder="エアコンの型式番号を入力してください">
 
             <div class="highlight-background">
                 <span class="highlight-text">オプション</span>
@@ -1044,6 +1044,10 @@
                 <button type="button" onclick="selectSymptom(this)" data-category="マッサージコース" data-price="15000">ドラム式洗濯機(¥33,000)</button>
                 <button type="button" onclick="selectSymptom(this)" data-category="マッサージコース" data-price="15000">縦型洗濯機（乾燥機能付き）(¥22,000)</button>
             </div>
+
+        <div class="labelhidariyose">洗濯機の型式番号</div>
+        <input type="tel" id="SentakukiModelnumber" placeholder="洗濯機の型式番号を入力してください">
+
             <div class="highlight-background">
                 <span class="highlight-text">オプション</span>
             </div>
@@ -1556,7 +1560,8 @@
             const formData = {
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
-                Modelnumber: document.getElementById('Modelnumber').value.trim(),
+                EakonModelnumber: document.getElementById('EakonModelnumber').value.trim(),
+                SentakukiModelnumber: document.getElementById('SentakukiModelnumber').value.trim(),
                 tellmetheaddress: document.getElementById('tellmetheaddress').value.trim(),
                 visitCount: visitCount,
                 selectedMenu: selectedMenu,
@@ -1611,8 +1616,12 @@
                 ? formData.selectedSymptom.map(item => `・${item.name}`).join('\n')
                 : 'メニュー未選択';
 
-const modelNumberText = formData.Modelnumber
-    ? `≪形式番号≫\n${formData.Modelnumber}\n`
+const EakonmodelNumberText = formData.EakonModelnumber
+    ? `｟エアコン型式番号｠\n${formData.EakonModelnumber}\n`
+    : '';
+
+const SentakukimodelNumberText = formData.SentakukiModelnumber
+    ? `｟洗濯機型式番号｠\n${formData.SentakukiModelnumber}\n`
     : '';
 
 const irradiationsText = formData.irradiationsCount
@@ -1621,7 +1630,7 @@ const irradiationsText = formData.irradiationsCount
 
 liff.sendMessages([{
     type: 'text',
-    text: `【ご予約内容】\n\n≪お名前≫：${formData.name}\n\n≪電話番号≫：${formData.phone}\n\n≪住所≫：${formData.tellmetheaddress}\n\n≪来店回数≫：${formData.visitCount}\n≪メニュー≫\n${selectedSymptomText}\n${modelNumberText}\n${irradiationsText}\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n≪メッセージ≫\n${formData.message}`
+    text: `【ご予約内容】\n\n≪お名前≫：${formData.name}\n\n≪電話番号≫：${formData.phone}\n\n≪住所≫：${formData.tellmetheaddress}\n\n≪来店回数≫：${formData.visitCount}\n\n≪メニュー≫\n${selectedSymptomText}\n${EakonmodelNumberText}\n${SentakukimodelNumberText}\n${irradiationsText}\n【希望日時】\n≪第一希望日≫\n${formatDate(formData.dates[0])}\n\n≪第二希望日≫\n${formatDate(formData.dates[1])}\n\n≪第三希望日≫\n${formatDate(formData.dates[2])}\n≪メッセージ≫\n${formData.message}`
 }]).then(() => {
     alert('当日キャンセルは無いようにお願いいたします。');
     liff.closeWindow();
