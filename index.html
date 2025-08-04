@@ -6,7 +6,7 @@
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
 <body>
-  <h2>画像を選んでアップロード</h2>
+  <h2>画像アップロード</h2>
   <input type="file" id="imageInput" accept="image/*" /><br /><br />
   <button onclick="uploadImage()">アップロード</button>
 
@@ -14,16 +14,12 @@
     let userId = "";
 
     async function init() {
-      try {
-        await liff.init({ liffId: "2005254357-zKma9BZk" });
-        if (!liff.isLoggedIn()) {
-          liff.login();
-        } else {
-          const profile = await liff.getProfile();
-          userId = profile.userId;
-        }
-      } catch (err) {
-        alert("LIFF初期化に失敗しました: " + err);
+      await liff.init({ liffId: "2005254357-zKma9BZk" }); // ← あなたのLIFF IDに置き換えてください
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      } else {
+        const profile = await liff.getProfile();
+        userId = profile.userId;
       }
     }
 
@@ -36,23 +32,25 @@
 
       const file = fileInput.files[0];
       if (file.size > 5 * 1024 * 1024) {
-        alert("5MB以下の画像を選んでください");
+        alert("5MB以下の画像を選択してください");
         return;
       }
 
       const reader = new FileReader();
       reader.onload = async function () {
-        const base64Image = reader.result.split(',')[1];
+        const base64 = reader.result.split(',')[1];
         const payload = {
-          image: base64Image,
+          image: base64,
           filename: file.name,
           userId: userId,
         };
 
-        const response = await fetch("https://script.google.com/macros/s/AKfycbwT4yLi-sWxdRYWUVJt5KWPIqc9j1iFZMPILWg3UjItHg8Bv6mLJwjYITNdOygCbchmUQ/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbyhRyfCyuX_L4px_UC17MioDkdTggEuopFanpOomRygxRIBtJyPVs8ANPqXgU7jHn5M7g/exec", { // ← あなたのGASデプロイURLに置き換えてください
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         });
 
         const result = await response.json();
