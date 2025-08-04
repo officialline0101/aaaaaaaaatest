@@ -1,65 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
   <title>画像アップロード</title>
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
 <body>
-  <h2>画像アップロード</h2>
-  <input type="file" id="imageInput" accept="image/*" /><br /><br />
-  <button onclick="uploadImage()">アップロード</button>
+  <h2>画像をアップロード</h2>
+  <input type="file" accept="image/*" id="imageInput" />
+  <button onclick="uploadImage()">送信</button>
 
   <script>
-    let userId = "";
-
-    async function init() {
-      await liff.init({ liffId: "2005254357-zKma9BZk" }); // ← あなたのLIFF IDに置き換えてください
-      if (!liff.isLoggedIn()) {
-        liff.login();
-      } else {
-        const profile = await liff.getProfile();
-        userId = profile.userId;
-      }
-    }
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbze7F_GY4LnOzxoPMO9XAOdAxlGmeBCzYhS_Kry_ySGD5eZ4OUEndcrVjsfVnF5UIeirg/exec';
 
     async function uploadImage() {
+      await liff.init({ liffId: "2005254357-zKma9BZk" });
+
       const fileInput = document.getElementById("imageInput");
-      if (!fileInput.files.length) {
+      const file = fileInput.files[0];
+      if (!file) {
         alert("画像を選択してください");
         return;
       }
 
-      const file = fileInput.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        alert("5MB以下の画像を選択してください");
-        return;
-      }
-
       const reader = new FileReader();
-      reader.onload = async function () {
-        const base64 = reader.result.split(',')[1];
-        const payload = {
-          image: base64,
-          filename: file.name,
-          userId: userId,
-        };
+      reader.onload = function(e) {
+        const base64Data = e.target.result.split(",")[1];
 
-        const response = await fetch("https://script.google.com/macros/s/AKfycbyhRyfCyuX_L4px_UC17MioDkdTggEuopFanpOomRygxRIBtJyPVs8ANPqXgU7jHn5M7g/exec", { // ← あなたのGASデプロイURLに置き換えてください
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+        liff.getProfile().then(profile => {
+          liff.getIDToken(); // optional
+
+          liff.getContext().then(ctx => {
+            const replyToken = ctx.extra?.replyToken; // LIFF v2.1で取得可能な場合のみ
+            const form = new FormData();
+            form.append("image", base64Data);
+            form.append("type", file.type);
+            form.append("replyToken", replyToken || ""); // 空でもOK（開発時）
+
+            fetch(GAS_URL, {
+              method: "POST",
+              body: form
+            }).then(res => res.text())
+              .then(txt => alert("アップロード完了: " + txt))
+              .catch(err => alert("送信エラー: " + err));
+          });
         });
-
-        const result = await response.json();
-        alert(result.message);
       };
       reader.readAsDataURL(file);
     }
-
-    window.onload = init;
   </script>
 </body>
 </html>
