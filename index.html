@@ -999,7 +999,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: '2007726513-4JyxVyzl'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1122,27 +1122,30 @@ function selectVisit(element) {
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                visitCount,
-            };
+function submitForm() {
+    const formData = {
+        visitCount,
+    };
 
-            if (!formData.visitCount) {
-                alert('プランをお選びください');
-                return;
-            }
+    if (!formData.visitCount || formData.visitCount.length === 0) {
+        alert('プランをお選びください');
+        return;
+    }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【生花】\n｟プラン｠\n・${formData.visitCount}`
-            }]).then(() => {
-                alert('お問合せありがとうございます。追って担当者から返信をさせて頂きます。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // visitCountの内容を1つずつ「・」付きで改行
+    const visitText = formData.visitCount.map(item => `・${item}`).join('\n');
+
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【生花】\n｟プラン｠\n${visitText}`
+    }]).then(() => {
+        alert('お問合せありがとうございます。追って担当者から返信をさせて頂きます。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(datetime) {
             /* 日時文字列が空の場合は空文字を返す */
