@@ -999,7 +999,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2007726513-4JyxVyzl'
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1123,8 +1123,9 @@ function selectVisit(element) {
         }
 
 function submitForm() {
+    // visitCountが複数の場合に備えて配列である前提
     const formData = {
-        visitCount,
+        visitCount,  // 例: ['１つめ', '２つめ', '３つめ']
     };
 
     if (!formData.visitCount || formData.visitCount.length === 0) {
@@ -1132,13 +1133,14 @@ function submitForm() {
         return;
     }
 
-    // visitCountの内容を1つずつ「・」付きで改行
-    const visitText = formData.visitCount.map(item => `・${item}`).join('\n');
+    // visitCountが配列なら1つずつ「・」付きで改行して表示
+    const visitCountText = Array.isArray(formData.visitCount)
+        ? formData.visitCount.map(item => `・${item}`).join('\n')
+        : `・${formData.visitCount}`; // 単一選択の可能性にも対応
 
-    // LINEトークにメッセージを送信
     liff.sendMessages([{
         type: 'text',
-        text: `【生花】\n｟プラン｠\n${visitText}`
+        text: `【生花】\n｟プラン｠\n${visitCountText}`
     }]).then(() => {
         alert('お問合せありがとうございます。追って担当者から返信をさせて頂きます。');
         liff.closeWindow();
