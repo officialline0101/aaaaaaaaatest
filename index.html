@@ -1012,6 +1012,7 @@
         let currentDate = new Date();
         let footsizeCount = '';
         let coordinationCount = '';
+        let clothessizeCount = '';
         let AnshinPackCount = '';
         let OtonaAnshinPackCount = '';
         let FreshflowerphotographyCount = [];
@@ -1042,9 +1043,11 @@
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
             const savedName = localStorage.getItem('name');
+            const savedYourresidentialaddress = localStorage.getItem('Yourresidentialaddress');
             const savedPhone = localStorage.getItem('phone');
 
             if (savedName) document.getElementById('name').value = savedName;
+            if (savedYourresidentialaddress) document.getElementById('Yourresidentialaddress').value = savedYourresidentialaddress;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
         });
 
@@ -1177,6 +1180,21 @@
         }
 
         // 訪問回数の選択（初回・リピート）
+        function selectclothessize(element) {
+            document.querySelectorAll('.clothessize-buttons button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            clothessizeCount = element.innerText;
+
+            // 選択された訪問回数に対応する時間を取得
+            selectedclothessizeTime = clothessizeTimes[clothessizeCount];
+
+            console.log('選択された訪問回数の時間:', selectedclothessizeTime);
+
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
+
+        // 訪問回数の選択（初回・リピート）
         function selectcoordination(element) {
             document.querySelectorAll('.coordination-buttons button').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -1241,6 +1259,11 @@
                 return;
             }
 
+            if (!formData.Yourresidentialaddress) {
+                alert('ご住所を入力してください');
+                return;
+            }
+
             if (!formData.phone) {
                 alert('電話番号を入力してください。');
                 return;
@@ -1255,7 +1278,7 @@
 
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n≪衣装レンタル≫\n｟お名前｠\n・${formData.name}\n\n｟電話番号｠\n・${formData.phone}\n\n【使用予定日】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メニュー｠\n・衣装レンタル\n\n｟ご希望のお衣装｠\n${formData.FreshflowerphotographyCount.length > 0 ? '・' + formData.FreshflowerphotographyCount.join('\n・') : '・未選択'}\n\n【お子様】\n\n｟足のサイズ｠\n・${formData.footsizeCount}\n\n｟あんしんパック｠\n・${formData.AnshinPackCount}\n\n【大人】\n｟普段お履きの靴のサイズ｠\n・${formData.Otonaisyoubangou}\n\n｟服のサイズ｠\n・${formData.clothessizeCount}\n\n｟ご年齢｠\n・${formData.Otonanenrei}\n\n｟帯小物コーディネート｠\n・${formData.coordinationCount}\n\n｟あんしんパック｠\n・${formData.OtonaAnshinPackCount}\n\n｟メッセージ｠\n・${formData.message}`
+                text: `【予約フォーム】\n≪衣装レンタル≫\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n【使用予定日】\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟メニュー｠\n・衣装レンタル\n\n｟ご希望のお衣装｠\n${formData.FreshflowerphotographyCount.length > 0 ? '・' + formData.FreshflowerphotographyCount.join('\n・') : '・未選択'}\n\n【お子様】\n\n｟足のサイズ｠\n・${formData.footsizeCount}\n\n｟あんしんパック｠\n・${formData.AnshinPackCount}\n\n【大人】\n｟普段お履きの靴のサイズ｠\n・${formData.Otonaisyoubangou}\n\n｟服のサイズ｠\n・${formData.clothessizeCount}\n\n｟ご年齢｠\n・${formData.Otonanenrei}\n\n｟帯小物コーディネート｠\n・${formData.coordinationCount}\n\n｟あんしんパック｠\n・${formData.OtonaAnshinPackCount}\n\n｟メッセージ｠\n・${formData.message}`
             }]).then(() => {
                 alert('お問合せありがとうございます。追って担当者から返信をさせて頂きます。');
                 liff.closeWindow();
