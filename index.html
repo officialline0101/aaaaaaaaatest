@@ -54,7 +54,7 @@
             font-size: 24px;
             /* 矢印をさらに大きく */
             position: absolute;
-            left: -0px;
+            left: 2px;
             /* 左端に寄せる */
             top: 13px;
             /* さらに下へ */
@@ -578,19 +578,20 @@
             margin: -5px 0;
         }
 
-.edit-button {
-    background-color: #ff6b6b;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    white-space: nowrap;
-    /* 改行を防ぐ */
-    width: auto; /* ←ここを変更 */
-    text-align: center;
-}
+        .edit-button {
+            background-color: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+            /* 改行を防ぐ */
+            width: auto;
+            /* ←ここを変更 */
+            text-align: center;
+        }
 
         .edit-button:hover {
             background-color: #ff4f4f;
@@ -1017,43 +1018,55 @@
             saveMenuSelection(menuType);
         }
 
-        function applyPreviousSelection() {
-            // 前回のメニュー、症状、オプションを取得
-            const savedMenu = localStorage.getItem('selectedMenu');
-            const savedSymptoms = JSON.parse(localStorage.getItem('selectedSymptoms') || '[]');
-            const savedIrradiations = JSON.parse(localStorage.getItem('selectedIrradiations') || '[]');
+function applyPreviousSelection() {
+    const savedMenu = localStorage.getItem('selectedMenu') || '';
+    const savedSymptoms = JSON.parse(localStorage.getItem('selectedSymptoms') || '[]');
+    const savedIrradiations = JSON.parse(localStorage.getItem('selectedIrradiations') || '[]');
 
-            if (!savedMenu && savedSymptoms.length === 0 && savedIrradiations.length === 0) {
-                alert('前回のメニューが見つかりません💦');
-                return;
-            }
+    if (!savedMenu && savedSymptoms.length === 0 && savedIrradiations.length === 0) {
+        alert('前回のメニューが見つかりません💦');
+        return;
+    }
 
-            // 前回選択したメニューを表示
-            if (savedMenu) {
-                document.getElementById(savedMenu).style.display = 'block';
-            }
+    // ✅ 前回の選択状態を初期化
+    // 1. オプションの active クラスを全て外す
+    document.querySelectorAll('.irradiations button.active').forEach(btn => {
+        btn.classList.remove('active');
+    });
 
-            // 施術メニューを選択
-            savedSymptoms.forEach(symptomId => {
-                const symptomButton = document.querySelector(`button[onclick*="selectSymptom"][onclick*="'${symptomId}'"]`);
-                if (symptomButton) symptomButton.click();
-            });
+    // 2. selectedIrradiations をリセット
+    localStorage.setItem('selectedIrradiations', JSON.stringify([]));
 
-            // オプションを選択
-            savedIrradiations.forEach(irradiationId => {
-                const irradiationButton = document.getElementById(irradiationId);
-                if (irradiationButton) irradiationButton.click();
-            });
+    // ✅ メニュー表示
+    if (savedMenu) {
+        showMenu(savedMenu);
+    }
 
-const targetElement = document.getElementById('calendar1');
-if (targetElement) {
-    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); // まずカレンダーへスクロール
+    // ✅ メニュー再選択
+    savedSymptoms.forEach(symptomId => {
+        const symptomButton = document.querySelector(`button[onclick*="selectSymptom"][onclick*="'${symptomId}'"]`);
+        if (symptomButton && !symptomButton.classList.contains('active')) {
+            symptomButton.click();
+        }
+    });
 
-    // 少し下にずらす（300pxなど調整可能）
-    setTimeout(() => {
-        window.scrollBy({ top: 50, behavior: 'smooth' });
-    }, 500); // スクロール完了まで少し待つ（500msが目安）
-}
+    // ✅ オプション再選択（初期化済なので安心）
+    savedIrradiations.forEach(irradiationId => {
+        const irradiationButton = document.getElementById(irradiationId);
+        if (irradiationButton && !irradiationButton.classList.contains('active')) {
+            irradiationButton.click();
+        }
+    });
+
+    // ✅ カレンダーにスクロール
+    const targetElement = document.getElementById('calendar1');
+    if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        setTimeout(() => {
+            window.scrollBy({ top: 50, behavior: 'smooth' });
+        }, 500);
+    }
 }
 
         function updateDisplayInfo() {
@@ -1251,57 +1264,38 @@ if (targetElement) {
             updateDisplayInfo();
         }
 
-        function selectirradiations(button) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+function selectirradiations(button) {
+    selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    // トグル
+    button.classList.toggle('active');
 
-            // ローカルストレージから選択されたオプションを取得
-            let selectedIrradiations = JSON.parse(localStorage.getItem('selectedIrradiations') || '[]');
-            const irradiationId = button.id;
+    // ✅ 現在アクティブなオプションボタンのみを取得し保存（過去データ無視）
+    const selectedButtons = document.querySelectorAll('.irradiations button.active');
+    const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.id);
+    localStorage.setItem('selectedIrradiations', JSON.stringify(selectedIrradiations));
 
-            if (button.classList.contains('active')) {
-                // 選択されたら追加
-                selectedIrradiations.push(irradiationId);
-            } else {
-                // 解除されたら削除
-                selectedIrradiations = selectedIrradiations.filter(id => id !== irradiationId);
-            }
+    // 表示用データ生成
+    const selectedIrradiationsNames = Array.from(selectedButtons).map(btn => btn.innerText);
+    irradiationsCount = selectedIrradiationsNames.join(', ');
 
-            // ローカルストレージに保存
-            localStorage.setItem('selectedIrradiations', JSON.stringify(selectedIrradiations));
+    // 合計金額など更新
+    optionsPrice = 0;
+    let totalirradiationsTime = 0;
+    selectedButtons.forEach(btn => {
+        const price = parseInt(btn.getAttribute('data-price'), 10);
+        optionsPrice += price;
 
-            // 選択されたオプションを取得
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiationsNames = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiationsNames.join(', ');
+        const irradiationName = btn.innerText;
+        const irradiationTime = irradiationsTimes[irradiationName] || 0;
+        totalirradiationsTime += irradiationTime;
+    });
 
-            // すべてのオプションの価格を再計算
-            optionsPrice = 0; // 全体をリセットして再計算
-            let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
-            selectedButtons.forEach(btn => {
-                const price = parseInt(btn.getAttribute('data-price'), 10);
-                optionsPrice += price;
+    selectedirradiationsTime = totalirradiationsTime;
 
-                // 各オプションの時間を加算
-                const irradiationName = btn.innerText;
-                const irradiationTime = irradiationsTimes[irradiationName] || 0;
-                totalirradiationsTime += irradiationTime;
-            });
-
-            // selectedirradiationsTimeに合計時間を設定
-            selectedirradiationsTime = totalirradiationsTime;
-
-            console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
+    fetchAvailability(currentDate);
+    updateDisplayInfo();
+}
 
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
@@ -1348,16 +1342,20 @@ if (targetElement) {
 
             // 選択されたメニューの名前を取得
             let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
+
             if (selectedButton) {
                 selectedMenu = selectedButton.innerText;
             }
+
+            // ✅ ローカルストレージにメニュー識別子を保存（追加）
+            localStorage.setItem('selectedMenu', menu); // ←この行を追加！
 
             // すべてのメニューボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 button.classList.remove('active');
             });
 
-            // 選択されたメニューセクションを表示
+            // 選択されたメニューセクションを非表示＋ボタン状態リセット
             document.querySelectorAll('.menu-section').forEach(section => {
                 section.classList.remove('active');
                 section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
