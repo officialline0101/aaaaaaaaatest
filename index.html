@@ -1327,7 +1327,6 @@
                     venue: document.getElementById('venue').value.trim(),
                     weddingDate: document.getElementById('weddingDate').value.trim(),
                     visitCount: visitCount,
-                    selectedMenu: selectedMenu,
                     selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
                     irradiationsCount: irradiationsCount,
                     dates: selectedFullDate ? [selectedFullDate] : null,
@@ -1355,21 +1354,9 @@
                     return;
                 }
 
-                // 各項目を文字列として整形（空要素は除外）
-                const selectedSymptomText = formData.selectedSymptom
-                    ? formData.selectedSymptom.map(item => item.name).join(',')
-                    : '';
-
-                const optionalDetails = [
-                    selectedSymptomText,
-                    formData.irradiationsCount,
-                    formData.venue,
-                    formData.weddingDate
-                ].filter(Boolean).join(','); // 空文字やnull/undefinedを除外して結合
-
                 liff.sendMessages([{
                     type: 'text',
-                    text: `【TOKYO予約フォーム】\n≪GIGI VERDE TOKYO≫\nお名前：${formData.name}\n電話番号：${formData.phone}\nメニュー：${optionalDetails}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
+                    text: `【TOKYO予約フォーム】\n≪GIGI VERDE TOKYO≫\nお名前：${formData.name}\n電話番号：${formData.phone}\nメニュー：${formData.selectedSymptom}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`
                 }]).then(() => {
                     alert('当日キャンセルは無いようにお願いいたします。');
                     liff.closeWindow();
