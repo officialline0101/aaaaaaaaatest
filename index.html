@@ -1566,8 +1566,16 @@ if (menu === 'Kyousitu') {
                 return;
             }
 
-if (!formData.dates[0] && !formData.kibounitizi) {
-    alert('希望日時が未入力です。');
+// 値を正規化（undefined/null/空白/"undefined"/"null" を空扱いに）
+const rawDate = (formData.dates && formData.dates[0] != null) ? String(formData.dates[0]).trim() : '';
+const rawText = (formData.kibounitizi != null) ? String(formData.kibounitizi).trim() : '';
+
+const dateChoice = (rawDate && rawDate.toLowerCase() !== 'undefined' && rawDate.toLowerCase() !== 'null') ? rawDate : '';
+const textChoice = rawText; // すでに trim 済み
+
+// どちらも空ならエラー
+if (!dateChoice && !textChoice) {
+    alert('希望日時を選択するか入力してください。');
     return;
 }
 
