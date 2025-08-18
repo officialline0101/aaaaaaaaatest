@@ -1472,8 +1472,12 @@ function showMenu(menu) {
     optionsPrice = 0;
     totalAmount = 0;
 
-    // 🔽 ここで日付選択もリセット
-    selectedFullDate = '';
+// 🔽 ここで日付選択もリセット
+selectedFullDate = '';
+const kibounitiziInput = document.getElementById('kibounitizi');
+if (kibounitiziInput) {
+    kibounitiziInput.value = '';
+}
 
     // 表示を更新
     updateDisplayInfo();
@@ -1562,10 +1566,14 @@ if (menu === 'Kyousitu') {
                 return;
             }
 
-            if (!formData.dates) {
-                alert('希望日時を選択してください。');
-                return;
-            }
+// 希望日時チェック
+if (
+    !formData.dates[0] &&  // 日付が未選択
+    !(formData.selectedSymptom && formData.selectedSymptom.trim() === 'タロット講座' && formData.kibounitizi)
+) {
+    alert('希望日時を選択してください。');
+    return;
+}
 
     // メッセージを組み立て
     let message = `【予約フォーム】
