@@ -1009,7 +1009,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2007397643-Mmm64enZ'
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1060,106 +1060,6 @@
             const value = document.getElementById(id).value;
             localStorage.setItem(id, value);
         }
-
- const JP_WD = ['日','月','火','水','木','金','土'];
-  const pad = n => String(n).padStart(2,'0');
-
-  function toISODateTimeLocal(dayStr, timeStr) {
-    if (!dayStr || !timeStr) return "";
-    return `${dayStr}T${timeStr}`;
-  }
-
-  // ===== セレクト生成 =====
-  // 日付セレクト：今日から 'days' 日ぶんの候補を作る（必要に応じて変更OK）
-  function buildDateOptions(selectEl, days = 120, startDate = new Date()) {
-    const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-    selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
-    for (let i = 0; i < days; i++) {
-      const y = d.getFullYear();
-      const m = pad(d.getMonth() + 1);
-      const day = pad(d.getDate());
-      const wd = JP_WD[d.getDay()];
-      const value = `${y}-${m}-${day}`;
-      const label = `${y}/${m}/${day}（${wd}）`;
-      const opt = document.createElement('option');
-      opt.value = value;
-      opt.textContent = label;
-      selectEl.appendChild(opt);
-      d.setDate(d.getDate() + 1);
-    }
-  }
-
-  // 時間セレクト：00/30のみ
-  function buildHalfHourOptions(selectEl) {
-    selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
-    for (let h = 0; h < 24; h++) {
-      for (const m of [0, 30]) {
-        const hh = pad(h);
-        const mm = pad(m);
-        const opt = document.createElement('option');
-        opt.value = `${hh}:${mm}`;
-        opt.textContent = `${hh}:${mm}`;
-        selectEl.appendChild(opt);
-      }
-    }
-  }
-
-  // ===== 値更新 & プレースホルダ制御 =====
-  function updateHiddenAndPlaceholder(baseId) {
-    const day = document.getElementById(`${baseId}_day`).value;
-    const time = document.getElementById(`${baseId}_time`).value;
-    const hidden = document.getElementById(baseId);
-    const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
-
-    hidden.value = toISODateTimeLocal(day, time);
-    if (ph) ph.style.display = hidden.value ? 'none' : '';
-  }
-
-  // 既存 hidden の値（編集時）をセレクトへ復元。範囲外なら一時的に先頭へ追加
-  function restoreIfAny(baseId) {
-    const hidden = document.getElementById(baseId);
-    if (!hidden.value) return;
-    const [d, t] = hidden.value.split('T');
-    const daySel = document.getElementById(`${baseId}_day`);
-    const timeSel = document.getElementById(`${baseId}_time`);
-
-    if (d && ![...daySel.options].some(o => o.value === d)) {
-      const tmp = document.createElement('option');
-      tmp.value = d; tmp.textContent = d.replaceAll('-', '/') + '（選択日）';
-      daySel.insertBefore(tmp, daySel.options[1]); // 先頭のplaceholderの次に追加
-    }
-    if (d) daySel.value = d;
-    if (t) timeSel.value = t.slice(0,5);
-  }
-
-  // ===== 初期化 =====
-  function initPicker(baseId, dateDays = 120) {
-    const daySel = document.getElementById(`${baseId}_day`);
-    const timeSel = document.getElementById(`${baseId}_time`);
-    buildDateOptions(daySel, dateDays);       // 日付候補
-    buildHalfHourOptions(timeSel);            // 時間候補（00/30）
-
-    // 復元（編集時想定）
-    restoreIfAny(baseId);
-
-    // 変更イベントで hidden と外側PHを更新
-    daySel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
-    timeSel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
-    updateHiddenAndPlaceholder(baseId);
-  }
-
-  // 3つ分を初期化（必要なら120→90/60などに変更）
-  ['date1','date2','date3'].forEach(id => initPicker(id, 120));
-</script>
-
-<style>
-  /* 既存の .datetime-input スタイルが効いて同じ見た目になります */
-  .dt-grid {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
 
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
@@ -1377,6 +1277,106 @@
                 updateDisplayInfo();  // 日付を選択したら即座に表示を更新
             });
         });
+
+ const JP_WD = ['日','月','火','水','木','金','土'];
+  const pad = n => String(n).padStart(2,'0');
+
+  function toISODateTimeLocal(dayStr, timeStr) {
+    if (!dayStr || !timeStr) return "";
+    return `${dayStr}T${timeStr}`;
+  }
+
+  // ===== セレクト生成 =====
+  // 日付セレクト：今日から 'days' 日ぶんの候補を作る（必要に応じて変更OK）
+  function buildDateOptions(selectEl, days = 120, startDate = new Date()) {
+    const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
+    for (let i = 0; i < days; i++) {
+      const y = d.getFullYear();
+      const m = pad(d.getMonth() + 1);
+      const day = pad(d.getDate());
+      const wd = JP_WD[d.getDay()];
+      const value = `${y}-${m}-${day}`;
+      const label = `${y}/${m}/${day}（${wd}）`;
+      const opt = document.createElement('option');
+      opt.value = value;
+      opt.textContent = label;
+      selectEl.appendChild(opt);
+      d.setDate(d.getDate() + 1);
+    }
+  }
+
+  // 時間セレクト：00/30のみ
+  function buildHalfHourOptions(selectEl) {
+    selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
+    for (let h = 0; h < 24; h++) {
+      for (const m of [0, 30]) {
+        const hh = pad(h);
+        const mm = pad(m);
+        const opt = document.createElement('option');
+        opt.value = `${hh}:${mm}`;
+        opt.textContent = `${hh}:${mm}`;
+        selectEl.appendChild(opt);
+      }
+    }
+  }
+
+  // ===== 値更新 & プレースホルダ制御 =====
+  function updateHiddenAndPlaceholder(baseId) {
+    const day = document.getElementById(`${baseId}_day`).value;
+    const time = document.getElementById(`${baseId}_time`).value;
+    const hidden = document.getElementById(baseId);
+    const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
+
+    hidden.value = toISODateTimeLocal(day, time);
+    if (ph) ph.style.display = hidden.value ? 'none' : '';
+  }
+
+  // 既存 hidden の値（編集時）をセレクトへ復元。範囲外なら一時的に先頭へ追加
+  function restoreIfAny(baseId) {
+    const hidden = document.getElementById(baseId);
+    if (!hidden.value) return;
+    const [d, t] = hidden.value.split('T');
+    const daySel = document.getElementById(`${baseId}_day`);
+    const timeSel = document.getElementById(`${baseId}_time`);
+
+    if (d && ![...daySel.options].some(o => o.value === d)) {
+      const tmp = document.createElement('option');
+      tmp.value = d; tmp.textContent = d.replaceAll('-', '/') + '（選択日）';
+      daySel.insertBefore(tmp, daySel.options[1]); // 先頭のplaceholderの次に追加
+    }
+    if (d) daySel.value = d;
+    if (t) timeSel.value = t.slice(0,5);
+  }
+
+  // ===== 初期化 =====
+  function initPicker(baseId, dateDays = 120) {
+    const daySel = document.getElementById(`${baseId}_day`);
+    const timeSel = document.getElementById(`${baseId}_time`);
+    buildDateOptions(daySel, dateDays);       // 日付候補
+    buildHalfHourOptions(timeSel);            // 時間候補（00/30）
+
+    // 復元（編集時想定）
+    restoreIfAny(baseId);
+
+    // 変更イベントで hidden と外側PHを更新
+    daySel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+    timeSel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+    updateHiddenAndPlaceholder(baseId);
+  }
+
+  // 3つ分を初期化（必要なら120→90/60などに変更）
+  ['date1','date2','date3'].forEach(id => initPicker(id, 120));
+</script>
+
+<style>
+  /* 既存の .datetime-input スタイルが効いて同じ見た目になります */
+  .dt-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
 
         function selectSymptom(button, treatmentId) {
             // グローバルで用意されている前提の変数・関数：
