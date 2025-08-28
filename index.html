@@ -897,6 +897,19 @@
 .small-text {
   font-size: 18px; /* 好きなサイズに変更可能 */
 }
+
+  /* 既存の .datetime-input を活かしつつ横並び */
+  .dt-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .dt-grid .datetime-input {
+    flex: 1 1 50%;
+  }
+  @media (max-width: 480px) {
+    .dt-grid { flex-direction: column; }
+  }
     </style>
 </head>
 
@@ -936,28 +949,36 @@
             <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">日時変更</button>
         </div>
 
-        <div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
 
-        <!-- カスタム placeholder 表示用 -->
+<div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-  <input type="datetime-local" id="date1" class="datetime-input" step="1800" placeholder=" " aria-label="タップして日時を入力">
+  <!-- 提出/既存スクリプト用：ここに ISO を入れる -->
+  <input type="hidden" id="date1" name="date1">
+  <div class="dt-grid">
+    <input type="date" id="date1_day" class="datetime-input" aria-label="日付を選択">
+    <select id="date1_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
+  </div>
 </div>
 
-        <div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
-
-        <!-- カスタム placeholder 表示用 -->
+<div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
-  <input type="datetime-local" id="date2" class="datetime-input" step="1800" placeholder=" " aria-label="タップして日時を入力">
+  <input type="hidden" id="date2" name="date2">
+  <div class="dt-grid">
+    <input type="date" id="date2_day" class="datetime-input" aria-label="日付を選択">
+    <select id="date2_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
+  </div>
 </div>
 
-        <div class="labelkibounitizi">第三希望日時<span class="required">必須</span></div>
-
-        <!-- カスタム placeholder 表示用 -->
+<div class="labelkibounitizi">第三希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
-  <input type="datetime-local" id="date3" class="datetime-input" step="1800" placeholder=" " aria-label="タップして日時を入力">
+  <input type="hidden" id="date3" name="date3">
+  <div class="dt-grid">
+    <input type="date" id="date3_day" class="datetime-input" aria-label="日付を選択">
+    <select id="date3_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
+  </div>
 </div>
 
         <div class="labelmessezi">メッセージ<br>（質問等お気軽にご記入ください）</div>
@@ -984,7 +1005,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2007397643-Mmm64enZ'
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1035,6 +1056,66 @@
             const value = document.getElementById(id).value;
             localStorage.setItem(id, value);
         }
+
+  // 00:00 ～ 23:30 を 30分刻みで生成
+  function buildHalfHourOptions(selectEl) {
+    selectEl.innerHTML = '<option value="">時間を選択</option>';
+    for (let h = 0; h < 24; h++) {
+      for (const m of [0, 30]) {
+        const hh = String(h).padStart(2, '0');
+        const mm = String(m).padStart(2, '0');
+        const v = `${hh}:${mm}`;
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        selectEl.appendChild(opt);
+      }
+    }
+  }
+
+  function toISODateTimeLocal(dayStr, timeStr) {
+    // dayStr: "YYYY-MM-DD", timeStr: "HH:MM"
+    if (!dayStr || !timeStr) return "";
+    return `${dayStr}T${timeStr}`;
+  }
+
+  function updateHiddenAndPlaceholder(baseId) {
+    const day = document.getElementById(`${baseId}_day`).value;
+    const time = document.getElementById(`${baseId}_time`).value;
+    const hidden = document.getElementById(baseId);
+    const placeholder = document.getElementById(`placeholder${baseId.slice(-1)}`); // 末尾の番号で対応
+
+    hidden.value = toISODateTimeLocal(day, time);
+
+    // プレースホルダー表示/非表示
+    if (placeholder) {
+      placeholder.style.display = (hidden.value ? 'none' : '');
+    }
+  }
+
+  function initPicker(baseId) {
+    const dayEl = document.getElementById(`${baseId}_day`);
+    const timeEl = document.getElementById(`${baseId}_time`);
+    buildHalfHourOptions(timeEl);
+
+    // 既に hidden に値がある場合は復元（編集時など）
+    const hidden = document.getElementById(baseId);
+    if (hidden.value) {
+      const [d, t] = hidden.value.split('T');
+      if (d) dayEl.value = d;
+      if (t) timeEl.value = t.slice(0,5);
+    }
+
+    // 変更イベントで hidden を更新
+    dayEl.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+    timeEl.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+
+    // 初期プレースホルダ制御
+    updateHiddenAndPlaceholder(baseId);
+  }
+
+  // 3つ分を初期化
+  ['date1','date2','date3'].forEach(initPicker);
 
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
