@@ -910,6 +910,30 @@
   @media (max-width: 480px) {
     .dt-grid { flex-direction: column; }
   }
+
+  .dt-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
+
+  /* 日付入力の疑似プレースホルダー */
+  .date-input-wrap {
+    position: relative;
+    flex: 1 1 50%;
+  }
+  .date-input-wrap .date-faux-ph {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 16px;
+    pointer-events: none;      /* タップを妨げない */
+    transition: opacity .2s;
+  }
+  .date-input-wrap.has-value .date-faux-ph { opacity: 0; }
     </style>
 </head>
 
@@ -949,14 +973,16 @@
             <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">日時変更</button>
         </div>
 
-
+<!-- ② HTML：各ブロックの「日付入力」をラップして“日付を選択”を重ねる -->
 <div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-  <!-- 提出/既存スクリプト用：ここに ISO を入れる -->
   <input type="hidden" id="date1" name="date1">
   <div class="dt-grid">
-    <input type="date" id="date1_day" class="datetime-input" aria-label="日付を選択">
+    <div class="date-input-wrap">
+      <span class="date-faux-ph">日付を選択</span>
+      <input type="date" id="date1_day" class="datetime-input" aria-label="日付を選択">
+    </div>
     <select id="date1_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
   </div>
 </div>
@@ -966,7 +992,10 @@
   <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
   <input type="hidden" id="date2" name="date2">
   <div class="dt-grid">
-    <input type="date" id="date2_day" class="datetime-input" aria-label="日付を選択">
+    <div class="date-input-wrap">
+      <span class="date-faux-ph">日付を選択</span>
+      <input type="date" id="date2_day" class="datetime-input" aria-label="日付を選択">
+    </div>
     <select id="date2_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
   </div>
 </div>
@@ -976,7 +1005,10 @@
   <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
   <input type="hidden" id="date3" name="date3">
   <div class="dt-grid">
-    <input type="date" id="date3_day" class="datetime-input" aria-label="日付を選択">
+    <div class="date-input-wrap">
+      <span class="date-faux-ph">日付を選択</span>
+      <input type="date" id="date3_day" class="datetime-input" aria-label="日付を選択">
+    </div>
     <select id="date3_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
   </div>
 </div>
@@ -1064,17 +1096,15 @@
       for (const m of [0, 30]) {
         const hh = String(h).padStart(2, '0');
         const mm = String(m).padStart(2, '0');
-        const v = `${hh}:${mm}`;
         const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v;
+        opt.value = `${hh}:${mm}`;
+        opt.textContent = `${hh}:${mm}`;
         selectEl.appendChild(opt);
       }
     }
   }
 
   function toISODateTimeLocal(dayStr, timeStr) {
-    // dayStr: "YYYY-MM-DD", timeStr: "HH:MM"
     if (!dayStr || !timeStr) return "";
     return `${dayStr}T${timeStr}`;
   }
@@ -1083,38 +1113,47 @@
     const day = document.getElementById(`${baseId}_day`).value;
     const time = document.getElementById(`${baseId}_time`).value;
     const hidden = document.getElementById(baseId);
-    const placeholder = document.getElementById(`placeholder${baseId.slice(-1)}`); // 末尾の番号で対応
-
+    const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
     hidden.value = toISODateTimeLocal(day, time);
+    if (ph) ph.style.display = (hidden.value ? 'none' : '');
+  }
 
-    // プレースホルダー表示/非表示
-    if (placeholder) {
-      placeholder.style.display = (hidden.value ? 'none' : '');
-    }
+  // 日付疑似プレースホルダーの表示切替
+  function initDateFauxPh(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    const wrap = input.closest('.date-input-wrap');
+    const sync = () => {
+      if (input.value) { wrap.classList.add('has-value'); }
+      else { wrap.classList.remove('has-value'); }
+    };
+    input.addEventListener('input', sync);
+    input.addEventListener('change', sync);
+    sync();
   }
 
   function initPicker(baseId) {
-    const dayEl = document.getElementById(`${baseId}_day`);
     const timeEl = document.getElementById(`${baseId}_time`);
     buildHalfHourOptions(timeEl);
 
-    // 既に hidden に値がある場合は復元（編集時など）
+    // 既存値の復元（編集時想定）
     const hidden = document.getElementById(baseId);
+    const dayEl = document.getElementById(`${baseId}_day`);
     if (hidden.value) {
       const [d, t] = hidden.value.split('T');
       if (d) dayEl.value = d;
       if (t) timeEl.value = t.slice(0,5);
     }
 
-    // 変更イベントで hidden を更新
+    // 変更でhidden & 外側PHを更新
     dayEl.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
     timeEl.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
-
-    // 初期プレースホルダ制御
     updateHiddenAndPlaceholder(baseId);
+
+    // 日付疑似プレースホルダー有効化
+    initDateFauxPh(`${baseId}_day`);
   }
 
-  // 3つ分を初期化
   ['date1','date2','date3'].forEach(initPicker);
 
         // ページが読み込まれたときに前回の入力内容を復元
