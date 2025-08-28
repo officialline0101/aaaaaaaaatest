@@ -911,29 +911,6 @@
     .dt-grid { flex-direction: column; }
   }
 
-  .dt-grid {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-  @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
-
-  /* 日付入力の疑似プレースホルダー */
-  .date-input-wrap {
-    position: relative;
-    flex: 1 1 50%;
-  }
-  .date-input-wrap .date-faux-ph {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-    font-size: 16px;
-    pointer-events: none;      /* タップを妨げない */
-    transition: opacity .2s;
-  }
-  .date-input-wrap.has-value .date-faux-ph { opacity: 0; }
     </style>
 </head>
 
@@ -977,38 +954,33 @@
 <div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+  <!-- 提出/既存処理用：ISO(YYYY-MM-DDTHH:MM) を入れる -->
   <input type="hidden" id="date1" name="date1">
   <div class="dt-grid">
-    <div class="date-input-wrap">
-      <span class="date-faux-ph">日付を選択</span>
-      <input type="date" id="date1_day" class="datetime-input" aria-label="日付を選択">
-    </div>
+    <!-- 日付も<select>にして時間と同じ見た目 -->
+    <select id="date1_day" class="datetime-input" aria-label="日付を選択"></select>
     <select id="date1_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
   </div>
 </div>
 
+<!-- 第二希望日時 -->
 <div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
   <input type="hidden" id="date2" name="date2">
   <div class="dt-grid">
-    <div class="date-input-wrap">
-      <span class="date-faux-ph">日付を選択</span>
-      <input type="date" id="date2_day" class="datetime-input" aria-label="日付を選択">
-    </div>
+    <select id="date2_day" class="datetime-input" aria-label="日付を選択"></select>
     <select id="date2_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
   </div>
 </div>
 
+<!-- 第三希望日時 -->
 <div class="labelkibounitizi">第三希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
   <input type="hidden" id="date3" name="date3">
   <div class="dt-grid">
-    <div class="date-input-wrap">
-      <span class="date-faux-ph">日付を選択</span>
-      <input type="date" id="date3_day" class="datetime-input" aria-label="日付を選択">
-    </div>
+    <select id="date3_day" class="datetime-input" aria-label="日付を選択"></select>
     <select id="date3_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
   </div>
 </div>
@@ -1037,7 +1009,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: '2007397643-Mmm64enZ'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1089,13 +1061,41 @@
             localStorage.setItem(id, value);
         }
 
-  // 00:00 ～ 23:30 を 30分刻みで生成
+ const JP_WD = ['日','月','火','水','木','金','土'];
+  const pad = n => String(n).padStart(2,'0');
+
+  function toISODateTimeLocal(dayStr, timeStr) {
+    if (!dayStr || !timeStr) return "";
+    return `${dayStr}T${timeStr}`;
+  }
+
+  // ===== セレクト生成 =====
+  // 日付セレクト：今日から 'days' 日ぶんの候補を作る（必要に応じて変更OK）
+  function buildDateOptions(selectEl, days = 120, startDate = new Date()) {
+    const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
+    for (let i = 0; i < days; i++) {
+      const y = d.getFullYear();
+      const m = pad(d.getMonth() + 1);
+      const day = pad(d.getDate());
+      const wd = JP_WD[d.getDay()];
+      const value = `${y}-${m}-${day}`;
+      const label = `${y}/${m}/${day}（${wd}）`;
+      const opt = document.createElement('option');
+      opt.value = value;
+      opt.textContent = label;
+      selectEl.appendChild(opt);
+      d.setDate(d.getDate() + 1);
+    }
+  }
+
+  // 時間セレクト：00/30のみ
   function buildHalfHourOptions(selectEl) {
-    selectEl.innerHTML = '<option value="">時間を選択</option>';
+    selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
     for (let h = 0; h < 24; h++) {
       for (const m of [0, 30]) {
-        const hh = String(h).padStart(2, '0');
-        const mm = String(m).padStart(2, '0');
+        const hh = pad(h);
+        const mm = pad(m);
         const opt = document.createElement('option');
         opt.value = `${hh}:${mm}`;
         opt.textContent = `${hh}:${mm}`;
@@ -1104,57 +1104,62 @@
     }
   }
 
-  function toISODateTimeLocal(dayStr, timeStr) {
-    if (!dayStr || !timeStr) return "";
-    return `${dayStr}T${timeStr}`;
-  }
-
+  // ===== 値更新 & プレースホルダ制御 =====
   function updateHiddenAndPlaceholder(baseId) {
     const day = document.getElementById(`${baseId}_day`).value;
     const time = document.getElementById(`${baseId}_time`).value;
     const hidden = document.getElementById(baseId);
     const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
+
     hidden.value = toISODateTimeLocal(day, time);
-    if (ph) ph.style.display = (hidden.value ? 'none' : '');
+    if (ph) ph.style.display = hidden.value ? 'none' : '';
   }
 
-  // 日付疑似プレースホルダーの表示切替
-  function initDateFauxPh(inputId) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-    const wrap = input.closest('.date-input-wrap');
-    const sync = () => {
-      if (input.value) { wrap.classList.add('has-value'); }
-      else { wrap.classList.remove('has-value'); }
-    };
-    input.addEventListener('input', sync);
-    input.addEventListener('change', sync);
-    sync();
-  }
-
-  function initPicker(baseId) {
-    const timeEl = document.getElementById(`${baseId}_time`);
-    buildHalfHourOptions(timeEl);
-
-    // 既存値の復元（編集時想定）
+  // 既存 hidden の値（編集時）をセレクトへ復元。範囲外なら一時的に先頭へ追加
+  function restoreIfAny(baseId) {
     const hidden = document.getElementById(baseId);
-    const dayEl = document.getElementById(`${baseId}_day`);
-    if (hidden.value) {
-      const [d, t] = hidden.value.split('T');
-      if (d) dayEl.value = d;
-      if (t) timeEl.value = t.slice(0,5);
+    if (!hidden.value) return;
+    const [d, t] = hidden.value.split('T');
+    const daySel = document.getElementById(`${baseId}_day`);
+    const timeSel = document.getElementById(`${baseId}_time`);
+
+    if (d && ![...daySel.options].some(o => o.value === d)) {
+      const tmp = document.createElement('option');
+      tmp.value = d; tmp.textContent = d.replaceAll('-', '/') + '（選択日）';
+      daySel.insertBefore(tmp, daySel.options[1]); // 先頭のplaceholderの次に追加
     }
-
-    // 変更でhidden & 外側PHを更新
-    dayEl.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
-    timeEl.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
-    updateHiddenAndPlaceholder(baseId);
-
-    // 日付疑似プレースホルダー有効化
-    initDateFauxPh(`${baseId}_day`);
+    if (d) daySel.value = d;
+    if (t) timeSel.value = t.slice(0,5);
   }
 
-  ['date1','date2','date3'].forEach(initPicker);
+  // ===== 初期化 =====
+  function initPicker(baseId, dateDays = 120) {
+    const daySel = document.getElementById(`${baseId}_day`);
+    const timeSel = document.getElementById(`${baseId}_time`);
+    buildDateOptions(daySel, dateDays);       // 日付候補
+    buildHalfHourOptions(timeSel);            // 時間候補（00/30）
+
+    // 復元（編集時想定）
+    restoreIfAny(baseId);
+
+    // 変更イベントで hidden と外側PHを更新
+    daySel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+    timeSel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+    updateHiddenAndPlaceholder(baseId);
+  }
+
+  // 3つ分を初期化（必要なら120→90/60などに変更）
+  ['date1','date2','date3'].forEach(id => initPicker(id, 120));
+</script>
+
+<style>
+  /* 既存の .datetime-input スタイルが効いて同じ見た目になります */
+  .dt-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
 
         // ページが読み込まれたときに前回の入力内容を復元
         document.addEventListener('DOMContentLoaded', function () {
