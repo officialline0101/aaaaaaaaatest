@@ -1303,14 +1303,6 @@
             'ニキビケアクリアフェイシャル90分': 120,
             '極上癒しボディー×フェイシャル120分': 150,
             'デトックス痩身トリプルコース120分': 150,
-            '至福の全身リンパリリース60分': 90,
-            '至福の全身リンパリリース90分': 120,
-            '整体コース60分': 90,
-            '若々しさアップリフトアップフェイシャル75分': 120,
-            'しっとり美肌フェイシャル60分': 90,
-            'ニキビケアクリアフェイシャル90分': 120,
-            '極上癒しボディー×フェイシャル120分': 150,
-            'デトックス痩身トリプルコース120分': 150,
             'リンパ×整体120分': 150,
             'リンパ×痩身120分': 150,
             'リンパ×ハーブフェイシャル120分': 150,
@@ -2166,6 +2158,15 @@ const times = [
                         cell.classList.add('unavailable');
                         continue;
                     }
+
+// 30日後以降はすべて✕にする
+const maxDate = new Date(now);
+maxDate.setDate(maxDate.getDate() + 30);
+if (slotStart > maxDate) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    continue;
+}
 
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);
