@@ -2214,10 +2214,20 @@ function selectVisit(element) {
                 return;
             }
 
-    // オプションを改行して表示
-    const irradiationsText = Array.isArray(formData.irradiationsCount)
-        ? formData.irradiationsCount.join("\n⇒")
-        : formData.irradiationsCount || "";
+    // オプション（irradiationsCount）を改行して整形
+    let irradiationsText = "";
+    if (formData.irradiationsCount) {
+        if (Array.isArray(formData.irradiationsCount)) {
+            // 配列ならそのまま join
+            irradiationsText = formData.irradiationsCount.join("\n⇒");
+        } else if (typeof formData.irradiationsCount === "string") {
+            // カンマ区切り文字列なら分割して join
+            irradiationsText = formData.irradiationsCount
+                .split(",")
+                .map(item => item.trim())
+                .join("\n⇒");
+        }
+    }
 
     // LINEトークにメッセージを送信
     liff.sendMessages([{
