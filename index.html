@@ -813,7 +813,7 @@
 
 /* ドメイン選択だけ幅を固定・縮める */
 #emailDomainSelect {
-    flex: 0 0 100px; /* ← 固定幅にする（例: 180px） */
+    flex: 0 0 85px; /* ← 固定幅にする（例: 180px） */
     max-width: 200px; /* ← 伸びすぎ防止（任意） */
 }
 
@@ -927,6 +927,53 @@
         <small id="emailError" style="display:none;color:#d00;">
             メールアドレスの形式が正しくありません。
         </small>
+
+<div class="label" style="margin-top:.75rem;">確認のためもう一度入力してください</div>
+
+<!-- メール確認用ラッパー（2組目） -->
+<div class="email-input-row">
+  <!-- ローカル部（確認） -->
+  <input
+    type="text"
+    id="emailLocal2"
+    inputmode="email"
+    autocomplete="email"
+    spellcheck="false"
+    placeholder="例）taro.yamada"
+    oninput="onEmailLocalInput('2')"
+  />
+
+  <!-- ドメイン選択（確認） -->
+  <select id="emailDomainSelect" onchange="onEmailDomainSelectChange('2')">
+    <option value="" selected>選択</option>
+    <option value="@gmail.com">@gmail.com</option>
+    <option value="@icloud.com">@icloud.com</option>
+    <option value="@outlook.jp">@outlook.jp</option>
+    <option value="@outlook.com">@outlook.com</option>
+    <option value="@hotmail.com">@hotmail.com</option>
+    <option value="@live.jp">@live.jp</option>
+    <option value="@yahoo.co.jp">@yahoo.co.jp</option>
+    <option value="@docomo.ne.jp">@docomo.ne.jp</option>
+    <option value="@ezweb.ne.jp">@ezweb.ne.jp</option>
+    <option value="@au.com">@au.com</option>
+    <option value="@softbank.ne.jp">@softbank.ne.jp</option>
+    <option value="@i.softbank.jp">@i.softbank.jp</option>
+    <option value="@ymobile.ne.jp">@ymobile.ne.jp</option>
+    <option value="@custom">その他（手入力）</option>
+  </select>
+
+  <!-- カスタムドメイン（確認） -->
+  <input
+    type="text"
+    id="emailDomainCustom2"
+    inputmode="email"
+    autocomplete="email"
+    spellcheck="false"
+    placeholder="例）example.co.jp"
+    oninput="onEmailDomainCustomInput('2')"
+    style="display:none;"
+  />
+</div>
 
         <div class="label">ご来店回数<span class="required">必須</span></div>
         <div class="visit-buttons">
@@ -1414,70 +1461,97 @@
             return true;
         }
 
-        // --- UI結合ヘルパ ---
-        function buildEmailFromParts() {
-            const localRaw = document.getElementById('emailLocal').value || '';
-            const sel = document.getElementById('emailDomainSelect').value || '';
-            const customEl = document.getElementById('emailDomainCustom');
-            const domainRaw = (sel === 'custom') ? (customEl.value || '') : sel;
+  // ▼ 末尾サフィックス（'' or '2'）付きで各入力セットを扱うユーティリティ
+  function getSelectedDomain(selectEl, customEl) {
+    const sel = (selectEl?.value || '').trim();
+    // 「その他（手入力）」の値は @custom or custom どちらでも対応
+    if (sel === '@custom' || sel === 'custom') {
+      const raw = (customEl?.value || '');
+      return toHalfWidth(raw).toLowerCase();
+    }
+    if (!sel) return '';
+    // 先頭に @ が付いているプリセットは自動で外す
+    const cleaned = sel.startsWith('@') ? sel.slice(1) : sel;
+    return toHalfWidth(cleaned).toLowerCase();
+  }
 
-            const local = toHalfWidth(localRaw);
-            const domain = toHalfWidth(domainRaw).toLowerCase();
+  // ▼ サフィックス指定でメール文字列を組み立て
+  function buildEmailFromParts(suffix = '') {
+    const localRaw = document.getElementById('emailLocal' + suffix)?.value || '';
+    const selectEl = document.getElementById('emailDomainSelect' + suffix);
+    const customEl = document.getElementById('emailDomainCustom' + suffix);
 
-            if (!local || !domain) return ''; // どちらか欠けたらまだ未完成
-            return `${local}@${domain}`;
-        }
+    const local = toHalfWidth(localRaw);
+    const domain = getSelectedDomain(selectEl, customEl);
 
-        function syncEmailHidden() {
-            const email = normalizeEmail(buildEmailFromParts());
-            document.getElementById('email').value = email; // 既存互換（payload参照先）
-            // 軽いリアルタイム検証
-            const err = document.getElementById('emailError');
-            if (email && !isValidEmailStrict(email)) {
-                err.style.display = '';
-            } else {
-                err.style.display = 'none';
-            }
-        }
+    if (!local || !domain) return ''; // どちらか未入力なら未完成扱い
+    return `${local}@${domain}`;
+  }
 
-        // --- イベントハンドラ ---
-        function onEmailLocalInput() {
-            syncEmailHidden();
-            maybeShowCarrierNotice();
-        }
-        function onEmailDomainSelectChange() {
-            const sel = document.getElementById('emailDomainSelect').value;
-            const custom = document.getElementById('emailDomainCustom');
-            custom.style.display = (sel === 'custom') ? '' : 'none';
-            if (sel !== 'custom') custom.value = ''; // 切り替えで掃除
-            syncEmailHidden();
-            maybeShowCarrierNotice();
-        }
-        function onEmailDomainCustomInput() {
-            syncEmailHidden();
-        }
+  // ▼ 隠しフィールド（本体）へ同期（1組目のみ）
+  function syncEmailHidden() {
+    const email = normalizeEmail(buildEmailFromParts(''));
+    const hidden = document.getElementById('email');
+    if (hidden) hidden.value = email;
 
-        // --- 任意：キャリアアドレス注意喚起（到達率対策） ---
-        function maybeShowCarrierNotice() {
-            const email = document.getElementById('email').value;
-            const bannerId = 'carrierNotice';
-            let banner = document.getElementById(bannerId);
+    // 軽いリアルタイム検証（1組目だけ）
+    const err = document.getElementById('emailError');
+    if (email && !isValidEmailStrict(email)) {
+      err.style.display = '';
+    } else {
+      err.style.display = 'none';
+    }
+  }
 
-            const carrierRe = /@(docomo\.ne\.jp|ezweb\.ne\.jp|au\.com|softbank\.ne\.jp|i\.softbank\.jp|ymobile\.ne\.jp)$/i;
-            const isCarrier = carrierRe.test(email);
+  // ▼ イベントハンドラ（サフィックス対応）
+  function onEmailLocalInput(suffix = '') {
+    if (suffix === '') {
+      syncEmailHidden();
+      maybeShowCarrierNotice(); // 注意喚起は1組目のみ
+    }
+  }
+  function onEmailDomainSelectChange(suffix = '') {
+    const sel = document.getElementById('emailDomainSelect' + suffix)?.value || '';
+    const custom = document.getElementById('emailDomainCustom' + suffix);
+    if (custom) {
+      const isCustom = (sel === '@custom' || sel === 'custom');
+      custom.style.display = isCustom ? '' : 'none';
+      if (!isCustom) custom.value = '';
+    }
+    if (suffix === '') {
+      syncEmailHidden();
+      maybeShowCarrierNotice();
+    }
+  }
+  function onEmailDomainCustomInput(suffix = '') {
+    if (suffix === '') {
+      syncEmailHidden();
+    }
+  }
 
-            if (isCarrier) {
-                if (!banner) {
-                    banner = document.createElement('div');
-                    banner.id = bannerId;
-                    banner.style.cssText = 'margin-top:.25rem;color:#b35b00;font-size:.9em;';
-                    banner.textContent = 'キャリアメールは迷惑メール設定によりメールが届かない場合があります。受信設定のご確認、または可能であればGmail等のアドレスをご利用ください。';
-                    document.getElementById('emailDomainSelect').parentElement.appendChild(banner);
-                }
-            } else if (banner) {
-                banner.remove();
-            }
-        }
+  // ▼ 任意：キャリアメール注意喚起（既存のまま）
+  function maybeShowCarrierNotice() {
+    const email = document.getElementById('email').value;
+    const bannerId = 'carrierNotice';
+    let banner = document.getElementById(bannerId);
+
+    const carrierRe = /@(docomo\.ne\.jp|ezweb\.ne\.jp|au\.com|softbank\.ne\.jp|i\.softbank\.jp|ymobile\.ne\.jp)$/i;
+    const isCarrier = carrierRe.test(email);
+
+    if (isCarrier) {
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = bannerId;
+        banner.style.cssText = 'margin-top:.25rem;color:#b35b00;font-size:.9em;';
+        banner.textContent = 'キャリアメールは迷惑メール設定によりメールが届かない場合があります。受信設定のご確認、または可能であればGmail等のアドレスをご利用ください。';
+        // 1組目の行の末尾に付ける
+        const parentRow = document.getElementById('emailDomainSelect')?.parentElement;
+        if (parentRow) parentRow.appendChild(banner);
+      }
+    } else if (banner) {
+      banner.remove();
+    }
+  }
 
         function selectSymptom(button, treatmentId) {
             // 選択された日時をリセット
@@ -1734,26 +1808,38 @@
                 message: document.getElementById('message').value.trim()
             };
 
-            // 必須チェック
-            if (!formData.name) { alert('お名前を入力してください。'); return; }
-            if (!formData.phone) { alert('電話番号を入力してください。'); return; }
-            if (!formData.email) { alert('メールアドレスを入力してください。'); return; }
+    // 必須
+    if (!formData.name) { alert('お名前を入力してください。'); return; }
+    if (!formData.phone) { alert('電話番号を入力してください。'); return; }
 
-            // ★ メールを正規化（全角→半角、前後空白除去）
-            formData.email = normalizeEmail(formData.email);
-            document.getElementById('email').value = formData.email; // 表示も揃える
+    // 1組目・2組目を再構成して厳密一致確認
+    const email1 = normalizeEmail(buildEmailFromParts(''));
+    const email2 = normalizeEmail(buildEmailFromParts('2'));
 
-            // ★ 形式チェック（NGなら“跳ね返す”）
-            if (!isValidEmailStrict(formData.email)) {
-                document.getElementById('emailError').style.display = '';
-                alert('メールアドレスの形式が正しくありません。例：example@example.com');
-                document.getElementById('email').focus();
-                return;
-            } else {
-                document.getElementById('emailError').style.display = 'none';
-            }
+    if (!email1) { alert('メールアドレスを入力してください。'); return; }
+    if (!email2) { alert('確認用のメールアドレスを入力してください。'); return; }
+    if (email1 !== email2) {
+      alert('入力が一致していません。メールアドレスをもう一度ご確認ください。');
+      document.getElementById('emailLocal2').focus();
+      return;
+    }
 
-            if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
+    // 隠しフィールドを一致したメールで同期
+    formData.email = email1;
+    document.getElementById('email').value = formData.email;
+
+    // 形式チェック
+    if (!isValidEmailStrict(formData.email)) {
+      document.getElementById('emailError').style.display = '';
+      alert('メールアドレスの形式が正しくありません。例：example@example.com');
+      // 1組目をフォーカス
+      document.getElementById('emailLocal').focus();
+      return;
+    } else {
+      document.getElementById('emailError').style.display = 'none';
+    }
+
+    if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
             if (!formData.dates) { alert('希望日時を選択してください。'); return; }
 
             const startIso = jpToISO(formData.dates[0]);
