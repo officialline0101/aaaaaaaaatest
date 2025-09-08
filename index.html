@@ -995,7 +995,7 @@
             メールアドレスの形式が正しくありません。
         </small>
 
-<div class="label" style="margin-top:.75rem;">確認のためもう一度入力してください</div>
+<div class="label" style="margin-top:.75rem;">確認のためもう一度<br>入力してください</div>
 
 <div class="email-input-row">
   <!-- ローカル部（確認） -->
@@ -1368,6 +1368,80 @@
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
+
+
+// 共通：メール欄の値を保存（suffixは '' または '2'）
+function saveEmailPartsToStorage(suffix = '') {
+  const localEl = document.getElementById('emailLocal' + suffix);
+  const selEl   = document.getElementById('emailDomainSelect' + suffix);
+  const cusEl   = document.getElementById('emailDomainCustom' + suffix);
+
+  localStorage.setItem('emailLocal' + suffix,        localEl ? localEl.value : '');
+  localStorage.setItem('emailDomainSelect' + suffix, selEl ? selEl.value : '');
+  localStorage.setItem('emailDomainCustom' + suffix, cusEl ? cusEl.value : '');
+}
+
+// 共通：メール欄の値を復元（表示制御も含む）
+function restoreEmailPartsFromStorage(suffix = '') {
+  const localSaved = localStorage.getItem('emailLocal' + suffix) || '';
+  const selSaved   = localStorage.getItem('emailDomainSelect' + suffix) || '';
+  const cusSaved   = localStorage.getItem('emailDomainCustom' + suffix) || '';
+
+  const localEl = document.getElementById('emailLocal' + suffix);
+  const selEl   = document.getElementById('emailDomainSelect' + suffix);
+  const cusEl   = document.getElementById('emailDomainCustom' + suffix);
+
+  // 2組目のみ：カスタム入力のラッパ（存在すれば使う）
+  const customWrap = document.getElementById('emailDomainCustom' + suffix + 'Wrap');
+
+  if (localEl && localSaved) localEl.value = localSaved;
+  if (selEl && selSaved) selEl.value = selSaved;
+
+  const isCustom = (selSaved === '@custom' || selSaved === 'custom');
+  if (cusEl) {
+    if (customWrap) {
+      // 2組目はラッパの表示/非表示を切り替え
+      customWrap.style.display = isCustom ? '' : 'none';
+    } else {
+      // 1組目はinput自体を表示/非表示
+      cusEl.style.display = isCustom ? '' : 'none';
+    }
+    cusEl.value = isCustom ? (cusSaved || '') : '';
+  }
+
+  // 復元後に同期・注意喚起・照合
+  if (suffix === '' && typeof syncEmailHidden === 'function') {
+    // 隠しemailは1組目から組み立てるため、1組目復元時のみ同期
+    syncEmailHidden();
+    if (typeof maybeShowCarrierNotice === 'function') maybeShowCarrierNotice();
+  }
+  if (typeof validateEmailConfirmationParts === 'function') validateEmailConfirmationParts();
+}
+
+// 初期化：ページ読込時に両方を復元
+document.addEventListener('DOMContentLoaded', function () {
+  restoreEmailPartsFromStorage('');  // 1組目
+  restoreEmailPartsFromStorage('2'); // 2組目
+});
+
+// 既存ハンドラをラップして両組とも保存する
+const _orig_onEmailLocalInput = onEmailLocalInput;
+onEmailLocalInput = function(suffix = '') {
+  if (typeof _orig_onEmailLocalInput === 'function') _orig_onEmailLocalInput(suffix);
+  saveEmailPartsToStorage(suffix); // '' でも '2' でも保存
+};
+
+const _orig_onEmailDomainSelectChange = onEmailDomainSelectChange;
+onEmailDomainSelectChange = function(suffix = '') {
+  if (typeof _orig_onEmailDomainSelectChange === 'function') _orig_onEmailDomainSelectChange(suffix);
+  saveEmailPartsToStorage(suffix);
+};
+
+const _orig_onEmailDomainCustomInput = onEmailDomainCustomInput;
+onEmailDomainCustomInput = function(suffix = '') {
+  if (typeof _orig_onEmailDomainCustomInput === 'function') _orig_onEmailDomainCustomInput(suffix);
+  saveEmailPartsToStorage(suffix);
+};
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
