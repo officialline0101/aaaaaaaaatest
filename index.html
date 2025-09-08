@@ -796,18 +796,33 @@
   flex-wrap: nowrap;
 }
 
-/* input と select を同じ高さに */
+/* メール欄のinputやselectは共通幅指定しない */
 .email-input-row input,
 .email-input-row select {
-  flex: 1;
-  min-width: 0;
-  height: 42px;              /* 高さ統一 */
-  line-height: 42px;         /* ← selectの縦位置差を吸収 */
-  padding: 0 10px;           /* 上下0にして line-height で中央寄せ */
-  border: 1px solid #555;
-  border-radius: 3px;
-  font-size: 16px;
-  box-sizing: border-box;
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid #555;
+    border-radius: 3px;
+    font-size: 16px;
+    line-height: normal;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+/* ドメイン選択だけ幅を固定・縮める */
+#emailDomainSelect {
+    flex: 0 0 150px; /* ← 固定幅にする（例: 180px） */
+    max-width: 200px; /* ← 伸びすぎ防止（任意） */
+}
+
+/* ドメイン選択だけ位置を上にずらす */
+#emailDomainSelect {
+    position: relative;
+    top: -10px; /* ← 数値を調整して好みの高さに */
+    /* または transform でもOK */
+    /* transform: translateY(-2px); */
 }
 
 /* select 特有の見た目調整（矢印） */
@@ -884,25 +899,24 @@
             <!-- ローカル部 -->
             <input type="text" id="emailLocal" inputmode="email" autocomplete="email" spellcheck="false"
                 placeholder="例）taro.yamada" oninput="onEmailLocalInput()" />
-            <span class="at-mark">@</span>
 
             <!-- ドメイン選択 -->
             <select id="emailDomainSelect" onchange="onEmailDomainSelectChange()">
                 <option value="" selected>ドメインを選択</option>
-                <option value="gmail.com">gmail.com</option>
-                <option value="icloud.com">icloud.com</option>
-                <option value="outlook.jp">outlook.jp</option>
-                <option value="outlook.com">outlook.com</option>
-                <option value="hotmail.com">hotmail.com</option>
-                <option value="live.jp">live.jp</option>
-                <option value="yahoo.co.jp">yahoo.co.jp</option>
-                <option value="docomo.ne.jp">docomo.ne.jp</option>
-                <option value="ezweb.ne.jp">ezweb.ne.jp</option>
-                <option value="au.com">au.com</option>
-                <option value="softbank.ne.jp">softbank.ne.jp</option>
-                <option value="i.softbank.jp">i.softbank.jp</option>
-                <option value="ymobile.ne.jp">ymobile.ne.jp</option>
-                <option value="custom">その他（手入力）</option>
+                <option value="@gmail.com">@gmail.com</option>
+                <option value="@icloud.com">@icloud.com</option>
+                <option value="@outlook.jp">@outlook.jp</option>
+                <option value="@outlook.com">@outlook.com</option>
+                <option value="@hotmail.com">@hotmail.com</option>
+                <option value="@live.jp">@live.jp</option>
+                <option value="@yahoo.co.jp">@yahoo.co.jp</option>
+                <option value="@docomo.ne.jp">@docomo.ne.jp</option>
+                <option value="@ezweb.ne.jp">@ezweb.ne.jp</option>
+                <option value="@au.com">@au.com</option>
+                <option value="@softbank.ne.jp">@softbank.ne.jp</option>
+                <option value="@i.softbank.jp">@i.softbank.jp</option>
+                <option value="@ymobile.ne.jp">@ymobile.ne.jp</option>
+                <option value="@custom">その他（手入力）</option>
             </select>
 
             <!-- カスタムドメイン -->
