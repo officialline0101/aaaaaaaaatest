@@ -788,32 +788,63 @@
             color: #000000;
         }
 
-        /* メール専用ラッパー */
-        .email-input-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+/* メール専用ラッパー */
+.email-input-row {
+  display: flex;
+  align-items: center;   /* 縦中央 */
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
 
-        /* メール欄のinputやselectは共通幅指定しない */
-        .email-input-row input,
-        .email-input-row select {
-            flex: 1 1 220px;
-            width: auto;
-            /* ← 100%幅を無効化 */
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 3px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
+/* input と select を同じ高さに */
+.email-input-row input,
+.email-input-row select {
+  flex: 1;
+  min-width: 0;
+  height: 42px;              /* 高さ統一 */
+  line-height: 42px;         /* ← selectの縦位置差を吸収 */
+  padding: 0 10px;           /* 上下0にして line-height で中央寄せ */
+  border: 1px solid #555;
+  border-radius: 3px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
 
-        /* @マークだけ縦位置を中央揃え */
-        .email-input-row .at-mark {
-            font-size: 16px;
-            line-height: 1;
-        }
+/* select 特有の見た目調整（矢印） */
+.email-input-row select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background:
+    #fff url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='black' d='M6 8L0 0h12z'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  background-size: 12px 8px;
+  padding-right: 30px;       /* 矢印ぶん */
+  display: inline-flex;      /* ← これで縦中央が安定 */
+  align-items: center;
+}
+
+/* @ マークも高さを合わせて中央に */
+.email-input-row .at-mark {
+  display: inline-flex;
+  align-items: center;
+  height: 42px;              /* input/select と同じ高さ */
+  padding: 0 2px;
+  font-size: 16px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* （任意）iOS/Safari での上下余白ブレ抑制 */
+@supports (-webkit-touch-callout: none) {
+  .email-input-row select { padding-top: 0; padding-bottom: 0; }
+}
+
+/* （最終手段・Windows Chromeで1px下がる場合） */
+@media (min-width:0) {
+  .email-input-row select { position: relative; top: -1px; }
+}
+
     </style>
 </head>
 
