@@ -825,6 +825,20 @@
     /* transform: translateY(-2px); */
 }
 
+/* ドメイン選択だけ幅を固定・縮める */
+#emailDomainSelect2 {
+    flex: 0 0 85px; /* ← 固定幅にする（例: 180px） */
+    max-width: 200px; /* ← 伸びすぎ防止（任意） */
+}
+
+/* ドメイン選択だけ位置を上にずらす */
+#emailDomainSelect2 {
+    position: relative;
+    top: -10px; /* ← 数値を調整して好みの高さに */
+    /* または transform でもOK */
+    /* transform: translateY(-2px); */
+}
+
 /* select 特有の見た目調整（矢印） */
 .email-input-row select {
   appearance: none;
@@ -860,6 +874,59 @@
   .email-input-row select { position: relative; top: -1px; }
 }
 
+/* エラースタイル（赤枠） */
+.input-error {
+  border-color: #d00 !important;
+  box-shadow: 0 0 0 2px rgba(221,0,0,.12);
+}
+
+/* 2組目用ラッパ（ポップアップの基準） */
+.field-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 2組目のselect用（既存の固定幅を踏襲） */
+.field-wrap.select-narrow {
+  flex: 0 0 85px;
+  max-width: 200px;
+}
+
+/* エラーポップアップ */
+.popover-error {
+  position: absolute;
+  top: -28px;         /* ボックスの少し上 */
+  left: 0;
+  background: #d00;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1;
+  display: none;      /* JSで表示/非表示を制御 */
+}
+.popover-error::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 12px;
+  border: 6px solid transparent;
+  border-top-color: #d00;
+}
+
+/* 2組目のselect用（85px固定） */
+.field-wrap.select-narrow {
+  flex: 0 0 85px;   /* 横幅を85pxに固定 */
+  max-width: 85px;  /* 伸びないように上限も85pxに */
+}
+
+/* 中の select が親幅いっぱいに広がるように */
+.field-wrap.select-narrow select {
+  width: 100%;
+}
     </style>
 </head>
 
@@ -930,49 +997,56 @@
 
 <div class="label" style="margin-top:.75rem;">確認のためもう一度入力してください</div>
 
-<!-- メール確認用ラッパー（2組目） -->
 <div class="email-input-row">
   <!-- ローカル部（確認） -->
-  <input
-    type="text"
-    id="emailLocal2"
-    inputmode="email"
-    autocomplete="email"
-    spellcheck="false"
-    placeholder="例）taro.yamada"
-    oninput="onEmailLocalInput('2')"
-  />
+  <div class="field-wrap">
+    <input
+      type="text"
+      id="emailLocal2"
+      inputmode="email"
+      autocomplete="email"
+      spellcheck="false"
+      placeholder="例）taro.yamada"
+      oninput="onEmailLocalInput('2')"
+    />
+    <div id="emailLocal2Err" class="popover-error">一致していません</div>
+  </div>
 
   <!-- ドメイン選択（確認） -->
-  <select id="emailDomainSelect2" onchange="onEmailDomainSelectChange('2')">
-    <option value="" selected>選択</option>
-    <option value="@gmail.com">@gmail.com</option>
-    <option value="@icloud.com">@icloud.com</option>
-    <option value="@outlook.jp">@outlook.jp</option>
-    <option value="@outlook.com">@outlook.com</option>
-    <option value="@hotmail.com">@hotmail.com</option>
-    <option value="@live.jp">@live.jp</option>
-    <option value="@yahoo.co.jp">@yahoo.co.jp</option>
-    <option value="@docomo.ne.jp">@docomo.ne.jp</option>
-    <option value="@ezweb.ne.jp">@ezweb.ne.jp</option>
-    <option value="@au.com">@au.com</option>
-    <option value="@softbank.ne.jp">@softbank.ne.jp</option>
-    <option value="@i.softbank.jp">@i.softbank.jp</option>
-    <option value="@ymobile.ne.jp">@ymobile.ne.jp</option>
-    <option value="@custom">その他（手入力）</option>
-  </select>
+  <div class="field-wrap select-narrow">
+    <select id="emailDomainSelect2" onchange="onEmailDomainSelectChange('2')">
+      <option value="" selected>選択</option>
+      <option value="@gmail.com">@gmail.com</option>
+      <option value="@icloud.com">@icloud.com</option>
+      <option value="@outlook.jp">@outlook.jp</option>
+      <option value="@outlook.com">@outlook.com</option>
+      <option value="@hotmail.com">@hotmail.com</option>
+      <option value="@live.jp">@live.jp</option>
+      <option value="@yahoo.co.jp">@yahoo.co.jp</option>
+      <option value="@docomo.ne.jp">@docomo.ne.jp</option>
+      <option value="@ezweb.ne.jp">@ezweb.ne.jp</option>
+      <option value="@au.com">@au.com</option>
+      <option value="@softbank.ne.jp">@softbank.ne.jp</option>
+      <option value="@i.softbank.jp">@i.softbank.jp</option>
+      <option value="@ymobile.ne.jp">@ymobile.ne.jp</option>
+      <option value="@custom">その他（手入力）</option>
+    </select>
+    <div id="emailDomain2Err" class="popover-error">一致していません</div>
+  </div>
 
-  <!-- カスタムドメイン（確認） -->
-  <input
-    type="text"
-    id="emailDomainCustom2"
-    inputmode="email"
-    autocomplete="email"
-    spellcheck="false"
-    placeholder="例）example.co.jp"
-    oninput="onEmailDomainCustomInput('2')"
-    style="display:none;"
-  />
+  <!-- カスタムドメイン（確認）：select=その他時のみ表示 -->
+  <div class="field-wrap" id="emailDomainCustom2Wrap" style="display:none;">
+    <input
+      type="text"
+      id="emailDomainCustom2"
+      inputmode="email"
+      autocomplete="email"
+      spellcheck="false"
+      placeholder="例）example.co.jp"
+      oninput="onEmailDomainCustomInput('2')"
+    />
+    <div id="emailDomainCustom2Err" class="popover-error">一致していません</div>
+  </div>
 </div>
 
         <div class="label">ご来店回数<span class="required">必須</span></div>
@@ -1503,13 +1577,15 @@
     }
   }
 
-  // ▼ イベントハンドラ（サフィックス対応）
   function onEmailLocalInput(suffix = '') {
     if (suffix === '') {
       syncEmailHidden();
-      maybeShowCarrierNotice(); // 注意喚起は1組目のみ
+      maybeShowCarrierNotice();
     }
+    // ★ 2組目リアルタイム照合（1組目が動いても更新したいので常に呼ぶ）
+    validateEmailConfirmationParts();
   }
+
   function onEmailDomainSelectChange(suffix = '') {
     const sel = document.getElementById('emailDomainSelect' + suffix)?.value || '';
     const custom = document.getElementById('emailDomainCustom' + suffix);
@@ -1522,11 +1598,16 @@
       syncEmailHidden();
       maybeShowCarrierNotice();
     }
+    // ★ 2組目リアルタイム照合
+    validateEmailConfirmationParts();
   }
+
   function onEmailDomainCustomInput(suffix = '') {
     if (suffix === '') {
       syncEmailHidden();
     }
+    // ★ 2組目リアルタイム照合
+    validateEmailConfirmationParts();
   }
 
   // ▼ 任意：キャリアメール注意喚起（既存のまま）
@@ -1550,6 +1631,58 @@
       }
     } else if (banner) {
       banner.remove();
+    }
+  }
+
+    function showError(el, popoverEl) {
+    if (!el || !popoverEl) return;
+    el.classList.add('input-error');
+    popoverEl.style.display = '';
+  }
+  function hideError(el, popoverEl) {
+    if (!el || !popoverEl) return;
+    el.classList.remove('input-error');
+    popoverEl.style.display = 'none';
+  }
+
+  // 2組目の入力が変わるたびに呼ぶ（1組目が変わった時にも呼ぶと表示が即時更新され便利）
+  function validateEmailConfirmationParts() {
+    // ローカル部比較
+    const local1 = toHalfWidth(document.getElementById('emailLocal')?.value || '');
+    const local2Input = document.getElementById('emailLocal2');
+    const local2 = toHalfWidth(local2Input?.value || '');
+    const localErr = document.getElementById('emailLocal2Err');
+
+    if (local2 && local1 && local1 !== local2) {
+      showError(local2Input, localErr);
+    } else {
+      hideError(local2Input, localErr);
+    }
+
+    // ドメイン比較（custom/select どちらが可視かで対象切替）
+    const sel1 = document.getElementById('emailDomainSelect');
+    const cus1 = document.getElementById('emailDomainCustom');
+    const domain1 = getSelectedDomain(sel1, cus1); // 正規化済（@を外してlower）
+
+    const sel2 = document.getElementById('emailDomainSelect2');
+    const cus2 = document.getElementById('emailDomainCustom2');
+    const custom2Shown = cus2 && cus2.parentElement && cus2.parentElement.style.display !== 'none';
+    const domain2 = getSelectedDomain(sel2, cus2);
+
+    const sel2Err = document.getElementById('emailDomain2Err');
+    const cus2Err = document.getElementById('emailDomainCustom2Err');
+
+    // まず全部消す
+    hideError(sel2, sel2Err);
+    hideError(cus2, cus2Err);
+
+    // 値が両方あり、かつ不一致なら該当フィールドを赤に
+    if (domain2 && domain1 && domain1 !== domain2) {
+      if (custom2Shown) {
+        showError(cus2, cus2Err);
+      } else {
+        showError(sel2, sel2Err);
+      }
     }
   }
 
