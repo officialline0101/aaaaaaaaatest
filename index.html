@@ -943,12 +943,6 @@
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
-        <div class="label">ご来店回数<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
-        </div>
-
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
 
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
@@ -1187,12 +1181,12 @@ function formatDateTime(dateTimeString) {
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:#45c4b7;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-            const selectedMenuText = selectedMenu ? `<span style="color:#45c4b7;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
+            const selectedMenuText = selectedMenu ? `<span style="color:#45c4b7;"><strong>【メニュー】</strong></span><br>・${selectedMenu}` : '・メニューが未選択です';
 
             // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:#45c4b7;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
-                : '・メニューが未選択です';
+                ? `<span style="color:#45c4b7;"><strong>【担当者】</strong></span><br>・${selectedSymptom.join('<br>')}`
+                : '・担当者未選択';
 
             // オプションが選択されていたら、各オプションを改行して表示
             const irradiationsText = irradiationsCount
@@ -1239,6 +1233,11 @@ function formatDateTime(dateTimeString) {
         <div class="info-row">
             <p>${visitCountText}</p>
             <button class="edit-button" onclick="scrollToElement('firstVisit')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p>${selectedMenuText}</p>
+            <button class="edit-button" onclick="scrollToElement('course')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1633,54 +1632,80 @@ function isBlockedTime(weekday, h, m) {
             localStorage.setItem('selectedMenus', JSON.stringify(selectedMenus));
         }
 
-        function showMenu(menu) {
-            // treatment-text を非表示にする
-            document.getElementById("treatment-text").style.display = "none";
+function showMenu(menu) {
+    // treatment-text を非表示にする
+    document.getElementById("treatment-text").style.display = "none";
 
-            // 選択されたメニューの名前を取得
-            let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
+    // 選択されたメニューの名前を取得
+    let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
+    if (selectedButton) {
+        selectedMenu = selectedButton.innerText;
+    }
 
-            if (selectedButton) {
-                selectedMenu = selectedButton.innerText;
-            }
+    // ✅ メニュー識別子を保存
+    localStorage.setItem('selectedMenu', menu);
 
-            // ✅ ローカルストレージにメニュー識別子を保存（追加）
-            localStorage.setItem('selectedMenu', menu); // ←この行を追加！
+    // ★ ここを追加：メニュー切替時に症状選択を完全リセット
+    // 状態変数
+    selectedSymptom = '';
+    irradiationsCount = '';
 
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
+    // 保存値
+    localStorage.removeItem('selectedSymptom');
+    localStorage.removeItem('irradiationsCount');
+
+    // UI（ボタン/トグルの見た目・入力の解除）
+    // 症状用のラッパに .symptom（または .symptom-list 等）を使っている想定
+    // クラス名が違う場合は該当クラスに置き換えてください
+    document.querySelectorAll('.symptom button.selected, .symptom button.active').forEach(el => {
+        el.classList.remove('selected', 'active');
+    });
+    document.querySelectorAll('.symptom input[type="radio"], .symptom input[type="checkbox"]').forEach(el => {
+        el.checked = false;
+    });
+
+    // すべてのメニューボタンの選択状態をリセット
+    document.querySelectorAll('.menu-sections button').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // 選択されたメニューセクションを非表示＋ボタン状態リセット
+    document.querySelectorAll('.menu-section').forEach(section => {
+        section.classList.remove('active');
+        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+    });
+
+    // 対応するメニューボタンを選択状態にする
+    if (selectedButton) {
+        selectedButton.classList.add('active');
+        selectMenu(selectedButton);
+    }
+
+    // 選択されたメニューセクションを表示
+    document.getElementById(menu).classList.add('active');
+
+    // treatment-text の内容をリセット
+    document.getElementById("treatment-text").innerHTML = "";
+
+    // 金額系もリセット
+    menuPrice = 0;
+    optionsPrice = 0;
+    totalAmount = 0;
+
+    // 表示を更新
+    updateDisplayInfo();
+}
+
+        // ページ読み込み時にローカルストレージから選択状態を復元
+        document.addEventListener("DOMContentLoaded", () => {
+            let selectedMenus = JSON.parse(localStorage.getItem('selectedMenus') || '[]');
+            selectedMenus.forEach(menuId => {
+                let menuButton = document.getElementById(menuId);
+                if (menuButton) {
+                    menuButton.classList.add('selected');
+                }
             });
-
-            // 選択されたメニューセクションを非表示＋ボタン状態リセット
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
-
-            // 対応するメニューボタンを選択状態にする
-            if (selectedButton) {
-                selectedButton.classList.add('active');
-                selectMenu(selectedButton);
-            }
-
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // treatment-text の内容をリセット
-            document.getElementById("treatment-text").innerHTML = "";
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
+        });
         // ページ読み込み時にローカルストレージから選択状態を復元
         document.addEventListener("DOMContentLoaded", () => {
             let selectedMenus = JSON.parse(localStorage.getItem('selectedMenus') || '[]');
@@ -1723,7 +1748,7 @@ function isBlockedTime(weekday, h, m) {
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
                 selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : "指名なし", // 空なら「指名なし」
                 irradiationsCount: irradiationsCount,
                 dates: [
                     document.getElementById('date1').value,
@@ -1744,21 +1769,20 @@ function isBlockedTime(weekday, h, m) {
                 return;
             }
 
+            if (!formData.selectedMenu) {
+                alert('メニューを選択してください。');
+                return;
+            }
+
             if (!formData.dates[0]) {
                 alert('第1希望日※必須を選択してください。');
                 return;
             }
 
-    // メニュー部分の組み立て
-    let symptomText = "";
-    if (formData.selectedSymptom) {
-        symptomText = `\n《メニュー》\n・${formData.selectedSymptom}`;
-    }
-
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《ご来店回数》${formData.visitCount}\n\nコース：${formData.selectedMenu}${symptomText}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
+                text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《ご来店回数》${formData.visitCount}\n\nコース：${formData.selectedMenu}\n《指名》${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('確認してご連絡差し上げます。');
