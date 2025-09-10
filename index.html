@@ -1135,9 +1135,6 @@
 
 /* オプションの枠はJSで display を切り替える */
 .option-group { display: none; }
-
-/* メニューを外したときに中の選択を一括で見た目解除したい場合の補助 */
-.option-group .irradiations button.active { outline: 2px solid var(--primary, #4361ee); }
     </style>
 </head>
 
@@ -1429,7 +1426,7 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let secondTimes = {
-            '利用する': 0,
+            '利用する': 30,
             '利用しない': 0
         };
 
@@ -1647,14 +1644,7 @@ function toggleOptionGroup(treatmentId, show) {
   }
 }
 
-// ★ 追加：本体メニュー（.symptoms 直下の button）だけを対象にする
-function getActiveMainButtons() {
-  return Array.from(document.querySelectorAll('.symptoms > button.active'));
-}
-function getAllMainButtons() {
-  return Array.from(document.querySelectorAll('.symptoms > button'));
-}
-
+// ▼ 既存の selectSymptom を一部拡張（トグルの直後に option-group を制御）
 function selectSymptom(button, treatmentId) {
   const wasActive = button.classList.contains('active');
 
@@ -1665,25 +1655,21 @@ function selectSymptom(button, treatmentId) {
   const selectedMenusDisplay = document.getElementById("selected-menus-display");
   const selectedMenuNameDiv = document.getElementById('selected-menu-name');
 
-  // 追加前に「本体の選択数」をチェック（オプションは数えない）
-  if (!wasActive) {
-    const activeMainBefore = getActiveMainButtons();
-    if (activeMainBefore.length >= 3) {
-      return; // 上限3
-    }
-  }
-
   // トグル
   if (wasActive) {
-    button.classList.remove('active'); // 解除
-    toggleOptionGroup(treatmentId, false); // 対応オプションを閉じる
+    button.classList.remove('active');       // 解除
+    // ▼ 対応オプションを閉じる
+    toggleOptionGroup(treatmentId, false);
   } else {
-    button.classList.add('active'); // 追加
-    toggleOptionGroup(treatmentId, true);  // 対応オプションを開く
+    let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+    if (updatedSelectedButtons.length >= 3) return;
+    button.classList.add('active');          // 追加
+    // ▼ 対応オプションを開く
+    toggleOptionGroup(treatmentId, true);
   }
 
-  // ここから「本体ボタンのみ」で再構築
-  const activeMain = getActiveMainButtons();
+  // 最新の選択状態
+  let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
 
   // リセット
   selectedMenuTime = 0;
@@ -1691,7 +1677,7 @@ function selectSymptom(button, treatmentId) {
   menuPrice = 0;
 
   // 全解除なら関連UIを閉じて終了
-  if (activeMain.length === 0) {
+  if (updatedSelectedButtons.length === 0) {
     if (treatmentText) treatmentText.style.display = 'none';
     selectedMenusDisplay.style.display = 'none';
     selectedMenusDisplay.innerHTML = '';
@@ -1703,8 +1689,8 @@ function selectSymptom(button, treatmentId) {
     return;
   }
 
-  // 選択の再構築（本体のみ）
-  activeMain.forEach((btn) => {
+  // 選択の再構築
+  updatedSelectedButtons.forEach((btn) => {
     const name = btn.textContent;
     const category = btn.getAttribute('data-category');
     selectedSymptom.push({ category, name });
@@ -1712,8 +1698,8 @@ function selectSymptom(button, treatmentId) {
     menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
   });
 
-  // カレンダー更新
-  fetchAvailability?.(currentDate);
+            // カレンダー更新
+            fetchAvailability(currentDate);
 
             // 《ここが肝》解除操作なら説明は必ず隠す／追加操作のときだけ表示＆差し替え
             if (wasActive) {
@@ -1929,52 +1915,26 @@ function removeSymptom(button) {
 
 // ※ updateSelectedMenusDisplay はそのままでOK（ご提示のまま使えます）
 
-function updateSelectedMenusDisplay() {
-  const selectedMenusDisplay = document.getElementById("selected-menus-display");
+        function updateSelectedMenusDisplay() {
+            const selectedMenusDisplay = document.getElementById("selected-menus-display");
 
-  if (selectedSymptom.length > 0) {
-    // 念のため「オプション項目」が紛れ込んでいても弾く（selectirradiationsは通常selectedSymptomに入れませんが保険）
-    const mainsOnly = selectedSymptom.filter(item => {
-      // 例: カテゴリ名や名称に「オプション」「irradiations」などが混入していたら除外
-      const name = (item?.name ?? '').toLowerCase();
-      const cat  = (item?.category ?? '').toLowerCase();
-      return !(
-        cat.includes('オプション') || cat.includes('option') ||
-        name.includes('オプション') || name.includes('option') ||
-        name.includes('irradiations')
-      );
-    });
-
-    // 表示内容を構築（名称は必ずエスケープしてテキスト扱い）
-    selectedMenusDisplay.innerHTML = `
-      <div class="menu-items-wrapper">
-        ${mainsOnly.map(item => `
-          <div class="menu-item">
-            <span>《${escapeHTML(item.category)}》<br>${escapeHTML(item.name)}</span>
-            <button class="remove-button"
-                    data-category="${escapeHTML(item.category)}"
-                    data-name="${escapeHTML(item.name)}"
-                    onclick="removeSymptom(this)">✕</button>
-          </div>
-        `).join('')}
-      </div>
-    `;
-
-    // 念のため、もし内部に .irradiations / .option-group が混入しても削除（保険）
-    selectedMenusDisplay.querySelectorAll('.irradiations, .option-group').forEach(el => el.remove());
-
-    // 何も残らなければ非表示
-    if (mainsOnly.length === 0) {
-      selectedMenusDisplay.innerHTML = '';
-      selectedMenusDisplay.style.display = 'none';
-      return;
-    }
-    selectedMenusDisplay.style.display = 'block';
-  } else {
-    selectedMenusDisplay.innerHTML = '';
-    selectedMenusDisplay.style.display = 'none';
-  }
-}
+            if (selectedSymptom.length > 0) {
+                selectedMenusDisplay.innerHTML = `
+            <div class="menu-items-wrapper">
+                ${selectedSymptom.map(item => `
+                    <div class="menu-item">
+                        <span>《${item.category}》<br>${item.name}</span>
+                        <button class="remove-button" data-category="${item.category}" data-name="${item.name}" onclick="removeSymptom(this)">✕</button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+                selectedMenusDisplay.style.display = 'block';
+            } else {
+                selectedMenusDisplay.innerHTML = '';
+                selectedMenusDisplay.style.display = 'none';
+            }
+        }
 
         function selectirradiations(button) {
             // 選択された日時をリセット
@@ -2139,8 +2099,6 @@ function updateSelectedMenusDisplay() {
             document.getElementById("treatment-text").innerHTML = "";
 
             // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
             menuPrice = 0;             // メニューの価格リセット
             optionsPrice = 0;          // オプションの価格リセット
             totalAmount = 0;           // 合計金額リセット
