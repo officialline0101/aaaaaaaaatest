@@ -1299,11 +1299,7 @@
 
   <div class="symptoms">
     <!-- フラットラッシュ（セカンド） -->
-    <button type="button"
-            onclick="selectSymptom(this, 'treatment16')"
-            data-category="まつげエクステ" data-price="4900">
-      フラットラッシュ
-    </button>
+    <button type="button" onclick="selectSymptom(this, 'treatment16')" data-category="まつげエクステ" data-price="4900">フラットラッシュ</button>
 
     <div class="option-group" data-for="treatment16" style="display:none;">
       <div class="labeltyuuou">
@@ -1324,11 +1320,7 @@
     </div>
 
     <!-- デザインキープラッシュ（セカンド） -->
-    <button type="button"
-            onclick="selectSymptom(this, 'treatment17')"
-            data-category="まつげエクステ" data-price="4900">
-      デザインキープラッシュ
-    </button>
+    <button type="button" onclick="selectSymptom(this, 'treatment17')" data-category="まつげエクステ" data-price="4900">デザインキープラッシュ</button>
 
     <div class="option-group" data-for="treatment17" style="display:none;">
       <div class="labeltyuuou">
@@ -1336,9 +1328,9 @@
       </div>
       <div class="irradiations">
         <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：6500円">３週間以内<br>ナチュラルリペア</button>
-        <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：8000円">３週間以内vスタンダートリペア</button>
+        <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：8000円">３週間以内<br>スタンダートリペア</button>
         <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：9000円">３週間以内付け放題</button>
-        <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：7000円">4週間以内ナチュラルリペア</button>
+        <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：7000円">4週間以内<br>ナチュラルリペア</button>
         <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：9000円">4週間以内<br>スタンダートリペア</button>
         <button type="button" onclick="selectirradiations(this)" data-price="15000" data-note="料金：10000円">4週間以内付け放題</button>
       </div>
@@ -2211,13 +2203,17 @@ function removeSymptom(button) {
                 return;
             }
 
+            
+
             // selectedSymptomを文字列に整形
             const selectedSymptomText = formData.selectedSymptom
                 ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
                 : 'メニュー未選択';
 
-            // irradiationsCountの整形（nullチェック）
-            const irradiationsText = formData.irradiationsCount || 'なし';
+// irradiationsCountの整形（nullチェック & 改行削除）
+const irradiationsText = formData.irradiationsCount
+    ? formData.irradiationsCount.toString().replace(/<br\s*\/?>|\r?\n/g, '')
+    : 'なし';
 
             liff.sendMessages([{
                 type: 'text',
