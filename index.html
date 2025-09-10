@@ -1369,7 +1369,6 @@
             }
         }
 
-
 // 共通：メール欄の値を保存（suffixは '' または '2'）
 function saveEmailPartsToStorage(suffix = '') {
   const localEl = document.getElementById('emailLocal' + suffix);
@@ -1759,6 +1758,52 @@ onEmailDomainCustomInput = function(suffix = '') {
       }
     }
   }
+
+  // 追加：カスタムドメイン欄の表示/非表示をラッパーごと切り替える共通関数
+  function toggleEmailCustomVisibility(suffix = '') {
+    const selVal = document.getElementById('emailDomainSelect' + suffix)?.value || '';
+    const isCustom = (selVal === '@custom' || selVal === 'custom');
+
+    const customInput = document.getElementById('emailDomainCustom' + suffix);
+    const customWrap  = document.getElementById('emailDomainCustom' + suffix + 'Wrap'); // 2組目のみ存在
+
+    if (customWrap) {
+      // 確認用（2組目）はラッパーを開閉
+      customWrap.style.display = isCustom ? '' : 'none';
+      if (customInput && !isCustom) customInput.value = '';
+    } else if (customInput) {
+      // 1組目は input 自体を開閉
+      customInput.style.display = isCustom ? '' : 'none';
+      if (!isCustom) customInput.value = '';
+    }
+  }
+
+  // 置き換え：既存ハンドラを包んで、表示切替も行う
+  const __orig_onEmailDomainSelectChange = onEmailDomainSelectChange;
+  onEmailDomainSelectChange = function(suffix = '') {
+    if (typeof __orig_onEmailDomainSelectChange === 'function') {
+      __orig_onEmailDomainSelectChange(suffix);
+    }
+    // ★ ラッパーごと正しくトグル
+    toggleEmailCustomVisibility(suffix);
+
+    // 既存処理（隠し値同期や注意喚起/照合）はそのまま
+    if (suffix === '') {
+      if (typeof syncEmailHidden === 'function') syncEmailHidden();
+      if (typeof maybeShowCarrierNotice === 'function') maybeShowCarrierNotice();
+    }
+    if (typeof validateEmailConfirmationParts === 'function') {
+      validateEmailConfirmationParts();
+    }
+    // 保存
+    if (typeof saveEmailPartsToStorage === 'function') saveEmailPartsToStorage(suffix);
+  };
+
+  // 初期表示時にも状態を反映しておくと安心
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleEmailCustomVisibility('');
+    toggleEmailCustomVisibility('2');
+  });
 
         function selectSymptom(button, treatmentId) {
             // 選択された日時をリセット
