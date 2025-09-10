@@ -1685,22 +1685,34 @@ onEmailDomainCustomInput = function(suffix = '') {
 
   // ▼ 任意：キャリアメール注意喚起（既存のまま）
   function maybeShowCarrierNotice() {
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email')?.value || '';
     const bannerId = 'carrierNotice';
     let banner = document.getElementById(bannerId);
 
+    // 対象: キャリアメール判定
     const carrierRe = /@(docomo\.ne\.jp|ezweb\.ne\.jp|au\.com|softbank\.ne\.jp|i\.softbank\.jp|ymobile\.ne\.jp)$/i;
     const isCarrier = carrierRe.test(email);
 
+    // 「1組目のメール入力行（.email-input-row）」の直後に挿入したい
+    const firstRow = document.getElementById('emailDomainSelect')?.closest('.email-input-row');
+
     if (isCarrier) {
+      // バナー未生成なら作成
       if (!banner) {
         banner = document.createElement('div');
         banner.id = bannerId;
-        banner.style.cssText = 'margin-top:.25rem;color:#b35b00;font-size:.9em;';
-        banner.textContent = 'キャリアメールは迷惑メール設定によりメールが届かない場合があります。受信設定のご確認、または可能であればGmail等のアドレスをご利用ください。';
-        // 1組目の行の末尾に付ける
-        const parentRow = document.getElementById('emailDomainSelect')?.parentElement;
-        if (parentRow) parentRow.appendChild(banner);
+        banner.style.cssText = 'margin-top:.5rem;color:#b35b00;font-size:.9em;line-height:1.6;';
+        banner.textContent =
+          'キャリアメールは迷惑メール設定によりメールが届かない場合があります。受信設定のご確認、または可能であればGmail等のアドレスをご利用ください。';
+      }
+
+      // 目的の位置（1組目の行の直後）へ差し込む／移動する
+      if (firstRow && banner.previousElementSibling !== firstRow) {
+        firstRow.insertAdjacentElement('afterend', banner);
+      } else if (!firstRow && !banner.isConnected) {
+        // 念のためフォールバック：親が取れない場合は select の親に追加
+        const fallbackParent = document.getElementById('emailDomainSelect')?.parentElement;
+        fallbackParent?.appendChild(banner);
       }
     } else if (banner) {
       banner.remove();
