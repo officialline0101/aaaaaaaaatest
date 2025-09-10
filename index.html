@@ -1636,15 +1636,49 @@ function toggleOptionGroup(treatmentId, show) {
 
   group.style.display = show ? 'block' : 'none';
 
-  // 非表示にする場合は中の選択もクリア
+  // 非表示にするときは中の選択を完全解除
   if (!show) {
-    group.querySelectorAll('.irradiations button.active').forEach(b => b.classList.remove('active'));
-    // 価格・時間などをオプション分だけ再計算したい場合はここで適宜更新
-    updateDisplayInfo && updateDisplayInfo();
+    group.querySelectorAll('.irradiations button.active')
+         .forEach(b => b.classList.remove('active'));
   }
+
+  // 常に“全体再計算”してグローバル反映
+  recalcIrradiationsState();
+
+  // 表示を同期
+  if (typeof updateDisplayInfo === 'function') updateDisplayInfo();
 }
 
-// ▼ 既存の selectSymptom を一部拡張（トグルの直後に option-group を制御）
+/** オプションの“現時点の真の状態”を全体から再計算して反映 */
+function recalcIrradiationsState() {
+  const activeOptBtns = document.querySelectorAll('.option-group .irradiations button.active');
+
+  // 文言（どのオプションが選ばれているか）を最新に
+  irradiationsCount = Array.from(activeOptBtns)
+    .map(b => b.innerText.trim())
+    .join(', ');
+
+  // 価格・時間も最新に
+  optionsPrice = 0;
+  selectedirradiationsTime = 0;
+  activeOptBtns.forEach(btn => {
+    optionsPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
+    const name = btn.innerText.trim();
+    if (window.irradiationsTimes) {
+      selectedirradiationsTime += window.irradiationsTimes[name] || 0;
+    }
+  });
+}
+
+// ★ 追加：本体メニュー（.symptoms 直下の button）だけを対象にする
+function getActiveMainButtons() {
+  return Array.from(document.querySelectorAll('.symptoms > button.active'));
+}
+function getAllMainButtons() {
+  return Array.from(document.querySelectorAll('.symptoms > button'));
+}
+
+
 function selectSymptom(button, treatmentId) {
   const wasActive = button.classList.contains('active');
 
@@ -1655,21 +1689,25 @@ function selectSymptom(button, treatmentId) {
   const selectedMenusDisplay = document.getElementById("selected-menus-display");
   const selectedMenuNameDiv = document.getElementById('selected-menu-name');
 
-  // トグル
-  if (wasActive) {
-    button.classList.remove('active');       // 解除
-    // ▼ 対応オプションを閉じる
-    toggleOptionGroup(treatmentId, false);
-  } else {
-    let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
-    if (updatedSelectedButtons.length >= 3) return;
-    button.classList.add('active');          // 追加
-    // ▼ 対応オプションを開く
-    toggleOptionGroup(treatmentId, true);
+  // 追加前に「本体の選択数」をチェック（オプションは数えない）
+  if (!wasActive) {
+    const activeMainBefore = getActiveMainButtons();
+    if (activeMainBefore.length >= 3) {
+      return; // 上限3
+    }
   }
 
-  // 最新の選択状態
-  let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+  // トグル
+  if (wasActive) {
+    button.classList.remove('active'); // 解除
+    toggleOptionGroup(treatmentId, false); // 対応オプションを閉じる
+  } else {
+    button.classList.add('active'); // 追加
+    toggleOptionGroup(treatmentId, true);  // 対応オプションを開く
+  }
+
+  // ここから「本体ボタンのみ」で再構築
+  const activeMain = getActiveMainButtons();
 
   // リセット
   selectedMenuTime = 0;
@@ -1677,7 +1715,7 @@ function selectSymptom(button, treatmentId) {
   menuPrice = 0;
 
   // 全解除なら関連UIを閉じて終了
-  if (updatedSelectedButtons.length === 0) {
+  if (activeMain.length === 0) {
     if (treatmentText) treatmentText.style.display = 'none';
     selectedMenusDisplay.style.display = 'none';
     selectedMenusDisplay.innerHTML = '';
@@ -1689,8 +1727,8 @@ function selectSymptom(button, treatmentId) {
     return;
   }
 
-  // 選択の再構築
-  updatedSelectedButtons.forEach((btn) => {
+  // 選択の再構築（本体のみ）
+  activeMain.forEach((btn) => {
     const name = btn.textContent;
     const category = btn.getAttribute('data-category');
     selectedSymptom.push({ category, name });
@@ -1698,8 +1736,8 @@ function selectSymptom(button, treatmentId) {
     menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
   });
 
-            // カレンダー更新
-            fetchAvailability(currentDate);
+  // カレンダー更新
+  fetchAvailability?.(currentDate);
 
             // 《ここが肝》解除操作なら説明は必ず隠す／追加操作のときだけ表示＆差し替え
             if (wasActive) {
@@ -1827,17 +1865,14 @@ function hideOptionGroupAndClear(treatmentId) {
   const group = document.querySelector(`.option-group[data-for="${treatmentId}"]`);
   if (!group) return;
 
-  // 非表示
   group.style.display = 'none';
+  group.querySelectorAll('.irradiations button.active')
+       .forEach(b => b.classList.remove('active'));
 
-  // 中のアクティブを解除
-  group.querySelectorAll('.irradiations button.active').forEach(b => b.classList.remove('active'));
+  // 解除後は必ず全体再計算
+  recalcIrradiationsState();
 
-  // 合計を再計算
-  recalcIrradiationsTotals();
-
-  // 表示更新（存在すれば呼ぶ）
-  updateDisplayInfo?.();
+  if (typeof updateDisplayInfo === 'function') updateDisplayInfo();
 }
 
 // ▼ ここを差し替え
