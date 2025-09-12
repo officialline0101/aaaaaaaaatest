@@ -909,11 +909,13 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
+        let visitCount = '';
         let selectedMenu = '';
         let selectedSymptom = [];  // 配列として定義
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
+        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
         let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
@@ -1270,6 +1272,39 @@ function updateDisplayInfo() {
             updateDisplayInfo();
         }
 
+        function selectirradiations(button) {
+            selectedFullDate = '';
+
+            // トグル
+            button.classList.toggle('active');
+
+            // ✅ 現在アクティブなオプションボタンのみを取得し保存（過去データ無視）
+            const selectedButtons = document.querySelectorAll('.irradiations button.active');
+            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.id);
+            localStorage.setItem('selectedIrradiations', JSON.stringify(selectedIrradiations));
+
+            // 表示用データ生成
+            const selectedIrradiationsNames = Array.from(selectedButtons).map(btn => btn.innerText);
+            irradiationsCount = selectedIrradiationsNames.join(', ');
+
+            // 合計金額など更新
+            optionsPrice = 0;
+            let totalirradiationsTime = 0;
+            selectedButtons.forEach(btn => {
+                const price = parseInt(btn.getAttribute('data-price'), 10);
+                optionsPrice += price;
+
+                const irradiationName = btn.innerText;
+                const irradiationTime = irradiationsTimes[irradiationName] || 0;
+                totalirradiationsTime += irradiationTime;
+            });
+
+            selectedirradiationsTime = totalirradiationsTime;
+
+            fetchAvailability(currentDate);
+            updateDisplayInfo();
+        }
+
         function updateTotalAmount() {
             totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
             updateDisplayInfo(); // 表示を更新
@@ -1400,8 +1435,10 @@ function updateDisplayInfo() {
                 region: document.getElementById('region').value.trim(),
                 age: document.getElementById('age').value.trim(),
                 DueDate: document.getElementById('DueDate').value.trim(),
+                visitCount: visitCount,
                 selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                irradiationsCount: irradiationsCount,
                 dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
                 message: document.getElementById('message').value.trim()
             };
@@ -1445,7 +1482,7 @@ function updateDisplayInfo() {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n出産日または予定日：${formData.dueDate}\n行政区：${formData.region}\n年齢：${formData.age}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\n出産日または予定日：${formData.dueDate}\n行政区：${formData.region}\n年齢：${formData.age}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
