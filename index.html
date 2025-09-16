@@ -833,7 +833,7 @@
     </div>
 
     <div class="container">
-        <h1>予約フォームA<br>予約フォーム
+        <h1>予約フｓｓｓｓォームA<br>予約フォーム
         </h1>
         <div class="Precautions">・施術不可能な方
 ・妊婦の方<br>
@@ -1453,23 +1453,18 @@ function updateDisplayInfo() {
             fetchAvailability(currentDate);
         }
 
-        function selectPrecautions(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+    function selectPrecautions(element) {
+        // 選択された日時をリセット
+        selectedFullDate = '';
 
-            document.getElementById('firstPrecautions').classList.remove('active');
-            document.getElementById('repeatPrecautions').classList.remove('active');
-            element.classList.add('active');
-            PrecautionsCount = element.innerText;
+        document.getElementById('firstPrecautions').classList.remove('active');
+        document.getElementById('repeatPrecautions').classList.remove('active');
+        element.classList.add('active');
+        PrecautionsCount = element.innerText; // 「同意する」or「同意しない」が入る
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedPrecautionsTime = PrecautionsTimes[PrecautionsCount];
-
-            console.log('選択された訪問回数の時間:', selectedPrecautionsTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+        // カレンダーを更新するために取得する日付を渡す
+        fetchAvailability(currentDate);
+    }
 
         // メニューの選択を保存する関数
         function selectMenu(element) {
@@ -1605,10 +1600,11 @@ function updateDisplayInfo() {
                 return;
             }
 
-            if (!formData.PrecautionsCount) {
-                alert('同意を選択しない場合、ご予約は出来ません。');
-                return;
-            }
+        // ★ 同意しない場合は予約できないようにする
+        if (formData.PrecautionsCount === '同意しない') {
+            alert('同意を選択しない場合、ご予約は出来ません。');
+            return;
+        }
 
             if (!formData.dates) {
                 alert('希望日時を選択してください。');
