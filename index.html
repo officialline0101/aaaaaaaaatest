@@ -820,6 +820,100 @@
             background-color: #f1f1f1;
             color: #000000;
         }
+
+:root {
+  --ink:#111;
+  --ink-muted:#666;
+  --line:#111;
+  --hairline:#f2f2f2;
+  --card:#fff;
+  --radius:16px;
+}
+
+/* 画像エリア（黒線を削除） */
+.treatment-image {
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin: 0px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  /* border: 1.5px solid var(--line); ←削除 */
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+.treatment-image img {
+  width: 100%;
+  display: none;
+  border-radius: 0;
+}
+
+/* 詳細・料金・所要時間セクション */
+.treatment-description, 
+.treatment-price,
+.treatment-time {
+  position: relative;
+  margin-top: 20px;
+  padding: 18px 0;   /* ← 左右の余白を削って横幅を広く */
+  background: #fff;
+  border-top: 2.5px solid var(--line);
+  border-bottom: 0;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  box-shadow: none;
+  line-height: 1.6;
+  color: #222;
+
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+/* 見出しラベル */
+.treatment-description::before,
+.treatment-price::before,
+.treatment-time::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  left: 14px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+}
+.treatment-description::before { content: "詳細"; }
+.treatment-price::before { content: "料金"; }
+.treatment-time::before { content: "所要時間"; }
+
+/* 強調 */
+.treatment-price strong,
+.treatment-time strong {
+  font-size: 20px;
+  font-weight: 900;
+}
+.treatment-price span,
+.treatment-time span {
+  color: var(--ink-muted);
+}
+
+/* 重複文言を非表示 */
+.treatment-price > span:first-child,
+.treatment-time > span:first-child {
+  display: none;
+}
+
+/* 画面が広い時 */
+@media (min-width: 720px){
+  .treatment-title { font-size: 26px; }
+  .treatment-price strong,
+  .treatment-time strong { font-size: 26px; }
+}
     </style>
 </head>
 
@@ -836,24 +930,24 @@
         <h1>予約フォームA<br>予約フォーム
         </h1>
         <div class="Precautions">・施術不可能な方
-・妊婦の方<br>
-・顔部分がケロイド性皮膚の方<br>
-・ひどい脂性肌の方、肝炎保菌者の方<br>
-・乾癬の方、眉毛部分にアトピーのある方<br>
-・にきび性皮膚の方、極度の敏感肌の方<br>
-・アートメイク施術を受けて1ヵ月経っていない方<br>
-・持病のある方<br>
-（確実な病院の許可がなければ施術不可）<br>
-・未成年の方は保護者の方の同意書にサインが必要。<br><br>
+            ・妊婦の方<br>
+            ・顔部分がケロイド性皮膚の方<br>
+            ・ひどい脂性肌の方、肝炎保菌者の方<br>
+            ・乾癬の方、眉毛部分にアトピーのある方<br>
+            ・にきび性皮膚の方、極度の敏感肌の方<br>
+            ・アートメイク施術を受けて1ヵ月経っていない方<br>
+            ・持病のある方<br>
+            （確実な病院の許可がなければ施術不可）<br>
+            ・未成年の方は保護者の方の同意書にサインが必要。<br><br>
 
-※既存のアートメイク施術痕がある方や<br>
-左右の差（非対称）を気にされる方は、<br>
-洗顔後メイクを落とした状態で<br>
-無補正写真を送ってください。（自撮り写真不可）<br>
+            ※既存のアートメイク施術痕がある方や<br>
+            左右の差（非対称）を気にされる方は、<br>
+            洗顔後メイクを落とした状態で<br>
+            無補正写真を送ってください。（自撮り写真不可）<br>
 
-以上を無視されて施術を受けられた場合は<br>
-自己責任となりますので、<br>
-ご理解の程、お願いいたします。</div>
+            以上を無視されて施術を受けられた場合は<br>
+            自己責任となりますので、<br>
+            ご理解の程、お願いいたします。</div>
         <div class="Precautions-buttons">
             <button type="button" id="firstPrecautions" onclick="selectPrecautions(this)">同意する</button>
             <button type="button" id="repeatPrecautions" onclick="selectPrecautions(this)">同意しない</button>
@@ -872,127 +966,90 @@
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
-        <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
-        <div class="info-text">※メニューを選択すると<br>空き状況のカレンダーが表示されます</div>
+        <div class="label" id="course">カテゴリーをお選びください<span class="required">必須</span></div>
         <div class="menu-sections">
-            <button type="button" onclick="showMenu('male')">ブライダルコース</button>
-            <button type="button" onclick="showMenu('female')">シェービングコース</button>
-            <button type="button" onclick="showMenu('whitening')">マッサージコース</button>
+            <button type="button" onclick="showMenu('male')">シルエットブロウ</button>
+            <button type="button" onclick="showMenu('female')">ヘアティントアップ</button>
+            <button type="button" onclick="showMenu('whitening')">リップティントアップ</button>
         </div>
 
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
 
         <div id="male" class="menu-section">
             <div class="labeltyuuou">
-                <span class="highlight-text">◆ブライダルコース◆</span>
+                <span class="highlight-text">◆シルエットブロウ◆</span>
             </div>
-        <div class="Precautions">・施術時間は約2時間を目安にお越しください。<br>
-・前日および当日の飲酒はお控えください。<br>
-・当日はメイクをしたままご来店いただいても構いません。<br>
-　ただし施術後（当日）は水に濡れる行為を避けてお過ごしください。<br>
-・施術日から5〜7日間は以下を避けてください。<br>
-　温泉・サウナ・プール・激しい運動・日焼け など。<br>
-・施術した箇所は、1週間もしくはかさぶたが落ちるまでは 強く擦ったり、不必要に触れたりしないでください。<br>
-・今回のモニター価格のお支払いは現金のみとなります。<br>
-　（キャッシュレス決済をご希望の場合は事前にご相談ください）<br>
-・ご不明点などがあれば、ご連絡ください。</div>
+            <div class="Precautions">注意事項 -シルエットブロウ-<br><br>
+                ・施術時間は約2時間を目安にお越しください。<br>
+                ・前日および当日の飲酒はお控えください。<br>
+                ・当日はメイクをしたままご来店いただいても構いません。<br>
+                　ただし施術後（当日）は水に濡れる行為を避けてお過ごしください。<br>
+                ・施術日から5〜7日間は以下を避けてください。<br>
+                　温泉・サウナ・プール・激しい運動・日焼け など。<br>
+                ・施術した箇所は、1週間もしくはかさぶたが落ちるまでは 強く擦ったり、不必要に触れたりしないでください。<br>
+                ・今回のモニター価格のお支払いは現金のみとなります。<br>
+                　（キャッシュレス決済をご希望の場合は事前にご相談ください）<br>
+                ・ご不明点などがあれば、ご連絡ください。</div>
+            <div class="labeltyuuou">
+                <span class="highlight-text">メニューをお選びください</span></div>
+        <div class="info-text">※メニューを選択すると<br>空き状況のカレンダーが表示されます</div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">和装プラン〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">洋装プランA〈60分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">洋装プランB〈120分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">洋装プランC〈30分〉</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">パウダーグラデーション</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">毛並みストローク</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">ミックス(2D +3D)</button>
             </div>
         </div>
 
         <div id="female" class="menu-section">
             <div class="labeltyuuou">
-                <span class="highlight-text">◆シェービングコース◆</span>
+                <span class="highlight-text">◆ヘアティントアップ◆</span>
             </div>
-        <div class="Precautions">・施術時間は約2時間を目安にお越しください。<br>
-・前日および当日の飲酒はお控えください。<br>
-・施術の前後1週間は、カラーやパーマなどはお控えください。<br>
-・施術後〜5日間ほどは、髪を洗う際は ぬるま湯で優しく扱ってください。<br>
-・施術日から5〜7日間は以下を避けてください。<br>
-　温泉・サウナ・プール・激しい運動・日焼け など。<br>
-・施術した箇所は、1週間もしくはかさぶたが落ちるまでは 強く擦ったり、不必要に触れたりしないでください。<br>
-・今回のモニター価格のお支払いは現金のみとなります。<br>
-　（キャッシュレス決済をご希望の場合は事前にご相談ください）<br>
-・ご不明点などがあれば、ご連絡ください。</div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment5')"
-                    data-price="15000">リラックスコース〈60分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment6')"
-                    data-price="15000">ベーシックコース〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment7')"
-                    data-price="15000">スピードコース〈90分〉</button>
-            </div>
+            <div class="Precautions">注意事項 -ヘアティントアップ-<br><br>
+                ・施術時間は約2時間を目安にお越しください。<br>
+                ・前日および当日の飲酒はお控えください。<br>
+                ・施術の前後1週間は、カラーやパーマなどはお控えください。<br>
+                ・施術後〜5日間ほどは、髪を洗う際は ぬるま湯で優しく扱ってください。<br>
+                ・施術日から5〜7日間は以下を避けてください。<br>
+                　温泉・サウナ・プール・激しい運動・日焼け など。<br>
+                ・施術した箇所は、1週間もしくはかさぶたが落ちるまでは 強く擦ったり、不必要に触れたりしないでください。<br>
+                ・今回のモニター価格のお支払いは現金のみとなります。<br>
+                　（キャッシュレス決済をご希望の場合は事前にご相談ください）<br>
+                ・ご不明点などがあれば、ご連絡ください。</div>
             <div class="labeltyuuou">
-                <span class="highlight-text">オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="fourthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="fifthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="sixthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="seventhirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="eighthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="ninthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="tenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="eleventhirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">美白パック〈30分〉</button>
+                <span class="highlight-text">メニューをお選びください</span></div>
+        <div class="info-text">※メニューを選択すると<br>空き状況のカレンダーが表示されます</div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">M字(生え際)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">名刺1枚分(10cm × 5cm)</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">コンプレックスティント</button>
             </div>
         </div>
 
         <div id="whitening" class="menu-section">
             <div class="labeltyuuou">
-                <span class="highlight-text">◆マッサージコース◆</span>
+                <span class="highlight-text">◆リップティントアップ◆</span>
             </div>
-        <div class="Precautions">・施術時間は約3時間を目安にお越しください。<br>
-・唇の周りを特に清潔に保つ。<br>
-　（冷やす場合は氷を直接当てず、ガーゼの上に氷パックをのせて使用してください）<br>
-・刺激の強い食べ物や、熱い・熱すぎる飲み物は控えてください。<br>
-・施術後3日程度は水分もストローを使わずに摂取し、食事も刺激物を控えてください。<br>
-・感染予防のため、処方された抗ウイルス薬は必ず服用してください。<br>
-・喫煙・飲酒はお控えください。<br>
-・ヘルペスができた場合は自己判断で潰さず、処方された抗ウイルス薬を3〜5日間必ず服用してください。<br>
-・施術後は直接手で触れないように注意してください。<br>
-・ワセリンを薄く塗布してください。<br>
-・施術した箇所は、1週間もしくはかさぶたが落ちるまでは 強く擦ったり、不必要に触れたりしないでください。<br>
-・感染を防ぐため、施術後から再生皮膚が安定するまでの約1週間はメイクを避けてください。<br>
-・角質が落ちた後は乾燥しないように、保湿をしっかり行ってください。<br>
-・唇のホワイトニングは施術から2ヶ月後より可能です。</div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment8')"
-                    data-price="15000">リラックスマッサージ〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')"
-                    data-price="15000">ベーシックマッサージ〈30分〉</button>
-            </div>
+            <div class="Precautions">注意事項 -リップティントアップ-<br><br>
+                ・施術時間は約3時間を目安にお越しください。<br>
+                ・唇の周りを特に清潔に保つ。<br>
+                　（冷やす場合は氷を直接当てず、ガーゼの上に氷パックをのせて使用してください）<br>
+                ・刺激の強い食べ物や、熱い・熱すぎる飲み物は控えてください。<br>
+                ・施術後3日程度は水分もストローを使わずに摂取し、食事も刺激物を控えてください。<br>
+                ・感染予防のため、処方された抗ウイルス薬は必ず服用してください。<br>
+                ・喫煙・飲酒はお控えください。<br>
+                ・ヘルペスができた場合は自己判断で潰さず、処方された抗ウイルス薬を3〜5日間必ず服用してください。<br>
+                ・施術後は直接手で触れないように注意してください。<br>
+                ・ワセリンを薄く塗布してください。<br>
+                ・施術した箇所は、1週間もしくはかさぶたが落ちるまでは 強く擦ったり、不必要に触れたりしないでください。<br>
+                ・感染を防ぐため、施術後から再生皮膚が安定するまでの約1週間はメイクを避けてください。<br>
+                ・角質が落ちた後は乾燥しないように、保湿をしっかり行ってください。<br>
+                ・唇のホワイトニングは施術から2ヶ月後より可能です。</div>
             <div class="labeltyuuou">
-                <span class="highlight-text">オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="twelvethirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="thirteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="fourteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="fifteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="sixteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="seventeenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="eighteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="nineteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">美白パック〈30分〉</button>
+                <span class="highlight-text">メニューをお選びください</span></div>
+        <div class="info-text">※メニューを選択すると<br>空き状況のカレンダーが表示されます</div>
+            <div class="symptoms">
+                <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">グラデーション</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">フルリップ</button>
             </div>
         </div>
 
@@ -1003,7 +1060,7 @@
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目</button>
             <button type="button" id="sanbanmeVisit" onclick="selectVisit(this)">3回目以降</button>
         </div>
-        
+
         <div class="label">希望日時<span class="required">必須</span></div>
         <div class="calendar-container">
             <!-- 月を独立して配置 -->
@@ -1170,11 +1227,11 @@
                 return;
             }
 
-    // ✅ ご来店回数（2回目以降）を自動で選択
-    const repeatVisitButton = document.getElementById('repeatVisit');
-    if (repeatVisitButton) {
-        selectVisit(repeatVisitButton);
-    }
+            // ✅ ご来店回数（2回目以降）を自動で選択
+            const repeatVisitButton = document.getElementById('repeatVisit');
+            if (repeatVisitButton) {
+                selectVisit(repeatVisitButton);
+            }
 
             // ✅ 前回の選択状態を初期化
             // 1. オプションの active クラスを全て外す
@@ -1213,40 +1270,40 @@
             }
         }
 
-function updateDisplayInfo() {
-    const name = document.getElementById('name').value;
+        function updateDisplayInfo() {
+            const name = document.getElementById('name').value;
 
-    const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
+            const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
 
-    const visitCountText = visitCount
-        ? `<span style="${labelStyle}"><strong>来店回数</strong></span> ${visitCount}`
-        : '・来店回数が未選択です';
+            const visitCountText = visitCount
+                ? `<span style="${labelStyle}"><strong>来店回数</strong></span> ${visitCount}`
+                : '・来店回数が未選択です';
 
-    const selectedMenuText = selectedMenu
-        ? `<span style="${labelStyle}"><strong>コース</strong></span> ${selectedMenu}`
-        : '・コースが未選択です';
+            const selectedMenuText = selectedMenu
+                ? `<span style="${labelStyle}"><strong>コース</strong></span> ${selectedMenu}`
+                : '・コースが未選択です';
 
-    const selectedSymptomText = selectedSymptom.length > 0
-        ? `<span style="${labelStyle}"><strong>メニュー</strong></span><br>・${selectedSymptom.join('<br>')}`
-        : '・メニューが未選択です';
+            const selectedSymptomText = selectedSymptom.length > 0
+                ? `<span style="${labelStyle}"><strong>メニュー</strong></span><br>・${selectedSymptom.join('<br>')}`
+                : '・メニューが未選択です';
 
-    const irradiationsText = irradiationsCount
-        ? `<span style="${labelStyle}"><strong>オプション</strong></span><br>・${irradiationsCount.split(', ').join('<br>・')}`
-        : '・オプション無し';
+            const irradiationsText = irradiationsCount
+                ? `<span style="${labelStyle}"><strong>オプション</strong></span><br>・${irradiationsCount.split(', ').join('<br>・')}`
+                : '・オプション無し';
 
-    let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
-    let hours = Math.floor(totalMinutes / 60);
-    let minutes = totalMinutes % 60;
-    let totalTimeText = `<span style="${labelStyle}"><strong>所要時間</strong></span> ${hours > 0 ? hours + '時間' : ''}${minutes}分`;
+            let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
+            let hours = Math.floor(totalMinutes / 60);
+            let minutes = totalMinutes % 60;
+            let totalTimeText = `<span style="${labelStyle}"><strong>所要時間</strong></span> ${hours > 0 ? hours + '時間' : ''}${minutes}分`;
 
-    const totalAmountText = `<span style="${labelStyle}"><strong>合計金額</strong></span> ¥${menuPrice + optionsPrice}`;
+            const totalAmountText = `<span style="${labelStyle}"><strong>合計金額</strong></span> ¥${menuPrice + optionsPrice}`;
 
-    const selectedDateText = selectedFullDate
-        ? `<span style="${labelStyle}"><strong>希望日時</strong></span> ${selectedFullDate}`
-        : '・日時が未選択です';
+            const selectedDateText = selectedFullDate
+                ? `<span style="${labelStyle}"><strong>希望日時</strong></span> ${selectedFullDate}`
+                : '・日時が未選択です';
 
-    // 修正ボタン付きのHTMLを作成
-    document.getElementById('displayInfo').innerHTML = `
+            // 修正ボタン付きのHTMLを作成
+            document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
             <p><span style="${labelStyle}"><strong>お名前</strong></span> ${name}</p>
             <button class="edit-button" onclick="scrollToElement('name')">修正</button>
@@ -1268,21 +1325,8 @@ function updateDisplayInfo() {
         </div>
         <hr>
         <div class="info-row">
-            <p>${irradiationsText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstirradiations')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${totalTimeText}</p>
-        </div>
-        <hr>
-        <div class="info-row">
             <p>${selectedDateText}</p>
             <button class="edit-button" onclick="scrollToElement('calendar1')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${totalAmountText}</p>
         </div>
         <hr>
     `;
@@ -1382,24 +1426,102 @@ function updateDisplayInfo() {
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
 
+            function createTreatmentContent(title, imageUrl, description, price, time) {
+                // 所要時間の表示を条件付きで設定
+                const timeContent = time
+                    ? `<span></span><strong>${time}</strong><br>`
+                    : '';
+
+                return `
+<div class="treatment-container">
+    <div class="treatment-title">${title}</div>
+
+    <div class="treatment-image">
+        <div class="spinner-overlay">
+            <div class="spinner"></div>
+        </div>
+        <img src="${imageUrl}" alt="${title}" 
+            onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
+    </div>
+
+    <div class="treatment-description">${description}</div>
+
+    <div class="treatment-price">
+        <span>価格：</span><strong>${price}</strong>
+    </div>
+
+    <div class="treatment-time">
+        <span></span><strong>${timeContent}</strong>
+    </div>
+</div>`;
+            }
+
+
+            // 呼び出し例（treatmentIdやボタンの条件が揃っている前提）
             if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/l0zeegs0nhzjayohdhbbs/1.png?rlkey=gd2nx4fcmqkfhr1v67ba9qzqd&st=wge93uw9&raw=1',
+                    'マシンを使って点状に色を入れることで、パウダーをのせたような柔らかい仕上がりに✨',
+                    '2回セット<br>定価：44,000円→限定：28,000円',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/jqde0jne364dvbs97l7gs/2.png?rlkey=bokgz98izpbreicdm611fohta&st=b05abh16&raw=1',
+                    '手彫りで1本ずつ毛を描くことで、自然な毛流れや立体感を表現🌿<br>地眉になじむデザインで、違和感のないナチュラル眉に💎',
+                    '2回セット<br>定価：44,000円→限定：28,000円',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/139534r9shbeofutikzog/3.png?rlkey=nqyfband4nzy2u9eigs4e3y9l&st=2rncedql&raw=1',
+                    '2Dと3Dを組み合わせた<br>💫ハイブリッド技術💫<br>毛流れとパウダーの良さを両立し、立体感のある理想の眉に仕上がります✨',
+                    '2回セット<br>定価：66,000円→限定：44,000円',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/vmujp0mn8seqzf44a84fm/7.png?rlkey=70t4n3ggstfh16bqb5ftges6z&st=li8c4o0c&raw=1',
+                    '小顔効果を実感したい方、前髪の後退が気になる方におすすめです',
+                    '2回セット<br>定価：66,000円→限定：44,000円',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/6y7agblle4y44d8vxz8wy/8.png?rlkey=305evut64korg9clubi4u0ahv&st=eii3n1zu&raw=1',
+                    '円形脱毛や傷などで生えてこなくなった部分をカバーします。<br>※500円玉以上のサイズの方は名刺1枚分をお選びください',
+                    '2回セット<br>定価：88,000円→限定：55,000',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/14rc1crh07vhhlhpvu2zt/9.png?rlkey=h0ou4jtjydflipu6lzhm7zcwq&st=qjdkqjsk&raw=1',
+                    '腕や足など広範囲の脱毛。<br>肌に優しい冷却ジェルで施術。<br><br><strong>おすすめ： 定期的なお手入れを始めたい方</strong>',
+                    '2回セット<br>定価：44,000円→限定：22,000円',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/es6wrwm2ais0ys0ftcjjm/5.png?rlkey=1hbhcmejhlhy5cl8wlm7g8fp9&st=5r4z1de0&raw=1',
+                    '唇の中心部分に施術し、韓国風な唇に仕上がります。',
+                    '2回セット<br>定価：55,000円→限定：44,000円',
+                    '○○分'
+                );
             } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+                treatmentText.innerHTML = createTreatmentContent(
+                    '',
+                    'https://www.dropbox.com/scl/fi/4pd0w5xrql5xd4x1hevsi/6.png?rlkey=8v2x5vo2hyybhaszn93js0umf&st=kk0rnesh&raw=1',
+                    '唇全体に施術し、スッピンの時でも綺麗な発色を保てます。',
+                    '2回セット<br>定価：77,000→限定：55,000円',
+                    '○○分'
+                );
             } else {
                 treatmentText.innerHTML = '';
             }
@@ -1476,18 +1598,18 @@ function updateDisplayInfo() {
             fetchAvailability(currentDate);
         }
 
-    function selectPrecautions(element) {
-        // 選択された日時をリセット
-        selectedFullDate = '';
+        function selectPrecautions(element) {
+            // 選択された日時をリセット
+            selectedFullDate = '';
 
-        document.getElementById('firstPrecautions').classList.remove('active');
-        document.getElementById('repeatPrecautions').classList.remove('active');
-        element.classList.add('active');
-        PrecautionsCount = element.innerText; // 「同意する」or「同意しない」が入る
+            document.getElementById('firstPrecautions').classList.remove('active');
+            document.getElementById('repeatPrecautions').classList.remove('active');
+            element.classList.add('active');
+            PrecautionsCount = element.innerText; // 「同意する」or「同意しない」が入る
 
-        // カレンダーを更新するために取得する日付を渡す
-        fetchAvailability(currentDate);
-    }
+            // カレンダーを更新するために取得する日付を渡す
+            fetchAvailability(currentDate);
+        }
 
         // メニューの選択を保存する関数
         function selectMenu(element) {
@@ -1623,11 +1745,11 @@ function updateDisplayInfo() {
                 return;
             }
 
-        // ★ 同意しない場合は予約できないようにする
-        if (formData.PrecautionsCount === '同意しない') {
-            alert('同意を選択しない場合、ご予約は出来ません。');
-            return;
-        }
+            // ★ 同意しない場合は予約できないようにする
+            if (formData.PrecautionsCount === '同意しない') {
+                alert('同意を選択しない場合、ご予約は出来ません。');
+                return;
+            }
 
             if (!formData.dates) {
                 alert('希望日時を選択してください。');
@@ -1706,7 +1828,8 @@ function updateDisplayInfo() {
                 '12:00', '12:30', '13:00', '13:30',
                 '14:00', '14:30', '15:00', '15:30',
                 '16:00', '16:30', '17:00', '17:30',
-                '18:00'
+                '18:00', '18:30', '19:00', '19:30',
+                '20:00', '20:30', '21:00'
             ];
 
             if (table.rows.length === 0) {
