@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予約フォーム</title>
+    <title>la chance<br>予約フォーム</title>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         /* 右端の細いナビ（固定） */
@@ -131,9 +131,9 @@
             text-indent: 20px;
             position: relative;
             overflow: hidden;
-            border-top: 1px solid black;
+            border-top: 2px solid black;
             /* 上の線 */
-            border-bottom: 1px solid black;
+            border-bottom: 2px solid black;
             /* 下の線 */
         }
 
@@ -149,9 +149,9 @@
             text-indent: 0px;
             position: relative;
             overflow: hidden;
-            border-top: 1px solid black;
+            border-top: 2px solid black;
             /* 上の線 */
-            border-bottom: 1px solid black;
+            border-bottom: 2px solid black;
             /* 下の線 */
         }
 
@@ -168,9 +168,9 @@
             text-indent: 0px;
             position: relative;
             overflow: hidden;
-            border-top: 1px solid black;
+            border-top: 2px solid black;
             /* 上の線 */
-            border-bottom: 1px solid black;
+            border-bottom: 2px solid black;
             /* 下の線 */
         }
 
@@ -927,7 +927,7 @@
     </div>
 
     <div class="container">
-        <h1>予約フォームA<br>予約フォーム
+        <h1>la chance<br>予約フォーム
         </h1>
         <div class="Precautions">・施術不可能な方
             ・妊婦の方<br>
@@ -1141,36 +1141,28 @@
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
-            '1回目〈30分〉': 30,
-            '2回目以降〈0分〉': 0
+            '1回目': 0,
+            '2回目以降': 0
         };
 
         let selectedVisitTime = 0; // 訪問回数で選択された時間
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
-            '眉カット〈30分〉': 30,
-            '襟足〈30分〉': 30,
-            '背中(キャミソールライン)〈30分〉': 30,
-            '背中(腰まで)〈30分〉': 30,
-            'デコルテ〈30分〉': 30,
-            '腕〈30分〉': 30,
-            '保湿パック〈30分〉': 30,
-            'ベーシックマッサージ〈30分〉': 30,
-            'リラックスマッサージ〈30分〉': 30,
-            '美白パック〈30分〉': 30
+            '美白パック〈30分〉': 0
         };
 
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            '和装プラン〈30分〉': 30,
-            '洋装プランA〈60分〉': 60,
-            '洋装プランB〈120分〉': 420,
-            '洋装プランC〈30分〉': 30,
-            'リラックスコース〈60分〉': 60,
-            'ベーシックコース〈30分〉': 30,
-            'スピードコース〈90分〉': 90
+            'パウダーグラデーション': 30,
+            '毛並みストローク': 60,
+            'ミックス(2D +3D)': 30,
+            'M字(生え際)': 30,
+            '名刺1枚分(10cm × 5cm)': 60,
+            'コンプレックスティント': 30,
+            'グラデーション': 90,
+            'フルリップ': 90
         };
 
         let selectedMenuTime = 0;
@@ -1227,7 +1219,7 @@
                 return;
             }
 
-            // ✅ ご来店回数（2回目以降）を自動で選択
+            // ✅ 施術回数（2回目以降）を自動で選択
             const repeatVisitButton = document.getElementById('repeatVisit');
             if (repeatVisitButton) {
                 selectVisit(repeatVisitButton);
@@ -1276,8 +1268,8 @@
             const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
 
             const visitCountText = visitCount
-                ? `<span style="${labelStyle}"><strong>来店回数</strong></span> ${visitCount}`
-                : '・来店回数が未選択です';
+                ? `<span style="${labelStyle}"><strong>施術回数</strong></span> ${visitCount}`
+                : '・施術回数が未選択です';
 
             const selectedMenuText = selectedMenu
                 ? `<span style="${labelStyle}"><strong>コース</strong></span> ${selectedMenu}`
@@ -1310,11 +1302,6 @@
         </div>
         <hr>
         <div class="info-row">
-            <p>${visitCountText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstVisit')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
             <p>${selectedMenuText}</p>
             <button class="edit-button" onclick="scrollToElement('course')">修正</button>
         </div>
@@ -1322,6 +1309,11 @@
         <div class="info-row">
             <p>${selectedSymptomText}</p>
             <button class="edit-button" onclick="scrollToElement('male'); scrollToElement('female'); scrollToElement('whitening');">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p>${visitCountText}</p>
+            <button class="edit-button" onclick="scrollToElement('firstVisit')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1759,7 +1751,7 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom}\n施術回数：${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
