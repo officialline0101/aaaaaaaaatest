@@ -1711,13 +1711,15 @@ function removeSymptom(button) {
                 return;
             }
 
-            // selectedSymptomを文字列に整形
-            const selectedSymptomText = formData.selectedSymptom
-                ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
-                : 'メニュー未選択';
+// selectedSymptomを文字列に整形
+const selectedSymptomText = formData.selectedSymptom
+    ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
+    : 'メニュー未選択';
 
-            // irradiationsCountの整形（nullチェック）
-            const irradiationsText = formData.irradiationsCount || 'なし';
+// irradiationsCountの整形（nullチェック＋<br>削除）
+const irradiationsText = formData.irradiationsCount
+    ? formData.irradiationsCount.replace(/<br\s*\/?>/gi, '')
+    : 'なし';
 
             liff.sendMessages([{
                 type: 'text',
