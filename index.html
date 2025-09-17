@@ -1452,19 +1452,19 @@ function formatDateTime(dateTimeString) {
             // 第1希望日が選択された場合の表示
             const selectedDate1 = document.getElementById('date1').value;
             const selectedDate1Text = selectedDate1
-                ? `・<span style="${labelStyle}"><strong>希望日1</strong></span> ${formatDateTime(selectedDate1)}`
+                ? `<span style="${labelStyle}"><strong>希望日1</strong></span> ${formatDateTime(selectedDate1)}`
                 : '・第1希望日が未選択です';
 
             // 第2希望日が選択された場合の表示
             const selectedDate2 = document.getElementById('date2').value;
             const selectedDate2Text = selectedDate2
-                ? `・<span style="${labelStyle}"><strong>希望日2</strong></span> ${formatDateTime(selectedDate2)}`
+                ? `<span style="${labelStyle}"><strong>希望日2</strong></span> ${formatDateTime(selectedDate2)}`
                 : '・第2希望日が未選択です';
 
             // 第3希望日が選択された場合の表示
             const selectedDate3 = document.getElementById('date3').value;
             const selectedDate3Text = selectedDate3
-                ? `・<span style="${labelStyle}"><strong>希望日3</strong></span> ${formatDateTime(selectedDate3)}`
+                ? `<span style="${labelStyle}"><strong>希望日3</strong></span> ${formatDateTime(selectedDate3)}`
                 : '・第3希望日が未選択です';
 
             // 修正ボタン付きのHTMLを作成
@@ -2078,14 +2078,13 @@ function initPicker(baseId, dateDays = 120) {
                 return;
             }
 
-            if (!formData.visitCount) {
-                alert('施術回数を選択してください。');
+            if (!formData.PrecautionsCount) {
+                alert('同意しないと予約できません。');
                 return;
             }
 
-            // ★ 同意しない場合は予約できないようにする
-            if (formData.PrecautionsCount === '同意しない') {
-                alert('同意を選択しない場合、ご予約は出来ません。');
+            if (!formData.visitCount) {
+                alert('施術回数を選択してください。');
                 return;
             }
 
@@ -2097,7 +2096,7 @@ function initPicker(baseId, dateDays = 120) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《ご来店回数》${formData.visitCount}\n\n《コース》${formData.selectedMenu}\n\n《メニュー》\n・${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
+                text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《施術回数》${formData.visitCount}\n\n《コース》${formData.selectedMenu}\n\n《メニュー》\n・${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
