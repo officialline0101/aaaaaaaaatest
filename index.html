@@ -596,6 +596,10 @@ function selectsnsphoto(element) {
             budgetyCount: budgetyCount;
             snsphotoCount: snsphotoCount;
 
+  // ▼ 追加：詳細住所（任意）の取得
+  const wardFreeTextEl = document.getElementById('wardFreeText');
+  const wardFreeText   = wardFreeTextEl ? wardFreeTextEl.value.trim() : '';
+
     // data-ja取得
     const submitButtonText = document.querySelector('.submit-button').getAttribute('data-ja');
 
@@ -608,6 +612,7 @@ function selectsnsphoto(element) {
                 message6,
                 message7,
                 message8,
+                wardFreeText,
                 timezoneCount,
                 priorityCount,
                 demandCount,
@@ -693,7 +698,7 @@ function selectsnsphoto(element) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前(漢字)】\n・${formData.message2}\n\n【お名前(ふりがな)】\n・${formData.message6}\n\n【生年月日】\n・${formData.message3}\n\n【電話番号】\n・${formData.message4}\n\n【お住まい】\n・${formData.message5}\n\n【ご職業】\n・${formData.priorityCount}\n\n【勤務先】\n・${formData.demandCount}\n\n【来店しやすい時間帯】\n・${formData.timezoneCount}\n\n【知人の紹介名】\n・${formData.message7}\n\n【空き状況配信】\n・${formData.chanceCount}\n\n【過去施術】\n・${formData.IntroductionCount}\n\n【薬品/ネイルでのアレルギー】\n・${formData.deliveryCount}\n\n【長さ出し左右本数】\n・${formData.message8}\n\n【SNS紹介】\n・${formData.snsphotoCount}\n\n【重要項目の同意】\n・${formData.budgetyCount}`
+                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前(漢字)】\n・${formData.message2}\n\n【お名前(ふりがな)】\n・${formData.message6}\n\n【生年月日】\n・${formData.message3}\n\n【電話番号】\n・${formData.message4}\n\n【お住まい】\n・${formData.message5}\n\n【お住まいの区】\n・${formData.priorityCount}\n\n【お住まいの詳細】\n・${formData.wardFreeText}\n\n【勤務先】\n・${formData.demandCount}\n\n【来店しやすい時間帯】\n・${formData.timezoneCount}\n\n【知人の紹介名】\n・${formData.message7}\n\n【空き状況配信】\n・${formData.chanceCount}\n\n【過去施術】\n・${formData.IntroductionCount}\n\n【薬品/ネイルでのアレルギー】\n・${formData.deliveryCount}\n\n【長さ出し左右本数】\n・${formData.message8}\n\n【SNS紹介】\n・${formData.snsphotoCount}\n\n【重要項目の同意】\n・${formData.budgetyCount}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('カウンセリングシートのご記入と、重要事項へのご同意、ありがとうございました。');
