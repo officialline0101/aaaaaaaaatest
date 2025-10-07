@@ -767,6 +767,114 @@
             visibility: hidden;
             opacity: 0;
         }
+
+        #repeatBookingButton {
+            background-color: #f7f7f7;
+            color: #000000;
+            border: 1px solid #000000;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #repeatBookingButton:hover {
+            background-color: #f1f1f1;
+            color: #000000;
+        }
+
+        .datetime-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .datetime-input {
+            width: 100%;
+            padding: 18px;
+            /* 少し大きめにして押しやすく */
+            font-size: 18px;
+            border: 1px solid #000000;
+            /* 少し濃くして視認性アップ */
+            border-radius: 8px;
+            /* 指触りの良いデザイン */
+            box-sizing: border-box;
+            background-color: #fff;
+            color: #333;
+            appearance: none;
+            /* OSに左右されにくくする */
+            touch-action: manipulation;
+            /* モバイルのタップ精度向上 */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .datetime-input:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+            /* タップ時の視覚的フィードバック */
+            outline: none;
+        }
+
+        .kibounitizi {
+            display: block;
+            /* ブロック要素として表示。幅いっぱいに広がるよ！ */
+            margin-bottom: 1px;
+            /* 下に10pxのスペースをあける（余白） */
+            padding: 3px;
+            /* 内側に3pxのスペースをつける（中身がくっつかないように） */
+            font-weight: 600;
+            /* 文字を少し太くする（600は太さの目安） */
+            background-color: #45c4b7;
+            /* 背景の色をくすんだ緑にする */
+            color: white;
+            /* 文字の色を白にする */
+            border-radius: 6px;
+            /* 角を6pxだけ丸くする（ふんわりした見た目に） */
+            font-size: 20px;
+            /* 文字の大きさを18pxにする（ちょっと大きめ） */
+            text-align: center;
+            /* 文字を中央に揃える */
+            /* ↑ 中央揃えにしています */
+            text-indent: 20px;
+            /* 最初の行だけ、文字を右に20pxずらす */
+            /* ↑ テキストの先頭をちょっと右にずらしてるよ！ */
+            position: relative;
+            /* 子要素を自由に配置できるようにする準備（位置調整） */
+            overflow: hidden;
+            /* はみ出た中身を隠す（枠から出ないようにする） */
+        }
+
+.small-text {
+  font-size: 18px; /* 好きなサイズに変更可能 */
+}
+
+  /* 既存の .datetime-input を活かしつつ横並び */
+  .dt-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .dt-grid .datetime-input {
+    flex: 1 1 50%;
+  }
+  @media (max-width: 480px) {
+    .dt-grid { flex-direction: column; }
+  }
+
+    /* 既存の .datetime-input スタイルが効いて同じ見た目になります */
+  .dt-grid {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
     </style>
 </head>
 
@@ -1324,51 +1432,66 @@
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                irradiationsCount: irradiationsCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+  const formData = {
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    selectedSymptom: (selectedSymptom && selectedSymptom.length > 0) ? selectedSymptom : null,
+    irradiationsCount: irradiationsCount, // 数値/文字列いずれも想定
+    dates: [
+      document.getElementById('date1').value,
+      document.getElementById('date2').value
+    ],
+    message: document.getElementById('message').value.trim()
+  };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
+  // 必須チェック
+  if (!formData.name) { alert('お名前を入力してください。'); return; }
+  if (!formData.phone) { alert('電話番号を入力してください。'); return; }
+  if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
+  if (!formData.dates[0]) { alert('第1希望日を選択してください。'); return; }
 
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
-            }
+  // 送信用テキストを組み立て（空ならセクションごと省略）
+  const joinSymptom = Array.isArray(formData.selectedSymptom)
+    ? formData.selectedSymptom.join('、')
+    : formData.selectedSymptom;
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
+  let text = `【予約フォーム】\n\n` +
+             `〈お名前〉\n・${formData.name}\n\n` +
+             `〈電話番号〉\n・${formData.phone}\n\n` +
+             `〈メニュー〉\n・${joinSymptom}\n`;
 
-            if (!formData.dates[0]) {
-                alert('第1希望日を選択してください。');
-                return;
-            }
+  // オプション（数値なら >0、文字列なら空白以外がある時だけ）
+  const hasIrradiations =
+    (typeof formData.irradiationsCount === 'number')
+      ? formData.irradiationsCount > 0
+      : (formData.irradiationsCount && String(formData.irradiationsCount).trim() !== '');
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n\n〈お名前〉\n・${formData.name}\n\n〈電話番号〉\n・${formData.phone}\n\n〈メニュー〉\n・${formData.selectedSymptom}\n〈オプション〉\n・${formData.irradiationsCount}\n\n〈第一希望日〉\n${formatDate(formData.dates[0])}\n\n〈第二希望日〉\n${formatDate(formData.dates[1])}\n\n〈メッセージ〉\n・${formData.message}`
-            }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+  if (hasIrradiations) {
+    text += `\n〈オプション〉\n・${formData.irradiationsCount}\n`;
+  }
+
+  // 第一希望日は必須
+  text += `\n〈第一希望日〉\n${formatDate(formData.dates[0])}\n`;
+
+  // 第二希望日（任意）
+  if (formData.dates[1]) {
+    text += `\n〈第二希望日〉\n${formatDate(formData.dates[1])}\n`;
+  }
+
+  // メッセージ（任意）
+  if (formData.message) {
+    text += `\n\n〈メッセージ〉\n・${formData.message}`;
+  }
+
+  // 送信
+  liff.sendMessages([{ type: 'text', text }]).then(() => {
+    alert('当日キャンセルは無いようにお願いいたします。');
+    liff.closeWindow();
+  }).catch((err) => {
+    console.error('メッセージの送信に失敗しました', err);
+  });
+}
 
         function formatDate(datetime) {
             /* 日時文字列が空の場合は空文字を返す */
