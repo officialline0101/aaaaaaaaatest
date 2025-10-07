@@ -1741,7 +1741,7 @@
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
 
 <!-- ② HTML：各ブロックの「日付入力」をラップして“日付を選択”を重ねる -->
-<div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
+<div class="labelkibounitizi" id="kibounitizi1">希望日時<span class="required">必須</span></div>
 <div class="datetime-wrapper" style="text-align: center;">
   <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
   <!-- 提出/既存処理用：ISO(YYYY-MM-DDTHH:MM) を入れる -->
@@ -3511,7 +3511,11 @@ function createTreatmentContent(title, imageUrl, description, price, time) {
                 selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
                 secondsecondanniversaryCount: secondsecondanniversaryCount,
                 irradiationsCount: irradiationsCount,
-                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+                dates: [
+                    document.getElementById('date1').value,
+                    document.getElementById('date2').value,
+                    document.getElementById('date3').value
+                ],
                 message: document.getElementById('message').value.trim()
             };
 
@@ -3531,15 +3535,15 @@ function createTreatmentContent(title, imageUrl, description, price, time) {
                 return;
             }
 
-            if (!formData.dates) {
-                alert('希望日時を選択してください。');
+            if (!formData.dates[0]) {
+                alert('第1希望日※必須を選択してください。');
                 return;
             }
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース契約の有無クーポン：${formData.contractCount}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount},${formData.secondsecondanniversaryCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース契約の有無クーポン：${formData.contractCount}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount},${formData.secondsecondanniversaryCount}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。キャンセル料発生いたします。');
