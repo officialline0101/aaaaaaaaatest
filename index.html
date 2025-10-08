@@ -510,7 +510,7 @@
         <h1>給仕當田<br>予約フォーム</h1>
         <div class="info-text">以下全て入力後【予約送信】ボタンを押してください。</div>
         <div class="label">　　お名前<span class="required">必須</span></div>
-        <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+        <textarea id="message" rows="1" placeholder="入力してください" oninput="saveInput('message')"></textarea> <!-- メッセージ入力フィールド -->
 
         <div class="label">　　ご来店人数<span class="required">必須</span></div>
         <textarea id="message2" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
@@ -539,6 +539,19 @@
                 // LIFF初期化失敗時の処理
                 console.error('LIFF初期化失敗', err);
             });
+        });
+
+        // 入力内容をローカルストレージに保存
+        function saveInput(id) {
+            const value = document.getElementById(id).value;
+            localStorage.setItem(id, value);
+        }
+
+        // ページが読み込まれたときに前回の入力内容を復元
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedmessage = localStorage.getItem('message');
+
+            if (savedmessage) document.getElementById('message').value = savedmessage;
         });
 
         // プレースホルダーを非表示にする関数
@@ -596,10 +609,10 @@
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【ご来店日】\n・${formData.message}\n\n【お名前】\n・${formData.message2}\n\n【コース希望】\n・${formData.priorityCount}`
+                text: `≪予約フォーム≫\n【お名前】\n・${formData.message}\n\n【ご来店人数】\n・${formData.message2}\n\n【コース希望】\n・${formData.priorityCount}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
-                alert('ご記入ありがとうございます。同意書が表示されますので、ご確認ください。');
+                alert('ご予約ありがとうございます。確認後ご連絡差し上げます。');
                 /* LIFFウィンドウを閉じる */
                 liff.closeWindow();
             }).catch((err) => {
