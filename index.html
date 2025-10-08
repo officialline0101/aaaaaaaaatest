@@ -1468,7 +1468,15 @@
     </div>
 
     <div class="container">
-        <h1 class="title">Elegram<br>予約フォーム</h1>
+        <h1>Elegram<br>予約フォーム
+        </h1>
+        <!-- 追加するボタン -->
+        <div class="repeat-booking-wrapper">
+            <button type="button" id="repeatBookingButton" onclick="applyPreviousSelection()">
+                🔁 前回と同じメニューで予約する
+            </button>
+        </div>
+
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
@@ -1940,17 +1948,30 @@
         }
 
         function applyPreviousSelection() {
+            const savedMenu = localStorage.getItem('selectedMenu') || '';
             const savedSymptoms = JSON.parse(localStorage.getItem('selectedSymptoms') || '[]');
+            const savedIrradiations = JSON.parse(localStorage.getItem('selectedIrradiations') || '[]');
 
-            if (savedSymptoms.length === 0) {
+            if (!savedMenu && savedSymptoms.length === 0 && savedIrradiations.length === 0) {
                 alert('前回のメニューが見つかりません💦');
                 return;
             }
 
-            // ✅ ご来店回数を自動で「2回目以降」に設定
-            const repeatVisitButton = document.getElementById('repeatVisit');
-            if (repeatVisitButton) {
-                selectVisit(repeatVisitButton);
+    // ✅ ご来店回数（2回目以降）を自動で選択
+    const repeatVisitButton = document.getElementById('repeatVisit');
+    if (repeatVisitButton) {
+        selectVisit(repeatVisitButton);
+    }
+
+            // ✅ 前回の選択状態を初期化
+            // 1. オプションの active クラスを全て外す
+            document.querySelectorAll('.irradiations button.active').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // ✅ メニュー表示
+            if (savedMenu) {
+                showMenu(savedMenu);
             }
 
             // ✅ メニュー再選択
@@ -1961,8 +1982,8 @@
                 }
             });
 
-            // ✅ カレンダーにスクロール
-            const targetElement = document.getElementById('date1');
+            // ✅ ここでカレンダーへスクロール
+            const targetElement = document.getElementById('placeholder1');
             if (targetElement) {
                 targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
@@ -2291,6 +2312,13 @@ function initPicker(baseId, dateDays = 120) {
 
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
+
+            // ローカルストレージに保存する配列を取得
+            let selectedSymptoms = JSON.parse(localStorage.getItem('selectedSymptoms') || '[]');
+
+            // 選択した症状をローカルストレージに保存（1つだけ保持）
+            selectedSymptoms = [treatmentId];
+            localStorage.setItem('selectedSymptoms', JSON.stringify(selectedSymptoms));
 
             // 選択されたオプションを取得
             const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
@@ -3447,6 +3475,9 @@ function createTreatmentContent(title, imageUrl, description, price, time) {
                 selectedMenu = selectedButton.innerText;
             }
 
+            // ✅ ローカルストレージにメニュー識別子を保存（追加）
+            localStorage.setItem('selectedMenu', menu); // ←この行を追加！
+
             // すべてのメニューボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 button.classList.remove('active');
@@ -3479,6 +3510,17 @@ function createTreatmentContent(title, imageUrl, description, price, time) {
             // 表示を更新
             updateDisplayInfo();
         }
+
+        // ページ読み込み時にローカルストレージから選択状態を復元
+        document.addEventListener("DOMContentLoaded", () => {
+            let selectedMenus = JSON.parse(localStorage.getItem('selectedMenus') || '[]');
+            selectedMenus.forEach(menuId => {
+                let menuButton = document.getElementById(menuId);
+                if (menuButton) {
+                    menuButton.classList.add('selected');
+                }
+            });
+        });
 
  function selectcontract(element) {
     // すでに選択されているボタンをもう一度押した場合は解除
@@ -3589,7 +3631,7 @@ function submitForm() {
     // LINEトークにメッセージを送信
     liff.sendMessages([{
         type: 'text',
-        text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《コース契約の有無》\n⇒${formData.contractCount}\n《ご来店回数》${formData.visitCount}\n《メニュー》\n${formData.selectedSymptom}\n\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》${formData.message}`
+        text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《コース契約の有無》\n⇒${formData.contractCount}\n《ご来店回数》${formData.visitCount}\n\n《メニュー》\n${formData.selectedSymptom}\n\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》${formData.message}`
     }]).then(() => {
         alert('ご予約ありがとうございます。確認次第、ご連絡差し上げます。');
         liff.closeWindow();
