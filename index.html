@@ -3567,13 +3567,6 @@ function submitForm() {
         return;
     }
 
-    // ★ contractCount が未設定なら送信しない
-    // 文字列 '' や undefined/null は不可。数値 0 は許容します。
-    const isContractMissing =
-        formData.contractCount === undefined ||
-        formData.contractCount === null ||
-        (typeof formData.contractCount === 'string' && formData.contractCount.trim() === '');
-
     if (!formData.dates[0]) {
         alert('第1希望日を選択してください。');
         return;
@@ -3584,17 +3577,23 @@ function submitForm() {
         return;
     }
 
+    // ★ contractCount が未設定なら「契約していない」を代入
+    if (
+        formData.contractCount === undefined ||
+        formData.contractCount === null ||
+        (typeof formData.contractCount === 'string' && formData.contractCount.trim() === '')
+    ) {
+        formData.contractCount = '契約していない';
+    }
+
     // LINEトークにメッセージを送信
     liff.sendMessages([{
         type: 'text',
         text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース契約の有無：${formData.contractCount}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\nメッセージ：${formData.message}`
     }]).then(() => {
-        /* メッセージ送信成功時の処理 */
         alert('ご予約ありがとうございます。確認次第、ご連絡差し上げます。');
-        /* LIFFウィンドウを閉じる */
         liff.closeWindow();
     }).catch((err) => {
-        /* メッセージ送信失敗時の処理 */
         console.error('メッセージの送信に失敗しました', err);
     });
 }
