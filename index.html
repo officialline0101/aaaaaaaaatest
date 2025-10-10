@@ -1195,35 +1195,55 @@ function selectirradiations(button) {
 async function checkCalendarAvailability(selectedFullDate) {
     if (!selectedFullDate) return false;
 
-    // Google Apps Script 側URL（fetchAvailabilityで使っているものと同じ）
     const urlBase = 'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec';
 
     try {
-        // 選択日時を Date に変換
+        // 🕒 選択された日時をパース
         const targetDate = new Date(selectedFullDate.replace(/[年月]/g, '/').replace('日', ''));
+        if (isNaN(targetDate.getTime())) {
+            alert('日時の形式が不正です。');
+            return false;
+        }
+
+        // 🧭 合計施術時間を算出
+        const totalMinutes = (selectedMenuTime || 0) + (selectedirradiationsTime || 0) + (selectedVisitTime || 0);
         const startTime = new Date(targetDate);
         const endTime = new Date(targetDate);
-        endTime.setMinutes(endTime.getMinutes() + 5); // ±5分範囲で検索
+        endTime.setMinutes(endTime.getMinutes() + totalMinutes);
 
-        // Googleカレンダーから同期間のイベントを取得
-        const url = `${urlBase}?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+        // 📡 その日の全イベントを取得
+        const startOfDay = new Date(targetDate);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(targetDate);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const url = `${urlBase}?startTime=${startOfDay.toISOString()}&endTime=${endOfDay.toISOString()}`;
         const response = await fetch(url);
         const data = await response.json();
 
-        // 「営業日」以外のイベントを抽出
-        const relevantEvents = data.filter(event => event.title !== "営業日");
+        // 🔍 対象イベント（営業日以外）だけ抽出
+        const relevantEvents = data.filter(e => e.title !== "営業日");
 
-        // この時間帯に重なっている予約イベントをカウント
-        const overlappingCount = relevantEvents.filter(event => {
-            const eventStart = new Date(event.startTime);
-            const eventEnd = new Date(event.endTime);
-            return targetDate >= eventStart && targetDate < eventEnd;
-        }).length;
+        // 🧮 時間帯ごとの重複チェック
+        let maxOverlap = 0;
 
-        console.log("現在の重複イベント数:", overlappingCount);
+        // 1分刻みで重複をカウント
+        for (let t = new Date(startTime); t < endTime; t.setMinutes(t.getMinutes() + 1)) {
+            let overlapping = 1; // 今の予約を1件としてカウント
+            relevantEvents.forEach(e => {
+                const evStart = new Date(e.startTime);
+                const evEnd = new Date(e.endTime);
+                if (t >= evStart && t < evEnd) overlapping++;
+            });
+            if (overlapping > maxOverlap) maxOverlap = overlapping;
+            if (maxOverlap >= 3) break; // 3件目が発生したら即終了
+        }
 
-        // ✅ 重複が2件までなら通す（3件目からNG）
-        return overlappingCount < 3;
+        console.log(`重複最大数: ${maxOverlap}件`);
+
+        // ✅ 3件以上重なっていたら予約不可
+        return maxOverlap < 3;
+
     } catch (err) {
         console.error('カレンダー確認エラー:', err);
         alert('予約状況の確認に失敗しました。時間をおいて再度お試しください。');
@@ -1231,7 +1251,6 @@ async function checkCalendarAvailability(selectedFullDate) {
     }
 }
 
-// submitForm 修正版
 async function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
@@ -1244,31 +1263,19 @@ async function submitForm() {
     };
 
     // 入力チェック
-    if (!formData.name) {
-        alert('お名前を入力してください。');
-        return;
-    }
-    if (!formData.phone) {
-        alert('電話番号を入力してください。');
-        return;
-    }
-    if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
-        return;
-    }
-    if (!formData.dates) {
-        alert('希望日時を選択してください。');
-        return;
-    }
+    if (!formData.name) { alert('お名前を入力してください。'); return; }
+    if (!formData.phone) { alert('電話番号を入力してください。'); return; }
+    if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
+    if (!formData.dates) { alert('希望日時を選択してください。'); return; }
 
-    // ✅ カレンダー確認
+    // 🔍 空き状況チェック
     const available = await checkCalendarAvailability(formData.dates[0]);
     if (!available) {
         alert('予約が埋まりました。別の日時をお選びください。');
-        return; // 中止
+        return;
     }
 
-    // ✅ 空いていれば送信
+    // ✅ OKなら送信
     liff.sendMessages([{
         type: 'text',
         text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
