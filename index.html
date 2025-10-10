@@ -1227,7 +1227,6 @@ async function checkCalendarAvailability(selectedFullDate) {
         // 🧮 時間帯ごとの重複チェック
         let maxOverlap = 0;
 
-        // 1分刻みで重複をカウント
         for (let t = new Date(startTime); t < endTime; t.setMinutes(t.getMinutes() + 1)) {
             let overlapping = 1; // 今の予約を1件としてカウント
             relevantEvents.forEach(e => {
@@ -1240,9 +1239,7 @@ async function checkCalendarAvailability(selectedFullDate) {
         }
 
         console.log(`重複最大数: ${maxOverlap}件`);
-
-        // ✅ 3件以上重なっていたら予約不可
-        return maxOverlap < 3;
+        return maxOverlap < 3; // true: 空きあり、false: 埋まり
 
     } catch (err) {
         console.error('カレンダー確認エラー:', err);
@@ -1270,12 +1267,18 @@ async function submitForm() {
 
     // 🔍 空き状況チェック
     const available = await checkCalendarAvailability(formData.dates[0]);
+
     if (!available) {
         alert('予約が埋まりました。別の日時をお選びください。');
-        return;
+        // ✅ 最新状況を反映するためカレンダーを再読み込み
+        showLoadingSpinner();
+        availabilityCache = {}; // キャッシュリセット
+        await fetchAvailability(currentDate);
+        hideLoadingSpinner();
+        return; // 中止
     }
 
-    // ✅ OKなら送信
+    // ✅ 空いていれば送信
     liff.sendMessages([{
         type: 'text',
         text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
