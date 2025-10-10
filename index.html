@@ -744,6 +744,22 @@
                 /* テキストの高さ調整 */
             }
         }
+
+.loading-spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+
+    /* ✅ ここを追加（最前面に表示） */
+    z-index: 9999;
+}
     </style>
 </head>
 
@@ -1245,8 +1261,9 @@ async function checkCalendarAvailability(selectedFullDate) {
 }
 
 async function submitForm() {
-    // ✅ 押した瞬間にスピナー表示
+    // ✅ スピナー表示を確実に反映（描画の1フレーム待つ）
     showLoadingSpinner();
+    await new Promise(resolve => requestAnimationFrame(resolve));
 
     const formData = {
         name: document.getElementById('name').value.trim(),
@@ -1258,33 +1275,35 @@ async function submitForm() {
         message: document.getElementById('message').value.trim()
     };
 
-    // 入力チェック
+    // ✅ 入力チェック（ここでもスピナー維持）
     if (!formData.name || !formData.phone || !formData.selectedSymptom || !formData.dates) {
-        setTimeout(hideLoadingSpinner, 800); // ← 少し遅らせて自然に
+        setTimeout(hideLoadingSpinner, 800);
         if (!formData.name) { alert('お名前を入力してください。'); return; }
         if (!formData.phone) { alert('電話番号を入力してください。'); return; }
         if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
         if (!formData.dates) { alert('希望日時を選択してください。'); return; }
     }
 
-    // 🔍 空き状況チェック
+    // ✅ カレンダー空き状況チェック
     const available = await checkCalendarAvailability(formData.dates[0]);
 
     if (!available) {
         alert('予約が埋まりました。別の日時をお選びください。');
-        availabilityCache = {}; // キャッシュリセット
-        await fetchAvailability(currentDate); // カレンダー更新
-        setTimeout(hideLoadingSpinner, 800);
+        availabilityCache = {};
+        await fetchAvailability(currentDate);
+        setTimeout(hideLoadingSpinner, 1000);
         return;
     }
 
-    // ✅ 送信処理
+    // ✅ メッセージ送信処理
     try {
         await liff.sendMessages([{
             type: 'text',
             text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
         }]);
+
         alert('当日キャンセルは無いようにお願いいたします。');
+
         // ✅ スピナーを少し残してから閉じる
         setTimeout(() => {
             hideLoadingSpinner();
