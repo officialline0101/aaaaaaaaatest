@@ -1213,7 +1213,7 @@ function selectirradiations(button) {
 async function checkCalendarAvailability(selectedFullDate) {
     if (!selectedFullDate) return false;
 
-    const urlBase = 'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec';
+    const urlBase = 'https://script.google.com/macros/s/AKfycbyEnDg7ywElyLmhGMo-qWOJX4NSQ2_SkCNJwBv_gAkdBXTPGUP7ljeQmrMScIdzS9k_1Q/exec';
 
     try {
         const targetDate = new Date(selectedFullDate.replace(/[年月]/g, '/').replace('日', ''));
@@ -1269,8 +1269,10 @@ async function submitForm() {
         name: document.getElementById('name').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
-        irradiationsCount: irradiationsCount,
+        selectedSymptom: (selectedSymptom && selectedSymptom.length > 0) ? selectedSymptom : null,
+        irradiationsCount: (typeof irradiationsCount !== 'undefined' && irradiationsCount !== null && String(irradiationsCount).trim() !== '')
+            ? irradiationsCount
+            : null,
         dates: selectedFullDate ? [selectedFullDate] : null,
         message: document.getElementById('message').value.trim()
     };
@@ -1286,7 +1288,6 @@ async function submitForm() {
 
     // ✅ カレンダー空き状況チェック
     const available = await checkCalendarAvailability(formData.dates[0]);
-
     if (!available) {
         alert('予約が埋まりました。別の日時をお選びください。');
         availabilityCache = {};
@@ -1295,12 +1296,28 @@ async function submitForm() {
         return;
     }
 
+    // ✅ メニュー行を可変で生成（irradiationsCount が無ければ付けない）
+    const symptomText = Array.isArray(formData.selectedSymptom)
+        ? formData.selectedSymptom.join(', ')
+        : formData.selectedSymptom;
+
+    const menuText = formData.irradiationsCount
+        ? `${symptomText},${formData.irradiationsCount}`
+        : `${symptomText}`;
+
     // ✅ メッセージ送信処理
     try {
-        await liff.sendMessages([{
-            type: 'text',
-            text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-        }]);
+        const text =
+`【予約フォーム】
+お名前：${formData.name}
+電話番号：${formData.phone}
+ご来店回数：${formData.visitCount}
+メニュー：${menuText}
+希望日時：
+ ${formData.dates[0]}
+メッセージ：${formData.message}`;
+
+        await liff.sendMessages([{ type: 'text', text }]);
 
         alert('当日キャンセルは無いようにお願いいたします。');
 
@@ -1337,7 +1354,7 @@ async function fetchAvailability(date, forceReload = false) {
     }
 
     const url =
-        'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec' +
+        'https://script.google.com/macros/s/AKfycbyEnDg7ywElyLmhGMo-qWOJX4NSQ2_SkCNJwBv_gAkdBXTPGUP7ljeQmrMScIdzS9k_1Q/exec' +
         `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
     try {
