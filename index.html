@@ -1195,28 +1195,35 @@ function selectirradiations(button) {
 async function checkCalendarAvailability(selectedFullDate) {
     if (!selectedFullDate) return false;
 
-    // Google Apps Script 側URL（fetchAvailabilityで使っているURLを流用）
+    // Google Apps Script 側URL（fetchAvailabilityで使っているものと同じ）
     const urlBase = 'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec';
 
     try {
-        // 選択された日時をISO形式に変換
-        const targetDate = new Date(selectedFullDate.replace(/[年月]/g, '/').replace(/[日]/, ''));
+        // 選択日時を Date に変換
+        const targetDate = new Date(selectedFullDate.replace(/[年月]/g, '/').replace('日', ''));
         const startTime = new Date(targetDate);
         const endTime = new Date(targetDate);
-        endTime.setMinutes(endTime.getMinutes() + 5); // 5分後を範囲にして検索
+        endTime.setMinutes(endTime.getMinutes() + 5); // ±5分範囲で検索
 
+        // Googleカレンダーから同期間のイベントを取得
         const url = `${urlBase}?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
         const response = await fetch(url);
         const data = await response.json();
 
-        // 予約・営業日以外のイベントをチェック（重なり判定）
-        const isBooked = data.some(event => {
+        // 「営業日」以外のイベントを抽出
+        const relevantEvents = data.filter(event => event.title !== "営業日");
+
+        // この時間帯に重なっている予約イベントをカウント
+        const overlappingCount = relevantEvents.filter(event => {
             const eventStart = new Date(event.startTime);
             const eventEnd = new Date(event.endTime);
-            return event.title !== "営業日" && targetDate >= eventStart && targetDate < eventEnd;
-        });
+            return targetDate >= eventStart && targetDate < eventEnd;
+        }).length;
 
-        return !isBooked; // true = 空きあり、false = 埋まり
+        console.log("現在の重複イベント数:", overlappingCount);
+
+        // ✅ 重複が2件までなら通す（3件目からNG）
+        return overlappingCount < 3;
     } catch (err) {
         console.error('カレンダー確認エラー:', err);
         alert('予約状況の確認に失敗しました。時間をおいて再度お試しください。');
@@ -1224,7 +1231,7 @@ async function checkCalendarAvailability(selectedFullDate) {
     }
 }
 
-// submitForm() 修正版
+// submitForm 修正版
 async function submitForm() {
     const formData = {
         name: document.getElementById('name').value.trim(),
@@ -1254,14 +1261,14 @@ async function submitForm() {
         return;
     }
 
-    // ✅ Googleカレンダー空き状況をチェック
+    // ✅ カレンダー確認
     const available = await checkCalendarAvailability(formData.dates[0]);
     if (!available) {
         alert('予約が埋まりました。別の日時をお選びください。');
-        return; // 送信中止
+        return; // 中止
     }
 
-    // ✅ 空いていれば送信実行
+    // ✅ 空いていれば送信
     liff.sendMessages([{
         type: 'text',
         text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
