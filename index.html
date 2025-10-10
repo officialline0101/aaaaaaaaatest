@@ -1660,6 +1660,9 @@ let spinnerDelayTimer = null;
             fetchAvailability(currentDate);
         }
 
+// 🔹 初回ロード判定用フラグ
+let isInitialLoad = true;
+
 function showLoadingSpinner() {
   const spinner = document.getElementById('loadingSpinner');
   if (!spinner) return;
@@ -1667,23 +1670,27 @@ function showLoadingSpinner() {
   // すぐにスピナーを表示
   spinner.style.display = 'block';
 
-  // ✅ すべてのボタン・セルを無効化
-  disableAllInteractiveElements(true);
+  // ✅ 初回ロード時は操作を無効化しない
+  if (!isInitialLoad) {
+    disableAllInteractiveElements(true);
+  }
 }
 
 function hideLoadingSpinner() {
   const spinner = document.getElementById('loadingSpinner');
   if (!spinner) return;
 
-  // 少し遅らせて非表示（見やすさのため）
+  // ✅ スピナーを1秒遅れて消す
   setTimeout(() => {
     spinner.style.display = 'none';
-    // ✅ すべてのボタン・セルを再有効化
     disableAllInteractiveElements(false);
-  }, 1000);
+
+    // ✅ 初回ロード終了後は以降すべて通常扱い
+    isInitialLoad = false;
+  }, 1000); // ← ここで1秒遅らせる
 }
 
-// ✅ 汎用：全ボタン・カレンダーセルの有効／無効を切り替える関数
+// ✅ 共通：全ボタン・カレンダーセルなどを一括制御
 function disableAllInteractiveElements(disabled) {
   const buttons = document.querySelectorAll('button');
   const inputs = document.querySelectorAll('input, textarea');
@@ -1701,9 +1708,11 @@ function disableAllInteractiveElements(disabled) {
     }
   });
 
-  // スピナーが出ている時はスクロールも固定（誤操作防止）
+  // スピナー中は全体クリック不可にするが、
+  // スピナー自体だけは操作可（表示の邪魔をしないため）
   document.body.style.pointerEvents = disabled ? 'none' : 'auto';
-  document.getElementById('loadingSpinner').style.pointerEvents = 'auto'; // スピナー自体は操作可
+  const spinner = document.getElementById('loadingSpinner');
+  if (spinner) spinner.style.pointerEvents = 'auto';
 }
     </script>
 </body>
