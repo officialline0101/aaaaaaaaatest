@@ -1300,46 +1300,44 @@ async function submitForm() {
             return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
         }
 
-        async function fetchAvailability(date) {
-            const startTime = new Date(date);
-            const endTime = new Date(date);
-            endTime.setDate(endTime.getDate() + 7);
+async function fetchAvailability(date, forceReload = false) {
+    const startTime = new Date(date);
+    const endTime = new Date(date);
+    endTime.setDate(endTime.getDate() + 7);
 
-            const cacheKey = startTime.toISOString() + endTime.toISOString();
+    const cacheKey = startTime.toISOString() + endTime.toISOString();
 
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-                return;
-            }
+    // ✅ キャッシュを使う条件を変更（forceReloadがfalseのときのみ）
+    if (!forceReload && availabilityCache[cacheKey]) {
+        console.log('Using cached data');
+        updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+        return;
+    }
 
-            const url = 'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec' +
-                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+    const url =
+        'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec' +
+        `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
-            try {
-                showLoadingSpinner(); // Show loading spinner
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+    try {
+        showLoadingSpinner();
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log('Fetched fresh data');
 
-                // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-                    return {
-                        start: new Date(event.startTime),
-                        end: new Date(event.endTime)
-                    };
-                });
+        const businessDays = data
+            .filter(event => event.summary === '営業日')
+            .map(event => ({
+                start: new Date(event.startTime),
+                end: new Date(event.endTime),
+            }));
 
-                // データをキャッシュに保存
-                availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
-
-                updateCalendar(data, businessDays);
-            } catch (error) {
-                console.error('Error fetching availability:', error);
-            } finally {
-                hideLoadingSpinner(); // Hide loading spinner
-            }
+        availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
+        updateCalendar(data, businessDays);
+    } catch (error) {
+        console.error('Error fetching availability:', error);
+    } finally {
+        hideLoadingSpinner();
+    }
         }
 
         function updateCalendar(availability, businessDays) {
@@ -1427,6 +1425,15 @@ for (let i = 0; i < 7; i++) {
         let visitDuration = selectedVisitTime || 0;
         let irradiationsDuration = selectedirradiationsTime || 0;
         slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+
+        // ⭐ 当日より前のすべての日は ✕ にする
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const compareDay = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+        if (compareDay < today) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+        }
 
         // 日をまたぐ場合は利用不可
         if (slotEnd.getDate() !== slotStart.getDate()) {
@@ -1638,27 +1645,35 @@ for (let checkTime = new Date(slotStart.getTime()); checkTime < slotEnd; checkTi
 // 追加（スクリプトの上部どこでもOK）
 let spinnerDelayTimer = null;
 
-        function nextmonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1); // 翌月に移動
-            currentDate.setDate(1); // 1日に設定
-            fetchAvailability(currentDate);
-        }
+function nextmonth() {
+    showLoadingSpinner();
+    availabilityCache = {}; // ✅ キャッシュクリア
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    currentDate.setDate(1);
+    fetchAvailability(currentDate, true); // ✅ 強制再読み込み
+}
 
-        function previousmonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1); // 前月に移動
-            currentDate.setDate(1); // 1日に設定
-            fetchAvailability(currentDate);
-        }
+function previousmonth() {
+    showLoadingSpinner();
+    availabilityCache = {}; // ✅ キャッシュクリア
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    currentDate.setDate(1);
+    fetchAvailability(currentDate, true);
+}
 
-        function nextWeek() {
-            currentDate.setDate(currentDate.getDate() + 4);
-            fetchAvailability(currentDate);
-        }
+function nextWeek() {
+    showLoadingSpinner();
+    availabilityCache = {}; // ✅ キャッシュクリア
+    currentDate.setDate(currentDate.getDate() + 4);
+    fetchAvailability(currentDate, true);
+}
 
-        function previousWeek() {
-            currentDate.setDate(currentDate.getDate() - 4);
-            fetchAvailability(currentDate);
-        }
+function previousWeek() {
+    showLoadingSpinner();
+    availabilityCache = {}; // ✅ キャッシュクリア
+    currentDate.setDate(currentDate.getDate() - 4);
+    fetchAvailability(currentDate, true);
+}
 
 // 🔹 初回ロード判定用フラグ
 let isInitialLoad = true;
