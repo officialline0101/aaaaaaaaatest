@@ -231,9 +231,9 @@
         .Introduction-buttons button.active,
         .delivery-buttons button.active,
         .menu-buttons button.active {
-            background-color: #444;
+            background-color: #fc8e52;
             color: #fff;
-            border-color: #444;
+            border-color: #fc8e52;
         }
 
         /* ホバー＆フォーカスのちょい浮きアニメ */
@@ -530,8 +530,8 @@
         }
 
         button:hover {
-            background-color: #e9e9e9;
-            transform: scale(1.05);
+            background-color: #58453b;
+            transform: scale(1.00);
         }
 
         .submit-button {
@@ -561,9 +561,11 @@
         }
 
         button.active {
-            outline: 2px solid #696969;
+            outline: 2px solid #fc8e52;
             /* ここで枠線を指定 */
             outline-offset: 2px;
+            /* 外側に色を追加 */
+            box-shadow: 0 0 0 3px #6f5031
         }
 
         /* 必須マークのスタイル */
@@ -675,27 +677,16 @@
         }
 
         .zip-search-btn {
-            padding: 12px 10px;
-            /* ← 上下を3pxに変更 */
+            padding: 9px 10px;
             border: none;
             border-radius: 6px;
             background: #58453b;
             color: #fff;
             cursor: pointer;
-            font-size: 14px;
-            /* ← 小さめに調整（高さに影響） */
-            line-height: 1;
-            /* ← 行の高さを詰める */
-            box-sizing: border-box;
-            /* ← パディング込みで高さ調整 */
-            height: auto;
-            /* ← 高さ固定を防ぐ */
-            display: inline-flex;
-            /* ← 高さをpadding通りに反映 */
-            align-items: center;
-            /* ← テキストを中央寄せ */
-            transform: translateY(-10px);
-            /* ← 見た目だけ下へ5px */
+            position: relative;
+            /* ← 相対位置指定を有効に */
+            top: -10px;
+            /* ← 上に12pxずらす */
         }
 
         .zip-row {
@@ -809,7 +800,7 @@
         </div>
 
         <!-- 職業（単一選択＋その他） -->
-        <div class="label">　　職業</div>
+        <div class="label">　　職業<span class="required">必須</span></div>
         <div class="priority-buttons" id="jobGroup">
             <button type="button" id="jobCompany" onclick="selectJob(this)">会社員</button>
             <button type="button" id="jobPublic" onclick="selectJob(this)">公務員</button>
@@ -820,7 +811,7 @@
             <button type="button" id="jobNursery" onclick="selectJob(this)">保育士</button>
             <button type="button" id="jobSelf" onclick="selectJob(this)">自営業</button>
             <button type="button" id="jobPart" onclick="selectJob(this)">パート</button>
-            <button type="button" id="jobOther" onclick="selectJob(this)">専業主婦・他</button>
+            <button type="button" id="jobOther" onclick="selectJob(this)">専業主婦・その他</button>
         </div>
         <div id="jobOtherWrap" style="display:none; margin:10px 0 20px;">
             <div class="label">　　他の方はこちらにお書きください</div>
@@ -843,7 +834,7 @@
         </div>
 
         <!-- 爪・手足の状態（単一選択＋その他） -->
-        <div class="label">　　爪・手足の状態について気になることを<span class="required">必須</span><br>教えてください</div>
+        <div class="label">　　爪・手足の状態について<span class="required">必須</span><br>気になることを教えてください</div>
         <div class="limbs-buttons" id="nailsGroup">
             <button type="button" id="nailsDouble" onclick="selectNails(this)">二枚爪</button>
             <button type="button" id="nailsWarp" onclick="selectNails(this)">爪がそる</button>
@@ -862,7 +853,7 @@
         </div>
 
         <!-- 普段のネイルの持ち（単一選択） -->
-        <div class="label">　普段のネイルの持ちについて教えてください<span class="required">必須</span></div>
+        <div class="label">　普段のネイルの<span class="required">必須</span><br>持ちについて教えてください</div>
         <div class="Introduction-buttons" id="holdGroup">
             <button type="button" id="holdFirst" onclick="selectHold(this)">ネイルするのが初めて</button>
             <button type="button" id="hold1w" onclick="selectHold(this)">1週間以内</button>
@@ -879,16 +870,31 @@
             <button type="button" id="fragileRing" onclick="selectFragileFinger(this)">薬指</button>
             <button type="button" id="fragileLittle" onclick="selectFragileFinger(this)">小指</button>
             <button type="button" id="fragileAll" onclick="selectFragileFinger(this)">全体的</button>
+            <button type="button" id="fragilewakarani" onclick="selectFragileFinger(this)">とくになし</button>
         </div>
 
         <!-- 取れ方（単一選択） -->
         <div class="label">　　取れ方について教えてください<span class="required">必須</span></div>
         <div class="Power-buttons" id="peelGroup">
-            <button type="button" id="peelWeak" onclick="selectPeel(this)">弱め</button>
-            <button type="button" id="peelSlight" onclick="selectPeel(this)">やや弱め</button>
-            <button type="button" id="peelNormal" onclick="selectPeel(this)">普通</button>
-            <button type="button" id="peelSlightHi" onclick="selectPeel(this)">やや強め</button>
-            <button type="button" id="peelStrong" onclick="selectPeel(this)">強め</button>
+            <button type="button" id="peelWeak" onclick="selectPeel(this)">先端が剥がれる</button>
+            <button type="button" id="peelSlight" onclick="selectPeel(this)">側面が剝がれる</button>
+            <button type="button" id="peelNormal" onclick="selectPeel(this)">中心が白くなって浮く</button>
+            <button type="button" id="peelSlightHi" onclick="selectPeel(this)">根元側が剥がれる</button>
+            <button type="button" id="peelStrong" onclick="selectPeel(this)">持ちは良い</button>
+            <button type="button" id="wakaranaiStrong" onclick="selectPeel(this)">分からない</button>
+        </div>
+
+        <!-- 手の使い方/指先の使用頻度（単一選択） -->
+        <div class="label">　　手の使い方、指先の使用頻度<span class="required">必須</span><br>について教えてください。</div>
+        <div class="experience-buttons" id="handUsageGroup">
+            <button type="button" id="handUseiti" onclick="selectHandUsage(this)">日常生活で指先をよく使う<br>（爪先でシールを剥がす等）</button>
+            <button type="button" id="handUseni" onclick="selectHandUsage(this)">水仕事が多い</button>
+            <button type="button" id="handUsesan" onclick="selectHandUsage(this)">パソコン作業が多い</button>
+            <button type="button" id="handUseyon" onclick="selectHandUsage(this)">小さい子供がいる</button>
+            <button type="button" id="handUsegoo" onclick="selectHandUsage(this)">薬品（消毒など）よく使う</button>
+            <button type="button" id="handUseroku" onclick="selectHandUsage(this)">爪を噛む・ささくれを剥く</button>
+            <button type="button" id="handUsesiti" onclick="selectHandUsage(this)">ガーデニングなど土をよく触る</button>
+            <button type="button" id="handUsehati" onclick="selectHandUsage(this)">指先を酷使することはない</button>
         </div>
 
         <!-- 今までのサロンで嫌だった事（単一選択：暫定5段階） -->
@@ -899,13 +905,6 @@
             <button type="button" id="dislike3" onclick="selectDislike(this)">普通</button>
             <button type="button" id="dislike4" onclick="selectDislike(this)">やや強め</button>
             <button type="button" id="dislike5" onclick="selectDislike(this)">強め</button>
-        </div>
-
-        <!-- 手の使い方/指先の使用頻度（単一選択） -->
-        <div class="label">　　手の使い方、指先の使用頻度について教えてください。<span class="required">必須</span></div>
-        <div class="experience-buttons" id="handUsageGroup">
-            <button type="button" id="handUseYes" onclick="selectHandUsage(this)">有り</button>
-            <button type="button" id="handUseNo" onclick="selectHandUsage(this)">無し</button>
         </div>
 
         <!-- お仕事でOKな範囲（単一選択） -->
@@ -961,14 +960,14 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
     <script>
-        let chanceValue = '';
+        let chanceValue = [];
         let reasonValues = [];           // 複数選択
         let jobValue = '';
-        let hobbyValue = '';
-        let nailsValue = '';
+        let hobbyValue = [];
+        let nailsValue = [];
         let holdValue = '';
         let fragileFingerValue = '';
-        let peelValue = '';
+        let peelValue = [];
         let dislikeValue = '';
         let handUsageValue = '';
         let workScopeValue = '';
@@ -1092,10 +1091,21 @@
             clickedEl.classList.add('active');
         }
 
-        // 施術中
+        // 施術中（複数選択可）
         function selectChance(el) {
-            setActiveSingle('#chanceGroup', el);
-            chanceValue = el.innerText;
+            // 押したボタンのON/OFF
+            el.classList.toggle('active');
+
+            // 選択中のボタンテキストを収集（重複は除外）
+            const selected = Array.from(document.querySelectorAll('#chanceGroup button.active'))
+                .map(b => b.innerText);
+            const unique = Array.from(new Set(selected));
+
+            // 既存submitForm互換：文字列で保持（空なら ""）
+            chanceValue = unique.length ? unique.join('、') : '';
+
+            // 配列で使いたい場合はコレを参照（任意）
+            window.chanceValues = unique;
         }
 
         // 当店を選んだ理由（複数＋紹介名）
@@ -1151,43 +1161,122 @@
             const input = document.getElementById('jobOtherInput');
             if (el.id === 'jobOther') {
                 wrap.style.display = 'block';
-                jobValue = input.value.trim() || '専業主婦・他';
-                input.oninput = () => jobValue = (input.value.trim() || '専業主婦・他');
+                jobValue = input.value.trim() || '専業主婦・その他';
+                input.oninput = () => jobValue = (input.value.trim() || '専業主婦・その他');
             } else {
                 wrap.style.display = 'none';
                 input.value = '';
             }
         }
 
-        // 趣味
+        // 趣味（複数選択可＋「その他」入力対応）
         function selectHobby(el) {
-            setActiveSingle('#hobbyGroup', el);
-            hobbyValue = el.innerText;
+            // クリック要素のON/OFF
+            el.classList.toggle('active');
+
+            const groupSel = '#hobbyGroup';
             const wrap = document.getElementById('hobbyOtherWrap');
             const input = document.getElementById('hobbyOtherInput');
+            const otherBtn = document.getElementById('hobbyOther');
+
+            // 「その他」ボタンの表示/非表示
             if (el.id === 'hobbyOther') {
-                wrap.style.display = 'block';
-                hobbyValue = input.value.trim() || 'その他';
-                input.oninput = () => hobbyValue = (input.value.trim() || 'その他');
+                if (el.classList.contains('active')) {
+                    wrap.style.display = 'block';
+                    // 初期値反映（空なら「その他」で保持）
+                    const v0 = (input.value || '').trim();
+                    // 直ちに全体の集合を再構築
+                    rebuild();
+                    // 入力中もリアルタイム更新
+                    input.oninput = () => rebuild();
+                    // フォーカス
+                    setTimeout(() => input.focus(), 0);
+                } else {
+                    // OFFになったら入力欄を閉じてクリア
+                    wrap.style.display = 'none';
+                    input.value = '';
+                    rebuild();
+                }
             } else {
-                wrap.style.display = 'none';
-                input.value = '';
+                // 通常ボタンのON/OFF時も全体を再構築
+                rebuild();
+            }
+
+            // 選択値の再構築（配列＋結合文字列の両方を更新）
+            function rebuild() {
+                // 現在activeなボタンのテキストを収集
+                let texts = Array.from(document.querySelectorAll(`${groupSel} button.active`))
+                    .map(b => b.innerText);
+
+                // 「その他」が選ばれている場合、入力値で置き換え
+                if (otherBtn.classList.contains('active')) {
+                    const v = (input.value || '').trim();
+                    // まず「その他」ラベルを除外
+                    texts = texts.filter(t => t !== 'その他');
+                    // 入力があればそれを、なければプレースホルダとして「その他」
+                    texts.push(v || 'その他');
+                }
+
+                // 重複排除
+                const unique = Array.from(new Set(texts));
+
+                // 既存submitForm互換：カンマ区切り文字列／空なら""
+                hobbyValue = unique.length ? unique.join('、') : '';
+
+                // 配列で使いたい場合はこちら
+                window.hobbyValues = unique;
             }
         }
 
-        // 爪・手足の状態
+        // 爪・手足の状態（複数選択可＋「その他」入力対応）
         function selectNails(el) {
-            setActiveSingle('#nailsGroup', el);
-            nailsValue = el.innerText;
+            // クリック要素のON/OFF
+            el.classList.toggle('active');
+
+            const groupSel = '#nailsGroup';
             const wrap = document.getElementById('nailsOtherWrap');
             const input = document.getElementById('nailsOtherInput');
+            const otherBtn = document.getElementById('nailsOther');
+
+            // 「その他」ボタンの表示/非表示制御
             if (el.id === 'nailsOther') {
-                wrap.style.display = 'block';
-                nailsValue = input.value.trim() || 'その他';
-                input.oninput = () => nailsValue = (input.value.trim() || 'その他');
+                if (el.classList.contains('active')) {
+                    wrap.style.display = 'block';
+                    // 初期反映＆入力のたびに再構築
+                    rebuild();
+                    input.oninput = () => rebuild();
+                    setTimeout(() => input.focus(), 0);
+                } else {
+                    wrap.style.display = 'none';
+                    input.value = '';
+                    rebuild();
+                }
             } else {
-                wrap.style.display = 'none';
-                input.value = '';
+                // 通常ボタンのON/OFF時
+                rebuild();
+            }
+
+            // 選択値の再構築
+            function rebuild() {
+                // 現在activeなボタンのラベルを収集
+                let texts = Array.from(document.querySelectorAll(`${groupSel} button.active`))
+                    .map(b => b.innerText);
+
+                // 「その他」がONのとき、入力値で置き換え
+                if (otherBtn.classList.contains('active')) {
+                    const v = (input.value || '').trim();
+                    texts = texts.filter(t => t !== 'その他'); // ラベル除外
+                    texts.push(v || 'その他');                // 入力が空なら「その他」で保持
+                }
+
+                // 重複排除
+                const unique = Array.from(new Set(texts));
+
+                // 既存submitForm互換：カンマ風の読点「、」で結合（空なら ""）
+                nailsValue = unique.length ? unique.join('、') : '';
+
+                // 配列で使いたい場合はこちら
+                window.nailsValues = unique;
             }
         }
 
@@ -1197,16 +1286,38 @@
             holdValue = el.innerText;
         }
 
-        // 取れやすい爪
-        function selectFragileFinger(el) {
-            setActiveSingle('#fragileFingerGroup', el);
-            fragileFingerValue = el.innerText;
-        }
+// 取れやすい爪（複数選択可）
+function selectFragileFinger(el) {
+  // クリック要素のON/OFF
+  el.classList.toggle('active');
 
-        // 取れ方
+  // 選択中ラベルを収集 → 重複排除
+  const selected = Array.from(document.querySelectorAll('#fragileFingerGroup button.active'))
+    .map(b => b.innerText);
+  const unique = Array.from(new Set(selected));
+
+  // 既存 submitForm 互換：読点で結合（空なら ""）
+  fragileFingerValue = unique.length ? unique.join('、') : '';
+
+  // 配列で扱いたい場合はこちら
+  window.fragileFingerValues = unique;
+}
+
+        // 取れ方（複数選択可）
         function selectPeel(el) {
-            setActiveSingle('#peelGroup', el);
-            peelValue = el.innerText;
+            // ボタンのON/OFF
+            el.classList.toggle('active');
+
+            // 選択中のラベルを収集 → 重複排除
+            const selected = Array.from(document.querySelectorAll('#peelGroup button.active'))
+                .map(b => b.innerText);
+            const unique = Array.from(new Set(selected));
+
+            // 既存 submitForm 互換：読点で結合（空なら ""）
+            peelValue = unique.length ? unique.join('、') : '';
+
+            // 配列で使いたい場合はこちら
+            window.peelValues = unique;
         }
 
         // 嫌だった事（暫定）
@@ -1215,10 +1326,21 @@
             dislikeValue = el.innerText;
         }
 
-        // 手の使い方
+        // 手の使い方（複数選択可）
         function selectHandUsage(el) {
-            setActiveSingle('#handUsageGroup', el);
-            handUsageValue = el.innerText;
+            // クリック要素のON/OFF
+            el.classList.toggle('active');
+
+            // 選択中ラベルを収集 → 重複排除
+            const selected = Array.from(document.querySelectorAll('#handUsageGroup button.active'))
+                .map(b => b.innerText);
+            const unique = Array.from(new Set(selected));
+
+            // 既存 submitForm 互換：読点で結合（空なら ""）
+            handUsageValue = unique.length ? unique.join('、') : '';
+
+            // 配列で使いたい場合はこちら
+            window.handUsageValues = unique;
         }
 
         // 仕事OK範囲
