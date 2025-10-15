@@ -1349,14 +1349,15 @@ function submitForm() {
   const birthYmd  = (document.getElementById('message3')?.value || '').trim();  // 誕生日（西暦）
   const tel       = (document.getElementById('message4')?.value || '').trim();  // 電話番号
   const address   = (document.getElementById('message5')?.value || '').trim();  // ご住所
-  const iro       = (document.getElementById('message6')?.value || '').trim();  // 好きな色
+  const iro       = (document.getElementById('message6')?.value || '').trim();  // ご住所
   const note = (document.querySelector('textarea[placeholder="メッセージを入力してください"]')?.value || '').trim(); // 備考
 
   // ===== ボタン選択の値（selectXXX 内で更新される想定）=====
   // chanceValue, reasonValues[], jobValue, hobbyValue, nailsValue, holdValue,
   // fragileFingerValue, peelValue, dislikeValue, handUsageValue, workScopeValue,
   // purposeValue, interestValue, allergyValue, allergyDetail, reasonReferralName
-  // tabakoValue（吸う/吸わない）, tabakodottiValue（紙/電子 or 読点結合）, window.tabakodottiValues（配列）
+  // ▼ たばこ関連
+  // tabakoValue（吸う/吸わない）, tabakodottiValue（紙タバコ/電子タバコ）
 
   // ===== 必須チェック =====
   if (!nameKanji) return alert('「お名前（漢字）」を入力してください。');
@@ -1365,19 +1366,19 @@ function submitForm() {
   if (!tel)       return alert('「電話番号」を入力してください。');
   if (!address)   return alert('「ご住所」を入力してください。');
 
-  if (!chanceValue)         return alert('「施術中」のご希望をお選びください。');
-  if (!reasonValues.length) return alert('「当店を選んでくださった理由」をお選びください。');
-  if (!hobbyValue)          return alert('「趣味」をお選びください。');
-  if (!nailsValue)          return alert('「爪・手足の状態」で該当するものをお選びください。');
-  if (!holdValue)           return alert('「普段のネイルの持ち」をお選びください。');
-  if (!fragileFingerValue)  return alert('「取れやすい爪」をお選びください。');
-  if (!peelValue)           return alert('「取れ方」をお選びください。');
-  if (!dislikeValue)        return alert('「今までのサロンで嫌だった事」をお選びください。');
-  if (!handUsageValue)      return alert('「手の使い方、指先の使用頻度」をお選びください。');
-  if (!workScopeValue)      return alert('「お仕事でOKな範囲」をお選びください。');
-  if (!purposeValue)        return alert('「ネイルをすることの目的・得たいこと」をお選びください。');
-  if (!interestValue)       return alert('「興味のあるメニュー」をお選びください。');
-  if (!allergyValue)        return alert('「アレルギーはありますか？」をお選びください。');
+  if (!chanceValue)        return alert('「施術中」のご希望をお選びください。');
+  if (!reasonValues.length)return alert('「当店を選んでくださった理由」をお選びください。');
+  if (!hobbyValue)         return alert('「趣味」をお選びください。');
+  if (!nailsValue)         return alert('「爪・手足の状態」で該当するものをお選びください。');
+  if (!holdValue)          return alert('「普段のネイルの持ち」をお選びください。');
+  if (!fragileFingerValue) return alert('「取れやすい爪」をお選びください。');
+  if (!peelValue)          return alert('「取れ方」をお選びください。');
+  if (!dislikeValue)       return alert('「今までのサロンで嫌だった事」をお選びください。');
+  if (!handUsageValue)     return alert('「手の使い方、指先の使用頻度」をお選びください。');
+  if (!workScopeValue)     return alert('「お仕事でOKな範囲」をお選びください。');
+  if (!purposeValue)       return alert('「ネイルをすることの目的・得たいこと」をお選びください。');
+  if (!interestValue)      return alert('「興味のあるメニュー」をお選びください。');
+  if (!allergyValue)       return alert('「アレルギーはありますか？」をお選びください。');
 
   const pickedReferral = reasonValues.some(v => v.startsWith('ご紹介'));
   if (pickedReferral && !reasonReferralName) {
@@ -1391,42 +1392,37 @@ function submitForm() {
   if (!tabakoValue) {
     return alert('「タバコは吸われますか？」をお選びください。');
   }
-  if (tabakoValue === '吸う') {
-    // 紙/電子は複数選択の可能性があるので、配列 or 読点結合のどちらでもOKにする
-    const hasDotti =
-      (Array.isArray(window.tabakodottiValues) && window.tabakodottiValues.length > 0) ||
-      (typeof tabakodottiValue === 'string' && tabakodottiValue.trim() !== '');
-    if (!hasDotti) return alert('「紙タバコ」または「電子タバコ」をお選びください。');
+  if (tabakoValue === '吸う' && !tabakodottiValue) {
+    return alert('「紙タバコ」または「電子タバコ」をお選びください。');
   }
 
-  // ===== 複数選択を改行で整形するヘルパー =====
-  const bullets = (v) => {
-    // v が配列ならそのまま、文字列で "、" を含むなら分割、単一なら配列化、空は []
-    const arr = Array.isArray(v)
-      ? v
-      : (typeof v === 'string' && v.includes('、'))
-        ? v.split('、').map(s => s.trim()).filter(Boolean)
-        : (v ? [v] : []);
-    return arr.map(s => `・${s}`).join('\n');
+  // ===== ここだけ追加：配列/区切り文字/オブジェクトを改行付き箇条書きにするヘルパー =====
+  const toLines = (v) => {
+    // Array
+    if (Array.isArray(v)) return v.filter(Boolean).map(s => `・${s}`).join('\n');
+    // Set
+    if (v && typeof v === 'object' && typeof v.forEach === 'function' && typeof v.size === 'number') {
+      const arr = []; v.forEach(x => arr.push(x));
+      return arr.filter(Boolean).map(s => `・${s}`).join('\n');
+    }
+    // plain object（{key:true} や {id:"label"} 等を想定：値を採用）
+    if (v && typeof v === 'object') {
+      const vals = Object.values(v).filter(Boolean);
+      if (vals.length) return vals.map(s => `・${s}`).join('\n');
+    }
+    // 文字列：「、」や「,」や改行で区切られているなら分割
+    if (typeof v === 'string') {
+      const s = v.trim();
+      if (!s) return '';
+      const sep = s.includes('\n') ? '\n' : (s.includes('、') ? '、' : (s.includes(',') ? ',' : null));
+      if (sep) return s.split(sep).map(x => x.trim()).filter(Boolean).map(x => `・${x}`).join('\n');
+      return `・${s}`;
+    }
+    return '';
   };
 
-  // 各項目を「改行付きの箇条書き」に整形（単一でもOK）
-  const chanceLines        = bullets(window.chanceValues ?? chanceValue);
-  const reasonLines        = bullets(reasonValues);                // これは元から配列
-  const hobbyLines         = bullets(window.hobbyValues ?? hobbyValue);
-  const nailsLines         = bullets(window.nailsValues ?? nailsValue);
-  const holdLines          = bullets(holdValue);
-  const fragileFingerLines = bullets(window.fragileFingerValues ?? fragileFingerValue);
-  const peelLines          = bullets(window.peelValues ?? peelValue);
-  const dislikeLines       = bullets(window.dislikeValues ?? dislikeValue);
-  const handUsageLines     = bullets(window.handUsageValues ?? handUsageValue);
-  const workScopeLines     = bullets(workScopeValue);
-  const purposeLines       = bullets(window.purposeValues ?? purposeValue);
-  const interestLines      = bullets(window.interestValues ?? interestValue);
-  const tabakoLines        = bullets(tabakoValue);
-  const tabakodottiLines   = tabakoValue === '吸う'
-    ? bullets(window.tabakodottiValues ?? tabakodottiValue)
-    : '';
+  // ===== 整形（箇条書きなど）=====
+  const reasonLines = reasonValues.map(v => `・${v}`).join('\n'); // 既存は配列なのでそのまま
 
   // ===== 送信用オブジェクト（必要に応じてGAS連携にも流用可）=====
   const formData = {
@@ -1436,27 +1432,33 @@ function submitForm() {
     tel,
     address,
     iro,
-    chance: window.chanceValues ?? chanceValue,
-    reasons: reasonValues,
-    job: jobValue,
-    hobby: window.hobbyValues ?? hobbyValue,
-    nails: window.nailsValues ?? nailsValue,
-    hold: holdValue,
-    fragile: window.fragileFingerValues ?? fragileFingerValue,
-    peel: window.peelValues ?? peelValue,
-    dislike: window.dislikeValues ?? dislikeValue,
-    handUsage: window.handUsageValues ?? handUsageValue,
-    workScope: workScopeValue,
-    purpose: window.purposeValues ?? purposeValue,
-    interest: window.interestValues ?? interestValue,
-    tabako: tabakoValue,
-    tabakodotti: window.tabakodottiValues ?? tabakodottiValue,
+    chanceValue,
+    reasonValues,
+    jobValue,                 // 任意
+    hobbyValue,
+    nailsValue,
+    holdValue,
+    fragileFingerValue,
+    peelValue,
+    dislikeValue,
+    handUsageValue,
+    workScopeValue,
+    purposeValue,
+    interestValue,
+    tabakoValue,
+    tabakodottiValue,
     allergyValue,
     allergyDetail,
     note,
   };
 
   // ===== LIFFで送信（テキスト整形）=====
+  // たばこ追質問（複数選択に対応：配列/区切り文字も改行化）
+  const tabakoLine =
+    tabakoValue === '吸う'
+      ? `【タバコ】\n${toLines(tabakoValue)}\n${toLines(tabakodottiValue)}\n`
+      : `【タバコ】\n${toLines(tabakoValue)}\n`;
+
   const msg =
 `≪アンケート≫
 
@@ -1472,70 +1474,57 @@ function submitForm() {
 ・${address}
 
 【施術中のご希望】
-${chanceLines || '・未選択'}
+${toLines(chanceValue)}
 
 【当店を選んだ理由】
-${reasonLines || '・未選択'}
+${reasonLines}
 
 ${jobValue ? `【職業】
 ・${jobValue}
 ` : ''}【趣味】
-${hobbyLines || '・未選択'}
+${toLines(hobbyValue)}
 
 【爪・手足の状態】
-${nailsLines || '・未選択'}
+${toLines(nailsValue)}
 
 【普段のネイルの持ち】
-${holdLines || '・未選択'}
+${toLines(holdValue)}
 
 【取れやすい爪】
-${fragileFingerLines || '・未選択'}
+${toLines(fragileFingerValue)}
 
 【取れ方】
-${peelLines || '・未選択'}
-
-【今までのサロンで嫌だった事】
-${dislikeLines || '・未選択'}
+${toLines(peelValue)}
 
 【手の使い方/指先の使用頻度】
-${handUsageLines || '・未選択'}
+${toLines(handUsageValue)}
+
+【今までのサロンで嫌だった事】
+${toLines(dislikeValue)}
 
 【お仕事でOKな範囲】
-${workScopeLines || '・未選択'}
+${toLines(workScopeValue)}
 
 【好きな色、やってみたい色】
-・${iro || '未入力'}
+${toLines(iro)}
 
 【ネイルの目的】
-${purposeLines || '・未選択'}
+${toLines(purposeValue)}
 
 【興味のあるメニュー】
-${interestLines || '・未選択'}
+${toLines(interestValue)}
 
-【タバコ】
-${tabakoLines}${tabakodottiLines ? `\n${tabakodottiLines}` : ''}
-
-【アレルギー】
-・${allergyValue}${allergyDetail ? `（${allergyDetail}）` : ''}
+${tabakoLine}【アレルギー】
+${toLines(allergyValue)}${allergyDetail ? `\n（${allergyDetail}）` : ''}
 
 ${note ? `【備考】
-・${note}` : ''}`;
+${toLines(note)}` : ''}`;
 
+  // LIFFログイン状態の確認
   if (typeof liff !== 'undefined' && liff.isLoggedIn && !liff.isLoggedIn()) {
     liff.login();
     return;
   }
-
-  liff.sendMessages([{ type: 'text', text: msg }])
-    .then(() => {
-      alert('ご記入ありがとうございます。「OK」をタップしてください。');
-      if (liff.closeWindow) liff.closeWindow();
-    })
-    .catch(err => {
-      console.error('メッセージ送信に失敗しました:', err);
-      alert('送信に失敗しました。通信環境をご確認の上、もう一度お試しください。');
-    });
-}
 
   liff.sendMessages([{ type: 'text', text: msg }])
     .then(() => {
