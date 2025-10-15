@@ -236,6 +236,48 @@
             border-color: #fc8e52;
         }
 
+        /* グリッド内でボタンをしっかり広げる */
+        .demand-buttons button {
+            width: 100%;
+        }
+
+        /* ボタンはグリッド内で全幅 */
+        .demand-buttons button {
+            width: 100%;
+        }
+
+        /* ☑ その他入力欄は “2列ぶち抜き”＆見た目調整 */
+        .demand-other-wrap {
+            display: none;
+            /* 初期は非表示 */
+            grid-column: 1 / -1;
+            /* ★ ここが肝：2列ぶち抜き */
+            margin-top: -2px;
+            /* （好みで微調整） */
+        }
+
+        .demand-other-wrap.show {
+            display: block;
+        }
+
+        .demand-other-wrap input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font: inherit;
+        }
+
+        .date-inputs input[type="datetime-local"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
         .submit-button {
             width: 100%;
             padding: 15px;
@@ -654,7 +696,7 @@
         </div>
 
         <!-- 当店を選んだ理由（複数選択＋紹介者名） -->
-        <div class="label">　　当店を選んでくださった理由を<span class="required">必須</span><br>教えてください<br>（複数回答可）</div>
+        <div class="label">　　当店を選んでくださった<span class="required">必須</span><br>理由を教えてください<br>（複数回答可）</div>
         <div class="demand-buttons" id="reasonGroup">
             <button type="button" id="reasonGMB" onclick="selectReason(this)">Googleマイビジネス（クチコミ）</button>
             <button type="button" id="reasonNear" onclick="selectReason(this)">近かった</button>
@@ -666,7 +708,7 @@
 
             <!-- 紹介者名の入力欄 -->
             <div id="reasonReferralWrap" class="demand-other-wrap">
-                <div class="label">　　ご紹介者様のお名前をお書きください<span class="required">必須</span></div>
+                <div class="label">　　ご紹介者様のお名前を<span class="required">必須</span><br>お書きください</div>
                 <input id="reasonReferralInput" type="text" placeholder="ご紹介者名を入力してください" />
             </div>
         </div>
@@ -779,7 +821,7 @@
         </div>
 
         <!-- お仕事でOKな範囲（単一選択） -->
-        <div class="label">　　お仕事でOKな範囲を教えてください。<span class="required">必須</span><br>（複数回答可）</div>
+        <div class="label">　　お仕事でOKな範囲を<span class="required">必須</span><br>教えてください。<br>（複数回答可）</div>
         <div class="experience-buttons" id="workScopeGroup">
             <button type="button" id="workOkYes" onclick="selectWorkScope(this)">自爪風</button>
             <button type="button" id="workOkNo" onclick="selectWorkScope(this)">ナチュラル</button>
@@ -801,7 +843,7 @@
         </div>
 
         <!-- 興味のあるメニュー（単一選択） -->
-        <div class="label">　　興味のあるメニューはなんですか？<span class="required">必須</span><br>（複数回答可）</div>
+        <div class="label">　　興味のあるメニューは<span class="required">必須</span><br>なんですか？<br>（複数回答可）</div>
         <div class="experience-buttons" id="interestGroup">
             <button type="button" id="interestYes" onclick="selectInterest(this)">ジェルネイル</button>
             <button type="button" id="interestNo" onclick="selectInterest(this)">自爪育成・ケア</button>
@@ -1242,10 +1284,21 @@
             window.handUsageValues = unique;
         }
 
-        // 仕事OK範囲
+        // 仕事OK範囲（複数選択可）
         function selectWorkScope(el) {
-            setActiveSingle('#workScopeGroup', el);
-            workScopeValue = el.innerText;
+            // クリック要素のON/OFF
+            el.classList.toggle('active');
+
+            // 選択中ラベルを収集 → 重複排除
+            const selected = Array.from(document.querySelectorAll('#workScopeGroup button.active'))
+                .map(b => b.innerText);
+            const unique = Array.from(new Set(selected));
+
+            // 既存 submitForm 互換：読点で結合（空なら ""）
+            workScopeValue = unique.length ? unique.join('、') : '';
+
+            // 配列で使いたい場合はこちら
+            window.workScopeValues = unique;
         }
 
         // 目的（複数選択可）
@@ -1289,41 +1342,41 @@
         }
 
 
-// タバコ：はい/いいえ（単一選択 ＋ 追質問の表示切替）
-function selecttabako(el) {
-  setActiveSingle('#tabakoGroup', el);
-  tabakoValue = el.innerText;
+        // タバコ：はい/いいえ（単一選択 ＋ 追質問の表示切替）
+        function selecttabako(el) {
+            setActiveSingle('#tabakoGroup', el);
+            tabakoValue = el.innerText;
 
-  const follow = document.getElementById('tabakoFollow');
-  const subBtns = document.querySelectorAll('#tabakodottiGroup button');
+            const follow = document.getElementById('tabakoFollow');
+            const subBtns = document.querySelectorAll('#tabakodottiGroup button');
 
-  if (el.id === 'tabakoYes') {
-    // 追質問を表示
-    follow.style.display = 'block';
-  } else {
-    // 非表示にして選択リセット
-    follow.style.display = 'none';
-    subBtns.forEach(b => b.classList.remove('active'));
-    tabakodottiValue = '';
-  }
-}
+            if (el.id === 'tabakoYes') {
+                // 追質問を表示
+                follow.style.display = 'block';
+            } else {
+                // 非表示にして選択リセット
+                follow.style.display = 'none';
+                subBtns.forEach(b => b.classList.remove('active'));
+                tabakodottiValue = '';
+            }
+        }
 
-// 追質問：紙/電子（複数選択可）
-function selecttabakodotti(el) {
-  // 押されたボタンのON/OFF
-  el.classList.toggle('active');
+        // 追質問：紙/電子（複数選択可）
+        function selecttabakodotti(el) {
+            // 押されたボタンのON/OFF
+            el.classList.toggle('active');
 
-  // アクティブなボタンのラベルを収集 → 重複排除
-  const selected = Array.from(document.querySelectorAll('#tabakodottiGroup button.active'))
-    .map(b => b.innerText);
-  const unique = Array.from(new Set(selected));
+            // アクティブなボタンのラベルを収集 → 重複排除
+            const selected = Array.from(document.querySelectorAll('#tabakodottiGroup button.active'))
+                .map(b => b.innerText);
+            const unique = Array.from(new Set(selected));
 
-  // 既存 submitForm 互換：読点で結合（空なら ""）
-  tabakodottiValue = unique.length ? unique.join('、') : '';
+            // 既存 submitForm 互換：読点で結合（空なら ""）
+            tabakodottiValue = unique.length ? unique.join('、') : '';
 
-  // 配列で扱いたい場合はこちらを参照
-  window.tabakodottiValues = unique;
-}
+            // 配列で扱いたい場合はこちらを参照
+            window.tabakodottiValues = unique;
+        }
 
         // アレルギー
         function selectAllergy(el) {
@@ -1342,125 +1395,125 @@ function selecttabakodotti(el) {
             }
         }
 
-function submitForm() {
-  // ===== テキスト入力（既存IDをそのまま利用）=====
-  const nameKanji = (document.getElementById('message')?.value || '').trim();   // お名前（漢字）
-  const nameKana  = (document.getElementById('message2')?.value || '').trim();  // お名前（フリガナ）
-  const birthYmd  = (document.getElementById('message3')?.value || '').trim();  // 誕生日（西暦）
-  const tel       = (document.getElementById('message4')?.value || '').trim();  // 電話番号
-  const address   = (document.getElementById('message5')?.value || '').trim();  // ご住所
-  const iro       = (document.getElementById('message6')?.value || '').trim();  // ご住所
-  const note = (document.querySelector('textarea[placeholder="メッセージを入力してください"]')?.value || '').trim(); // 備考
+        function submitForm() {
+            // ===== テキスト入力（既存IDをそのまま利用）=====
+            const nameKanji = (document.getElementById('message')?.value || '').trim();   // お名前（漢字）
+            const nameKana = (document.getElementById('message2')?.value || '').trim();  // お名前（フリガナ）
+            const birthYmd = (document.getElementById('message3')?.value || '').trim();  // 誕生日（西暦）
+            const tel = (document.getElementById('message4')?.value || '').trim();  // 電話番号
+            const address = (document.getElementById('message5')?.value || '').trim();  // ご住所
+            const iro = (document.getElementById('message6')?.value || '').trim();  // ご住所
+            const note = (document.querySelector('textarea[placeholder="メッセージを入力してください"]')?.value || '').trim(); // 備考
 
-  // ===== ボタン選択の値（selectXXX 内で更新される想定）=====
-  // chanceValue, reasonValues[], jobValue, hobbyValue, nailsValue, holdValue,
-  // fragileFingerValue, peelValue, dislikeValue, handUsageValue, workScopeValue,
-  // purposeValue, interestValue, allergyValue, allergyDetail, reasonReferralName
-  // ▼ たばこ関連
-  // tabakoValue（吸う/吸わない）, tabakodottiValue（紙タバコ/電子タバコ）
+            // ===== ボタン選択の値（selectXXX 内で更新される想定）=====
+            // chanceValue, reasonValues[], jobValue, hobbyValue, nailsValue, holdValue,
+            // fragileFingerValue, peelValue, dislikeValue, handUsageValue, workScopeValue,
+            // purposeValue, interestValue, allergyValue, allergyDetail, reasonReferralName
+            // ▼ たばこ関連
+            // tabakoValue（吸う/吸わない）, tabakodottiValue（紙タバコ/電子タバコ）
 
-  // ===== 必須チェック =====
-  if (!nameKanji) return alert('「お名前（漢字）」を入力してください。');
-  if (!nameKana)  return alert('「お名前（フリガナ）」を入力してください。');
-  if (!birthYmd)  return alert('「誕生日（西暦）」を入力してください。');
-  if (!tel)       return alert('「電話番号」を入力してください。');
-  if (!address)   return alert('「ご住所」を入力してください。');
+            // ===== 必須チェック =====
+            if (!nameKanji) return alert('「お名前（漢字）」を入力してください。');
+            if (!nameKana) return alert('「お名前（フリガナ）」を入力してください。');
+            if (!birthYmd) return alert('「誕生日（西暦）」を入力してください。');
+            if (!tel) return alert('「電話番号」を入力してください。');
+            if (!address) return alert('「ご住所」を入力してください。');
 
-  if (!chanceValue)        return alert('「施術中」のご希望をお選びください。');
-  if (!reasonValues.length)return alert('「当店を選んでくださった理由」をお選びください。');
-  if (!hobbyValue)         return alert('「趣味」をお選びください。');
-  if (!nailsValue)         return alert('「爪・手足の状態」で該当するものをお選びください。');
-  if (!holdValue)          return alert('「普段のネイルの持ち」をお選びください。');
-  if (!fragileFingerValue) return alert('「取れやすい爪」をお選びください。');
-  if (!peelValue)          return alert('「取れ方」をお選びください。');
-  if (!dislikeValue)       return alert('「今までのサロンで嫌だった事」をお選びください。');
-  if (!handUsageValue)     return alert('「手の使い方、指先の使用頻度」をお選びください。');
-  if (!workScopeValue)     return alert('「お仕事でOKな範囲」をお選びください。');
-  if (!purposeValue)       return alert('「ネイルをすることの目的・得たいこと」をお選びください。');
-  if (!interestValue)      return alert('「興味のあるメニュー」をお選びください。');
-  if (!allergyValue)       return alert('「アレルギーはありますか？」をお選びください。');
+            if (!chanceValue) return alert('「施術中」のご希望をお選びください。');
+            if (!reasonValues.length) return alert('「当店を選んでくださった理由」をお選びください。');
+            if (!hobbyValue) return alert('「趣味」をお選びください。');
+            if (!nailsValue) return alert('「爪・手足の状態」で該当するものをお選びください。');
+            if (!holdValue) return alert('「普段のネイルの持ち」をお選びください。');
+            if (!fragileFingerValue) return alert('「取れやすい爪」をお選びください。');
+            if (!peelValue) return alert('「取れ方」をお選びください。');
+            if (!dislikeValue) return alert('「今までのサロンで嫌だった事」をお選びください。');
+            if (!handUsageValue) return alert('「手の使い方、指先の使用頻度」をお選びください。');
+            if (!workScopeValue) return alert('「お仕事でOKな範囲」をお選びください。');
+            if (!purposeValue) return alert('「ネイルをすることの目的・得たいこと」をお選びください。');
+            if (!interestValue) return alert('「興味のあるメニュー」をお選びください。');
+            if (!allergyValue) return alert('「アレルギーはありますか？」をお選びください。');
 
-  const pickedReferral = reasonValues.some(v => v.startsWith('ご紹介'));
-  if (pickedReferral && !reasonReferralName) {
-    return alert('ご紹介を選ばれた場合は「ご紹介者様のお名前」を入力してください。');
-  }
-  if (allergyValue === 'ある' && !allergyDetail) {
-    return alert('アレルギーの内容をご入力ください。');
-  }
+            const pickedReferral = reasonValues.some(v => v.startsWith('ご紹介'));
+            if (pickedReferral && !reasonReferralName) {
+                return alert('ご紹介を選ばれた場合は「ご紹介者様のお名前」を入力してください。');
+            }
+            if (allergyValue === 'ある' && !allergyDetail) {
+                return alert('アレルギーの内容をご入力ください。');
+            }
 
-  // たばこ関連
-  if (!tabakoValue) {
-    return alert('「タバコは吸われますか？」をお選びください。');
-  }
-  if (tabakoValue === '吸う' && !tabakodottiValue) {
-    return alert('「紙タバコ」または「電子タバコ」をお選びください。');
-  }
+            // たばこ関連
+            if (!tabakoValue) {
+                return alert('「タバコは吸われますか？」をお選びください。');
+            }
+            if (tabakoValue === '吸う' && !tabakodottiValue) {
+                return alert('「紙タバコ」または「電子タバコ」をお選びください。');
+            }
 
-  // ===== ここだけ追加：配列/区切り文字/オブジェクトを改行付き箇条書きにするヘルパー =====
-  const toLines = (v) => {
-    // Array
-    if (Array.isArray(v)) return v.filter(Boolean).map(s => `・${s}`).join('\n');
-    // Set
-    if (v && typeof v === 'object' && typeof v.forEach === 'function' && typeof v.size === 'number') {
-      const arr = []; v.forEach(x => arr.push(x));
-      return arr.filter(Boolean).map(s => `・${s}`).join('\n');
-    }
-    // plain object（{key:true} や {id:"label"} 等を想定：値を採用）
-    if (v && typeof v === 'object') {
-      const vals = Object.values(v).filter(Boolean);
-      if (vals.length) return vals.map(s => `・${s}`).join('\n');
-    }
-    // 文字列：「、」や「,」や改行で区切られているなら分割
-    if (typeof v === 'string') {
-      const s = v.trim();
-      if (!s) return '';
-      const sep = s.includes('\n') ? '\n' : (s.includes('、') ? '、' : (s.includes(',') ? ',' : null));
-      if (sep) return s.split(sep).map(x => x.trim()).filter(Boolean).map(x => `・${x}`).join('\n');
-      return `・${s}`;
-    }
-    return '';
-  };
+            // ===== ここだけ追加：配列/区切り文字/オブジェクトを改行付き箇条書きにするヘルパー =====
+            const toLines = (v) => {
+                // Array
+                if (Array.isArray(v)) return v.filter(Boolean).map(s => `・${s}`).join('\n');
+                // Set
+                if (v && typeof v === 'object' && typeof v.forEach === 'function' && typeof v.size === 'number') {
+                    const arr = []; v.forEach(x => arr.push(x));
+                    return arr.filter(Boolean).map(s => `・${s}`).join('\n');
+                }
+                // plain object（{key:true} や {id:"label"} 等を想定：値を採用）
+                if (v && typeof v === 'object') {
+                    const vals = Object.values(v).filter(Boolean);
+                    if (vals.length) return vals.map(s => `・${s}`).join('\n');
+                }
+                // 文字列：「、」や「,」や改行で区切られているなら分割
+                if (typeof v === 'string') {
+                    const s = v.trim();
+                    if (!s) return '';
+                    const sep = s.includes('\n') ? '\n' : (s.includes('、') ? '、' : (s.includes(',') ? ',' : null));
+                    if (sep) return s.split(sep).map(x => x.trim()).filter(Boolean).map(x => `・${x}`).join('\n');
+                    return `・${s}`;
+                }
+                return '';
+            };
 
-  // ===== 整形（箇条書きなど）=====
-  const reasonLines = reasonValues.map(v => `・${v}`).join('\n'); // 既存は配列なのでそのまま
+            // ===== 整形（箇条書きなど）=====
+            const reasonLines = reasonValues.map(v => `・${v}`).join('\n'); // 既存は配列なのでそのまま
 
-  // ===== 送信用オブジェクト（必要に応じてGAS連携にも流用可）=====
-  const formData = {
-    nameKanji,
-    nameKana,
-    birthYmd,
-    tel,
-    address,
-    iro,
-    chanceValue,
-    reasonValues,
-    jobValue,                 // 任意
-    hobbyValue,
-    nailsValue,
-    holdValue,
-    fragileFingerValue,
-    peelValue,
-    dislikeValue,
-    handUsageValue,
-    workScopeValue,
-    purposeValue,
-    interestValue,
-    tabakoValue,
-    tabakodottiValue,
-    allergyValue,
-    allergyDetail,
-    note,
-  };
+            // ===== 送信用オブジェクト（必要に応じてGAS連携にも流用可）=====
+            const formData = {
+                nameKanji,
+                nameKana,
+                birthYmd,
+                tel,
+                address,
+                iro,
+                chanceValue,
+                reasonValues,
+                jobValue,                 // 任意
+                hobbyValue,
+                nailsValue,
+                holdValue,
+                fragileFingerValue,
+                peelValue,
+                dislikeValue,
+                handUsageValue,
+                workScopeValue,
+                purposeValue,
+                interestValue,
+                tabakoValue,
+                tabakodottiValue,
+                allergyValue,
+                allergyDetail,
+                note,
+            };
 
-  // ===== LIFFで送信（テキスト整形）=====
-  // たばこ追質問（複数選択に対応：配列/区切り文字も改行化）
-  const tabakoLine =
-    tabakoValue === '吸う'
-      ? `【タバコ】\n${toLines(tabakoValue)}\n${toLines(tabakodottiValue)}\n`
-      : `【タバコ】\n${toLines(tabakoValue)}\n`;
+            // ===== LIFFで送信（テキスト整形）=====
+            // たばこ追質問（複数選択に対応：配列/区切り文字も改行化）
+            const tabakoLine =
+                tabakoValue === '吸う'
+                    ? `【タバコ】\n${toLines(tabakoValue)}\n${toLines(tabakodottiValue)}\n`
+                    : `【タバコ】\n${toLines(tabakoValue)}\n`;
 
-  const msg =
-`≪アンケート≫
+            const msg =
+                `≪アンケート≫
 
 【お名前（漢字）】
 ・${nameKanji}
@@ -1515,27 +1568,27 @@ ${toLines(purposeValue)}
 ${toLines(interestValue)}
 
 ${tabakoLine}【アレルギー】
-${toLines(allergyValue)}${allergyDetail ? `\n（${allergyDetail}）` : ''}
+${toLines(allergyValue)}${allergyDetail ? `\n・${allergyDetail}` : ''}
 
 ${note ? `【備考】
 ${toLines(note)}` : ''}`;
 
-  // LIFFログイン状態の確認
-  if (typeof liff !== 'undefined' && liff.isLoggedIn && !liff.isLoggedIn()) {
-    liff.login();
-    return;
-  }
+            // LIFFログイン状態の確認
+            if (typeof liff !== 'undefined' && liff.isLoggedIn && !liff.isLoggedIn()) {
+                liff.login();
+                return;
+            }
 
-  liff.sendMessages([{ type: 'text', text: msg }])
-    .then(() => {
-      alert('ご記入ありがとうございます。「OK」をタップしてください。');
-      if (liff.closeWindow) liff.closeWindow();
-    })
-    .catch(err => {
-      console.error('メッセージ送信に失敗しました:', err);
-      alert('送信に失敗しました。通信環境をご確認の上、もう一度お試しください。');
-    });
-}
+            liff.sendMessages([{ type: 'text', text: msg }])
+                .then(() => {
+                    alert('ご記入ありがとうございます。「OK」をタップしてください。');
+                    if (liff.closeWindow) liff.closeWindow();
+                })
+                .catch(err => {
+                    console.error('メッセージ送信に失敗しました:', err);
+                    alert('送信に失敗しました。通信環境をご確認の上、もう一度お試しください。');
+                });
+        }
 
         (function initBirthdayPicker() {
             const yearSel = document.getElementById('birthYear');
