@@ -653,7 +653,7 @@
   </div>
 </div>
 
-        <div class="label">　　現在お怪我はおりますか？<span class="required">必須</span></div>
+        <div class="label">　現在お怪我はおりますか？<span class="required">必須</span></div>
         <div class="chance-buttons">
             <button type="button" id="onechance" onclick="selectchance(this)">有り</button>
             <button type="button" id="twochance" onclick="selectchance(this)">無し</button>
@@ -662,7 +662,7 @@
         <div class="label">　　病気お怪我の既往歴を<span class="required">必須</span><br>教えてください。</div>
         <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
-        <div class="label">　　現在妊娠されていますか？<span class="required">必須</span></div>
+        <div class="label">　現在妊娠されていますか？<span class="required">必須</span></div>
         <div class="Introduction-buttons">
             <button type="button" id="oneIntroduction" onclick="selectIntroduction(this)">はい</button>
             <button type="button" id="twoIntroduction" onclick="selectIntroduction(this)">いいえ</button>
@@ -866,6 +866,7 @@ function selectdemand(element){
 
         function submitForm() {
             const message = document.getElementById('message').value;
+            const message2 = document.getElementById('message2').value;
             priorityCount: priorityCount;
             demandCount: demandCount;
             chanceCount: chanceCount;
@@ -934,10 +935,18 @@ function selectdemand(element){
                 return;
             }
 
+// 送信前に demandCount を整形（配列 or カンマ区切りにも対応）
+const demandLines =
+  Array.isArray(formData.demandCount)
+    ? formData.demandCount.map(s => `・${s}`).join('\n')
+    : (typeof formData.demandCount === 'string' && formData.demandCount.includes(','))
+      ? formData.demandCount.split(',').map(s => `・${s.trim()}`).join('\n')
+      : `・${formData.demandCount}`;
+
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【疲れを感じる箇所】\n・${formData.priorityCount}\n\n【現在のお怪我】\n・${formData.demandCount}\n\n【病気お怪我の既往歴】\n・${formData.chanceCount}\n\n【ご来店目的】\n・${formData.message}\n\n【妊娠に関して】\n・${formData.IntroductionCount}\n\n【ボディーケアのご経験】\n・${formData.deliveryCount}\n\n【お好みの力加減】\n・${formData.PowerCount}\n\n【もみ返しのご経験】\n・${formData.experienceCount}\n\n備考考】\n・${formData.message2}`
+                text: `≪アンケート回答≫\n\n【疲れを感じる箇所】\n・${formData.priorityCount}\n\n【現在のお怪我】\n・${demandLines}\n\n【病気お怪我の既往歴】\n・${formData.chanceCount}\n\n【ご来店目的】\n・${formData.message}\n\n【妊娠に関して】\n・${formData.IntroductionCount}\n\n【ボディーケアのご経験】\n・${formData.deliveryCount}\n\n【お好みの力加減】\n・${formData.PowerCount}\n\n【もみ返しのご経験】\n・${formData.experienceCount}\n\n【備考】\n・${formData.message2}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('ご記入ありがとうございます。「OK」をタップしてください。');
