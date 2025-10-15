@@ -644,19 +644,20 @@
             /* 好きなサイズに変更可能 */
         }
 
-.birth-row{
-  display:flex;
-  gap:10px;
-  margin: 8px 0 20px;
-}
-.birth-select{
-  flex:1;
-  padding:10px 12px;
-  border:1px solid #ccc;
-  border-radius:6px;
-  font-size:16px;
-  background:#fff;
-}
+        .birth-row {
+            display: flex;
+            gap: 10px;
+            margin: 8px 0 20px;
+        }
+
+        .birth-select {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #fff;
+        }
     </style>
 </head>
 
@@ -695,7 +696,8 @@
         <input type="hidden" id="message3" />
 
         <div class="label">　　電話番号<span class="required">必須</span></div>
-        <textarea id="message4" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+        <input id="message4" type="tel" inputmode="tel" autocomplete="tel" placeholder="例）090-1234-5678"
+            pattern="^0[\d-]{9,13}$" title="先頭は0、半角数字とハイフンのみで入力してください" />
 
         <div class="label">　　ご住所<span class="required">必須</span></div>
         <textarea id="message5" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
@@ -914,6 +916,16 @@
                 // LIFF初期化失敗時の処理
                 console.error('LIFF初期化失敗', err);
             });
+        });
+
+        // 電話入力の補正（全角→半角、数字とハイフン以外除去）
+        document.getElementById('message4')?.addEventListener('input', (e) => {
+            const toHalf = (s) => s.replace(/[０-９－]/g, (ch) =>
+                String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)
+            );
+            let v = toHalf(e.target.value);
+            v = v.replace(/[^\d-]/g, ''); // 数字とハイフンのみ許可
+            e.target.value = v;
         });
 
         // プレースホルダーを非表示にする関数
@@ -1223,84 +1235,84 @@ ${note ? `\n【備考】\n・${note}` : ''}`;
                 });
         }
 
-(function initBirthdayPicker(){
-  const yearSel  = document.getElementById('birthYear');
-  const monthSel = document.getElementById('birthMonth');
-  const daySel   = document.getElementById('birthDay');
-  const hidden   = document.getElementById('message3'); // ←既存submitForm互換
+        (function initBirthdayPicker() {
+            const yearSel = document.getElementById('birthYear');
+            const monthSel = document.getElementById('birthMonth');
+            const daySel = document.getElementById('birthDay');
+            const hidden = document.getElementById('message3'); // ←既存submitForm互換
 
-  if(!yearSel || !monthSel || !daySel || !hidden) return;
+            if (!yearSel || !monthSel || !daySel || !hidden) return;
 
-  // 年の候補（1900年〜今年）
-  const thisYear = new Date().getFullYear();
-  for(let y=thisYear; y>=1900; y--){
-    const opt = document.createElement('option');
-    opt.value = String(y);
-    opt.textContent = `${y}`;
-    yearSel.appendChild(opt);
-  }
+            // 年の候補（1900年〜今年）
+            const thisYear = new Date().getFullYear();
+            for (let y = thisYear; y >= 1900; y--) {
+                const opt = document.createElement('option');
+                opt.value = String(y);
+                opt.textContent = `${y}`;
+                yearSel.appendChild(opt);
+            }
 
-  // 月の候補（1〜12）
-  for(let m=1; m<=12; m++){
-    const opt = document.createElement('option');
-    opt.value = String(m).padStart(2,'0');
-    opt.textContent = `${m}`;
-    monthSel.appendChild(opt);
-  }
+            // 月の候補（1〜12）
+            for (let m = 1; m <= 12; m++) {
+                const opt = document.createElement('option');
+                opt.value = String(m).padStart(2, '0');
+                opt.textContent = `${m}`;
+                monthSel.appendChild(opt);
+            }
 
-  function daysInMonth(year, month){
-    // month: "01"〜"12"
-    return new Date(Number(year), Number(month), 0).getDate();
-  }
+            function daysInMonth(year, month) {
+                // month: "01"〜"12"
+                return new Date(Number(year), Number(month), 0).getDate();
+            }
 
-  function updateDays(){
-    const y = yearSel.value;
-    const m = monthSel.value;
-    const selected = daySel.value; // 以前の選択を覚えておく
-    daySel.innerHTML = '<option value="">日</option>';
+            function updateDays() {
+                const y = yearSel.value;
+                const m = monthSel.value;
+                const selected = daySel.value; // 以前の選択を覚えておく
+                daySel.innerHTML = '<option value="">日</option>';
 
-    if(!y || !m){ syncHidden(); return; }
+                if (!y || !m) { syncHidden(); return; }
 
-    const dmax = daysInMonth(y, m);
-    for(let d=1; d<=dmax; d++){
-      const v = String(d).padStart(2,'0');
-      const opt = document.createElement('option');
-      opt.value = v;
-      opt.textContent = `${d}`;
-      daySel.appendChild(opt);
-    }
-    // 以前の選択が生きていれば復元（超過したら未選択）
-    if(selected){
-      const exists = Array.from(daySel.options).some(o=>o.value===selected);
-      daySel.value = exists ? selected : '';
-    }
-    syncHidden();
-  }
+                const dmax = daysInMonth(y, m);
+                for (let d = 1; d <= dmax; d++) {
+                    const v = String(d).padStart(2, '0');
+                    const opt = document.createElement('option');
+                    opt.value = v;
+                    opt.textContent = `${d}`;
+                    daySel.appendChild(opt);
+                }
+                // 以前の選択が生きていれば復元（超過したら未選択）
+                if (selected) {
+                    const exists = Array.from(daySel.options).some(o => o.value === selected);
+                    daySel.value = exists ? selected : '';
+                }
+                syncHidden();
+            }
 
-  function syncHidden(){
-    const y = yearSel.value;
-    const m = monthSel.value;
-    const d = daySel.value;
-    hidden.value = (y && m && d) ? `${y}-${m}-${d}` : '';
-  }
+            function syncHidden() {
+                const y = yearSel.value;
+                const m = monthSel.value;
+                const d = daySel.value;
+                hidden.value = (y && m && d) ? `${y}年${m}月${d}日` : '';
+            }
 
-  // 既存値（復帰表示用）：YYYY-MM-DD を各セレクトへ展開
-  if(hidden.value && /^\d{4}-\d{2}-\d{2}$/.test(hidden.value)){
-    const [yy, mm, dd] = hidden.value.split('-');
-    yearSel.value = yy;
-    monthSel.value = mm;
-    updateDays();
-    daySel.value = dd;
-    syncHidden();
-  }else{
-    // 初期化
-    updateDays();
-  }
+            // 既存値（復帰表示用）：YYYY-MM-DD を各セレクトへ展開
+            if (hidden.value && /^\d{4}-\d{2}-\d{2}$/.test(hidden.value)) {
+                const [yy, mm, dd] = hidden.value.split('-');
+                yearSel.value = yy;
+                monthSel.value = mm;
+                updateDays();
+                daySel.value = dd;
+                syncHidden();
+            } else {
+                // 初期化
+                updateDays();
+            }
 
-  yearSel.addEventListener('change', updateDays);
-  monthSel.addEventListener('change', updateDays);
-  daySel.addEventListener('change', syncHidden);
-})();
+            yearSel.addEventListener('change', updateDays);
+            monthSel.addEventListener('change', updateDays);
+            daySel.addEventListener('change', syncHidden);
+        })();
 
     </script>
 </body>
