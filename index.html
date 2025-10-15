@@ -691,7 +691,7 @@
             <button type="button" id="twoexperience" onclick="selectexperience(this)">無し</button>
         </div>
 
-        <div class="labeltyuuou">備考</div>
+        <div class="label">備考</div>
         <textarea id="message2" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <button class="submit-button" onclick="submitForm()" div id="section-message">送信</button>
@@ -887,26 +887,26 @@ function selectdemand(element){
             };
 
             // フォームデータのチェック
-            if (!formData.message) {
-                alert('ご来店日を入力してください。');
-                return;
-            }
-
-            // フォームデータのチェック
             if (!formData.priorityCount) {
-                alert('疲れを感じる箇所を教えてくださいをご選択ください。');
+                alert('ご来店の目的をご選択ください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.demandCount) {
-                alert('現在お怪我はおりますか？をご選択ください。');
+                alert('疲れを感じる箇所を教えてくださいをご選択ください。');
                 return;
             }
 
             // フォームデータのチェック
             if (!formData.chanceCount) {
-                alert('病気お怪我の既往歴を教えてください。をご選択ください。');
+                alert('現在お怪我はおりますか？をご選択ください。');
+                return;
+            }
+
+            // フォームデータのチェック
+            if (!formData.message) {
+                alert('病気お怪我の既往歴を教えてください。を入力してください。');
                 return;
             }
 
@@ -937,7 +937,7 @@ function selectdemand(element){
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `≪アンケート≫\n【ご来店目的】\n・${formData.message}\n\n【疲れを感じる箇所】\n・${formData.priorityCount}\n\n【現在のお怪我】\n・${formData.demandCount}\n\n【病気お怪我の既往歴】\n・${formData.chanceCount}\n\n【妊娠に関して】\n・${formData.IntroductionCount}\n\n【ボディーケアのご経験】\n・${formData.deliveryCount}\n\n【お好みの力加減】\n・${formData.PowerCount}\n\n【もみ返しのご経験】\n・${formData.experienceCount}`
+                text: `≪アンケート≫\n【疲れを感じる箇所】\n・${formData.priorityCount}\n\n【現在のお怪我】\n・${formData.demandCount}\n\n【病気お怪我の既往歴】\n・${formData.chanceCount}\n\n【ご来店目的】\n・${formData.message}\n\n【妊娠に関して】\n・${formData.IntroductionCount}\n\n【ボディーケアのご経験】\n・${formData.deliveryCount}\n\n【お好みの力加減】\n・${formData.PowerCount}\n\n【もみ返しのご経験】\n・${formData.experienceCount}\n\n備考考】\n・${formData.message2}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('ご記入ありがとうございます。「OK」をタップしてください。');
