@@ -287,6 +287,36 @@
   width: 100%;
 }
 
+/* demand だけ横二列 */
+.demand-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+/* ボタンはグリッド内で全幅 */
+.demand-buttons button{ width:100%; }
+
+/* ☑ その他入力欄は “2列ぶち抜き”＆見た目調整 */
+.demand-other-wrap{
+  display:none;               /* 初期は非表示 */
+  grid-column:1 / -1;         /* ★ ここが肝：2列ぶち抜き */
+  margin-top:-2px;            /* （好みで微調整） */
+}
+
+.demand-other-wrap.show{ display:block; }
+
+.demand-other-wrap input{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  box-sizing:border-box;
+  font:inherit;
+}
+
+
         .date-inputs input[type="datetime-local"] {
             width: calc(100% - 22px);
             padding: 10px;
@@ -589,7 +619,16 @@
             <button type="button" id="threepriority" onclick="selectpriority(this)">健康目的</button>
             <button type="button" id="fourpriority" onclick="selectpriority(this)">癒されたい</button>
             <button type="button" id="fivepriority" onclick="selectpriority(this)">その他</button>
-        </div>
+<!-- ご来店の目的：その他入力 -->
+<div id="priorityOtherWrap" style="display:none; margin:10px 0 20px;">
+  <input
+    id="priorityOtherInput"
+    type="text"
+    placeholder="その他の内容を入力してください"
+    style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;"
+  />
+</div>
+</div>
 
         <div class="label">　　疲れを感じる箇所を<span class="required">必須</span><br>教えてください</div>
         <div class="demand-buttons">
@@ -604,7 +643,15 @@
             <button type="button" id="naindemand" onclick="selectdemand(this)">足</button>
             <button type="button" id="tendemand" onclick="selectdemand(this)">足裏</button>
             <button type="button" id="irebundemand" onclick="selectdemand(this)">その他</button>
-        </div>
+  <!-- ▼ココを .demand-buttons の内側末尾に置く ▼ -->
+  <div id="demandOtherWrap" class="demand-other-wrap">
+    <input
+      id="demandOtherInput"
+      type="text"
+      placeholder="その他の内容を入力してください"
+    />
+  </div>
+</div>
 
         <div class="label">　　現在お怪我はおりますか？<span class="required">必須</span></div>
         <div class="chance-buttons">
@@ -644,18 +691,25 @@
             <button type="button" id="twoexperience" onclick="selectexperience(this)">無し</button>
         </div>
 
+        <div class="labeltyuuou">備考</div>
+        <textarea id="message2" rows="4" placeholder="メッセージを入力してください"></textarea>
+
         <button class="submit-button" onclick="submitForm()" div id="section-message">送信</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
     <script>
-        let priorityCount = '';
-        let demandCount = '';
-        let chanceCount = '';
-        let IntroductionCount = '';
-        let deliveryCount = '';
-        let PowerCount = '';
-        let experienceCount = '';
+  let priorityCount = '';
+  let demandCount = '';
+  let chanceCount = '';
+  let IntroductionCount = '';
+  let deliveryCount = '';
+  let PowerCount = '';
+  let experienceCount = '';
+
+  // ★ 追加
+  let isPriorityOtherActive = false;
+  let isDemandOtherActive = false;
 
         // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
@@ -683,32 +737,82 @@
             }
         }
 
-        function selectpriority(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.priority-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+  function selectpriority(element) {
+    const buttons = document.querySelectorAll('.priority-buttons button');
+    buttons.forEach(button => button.classList.remove('active'));
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            priorityCount = element.innerText;
+    element.classList.add('active');
+
+    const priorityOtherWrap = document.getElementById('priorityOtherWrap');
+    const priorityOtherInput = document.getElementById('priorityOtherInput');
+
+    if (element.id === 'fivepriority') {
+      // 「その他」選択 → 入力欄を表示
+      isPriorityOtherActive = true;
+      priorityOtherWrap.style.display = 'block';
+
+      // 入力内容があればそれを、なければ「その他」を一旦格納
+      const v = priorityOtherInput.value.trim();
+      priorityCount = v || 'その他';
+
+      // 入力中も priorityCount を更新
+      priorityOtherInput.oninput = () => {
+        if (isPriorityOtherActive) {
+          const val = priorityOtherInput.value.trim();
+          priorityCount = val || 'その他';
         }
+      };
+    } else {
+      // 「その他」以外 → 入力欄を隠す＆クリア
+      isPriorityOtherActive = false;
+      priorityOtherWrap.style.display = 'none';
+      priorityOtherInput.value = '';
+      priorityCount = element.innerText;
+    }
+  }
 
-function selectdemand(element) {
-    // activeクラスをトグル（ON/OFF）
-    element.classList.toggle('active');
+function selectdemand(element){
+  element.classList.toggle('active');
 
-    // 選択されているボタンをすべて取得
-    const activeButtons = document.querySelectorAll('.demand-buttons button.active');
+  const demandOtherWrap  = document.getElementById('demandOtherWrap');
+  const demandOtherInput = document.getElementById('demandOtherInput');
+  const otherBtn         = document.getElementById('irebundemand');
 
-    // 選択中のテキストを配列として取得
-    const selectedTexts = Array.from(activeButtons).map(btn => btn.innerText);
+  // 「その他」選択のON/OFFで入力欄を切り替え
+  if(element.id === 'irebundemand'){
+    if(element.classList.contains('active')){
+      demandOtherWrap.classList.add('show');   // ← classで表示
+      // フォーカスするとUX良い
+      setTimeout(()=> demandOtherInput.focus(), 0);
+    }else{
+      demandOtherWrap.classList.remove('show');
+      demandOtherInput.value = '';
+    }
+  }
 
-    // demandCount に配列として格納（必要に応じてカンマ区切り文字列でもOK）
-    demandCount = selectedTexts;
+  // 選択中のテキストを収集
+  let selectedTexts = Array.from(document.querySelectorAll('.demand-buttons button.active'))
+    .map(btn => btn.innerText);
 
-    // もし文字列にしたい場合は↓に変更
-    // demandCount = selectedTexts.join(', ');
+  // 「その他」がONのときは入力値で置換
+  if(otherBtn.classList.contains('active')){
+    const v = demandOtherInput.value.trim();
+    selectedTexts = selectedTexts.filter(t => t !== 'その他');
+    if(v) selectedTexts.push(v);
+
+    demandOtherInput.oninput = () => {
+      const val = demandOtherInput.value.trim();
+      let current = Array.from(document.querySelectorAll('.demand-buttons button.active'))
+        .map(btn => btn.innerText)
+        .filter(t => t !== 'その他');
+      if(val) current.push(val);
+      demandCount = current;
+    };
+  }
+
+  demandCount = selectedTexts;   // 配列で保持（必要なら .join(', ') に）
 }
+
 
         function selectchance(element) {
             // 単一選択項目の処理コード
@@ -772,6 +876,7 @@ function selectdemand(element) {
             
             const formData = {
                 message,
+                message2,
                 priorityCount,
                 demandCount,
                 chanceCount,
