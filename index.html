@@ -643,6 +643,20 @@
             font-size: 18px;
             /* 好きなサイズに変更可能 */
         }
+
+.birth-row{
+  display:flex;
+  gap:10px;
+  margin: 8px 0 20px;
+}
+.birth-select{
+  flex:1;
+  padding:10px 12px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  font-size:16px;
+  background:#fff;
+}
     </style>
 </head>
 
@@ -666,7 +680,19 @@
         <textarea id="message2" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
 
         <div class="label">　　誕生日（西暦）<span class="required">必須</span></div>
-        <textarea id="message3" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+        <div class="birth-row">
+            <select id="birthYear" class="birth-select" aria-label="西暦（年）">
+                <option value="">西暦</option>
+            </select>
+            <select id="birthMonth" class="birth-select" aria-label="月">
+                <option value="">月</option>
+            </select>
+            <select id="birthDay" class="birth-select" aria-label="日">
+                <option value="">日</option>
+            </select>
+        </div>
+        <!-- 送信互換のため隠しフィールド（YYYY-MM-DD） -->
+        <input type="hidden" id="message3" />
 
         <div class="label">　　電話番号<span class="required">必須</span></div>
         <textarea id="message4" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
@@ -1079,85 +1105,85 @@
             }
         }
 
-function submitForm() {
-  // ===== テキスト入力（既存IDをそのまま利用）=====
-  const nameKanji = (document.getElementById('message')?.value || '').trim();   // お名前（漢字）
-  const nameKana  = (document.getElementById('message2')?.value || '').trim();  // お名前（フリガナ）
-  const birthYmd  = (document.getElementById('message3')?.value || '').trim();  // 誕生日（西暦）
-  const tel       = (document.getElementById('message4')?.value || '').trim();  // 電話番号
-  const address   = (document.getElementById('message5')?.value || '').trim();  // ご住所
-  const note      = (document.querySelector('textarea[placeholder="メッセージを入力してください"]')?.value || '').trim(); // 備考（末尾のtextarea）
+        function submitForm() {
+            // ===== テキスト入力（既存IDをそのまま利用）=====
+            const nameKanji = (document.getElementById('message')?.value || '').trim();   // お名前（漢字）
+            const nameKana = (document.getElementById('message2')?.value || '').trim();  // お名前（フリガナ）
+            const birthYmd = (document.getElementById('message3')?.value || '').trim();  // 誕生日（西暦）
+            const tel = (document.getElementById('message4')?.value || '').trim();  // 電話番号
+            const address = (document.getElementById('message5')?.value || '').trim();  // ご住所
+            const note = (document.querySelector('textarea[placeholder="メッセージを入力してください"]')?.value || '').trim(); // 備考（末尾のtextarea）
 
-  // ===== ボタン選択の値（前段で用意したグローバル変数を利用）=====
-  // chanceValue, reasonValues[], jobValue, hobbyValue, nailsValue, holdValue,
-  // fragileFingerValue, peelValue, dislikeValue, handUsageValue, workScopeValue,
-  // purposeValue, interestValue, smokingValue, allergyValue, allergyDetail, reasonReferralName
-  // ※ これらは selectXXX() 内で更新される前提
+            // ===== ボタン選択の値（前段で用意したグローバル変数を利用）=====
+            // chanceValue, reasonValues[], jobValue, hobbyValue, nailsValue, holdValue,
+            // fragileFingerValue, peelValue, dislikeValue, handUsageValue, workScopeValue,
+            // purposeValue, interestValue, smokingValue, allergyValue, allergyDetail, reasonReferralName
+            // ※ これらは selectXXX() 内で更新される前提
 
-  // ===== 必須チェック =====
-  // テキスト系（ラベルに必須が付いているもの）
-  if (!nameKanji) return alert('「お名前（漢字）」を入力してください。');
-  if (!nameKana)  return alert('「お名前（フリガナ）」を入力してください。');
-  if (!birthYmd)  return alert('「誕生日（西暦）」を入力してください。');
-  if (!tel)       return alert('「電話番号」を入力してください。');
-  if (!address)   return alert('「ご住所」を入力してください。');
+            // ===== 必須チェック =====
+            // テキスト系（ラベルに必須が付いているもの）
+            if (!nameKanji) return alert('「お名前（漢字）」を入力してください。');
+            if (!nameKana) return alert('「お名前（フリガナ）」を入力してください。');
+            if (!birthYmd) return alert('「誕生日（西暦）」を入力してください。');
+            if (!tel) return alert('「電話番号」を入力してください。');
+            if (!address) return alert('「ご住所」を入力してください。');
 
-  // ボタン系（ラベルの必須に合わせてチェック）
-  if (!chanceValue)         return alert('「施術中」のご希望をお選びください。');
-  if (!reasonValues.length) return alert('「当店を選んでくださった理由」をお選びください。');
-  if (!hobbyValue)          return alert('「趣味」をお選びください。');
-  if (!nailsValue)          return alert('「爪・手足の状態」で該当するものをお選びください。');
-  if (!holdValue)           return alert('「普段のネイルの持ち」をお選びください。');
-  if (!fragileFingerValue)  return alert('「取れやすい爪」をお選びください。');
-  if (!peelValue)           return alert('「取れ方」をお選びください。');
-  if (!dislikeValue)        return alert('「今までのサロンで嫌だった事」をお選びください。');
-  if (!handUsageValue)      return alert('「手の使い方、指先の使用頻度」をお選びください。');
-  if (!workScopeValue)      return alert('「お仕事でOKな範囲」をお選びください。');
-  if (!purposeValue)        return alert('「ネイルをすることの目的・得たいこと」をお選びください。');
-  if (!interestValue)       return alert('「興味のあるメニュー」をお選びください。');
-  if (!allergyValue)        return alert('「アレルギーはありますか？」をお選びください。');
+            // ボタン系（ラベルの必須に合わせてチェック）
+            if (!chanceValue) return alert('「施術中」のご希望をお選びください。');
+            if (!reasonValues.length) return alert('「当店を選んでくださった理由」をお選びください。');
+            if (!hobbyValue) return alert('「趣味」をお選びください。');
+            if (!nailsValue) return alert('「爪・手足の状態」で該当するものをお選びください。');
+            if (!holdValue) return alert('「普段のネイルの持ち」をお選びください。');
+            if (!fragileFingerValue) return alert('「取れやすい爪」をお選びください。');
+            if (!peelValue) return alert('「取れ方」をお選びください。');
+            if (!dislikeValue) return alert('「今までのサロンで嫌だった事」をお選びください。');
+            if (!handUsageValue) return alert('「手の使い方、指先の使用頻度」をお選びください。');
+            if (!workScopeValue) return alert('「お仕事でOKな範囲」をお選びください。');
+            if (!purposeValue) return alert('「ネイルをすることの目的・得たいこと」をお選びください。');
+            if (!interestValue) return alert('「興味のあるメニュー」をお選びください。');
+            if (!allergyValue) return alert('「アレルギーはありますか？」をお選びください。');
 
-  // 追加必須条件：ご紹介を選んだ場合は紹介者名／アレルギー「ある」の場合は詳細
-  const pickedReferral = reasonValues.some(v => v.startsWith('ご紹介'));
-  if (pickedReferral && !reasonReferralName) {
-    return alert('ご紹介を選ばれた場合は「ご紹介者様のお名前」を入力してください。');
-  }
-  if (allergyValue === 'ある' && !allergyDetail) {
-    return alert('アレルギーの内容をご入力ください。');
-  }
+            // 追加必須条件：ご紹介を選んだ場合は紹介者名／アレルギー「ある」の場合は詳細
+            const pickedReferral = reasonValues.some(v => v.startsWith('ご紹介'));
+            if (pickedReferral && !reasonReferralName) {
+                return alert('ご紹介を選ばれた場合は「ご紹介者様のお名前」を入力してください。');
+            }
+            if (allergyValue === 'ある' && !allergyDetail) {
+                return alert('アレルギーの内容をご入力ください。');
+            }
 
-  // ===== 整形（箇条書きなど）=====
-  const reasonLines = reasonValues.map(v => `・${v}`).join('\n');
+            // ===== 整形（箇条書きなど）=====
+            const reasonLines = reasonValues.map(v => `・${v}`).join('\n');
 
-  // ===== 送信用オブジェクト（必要に応じてGAS連携にも流用可）=====
-  const formData = {
-    nameKanji,
-    nameKana,
-    birthYmd,
-    tel,
-    address,
-    chanceValue,
-    reasonValues,
-    jobValue,                 // 任意（必須ではない）
-    hobbyValue,
-    nailsValue,
-    holdValue,
-    fragileFingerValue,
-    peelValue,
-    dislikeValue,
-    handUsageValue,
-    workScopeValue,
-    purposeValue,
-    interestValue,
-    smokingValue,             // 任意（必須ではない）
-    allergyValue,
-    allergyDetail,            // 「ある」のときのみ有効
-    note,
-  };
+            // ===== 送信用オブジェクト（必要に応じてGAS連携にも流用可）=====
+            const formData = {
+                nameKanji,
+                nameKana,
+                birthYmd,
+                tel,
+                address,
+                chanceValue,
+                reasonValues,
+                jobValue,                 // 任意（必須ではない）
+                hobbyValue,
+                nailsValue,
+                holdValue,
+                fragileFingerValue,
+                peelValue,
+                dislikeValue,
+                handUsageValue,
+                workScopeValue,
+                purposeValue,
+                interestValue,
+                smokingValue,             // 任意（必須ではない）
+                allergyValue,
+                allergyDetail,            // 「ある」のときのみ有効
+                note,
+            };
 
-  // ===== LIFFで送信（テキスト整形）=====
-  const msg =
-`≪アンケート≫
+            // ===== LIFFで送信（テキスト整形）=====
+            const msg =
+                `≪アンケート≫
 
 【お名前（漢字）】\n・${nameKanji}
 【お名前（フリガナ）】\n・${nameKana}
@@ -1180,22 +1206,101 @@ ${jobValue ? `\n【職業】\n・${jobValue}\n` : ''}【趣味】\n・${hobbyVal
 ${smokingValue ? `【喫煙に関する追質問】\n・${smokingValue}\n` : ''}【アレルギー】\n・${allergyValue}${allergyDetail ? `（${allergyDetail}）` : ''}
 ${note ? `\n【備考】\n・${note}` : ''}`;
 
-  // LIFFログイン状態の確認（必要に応じてログイン誘導）
-  if (typeof liff !== 'undefined' && liff.isLoggedIn && !liff.isLoggedIn()) {
-    liff.login();
-    return;
+            // LIFFログイン状態の確認（必要に応じてログイン誘導）
+            if (typeof liff !== 'undefined' && liff.isLoggedIn && !liff.isLoggedIn()) {
+                liff.login();
+                return;
+            }
+
+            liff.sendMessages([{ type: 'text', text: msg }])
+                .then(() => {
+                    alert('ご記入ありがとうございます。「OK」をタップしてください。');
+                    if (liff.closeWindow) liff.closeWindow();
+                })
+                .catch(err => {
+                    console.error('メッセージ送信に失敗しました:', err);
+                    alert('送信に失敗しました。通信環境をご確認の上、もう一度お試しください。');
+                });
+        }
+
+(function initBirthdayPicker(){
+  const yearSel  = document.getElementById('birthYear');
+  const monthSel = document.getElementById('birthMonth');
+  const daySel   = document.getElementById('birthDay');
+  const hidden   = document.getElementById('message3'); // ←既存submitForm互換
+
+  if(!yearSel || !monthSel || !daySel || !hidden) return;
+
+  // 年の候補（1900年〜今年）
+  const thisYear = new Date().getFullYear();
+  for(let y=thisYear; y>=1900; y--){
+    const opt = document.createElement('option');
+    opt.value = String(y);
+    opt.textContent = `${y}`;
+    yearSel.appendChild(opt);
   }
 
-  liff.sendMessages([{ type: 'text', text: msg }])
-    .then(() => {
-      alert('ご記入ありがとうございます。「OK」をタップしてください。');
-      if (liff.closeWindow) liff.closeWindow();
-    })
-    .catch(err => {
-      console.error('メッセージ送信に失敗しました:', err);
-      alert('送信に失敗しました。通信環境をご確認の上、もう一度お試しください。');
-    });
-}
+  // 月の候補（1〜12）
+  for(let m=1; m<=12; m++){
+    const opt = document.createElement('option');
+    opt.value = String(m).padStart(2,'0');
+    opt.textContent = `${m}`;
+    monthSel.appendChild(opt);
+  }
+
+  function daysInMonth(year, month){
+    // month: "01"〜"12"
+    return new Date(Number(year), Number(month), 0).getDate();
+  }
+
+  function updateDays(){
+    const y = yearSel.value;
+    const m = monthSel.value;
+    const selected = daySel.value; // 以前の選択を覚えておく
+    daySel.innerHTML = '<option value="">日</option>';
+
+    if(!y || !m){ syncHidden(); return; }
+
+    const dmax = daysInMonth(y, m);
+    for(let d=1; d<=dmax; d++){
+      const v = String(d).padStart(2,'0');
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = `${d}`;
+      daySel.appendChild(opt);
+    }
+    // 以前の選択が生きていれば復元（超過したら未選択）
+    if(selected){
+      const exists = Array.from(daySel.options).some(o=>o.value===selected);
+      daySel.value = exists ? selected : '';
+    }
+    syncHidden();
+  }
+
+  function syncHidden(){
+    const y = yearSel.value;
+    const m = monthSel.value;
+    const d = daySel.value;
+    hidden.value = (y && m && d) ? `${y}-${m}-${d}` : '';
+  }
+
+  // 既存値（復帰表示用）：YYYY-MM-DD を各セレクトへ展開
+  if(hidden.value && /^\d{4}-\d{2}-\d{2}$/.test(hidden.value)){
+    const [yy, mm, dd] = hidden.value.split('-');
+    yearSel.value = yy;
+    monthSel.value = mm;
+    updateDays();
+    daySel.value = dd;
+    syncHidden();
+  }else{
+    // 初期化
+    updateDays();
+  }
+
+  yearSel.addEventListener('change', updateDays);
+  monthSel.addEventListener('change', updateDays);
+  daySel.addEventListener('change', syncHidden);
+})();
 
     </script>
 </body>
