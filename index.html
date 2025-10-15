@@ -658,6 +658,65 @@
             font-size: 16px;
             background: #fff;
         }
+
+        .zip-row,
+        .addr-row,
+        .addr-street-row {
+            display: flex;
+            gap: 10px;
+            margin: 8px 0 12px;
+        }
+
+        .zip-row input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .zip-search-btn {
+            padding: 12px 10px;
+            /* ← 上下を3pxに変更 */
+            border: none;
+            border-radius: 6px;
+            background: #58453b;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            /* ← 小さめに調整（高さに影響） */
+            line-height: 1;
+            /* ← 行の高さを詰める */
+            box-sizing: border-box;
+            /* ← パディング込みで高さ調整 */
+            height: auto;
+            /* ← 高さ固定を防ぐ */
+            display: inline-flex;
+            /* ← 高さをpadding通りに反映 */
+            align-items: center;
+            /* ← テキストを中央寄せ */
+            transform: translateY(-10px);
+            /* ← 見た目だけ下へ5px */
+        }
+
+        .zip-row {
+            align-items: center;
+            transform: translateY(7px);
+            /* ← 見た目だけ下へ5px */
+        }
+
+        .addr-row input,
+        .addr-street-row input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .zip-help {
+            font-size: 12px;
+            color: #666;
+            margin-top: -11px;
+        }
     </style>
 </head>
 
@@ -696,11 +755,32 @@
         <input type="hidden" id="message3" />
 
         <div class="label">　　電話番号<span class="required">必須</span></div>
-        <input id="message4" type="tel" inputmode="tel" autocomplete="tel" placeholder="例）090-1234-5678"
-            pattern="^0[\d-]{9,13}$" title="先頭は0、半角数字とハイフンのみで入力してください" />
+        <input id="message4" type="tel" inputmode="tel" autocomplete="tel" placeholder="例）09012345678"
+            pattern="^0[\d-]{9,13}$" title="先頭は0、半角数字で入力してください" />
 
         <div class="label">　　ご住所<span class="required">必須</span></div>
-        <textarea id="message5" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+
+        <!-- 郵便番号＋検索 -->
+        <div class="zip-row">
+            <input id="zipCode" type="text" inputmode="numeric" pattern="\d{3}-?\d{4}" placeholder="例）123-4567"
+                aria-label="郵便番号">
+            <button type="button" class="zip-search-btn" onclick="searchAddressByZip()">住所検索</button>
+        </div>
+        <div id="zipHelp" class="zip-help">郵便番号を入力して「住所検索」をタップしてください。</div>
+
+        <!-- 自動入力される項目 -->
+        <div class="addr-row">
+            <input id="addrPref" type="text" placeholder="都道府県（自動入力）" aria-label="都道府県">
+            <input id="addrCity" type="text" placeholder="市区町村・町域（自動入力）" aria-label="市区町村・町域">
+        </div>
+
+        <!-- ユーザーが入力する項目 -->
+        <div class="addr-street-row">
+            <input id="addrStreet" type="text" placeholder="丁目・番地・号・建物名" aria-label="丁目・番地・号・建物名">
+        </div>
+
+        <!-- 送信互換：合成済みのフル住所を入れる（submitFormはこの値を読む） -->
+        <input type="hidden" id="message5" />
 
         <!-- 施術中（単一選択） -->
         <div class="label">　　施術中<span class="required">必須</span></div>
@@ -916,6 +996,71 @@
                 // LIFF初期化失敗時の処理
                 console.error('LIFF初期化失敗', err);
             });
+        });
+
+        function normalizeZip(v) {
+            return (v || '').toString().replace(/[^\d]/g, '').slice(0, 7);
+        }
+        function composeFullAddress() {
+            const pref = (document.getElementById('addrPref')?.value || '').trim();
+            const city = (document.getElementById('addrCity')?.value || '').trim();
+            const street = (document.getElementById('addrStreet')?.value || '').trim();
+            document.getElementById('message5').value = [pref, city, street].filter(Boolean).join('');
+        }
+
+        // 郵便番号→住所検索（ZipCloud）
+        async function searchAddressByZip() {
+            const help = document.getElementById('zipHelp');
+            const raw = document.getElementById('zipCode')?.value || '';
+            const zip = normalizeZip(raw);
+
+            if (zip.length !== 7) {
+                help.textContent = '郵便番号は7桁で入力してください（例：123-4567）。';
+                help.style.color = '#b00020';
+                return;
+            }
+            help.textContent = '検索中...'; help.style.color = '#666';
+
+            try {
+                const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zip}`);
+                const data = await res.json();
+
+                if (data.status !== 200 || !data.results || !data.results.length) {
+                    help.textContent = '住所が見つかりませんでした。番号をご確認ください。';
+                    help.style.color = '#b00020';
+                    return;
+                }
+
+                const r = data.results[0];
+                // r.address1=都道府県, address2=市区町村, address3=町域
+                const pref = r.address1 || '';
+                const city = [r.address2 || '', r.address3 || ''].join('');
+
+                document.getElementById('addrPref').value = pref;
+                document.getElementById('addrCity').value = city;
+
+                help.textContent = '住所を自動入力しました。丁目・番地・号を入力してください。';
+                help.style.color = '#0a7f2e';
+
+                composeFullAddress();
+                document.getElementById('addrStreet').focus();
+            } catch (e) {
+                console.error(e);
+                help.textContent = 'エラーが発生しました。通信環境をご確認ください。';
+                help.style.color = '#b00020';
+            }
+        }
+
+        // 手入力での修正にも追随してフル住所を合成
+        ['addrPref', 'addrCity', 'addrStreet'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', composeFullAddress);
+        });
+        // 郵便番号入力の補正（全角→半角、数字以外除去、3-4の見た目整形はお好みで）
+        document.getElementById('zipCode')?.addEventListener('input', (e) => {
+            const half = e.target.value.replace(/[０-９ー－]/g, ch =>
+                String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)
+            );
+            e.target.value = half.replace(/[^\d-]/g, '');
         });
 
         // 電話入力の補正（全角→半角、数字とハイフン以外除去）
