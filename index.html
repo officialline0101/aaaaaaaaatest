@@ -952,19 +952,19 @@
             予約フォーム
         </h1>
 
-        <div class="label">お客様名<span class="required">必須</span></div>
+        <div class="label">お名前<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+
+        <div class="label">お名前（フリガナ）<span class="required">必須</span></div>
+        <input type="text" id="inquiry" placeholder="お名前のフリガナを入力してください" oninput="saveInput('inquiry')">
 
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
 
-        <div class="labelmessezi">お住まいの地域</div>
-        <input type="text" id="region" placeholder="お住まいの地域を入力してください" oninput="saveInput('region')">
-
-        <div class="labelmessezi">お問い合わせ内容</div>
-        <input type="tel" id="inquiry" placeholder="お問い合わせ内容を入力してください" oninput="saveInput('inquiry')">
+        <div class="labelmessezi">メールアドレス</div>
+        <input type="text" id="region" placeholder="メールアドレスを入力してください" oninput="saveInput('region')">
 
         <!-- ② HTML：各ブロックの「日付入力」をラップして“日付を選択”を重ねる -->
         <div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
@@ -980,7 +980,7 @@
         </div>
 
         <!-- 第二希望日時 -->
-        <div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
+        <div class="labelkibounitizi" id="karenda1">第二希望日時<span class="required">必須</span></div>
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
             <input type="hidden" id="date2" name="date2">
@@ -991,7 +991,7 @@
         </div>
 
         <!-- 第三希望日時 -->
-        <div class="labelkibounitizi">第三希望日時<span class="required">必須</span></div>
+        <div class="labelkibounitizi" id="karenda2">第三希望日時<span class="required">必須</span></div>
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
             <input type="hidden" id="date3" name="date3">
@@ -1001,7 +1001,7 @@
             </div>
         </div>
 
-        <div class="labelmessezi">メッセージ<br>（質問等お気軽にご記入ください）</div>
+        <div class="labelmessezi" id="karenda3">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="labeltyuuou">ご予約内容</div>
@@ -1168,33 +1168,33 @@
         </div>
         <hr>
         <div class="info-row">
+            <p><span style="color:#45c4b7;"><strong>【お名前（フリガナ）】</strong></span><br>・${inquiry}</p>
+            <button class="edit-button" onclick="scrollToElement('inquiry')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
             <p><span style="color:#45c4b7;"><strong>【電話番号】</strong></span><br>・${phone}</p>
             <button class="edit-button" onclick="scrollToElement('phone')">修正</button>
         </div>
         <hr>
         <div class="info-row">
-            <p><span style="color:#45c4b7;"><strong>【お住まいの地域】</strong></span><br>・${region}</p>
+            <p><span style="color:#45c4b7;"><strong>【メールアドレス】</strong></span><br>・${region}</p>
             <button class="edit-button" onclick="scrollToElement('region')">修正</button>
         </div>
         <hr>
         <div class="info-row">
-            <p><span style="color:#45c4b7;"><strong>【お問い合わせ内容】</strong></span><br>・${inquiry}</p>
-            <button class="edit-button" onclick="scrollToElement('inquiry')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
             <p>${selectedDate1Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date1')">修正</button>
+            <button class="edit-button" onclick="scrollToElement('date1'); scrollToElement('karenda1');">修正</button>
         </div>
         <hr>
         <div class="info-row">
             <p>${selectedDate2Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date2')">修正</button>
+            <button class="edit-button" onclick="scrollToElement('date2'); scrollToElement('karenda2');">修正</button>
         </div>
         <hr>
         <div class="info-row">
             <p>${selectedDate3Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date3')">修正</button>
+            <button class="edit-button" onclick="scrollToElement('date3'); scrollToElement('karenda3');">修正</button>
         </div>
         <hr>
     `;
@@ -1712,8 +1712,19 @@ function initPicker(baseId, dateDays = 120) {
                 return;
             }
 
+            // フォームデータのチェック
+            if (!formData.inquiry) {
+                alert('お名前（フリガナ）を入力してください。');
+                return;
+            }
+
             if (!formData.phone) {
                 alert('電話番号を入力してください。');
+                return;
+            }
+
+            if (!formData.region) {
+                alert('メールアドレスを入力してください。');
                 return;
             }
 
@@ -1725,7 +1736,7 @@ function initPicker(baseId, dateDays = 120) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《お住まいの地域》${formData.region}\n\n《お問い合わせ内容》\n${formData.inquiry}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
+                text: `【予約フォーム】\n《お名前》${formData.name}\n《お名前（フリガナ）》\n${formData.inquiry}\n《電話番号》${formData.phone}\n《メールアドレス》${formData.region}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('確認してご連絡差し上げます。');
