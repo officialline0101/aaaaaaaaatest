@@ -96,7 +96,7 @@
             background-color: #fdfdfd;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 90%;
+            width: 95%;
             max-width: 500px;
             padding: 25px;
             box-sizing: border-box;
@@ -104,16 +104,14 @@
         }
 
         h1 {
-            background: linear-gradient(135deg, #ede993, #ede993);
-            color: #262627;
-            padding: 20px;
-            border-radius: 0 0px 0px 0px;
+            background: url('https://www.dropbox.com/scl/fi/xjnrxz3i5dtu8e9h7scgd/imgi_7_123657_business_pic_2.png?rlkey=9tg8niqs17q5nwvpivouj1qrg&st=13cnfgqb&raw=1') center / cover no-repeat;
+            color: #fff;
+            padding: 60px 20px;
+            border-radius: 0;
             text-align: center;
-            display: block;
             margin: -20px -15px 20px -15px;
             font-size: 26px;
-            font-weight: 100;
-            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
             position: relative;
             overflow: hidden;
         }
@@ -877,7 +875,8 @@
             line-height: 1.6;
             color: #222;
             font-size: 12px;
-    text-align: left; /* ← 左揃え */
+            text-align: left;
+            /* ← 左揃え */
 
             width: 100%;
             /* ← 親要素いっぱいに広げる */
@@ -1146,7 +1145,7 @@
     </div>
 
     <div class="container">
-        <h1>ひなた助産院A<br>予約フォーム
+        <h1>
         </h1>
 
         <div class="label">氏名<span class="required">必須</span></div>
@@ -1407,7 +1406,8 @@
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
-
+            const namehurigana = document.getElementById('namehurigana').value;
+            const phone = document.getElementById('phone').value;
             const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
 
             const visitCountText = visitCount
@@ -1419,7 +1419,7 @@
                 : '・コースが未選択です';
 
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="${labelStyle}"><strong>メニュー</strong></span><br>・${selectedSymptom.join('<br>')}`
+                ? `<span style="${labelStyle}"><strong>メニュー</strong></span>・${selectedSymptom.join('<br>')}`
                 : '・メニューが未選択です';
 
             const irradiationsText = irradiationsCount
@@ -1445,36 +1445,28 @@
         </div>
         <hr>
         <div class="info-row">
+            <p><span style="${labelStyle}"><strong>名前/フリガナ</strong></span> ${namehurigana}</p>
+            <button class="edit-button" onclick="scrollToElement('namehurigana')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p><span style="${labelStyle}"><strong>電話番号</strong></span> ${phone}</p>
+            <button class="edit-button" onclick="scrollToElement('phone')">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
             <p>${visitCountText}</p>
             <button class="edit-button" onclick="scrollToElement('firstVisit')">修正</button>
         </div>
         <hr>
         <div class="info-row">
-            <p>${selectedMenuText}</p>
-            <button class="edit-button" onclick="scrollToElement('course')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
             <p>${selectedSymptomText}</p>
-            <button class="edit-button" onclick="scrollToElement('male'); scrollToElement('female'); scrollToElement('whitening');">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${irradiationsText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstirradiations')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${totalTimeText}</p>
+            <button class="edit-button" onclick="scrollToElement('course'); scrollToElement('female'); scrollToElement('whitening');">修正</button>
         </div>
         <hr>
         <div class="info-row">
             <p>${selectedDateText}</p>
             <button class="edit-button" onclick="scrollToElement('calendar1')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${totalAmountText}</p>
         </div>
         <hr>
     `;
@@ -1621,7 +1613,7 @@
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    'マタニティ整体はお腹の赤ちゃんの心音を確認し、赤ちゃんが元気であることを施術の前後で確認します。<br>胎児の心音の確認をするマタニティ整体は助産院ならではです。<br>安心してご予約下さいませ。<br>整体は痛みを伴わない手技により心地よい時間をお過ごしいただけます。<br>お腹クッションもございますので、楽な姿勢で受けられます。<br>ベルトの装着方法や生活のアドバイス、家でできる軽い体操なども指導いたします。<br>病院ではなかなか聞けないお産の相談もお気軽にどうぞ。',
+                    'マタニティ整体はお腹の赤ちゃんの心音を確認し、赤ちゃんが元気であることを施術の前後で確認します。<br>胎児の心音の確認をするマタニティ整体は助産院ならではです。<br>安心してご予約下さいませ。<br>整体は痛みを伴わない手技により心地よい時間をお過ごしいただけます。<br>お腹クッションもございますので、楽な姿勢で受けられます。<br><br>ベルトの装着方法や生活のアドバイス、家でできる軽い体操なども指導いたします。<br>病院ではなかなか聞けないお産の相談もお気軽にどうぞ。',
                     '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
                     ''
                 );
@@ -1629,56 +1621,56 @@
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '出産後の骨盤は崩壊状態です。<br>早めのケアをお勧めします。<br>全身の調整をいたします。<br>産後何年経過していてもケアいたします。<br>産後の体型戻し、出産・育児に伴う腰痛、肩こり、腱鞘炎などにも対応しています。<br>自分へのご褒美にもいかがでしょうか？',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br>料金：￥9,360',
+                    '出産後の骨盤は崩壊状態です。<br>早めのケアをお勧めします。<br>全身の調整をいたします。<br>産後何年経過していてもケアいたします。<br><br>産後の体型戻し、出産・育児に伴う腰痛、肩こり、腱鞘炎などにも対応しています。<br>自分へのご褒美にもいかがでしょうか？',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br>基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment3') {
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '小顔矯正＋脂肪分解ラジオ波でV字輪郭！',
-                    '初回料金：13,200円<br>2回目以降：16,500円',
+                    '赤ちゃんのことならお任せください。<br>向き癖、頭の形、反り返り、寝ないなどの相談、寝返りやずりばい、ハイハイがオリジナルで改善方法を知りたい、抱っこの仕方やスリング、おんぶ紐の使い方、授乳に関することまで幅広くお応えいたします。<br>ベビーケアでは、赤ちゃんの体をほぐしたり、遊び方や発達、おもちゃのこともご指導します。<br><br>ベビーケアの対象年齢は、新生児から小学校卒業まで！<br>歩き方や走り方などの運動面で気になること、脚の形や姿勢の問題、噛み合わせ（不正咬合）まで幅広くご相談いただけます。<br>発達障害児のからだのケアも受け付けています。',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment4') {
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '小顔矯正＋高周波ECSリフトアップで瞬間小顔！肌のハリ艶もアップ！',
-                    '初回料金：16,500円<br>2回目以降：19,800円',
+                    '助産師が指導する産後ピラティスです。<br>産後の体型戻し、育児疲れの解消に身体を動かしませんか？<br>マットピラティスで軽いエクササイズから始めていきます。',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥6,240',
                     ''
                 );
             } else if (treatmentId === 'treatment5') {
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '小顔矯正＋脂肪分解ラジオ波＋高周波ECSリフトアップで医療レベルの最高小顔に！',
-                    '初回料金：25,000円<br>2回目以降：35,000円',
+                    '産後のお母さんの体のメンテナンスと赤ちゃんのケアを両方取り入れたプランです。<br>料金が少しお安くなっています。',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥18,400',
                     ''
                 );
             } else if (treatmentId === 'treatment6') {
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '和歌山初導入の高周波で表情筋を引き締め、むくみ・たるみを即効改善。',
-                    '初回料金：14,300円<br>2回目以降：22,000円',
+                    '3人分の施術枠です。<br>産後整体と双子ちゃんケア、またはきょうだいのケア<br>など、大人と子ども2人の3人の施術でのご予約はこちらをご利用ください。<br>初回のみ初診料としてひとり2600円を頂戴いたします。<br>※お子様のケアにご夫婦で同席されるだけの場合にはベビーケアでご予約ください。<br><br>施術枠人数：3人分（例：大人1名＋子ども2名 など）',
+                    '初回：初診料 2,600円 × 人数分<br>半年以上あくと：再診料 1,100円 × 人数分<br>1年以上あくと：再診料 2,200円 × 人数分<br><br>基本料金：￥27,560',
                     ''
                 );
             } else if (treatmentId === 'treatment7') {
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '痛みがなく、若々しい肌に！<br>脂肪分解で下がり気味の頬にアプローチ！',
-                    '初回料金：5,500円<br>2回目以降：7,700円',
+                    '妊娠、産後に該当しない女性はこちらからご予約ください。<br>妊娠をご希望の女性もぜひ、ご予約くださいませ。<br><br>中学生や高校生の施術もこちらからどうぞ。',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment8') {
                 treatmentText.innerHTML = createTreatmentContent(
                     '',
                     '',
-                    '',
-                    '料金：22,000円<br>男性：27,500円',
+                    'おっぱいが硬くなる、つまる。<br>乳腺炎になってしまった。<br>赤ちゃんが上手に飲めない。<br>卒乳ケアにもご利用ください。<br><br>おっぱいの状態をより長く良い状態にキープするため、〔整体〕と〔リンパドレナージ〕と〔おっぱいマッサージ〕を併用したオリジナルのケアです。<br>〔おっぱいマッサージ〕は痛くないと好評です。<br><br>しっかり食べる食事指導とアフターケア、赤ちゃんのことまで対応いたします。',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥9,360',
                     ''
                 );
             } else {
