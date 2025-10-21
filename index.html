@@ -15,7 +15,7 @@
             /* さらに右へ */
             top: 80%;
             /* 画面中央に固定 */
-            transform: translateY(-50%) translateX(10px);
+            transform: translateY(-50%) translateX(14px);
             /* 中央配置と右ずらし */
             background: #ede993;
             display: flex;
@@ -104,7 +104,9 @@
         }
 
         h1 {
-            background: url('https://www.dropbox.com/scl/fi/xjnrxz3i5dtu8e9h7scgd/imgi_7_123657_business_pic_2.png?rlkey=9tg8niqs17q5nwvpivouj1qrg&st=13cnfgqb&raw=1') center / cover no-repeat;
+            background: url('https://www.dropbox.com/scl/fi/xjnrxz3i5dtu8e9h7scgd/imgi_7_123657_business_pic_2.png?rlkey=9tg8niqs17q5nwvpivouj1qrg&st=13cnfgqb&raw=1') center / 190% no-repeat;
+            /* ↑ cover の代わりに 120% とすると画像を少し拡大表示（100%が原寸） */
+
             color: #fff;
             padding: 60px 20px;
             border-radius: 0;
@@ -860,11 +862,11 @@
 
         /* 詳細・料金セクション */
         .treatment-description,
-        .treatment-price {
+        .treatment-price,
+        .treatment-basic {
             position: relative;
             margin-top: 20px;
             padding: 18px 0;
-            /* ← 左右の余白を削って横幅を広く */
             background: #fff;
             border-top: 2.5px solid var(--line);
             border-bottom: 0;
@@ -876,19 +878,15 @@
             color: #222;
             font-size: 12px;
             text-align: left;
-            /* ← 左揃え */
-
             width: 100%;
-            /* ← 親要素いっぱいに広げる */
             max-width: none;
-            /* ← 幅制限がかかっていた場合に解除 */
             box-sizing: border-box;
-            /* ← パディング含めて横幅計算 */
         }
 
         /* 見出しラベル */
         .treatment-description::before,
-        .treatment-price::before {
+        .treatment-price::before,
+        .treatment-basic::before {
             content: "";
             position: absolute;
             top: -18px;
@@ -908,18 +906,35 @@
         }
 
         .treatment-price::before {
-            content: "料金";
+            content: "診察料";
+        }
+
+        /* 🆕 基本料金ラベル */
+        .treatment-basic::before {
+            content: "基本料金";
         }
 
         /* 強調 */
-        .treatment-price strong {
+        .treatment-price strong,
+        .treatment-basic strong {
             font-size: 16px;
-            /* 料金だけ大きめ */
             font-weight: 900;
         }
 
-        .treatment-price span {
+        .treatment-price span,
+        .treatment-basic span {
             color: var(--ink-muted);
+        }
+
+        @media (min-width: 720px) {
+            .treatment-title {
+                font-size: 26px;
+            }
+
+            .treatment-price strong,
+            .treatment-basic strong {
+                font-size: 26px;
+            }
         }
 
         /* 重複文言を非表示 */
@@ -1566,45 +1581,34 @@
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
 
-            function createTreatmentContent(title, imageUrl, description, price, time) {
+            function createTreatmentContent(title, imageUrl, description, price, basic, time) {
                 const hasTitle = !!(title && title.trim());
                 const hasImage = !!(imageUrl && imageUrl.trim());
                 const hasDesc = !!(description && description.trim());
                 const hasPrice = !!(price && price.trim());
+                const hasBasic = !!(basic && basic.trim());
                 const hasTime = !!(time && time.trim());
 
-                const titleContent = hasTitle
-                    ? `<div class="treatment-title">${title}</div>`
-                    : '';
-
-                const imageContent = hasImage
-                    ? `
+                const titleContent = hasTitle ? `<div class="treatment-title">${title}</div>` : '';
+                const imageContent = hasImage ? `
       <div class="treatment-image">
         <div class="spinner-overlay"><div class="spinner"></div></div>
         <img src="${imageUrl}" alt="${hasTitle ? title : 'treatment image'}"
              onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
-      </div>`
+      </div>` : '';
+                const descContent = hasDesc ? `<div class="treatment-description">${description}</div>` : '';
+                const timeContent = hasTime ? `<span>所要時間：</span><strong>${time}</strong><br>` : '';
+
+                const priceContent = hasPrice
+                    ? `<div class="treatment-price"><span>価格：</span>${price}</div>`
                     : '';
 
-                const descContent = hasDesc
-                    ? `<div class="treatment-description">${description}</div>`
+                const basicContent = hasBasic
+                    ? `<div class="treatment-basic"><span></span>${basic}</div>`
                     : '';
 
-                const timeContent = hasTime
-                    ? `<span>所要時間：</span><strong>${time}</strong><br>`
-                    : '';
-
-                const priceInner = `
-    ${hasPrice ? `<span>価格：</span>${price}<br>` : ''}
-    ${timeContent}
-  `.trim();
-
-                const priceContent = priceInner
-                    ? `<div class="treatment-price">${priceInner}</div>`
-                    : '';
-
-                // 何か一つでも中身があるときだけコンテナを返す
-                const inner = `${titleContent}${imageContent}${descContent}${priceContent}`.trim();
+                // 出力順序を制御（タイトル→画像→詳細→料金→基本料金）
+                const inner = `${titleContent}${imageContent}${descContent}${priceContent}${basicContent}${timeContent}`.trim();
                 return inner ? `<div class="treatment-container">${inner}</div>` : '';
             }
 
@@ -1615,6 +1619,7 @@
                     '',
                     'マタニティ整体はお腹の赤ちゃんの心音を確認し、赤ちゃんが元気であることを施術の前後で確認します。<br>胎児の心音の確認をするマタニティ整体は助産院ならではです。<br>安心してご予約下さいませ。<br>整体は痛みを伴わない手技により心地よい時間をお過ごしいただけます。<br>お腹クッションもございますので、楽な姿勢で受けられます。<br><br>ベルトの装着方法や生活のアドバイス、家でできる軽い体操なども指導いたします。<br>病院ではなかなか聞けないお産の相談もお気軽にどうぞ。',
                     '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment2') {
@@ -1622,7 +1627,8 @@
                     '',
                     '',
                     '出産後の骨盤は崩壊状態です。<br>早めのケアをお勧めします。<br>全身の調整をいたします。<br>産後何年経過していてもケアいたします。<br><br>産後の体型戻し、出産・育児に伴う腰痛、肩こり、腱鞘炎などにも対応しています。<br>自分へのご褒美にもいかがでしょうか？',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br>基本料金：￥9,360',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment3') {
@@ -1630,7 +1636,8 @@
                     '',
                     '',
                     '赤ちゃんのことならお任せください。<br>向き癖、頭の形、反り返り、寝ないなどの相談、寝返りやずりばい、ハイハイがオリジナルで改善方法を知りたい、抱っこの仕方やスリング、おんぶ紐の使い方、授乳に関することまで幅広くお応えいたします。<br>ベビーケアでは、赤ちゃんの体をほぐしたり、遊び方や発達、おもちゃのこともご指導します。<br><br>ベビーケアの対象年齢は、新生児から小学校卒業まで！<br>歩き方や走り方などの運動面で気になること、脚の形や姿勢の問題、噛み合わせ（不正咬合）まで幅広くご相談いただけます。<br>発達障害児のからだのケアも受け付けています。',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥9,360',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment4') {
@@ -1638,7 +1645,8 @@
                     '',
                     '',
                     '助産師が指導する産後ピラティスです。<br>産後の体型戻し、育児疲れの解消に身体を動かしませんか？<br>マットピラティスで軽いエクササイズから始めていきます。',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥6,240',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥6,240',
                     ''
                 );
             } else if (treatmentId === 'treatment5') {
@@ -1646,7 +1654,8 @@
                     '',
                     '',
                     '産後のお母さんの体のメンテナンスと赤ちゃんのケアを両方取り入れたプランです。<br>料金が少しお安くなっています。',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥18,400',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥18,400',
                     ''
                 );
             } else if (treatmentId === 'treatment6') {
@@ -1654,7 +1663,8 @@
                     '',
                     '',
                     '3人分の施術枠です。<br>産後整体と双子ちゃんケア、またはきょうだいのケア<br>など、大人と子ども2人の3人の施術でのご予約はこちらをご利用ください。<br>初回のみ初診料としてひとり2600円を頂戴いたします。<br>※お子様のケアにご夫婦で同席されるだけの場合にはベビーケアでご予約ください。<br><br>施術枠人数：3人分（例：大人1名＋子ども2名 など）',
-                    '初回：初診料 2,600円 × 人数分<br>半年以上あくと：再診料 1,100円 × 人数分<br>1年以上あくと：再診料 2,200円 × 人数分<br><br>基本料金：￥27,560',
+                    '初回：初診料 2,600円 × 人数分<br>半年以上あくと：再診料 1,100円 × 人数分<br>1年以上あくと：再診料 2,200円 × 人数分',
+                    '基本料金：￥27,560',
                     ''
                 );
             } else if (treatmentId === 'treatment7') {
@@ -1662,7 +1672,8 @@
                     '',
                     '',
                     '妊娠、産後に該当しない女性はこちらからご予約ください。<br>妊娠をご希望の女性もぜひ、ご予約くださいませ。<br><br>中学生や高校生の施術もこちらからどうぞ。',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥9,360',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥9,360',
                     ''
                 );
             } else if (treatmentId === 'treatment8') {
@@ -1670,7 +1681,8 @@
                     '',
                     '',
                     'おっぱいが硬くなる、つまる。<br>乳腺炎になってしまった。<br>赤ちゃんが上手に飲めない。<br>卒乳ケアにもご利用ください。<br><br>おっぱいの状態をより長く良い状態にキープするため、〔整体〕と〔リンパドレナージ〕と〔おっぱいマッサージ〕を併用したオリジナルのケアです。<br>〔おっぱいマッサージ〕は痛くないと好評です。<br><br>しっかり食べる食事指導とアフターケア、赤ちゃんのことまで対応いたします。',
-                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円<br><br>基本料金：￥9,360',
+                    '初回：初診料 2,600円<br>半年以上あくと：再診料 1,100円<br>1年以上あくと：再診料 2,200円',
+                    '基本料金：￥9,360',
                     ''
                 );
             } else {
