@@ -5,268 +5,195 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>予約イベント一覧（GitHub Pages × GAS）</title>
 <style>
-  /* ===== Theme (Light & Clean) ===== */
   :root{
-    --bg:#f7fafc;         /* page background */
-    --panel:#ffffff;      /* card background */
-    --ink:#111827;        /* main text */
-    --muted:#6b7280;      /* secondary text */
-    --brand:#2563eb;      /* primary brand */
-    --border:#e5e7eb;     /* borders */
-    --radius:14px;
-    --shadow:0 2px 10px rgba(0,0,0,.06);
+    --bg:#f7fafc; --panel:#ffffff; --ink:#111827; --muted:#6b7280;
+    --brand:#2563eb; --border:#e5e7eb; --radius:14px; --shadow:0 2px 10px rgba(0,0,0,.06);
     --maxw:1120px;
   }
-
   *{box-sizing:border-box}
-  body{
-    margin:0; background:var(--bg); color:var(--ink);
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
-    line-height:1.6;
-  }
-
-  /* ===== Header ===== */
-  header{
-    position:sticky; top:0; z-index:20;
-    background:rgba(255,255,255,.9);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 1px 0 var(--border);
-  }
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;
+    line-height:1.6;}
+  header{position:sticky; top:0; z-index:20; background:rgba(255,255,255,.9);
+    backdrop-filter:blur(8px); box-shadow:0 1px 0 var(--border);}
   .wrap{max-width:var(--maxw); margin:0 auto; padding:14px 16px}
   h1{margin:0; font-size:20px; font-weight:800; letter-spacing:.2px}
-  .sub{color:var(--muted); font-size:13px; margin-top:4px; word-break:break-word}
-  .status[aria-live]{display:inline-block; min-height:1em}
+  .sub{color:var(--muted); font-size:0px; margin-top:4px; min-height:1em; word-break:break-word}
 
-  /* ===== Main ===== */
   main{max-width:var(--maxw); margin:18px auto 48px; padding:0 16px}
-
-  /* Controls (Data fetch + Filters) */
-  .panel{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow: var(--shadow);
-    padding:16px;
-  }
+  .panel{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:18px; margin-bottom:16px;}
+  .sec-title{font-weight:900; margin:0 0 10px; font-size:16px}
   .controls{display:grid; gap:10px; grid-template-columns:1fr}
   .row{display:flex; gap:10px; flex-wrap:wrap}
-  .controls input[type="url"],
-  .controls input[type="text"],
-  .controls input[type="number"],
-  .controls input[type="search"]{
-    flex:1 1 220px; width:100%;
-    padding:12px 14px; border-radius:12px;
-    border:1px solid var(--border); background:#fff; color:var(--ink);
-    font-size:15px;
-  }
-  .controls button{
-    padding:12px 16px; border-radius:12px; border:1px solid var(--brand);
-    background:var(--brand); color:#fff; font-weight:700; cursor:pointer;
-  }
-  .controls button.ghost{
-    background:#fff; color:var(--brand);
-  }
-  .chips{display:flex; gap:8px; flex-wrap:wrap}
-  .chip{
-    border:1px solid var(--border); background:#fff; color:var(--muted);
-    padding:6px 10px; border-radius:999px; font-size:12px;
-  }
+  label.lbl{font-weight:700; font-size:13px; color:#1f2937; display:block; margin:6px 0 4px}
+  .controls input[type="number"], .controls input[type="search"]{
+    flex:1 1 200px; width:100%; padding:12px 14px; border-radius:12px;
+    border:1px solid var(--border); background:#fff; color:var(--ink); font-size:15px;}
+  .controls button{padding:12px 16px; border-radius:12px; border:1px solid var(--brand);
+    background:var(--brand); color:#fff; font-weight:700; cursor:pointer;}
   .quick{display:flex; gap:6px; flex-wrap:wrap}
-  .quick button{
-    padding:8px 12px; border-radius:999px; border:1px solid var(--border);
-    background:#fff; color:#374151; cursor:pointer; font-size:13px;
-  }
+  .quick button{padding:8px 12px; border-radius:999px; border:1px solid var(--border);
+    background:#fff; color:#374151; cursor:pointer; font-size:13px;}
 
-  /* ===== List ===== */
-  .date-group{
-    margin-top:18px;
-  }
-  .date-head{
-    display:flex; align-items:center; gap:10px;
-    color:#1f2937; font-weight:800; letter-spacing:.2px;
-    margin:14px 2px 8px;
-  }
-  .date-head .bar{
-    height:10px; width:10px; border-radius:3px; background:var(--brand); opacity:.85;
-  }
-
+  .date-group{margin-top:18px}
+  .date-head{display:flex; align-items:center; gap:10px; color:#1f2937; font-weight:900; margin:14px 2px 8px}
+  .date-head .bar{height:10px; width:10px; border-radius:3px; background:var(--brand); opacity:.85}
   .grid{display:grid; gap:12px}
-  /* 2 columns on wide screens */
-  @media (min-width: 980px){ .grid{ grid-template-columns: 1fr 1fr; } }
-
-  .card{
-    background:var(--panel);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    box-shadow: var(--shadow);
-    padding:14px;
-  }
-  .title{font-weight:800; margin-bottom:6px; font-size:16px; word-break:break-word}
-  .rowline{display:flex; gap:8px; flex-wrap:wrap; font-size:14px; margin:6px 0}
-  .badge{
-    display:inline-flex; align-items:center; gap:6px;
-    border:1px solid var(--border); background:#fff; color:#1f2937;
-    padding:6px 10px; border-radius:999px; font-size:12px;
-  }
-  .desc{
-    margin-top:8px; font-size:14px; color:#1f2937; background:#fff; border:1px solid var(--border);
-    border-radius:10px; padding:10px 12px;
-    display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; -webkit-line-clamp:4;
-    white-space:pre-wrap;
-  }
-  .desc[data-expanded="true"]{-webkit-line-clamp:unset; max-height:none}
+  @media (min-width:980px){ .grid{grid-template-columns:1fr 1fr} }
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:14px;}
+  .title{font-weight:800; margin-bottom:8px; font-size:16px; word-break:break-word}
+  .item{margin:8px 0}
+  .item-label{font-size:12px; color:var(--muted); font-weight:700; margin-bottom:4px}
+  .item-value{font-size:14px; color:#1f2937}
+  .badges{display:flex; gap:8px; flex-wrap:wrap}
+  .badge{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border);
+    background:#fff; color:#1f2937; padding:6px 10px; border-radius:999px; font-size:12px;}
+  .desc{margin-top:8px; font-size:14px; color:#1f2937; background:#fff; border:1px solid var(--border);
+    border-radius:10px; padding:10px 12px; white-space:pre-wrap; display:-webkit-box; -webkit-box-orient:vertical;
+    overflow:hidden; -webkit-line-clamp:4;}
+  .desc[data-expanded="true"]{-webkit-line-clamp:unset}
   .more{margin-top:6px}
-  .more button{
-    background:#fff; border:1px solid var(--border); color:#374151;
-    border-radius:10px; padding:6px 10px; cursor:pointer; font-size:13px;
-  }
-
-  .empty{
-    border:2px dashed var(--border); color:#6b7280; text-align:center;
-    padding:22px; border-radius:var(--radius); margin-top:16px; background:#fff;
-  }
-
+  .more button{background:#fff; border:1px solid var(--border); color:#374151; border-radius:10px;
+    padding:6px 10px; cursor:pointer; font-size:13px;}
+  .empty{border:2px dashed var(--border); color:#6b7280; text-align:center; padding:22px; border-radius:var(--radius);
+    margin-top:16px; background:#fff;}
   .foot{color:var(--muted); font-size:12px; text-align:center; margin:28px 0 12px}
-
-  .spinner{
-    display:inline-block; width:16px; height:16px; border:2px solid #cbd5e1;
-    border-top-color:transparent; border-radius:50%; animation:spin .8s linear infinite; vertical-align:middle
-  }
-  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
   <header>
     <div class="wrap">
       <h1>予約イベント一覧</h1>
-      <div class="sub" id="sub">
-        GASから読み込み中… <span class="spinner" aria-hidden="true"></span>
-        <span class="status" aria-live="polite"></span>
-      </div>
+      <div class="sub" id="sub"></div>
     </div>
   </header>
 
   <main>
-    <!-- ===== Data fetch & Filters ===== -->
-    <section class="panel" aria-label="データ取得とフィルター">
+    <!-- 期間設定 -->
+    <section class="panel" aria-label="期間設定">
+      <h2 class="sec-title">期間設定</h2>
       <div class="controls">
-        <div class="row" aria-label="データ取得">
-          <!-- ★ ここに固定したい場合は下の JS の GAS_ENDPOINT_DEFAULT に設定 -->
-          <input id="api" type="url" inputmode="url" placeholder="GAS WebアプリURL（…/exec）" aria-label="GAS WebアプリURL（…/exec）">
-          <input id="cid" type="text" placeholder="calendar id（未指定=primary）" aria-label="カレンダーID">
-          <input id="days" type="number" min="1" step="1" placeholder="days（表示日数, 既定=30）" aria-label="表示日数">
-          <input id="offset" type="number" step="1" placeholder="offset（日数, 既定=0）" aria-label="開始日オフセット">
-          <button id="apply" aria-label="読み込む">読み込む</button>
-          <button id="csv" class="ghost" title="表示中のイベントをCSVで保存" aria-label="CSVで保存">CSV</button>
-        </div>
-
-        <div class="row" aria-label="クイック設定">
-          <div class="quick" role="group" aria-label="期間クイック設定">
-            <button data-days="7">7日</button>
-            <button data-days="14">14日</button>
-            <button data-days="30">30日</button>
-            <button data-days="60">60日</button>
+        <div class="row">
+          <div style="flex:1 1 160px;min-width:140px">
+            <label class="lbl" for="days">表示日数</label>
+            <input id="days" type="number" min="1" step="1" placeholder="例：30">
           </div>
-          <div class="quick" role="group" aria-label="開始クイック設定">
-            <button data-offset="0">今日から</button>
-            <button data-offset="1">明日から</button>
-            <button data-offset="7">1週間後から</button>
+          <div style="flex:1 1 160px;min-width:140px">
+            <label class="lbl" for="offset">開始オフセット（日）</label>
+            <input id="offset" type="number" step="1" placeholder="例：0（今日）">
+          </div>
+          <div style="align-self:end">
+            <button id="apply" aria-label="読み込む">読み込む</button>
           </div>
         </div>
-
-        <div class="row" aria-label="検索フィルター">
-          <input id="q" type="search" placeholder="キーワードで絞り込み（タイトル・説明・場所）" aria-label="キーワード検索">
+        <div class="row">
+          <div>
+            <div class="lbl" style="margin:0 0 6px">クイック（日数）</div>
+            <div class="quick" role="group" aria-label="期間クイック設定（日数）">
+              <button data-days="7">7日</button>
+              <button data-days="14">14日</button>
+              <button data-days="30">30日</button>
+              <button data-days="60">60日</button>
+            </div>
+          </div>
+          <div>
+            <div class="lbl" style="margin:0 0 6px">クイック（開始）</div>
+            <div class="quick" role="group" aria-label="開始日オフセット">
+              <button data-offset="0">今日から</button>
+              <button data-offset="1">明日から</button>
+              <button data-offset="7">1週間後から</button>
+            </div>
+          </div>
         </div>
-
-        <div class="chips" id="chips" aria-label="現在の条件"></div>
       </div>
     </section>
 
-    <!-- ===== List ===== -->
-    <div id="list"></div>
-    <div class="empty" id="empty" style="display:none;">条件に合う「予約:」イベントがありません。</div>
+    <!-- 検索 -->
+    <section class="panel" aria-label="検索">
+      <h2 class="sec-title">検索</h2>
+      <div class="controls">
+        <div class="row">
+          <div style="flex:1 1 380px">
+            <label class="lbl" for="q">キーワード検索（部分一致）</label>
+            <input id="q" type="search" placeholder="例）指名 / コース名 / 担当者">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- イベント一覧 -->
+    <section class="panel" aria-label="イベント一覧">
+      <h2 class="sec-title">イベント一覧</h2>
+      <div id="list"></div>
+      <div class="empty" id="empty" style="display:none;">条件に合う「予約:」イベントがありません。</div>
+    </section>
 
     <div class="foot" id="foot"></div>
   </main>
 
 <script>
 /* =========================================================
- * GitHub Pages Frontend
- * - JSONPでGASから取得（CORS不要）
- * - クエリ: ?api=...&id=...&days=...&offset=...&q=...
- * - グループ化: dateLabel 単位
+ * GitHub Pages Frontend（JSONPでGASから取得）
+ * - データURL/カレンダーIDの入力欄は削除
+ * - GASのURL/IDは GAS_ENDPOINT_DEFAULT または URLクエリ (?api=...&id=...)
+ * - 曜日は必ず「月火水木金土日」で表示
+ * - 検索は部分一致（スペース区切りAND）
  * ========================================================= */
-
 const $ = s => document.querySelector(s);
 const qp = Object.fromEntries(new URL(location.href).searchParams.entries());
 
-// ★ 固定運用するならここに exec URL を設定（空欄でもOK）
+// ★ 固定運用ならここに exec URL を設定（空欄OK。URLクエリ ?api=... でも可）
 const GAS_ENDPOINT_DEFAULT = 'https://script.google.com/macros/s/AKfycbypXZgQp-awDyoD94dwOSuvak74BOA_pkDZnIB1zhBeIQC7bQsc1538iNotQ6ycFK8r/exec';
+const API_URL = qp.api || GAS_ENDPOINT_DEFAULT;
+const CAL_ID  = qp.id  || '';
 
-const initialApi = qp.api || GAS_ENDPOINT_DEFAULT;
-$('#api.value') && ($('#api').value = initialApi || '');
-$('#cid').value    = qp.id     || '';
 $('#days').value   = qp.days   || 30;
 $('#offset').value = qp.offset || 0;
 $('#q').value      = qp.q      || '';
 
 let CURRENT_DATA = { meta:null, events:[] };
-let FILTERED = [];
 
-// ===== UI Wiring =====
+// UI
 $('#apply').addEventListener('click', applyLoad);
-$('#csv').addEventListener('click', downloadCSV);
 $('#q').addEventListener('input', renderFiltered);
-
 document.querySelectorAll('.quick button[data-days]').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    $('#days').value = b.getAttribute('data-days');
-    applyLoad();
-  });
+  b.addEventListener('click', ()=>{ $('#days').value = b.dataset.days; applyLoad(); });
 });
 document.querySelectorAll('.quick button[data-offset]').forEach(b=>{
-  b.addEventListener('click', ()=>{
-    $('#offset').value = b.getAttribute('data-offset');
-    applyLoad();
-  });
+  b.addEventListener('click', ()=>{ $('#offset').value = b.dataset.offset; applyLoad(); });
 });
 
 // 初回ロード
 applyLoad(true);
 
-function applyLoad(isFirst=false){
-  const api = $('#api').value.trim();
-  const id = $('#cid').value.trim();
+function applyLoad(){
   const days = $('#days').value.trim();
   const offset = $('#offset').value.trim();
   const q = $('#q').value.trim();
 
-  // URLを同期（ブックマーク可）
+  // URL同期（api/id は保持）
   const next = new URL(location.href);
   next.search = '';
-  if (api)    next.searchParams.set('api', api);
-  if (id)     next.searchParams.set('id', id);
+  if (qp.api) next.searchParams.set('api', qp.api);
+  if (qp.id)  next.searchParams.set('id',  qp.id);
   if (days)   next.searchParams.set('days', days);
   if (offset) next.searchParams.set('offset', offset);
   if (q)      next.searchParams.set('q', q);
   history.replaceState(null, '', next.toString());
 
-  loadData({ api: api || GAS_ENDPOINT_DEFAULT, id, days, offset }, isFirst);
+  loadData({ api: API_URL, id: CAL_ID, days, offset });
 }
 
-function loadData({ api, id, days, offset }, isFirst){
-  const sub = $('#sub'); const status = sub.querySelector('.status');
-  const list = $('#list'); const empty = $('#empty'); const chips = $('#chips'); const foot = $('#foot');
+function loadData({ api, id, days, offset }){
+  const sub = $('#sub'), list = $('#list'), empty = $('#empty'), foot = $('#foot');
+  list.innerHTML = ''; empty.style.display = 'none'; foot.textContent = '';
+  sub.textContent = '';
 
-  list.innerHTML = '';
-  empty.style.display = 'none';
-  chips.innerHTML = '';
-  foot.textContent = '';
-  status.textContent = '読み込み中…';
+  if (!api){ sub.textContent = 'データURL（…/exec）を設定してください。'; return; }
 
-  if (!api) { status.textContent = 'GAS WebアプリURL（…/exec）を入力してください。'; return; }
-
-  // JSONPコールバック名
+  // JSONP
   const cb = `__gas_cb_${Date.now()}_${Math.random().toString(36).slice(2)}`;
   const params = new URLSearchParams();
   if (id) params.set('id', id);
@@ -278,74 +205,59 @@ function loadData({ api, id, days, offset }, isFirst){
   script.src = `${api}${api.includes('?') ? '&' : '?'}${params.toString()}`;
   script.async = true;
 
-  let timeout = setTimeout(() => {
-    cleanup();
-    status.textContent = 'タイムアウトしました。URL・公開権限をご確認ください。';
-  }, 12000);
+  let timer = setTimeout(()=>{ cleanup(); sub.textContent='読み込みできませんでした。URL/権限をご確認ください。'; }, 12000);
 
   window[cb] = (data) => {
-    clearTimeout(timeout);
-    cleanup();
-
-    if (!data || data.error) {
-      status.textContent = data && data.error ? data.error : 'データ取得に失敗しました。';
-      return;
-    }
+    clearTimeout(timer); cleanup();
+    if (!data || data.error){ sub.textContent = data?.error || 'データ取得に失敗しました。'; return; }
 
     CURRENT_DATA = data;
-    status.textContent = `${data.meta.calendarName}（${data.meta.calendarId}）｜期間: ${data.meta.range.start} 〜 ${data.meta.range.end}`;
-    chips.innerHTML = [
-      ['api', api],
-      ['id', id || '(primary)'],
-      ['days', days || 30],
-      ['offset', offset || 0],
-      ['tz', data.meta.tz],
-      ['total', data.meta.total]
-    ].map(([k,v]) => `<span class="chip">${k}: ${escapeHtml(String(v))}</span>`).join('');
+    sub.textContent = `${data.meta.calendarName}（${data.meta.calendarId}）｜${data.meta.range.start} 〜 ${data.meta.range.end}`;
 
-    FILTERED = data.events.slice();
-    renderFiltered(); // フィルター適用 & レンダリング
+    // 曜日表記用にフロントで日付整形
+    CURRENT_DATA.events = (CURRENT_DATA.events || []).map(ev => ({
+      ...ev,
+      __dateKey: dateKeyFromIso(ev.startIso),
+      __dateJp : formatJpDate(ev.startIso)   // 例: 2025/10/23（木）
+    }));
+
+    renderFiltered();
     foot.textContent = `generated at ${data.meta.generatedAt}`;
   };
 
   document.body.appendChild(script);
-
-  function cleanup(){
-    if (script && script.parentNode) script.parentNode.removeChild(script);
-    try { delete window[cb]; } catch(e){ window[cb] = undefined; }
-  }
+  function cleanup(){ if (script.parentNode) script.parentNode.removeChild(script); try{ delete window[cb]; }catch(_){ window[cb]=undefined; } }
 }
 
 function renderFiltered(){
   const q = $('#q').value.trim().toLowerCase();
-  const list = $('#list'); const empty = $('#empty');
-
-  // フィルタ
+  const list = $('#list'), empty = $('#empty');
   const src = CURRENT_DATA.events || [];
-  const rows = q
-    ? src.filter(ev => [ev.title, ev.description, ev.location].join(' ').toLowerCase().includes(q))
+
+  const tokens = q.length ? q.split(/\s+/).filter(Boolean) : [];
+  const rows = tokens.length
+    ? src.filter(ev => {
+        const hay = [ev.title, ev.description, ev.location].join(' ').toLowerCase();
+        return tokens.every(t => hay.includes(t)); // 部分一致 AND
+      })
     : src.slice();
 
-  // 日付ごとにグルーピング
-  const grouped = groupBy(rows, ev => ev.dateLabel);
+  const grouped = groupBy(rows, ev => ev.__dateKey);
   list.innerHTML = '';
 
-  if (rows.length === 0){
-    empty.style.display = '';
-    return;
-  }
+  if (rows.length === 0){ empty.style.display = ''; return; }
 
-  for (const date of Object.keys(grouped)){
+  const sortedKeys = Object.keys(grouped).sort();
+  for (const key of sortedKeys){
     const section = document.createElement('section');
     section.className = 'date-group';
+    const jpLabel = formatJpDate(grouped[key][0].startIso);
     section.innerHTML = `
-      <div class="date-head"><span class="bar"></span><span>${escapeHtml(date)}</span></div>
+      <div class="date-head"><span class="bar"></span><span>${escapeHtml(jpLabel)}</span></div>
       <div class="grid"></div>
     `;
     const grid = section.querySelector('.grid');
-    for (const ev of grouped[date]){
-      grid.appendChild(renderCard(ev));
-    }
+    for (const ev of grouped[key]) grid.appendChild(renderCard(ev));
     list.appendChild(section);
   }
 }
@@ -354,17 +266,29 @@ function renderCard(ev){
   const el = document.createElement('article');
   el.className = 'card';
   const hasDesc = !!(ev.description && ev.description.trim());
-  const descId = `d_${ev.id.replace(/[^a-zA-Z0-9_]/g,'')}`;
+  const descId = `d_${(ev.id || '').replace(/[^a-zA-Z0-9_]/g,'')}`;
 
   el.innerHTML = `
-    <div class="title">${escapeHtml(ev.title)}</div>
-    <div class="rowline">
-      <span class="badge" title="時間">${escapeHtml(ev.startTime)} 〜 ${escapeHtml(ev.endTime)}</span>
-      ${ev.allDay ? `<span class="badge">終日</span>` : ``}
-      ${ev.location ? `<span class="badge" title="場所">場所: ${escapeHtml(ev.location)}</span>` : ``}
+    <div class="title">${escapeHtml(ev.title || '')}</div>
+    <div class="item">
+      <div class="item-label">日付</div>
+      <div class="item-value">${escapeHtml(ev.__dateJp)}</div>
     </div>
-    ${hasDesc ? `<div id="${descId}" class="desc" data-expanded="false">${escapeHtml(ev.description)}</div>` : ``}
-    ${hasDesc ? `<div class="more"><button type="button" data-toggle="${descId}">もっと見る</button></div>` : ``}
+    <div class="item">
+      <div class="item-label">時間</div>
+      <div class="item-value">
+        <span class="badges">
+          <span class="badge">${escapeHtml(ev.startTime)} 〜 ${escapeHtml(ev.endTime)}</span>
+          ${ev.allDay ? `<span class="badge">終日</span>` : ``}
+        </span>
+      </div>
+    </div>
+    ${hasDesc ? `
+    <div class="item">
+      <div class="item-label">説明</div>
+      <div id="${descId}" class="desc" data-expanded="false">${escapeHtml(ev.description)}</div>
+      <div class="more"><button type="button" data-toggle="${descId}">もっと見る</button></div>
+    </div>` : ``}
   `;
 
   if (hasDesc){
@@ -379,44 +303,20 @@ function renderCard(ev){
   return el;
 }
 
-function downloadCSV(){
-  const src = CURRENT_DATA.events || [];
-  if (!src.length){ alert('出力できるデータがありません。'); return; }
-  const header = ['date','start','end','title','location','description'];
-  const lines = [header]
-    .concat(src.map(ev => [
-      ev.dateLabel, ev.startTime, ev.endTime, ev.title || '', ev.location || '', (ev.description || '').replace(/\r?\n/g,'\\n')
-    ]));
-  const csv = lines.map(cols => cols.map(csvEscape).join(',')).join('\r\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'events.csv';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+/* ===== Utils ===== */
+function dateKeyFromIso(iso){
+  const d = new Date(iso.replace(' ', 'T'));
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}/${m}/${day}`;
 }
-
-function csvEscape(s){
-  const t = String(s).replace(/"/g,'""');
-  return /[,"\r\n]/.test(t) ? `"${t}"` : t;
+function formatJpDate(iso){
+  const d = new Date(iso.replace(' ', 'T'));
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  const jp = ['日','月','火','水','木','金','土'][d.getDay()];
+  return `${y}/${m}/${day}（${jp}）`;
 }
-
-function groupBy(arr, keyFn){
-  return arr.reduce((m, x) => {
-    const k = keyFn(x);
-    (m[k] ||= []).push(x);
-    return m;
-  }, {});
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, c =>
-    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
-  );
-}
+function groupBy(arr, keyFn){ return arr.reduce((m,x)=>{ const k=keyFn(x); (m[k]??=[]).push(x); return m; },{}); }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 </script>
 </body>
 </html>
