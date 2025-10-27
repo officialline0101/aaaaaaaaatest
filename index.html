@@ -216,7 +216,7 @@
         .visit-buttons,
         .symptoms,
         .menu-sections,
-        .irradiations {
+        .opti {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
@@ -226,7 +226,7 @@
         .visit-buttons button,
         .symptoms button,
         .menu-sections button,
-        .irradiations button {
+        .opti button {
             flex: 1;
             padding: 10px;
             border: 1px solid #2e2e2e;
@@ -241,7 +241,7 @@
         .visit-buttons button.active,
         .symptoms button.active,
         .menu-sections button.active,
-        .irradiations button.active {
+        .opti button.active {
             background-color: #ffffff;
             color: #141414;
         }
@@ -948,164 +948,130 @@
             width: 100%;
         }
 
-/* ▼ここを差し替え（現在は 85px 固定になっている箇所） */
-.field-wrap.select-narrow {
-  /* 好みの幅に拡大（例：180〜220pxあたり） */
-  flex: 0 0 160px;   /* 横幅を200pxに固定する */
-  max-width: 160px;  /* 伸びすぎ防止の上限も同じに */
-}
+        /* ▼ここを差し替え（現在は 85px 固定になっている箇所） */
+        .field-wrap.select-narrow {
+            /* 好みの幅に拡大（例：180〜220pxあたり） */
+            flex: 0 0 160px;
+            /* 横幅を200pxに固定する */
+            max-width: 160px;
+            /* 伸びすぎ防止の上限も同じに */
+        }
 
-/* 中の select は親幅いっぱいに広げる設定のままでOK */
-.field-wrap.select-narrow select {
-  width: 100%;
-}
+        /* 中の select は親幅いっぱいに広げる設定のままでOK */
+        .field-wrap.select-narrow select {
+            width: 100%;
+        }
 
-/* =========================================
-📧 メールアドレス入力欄（スマホ最適化版）
-========================================= */
-
-/* 全体共通 */
+/* メールアドレス欄共通スタイル */
 .email-input-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: nowrap;
-  width: 100%;
-  max-width: 100%;
-  -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
 }
 
-/* 入力欄＆セレクト共通スタイル */
+/* input, select 共通設定 */
 .email-input-row input,
 .email-input-row select {
-  flex: 1;
-  min-width: 0;
-  height: 44px;
-  padding: 0 10px;
-  border: 1px solid #555;
-  border-radius: 6px;
-  font-size: 16px;
-  line-height: 1.2;
-  box-sizing: border-box;
-  vertical-align: middle;
-  background-color: #fff;
-  color: #000;
-  -webkit-text-size-adjust: 100%;
-  appearance: none;
-}
-
-/* Androidでのフォント太字化防止 */
-input,
-select,
-textarea {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Noto Sans JP", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 400;
-}
-
-/* ▼ドメイン選択共通（両方まとめ） */
-#emailDomainSelect,
-#emailDomainSelect2,
-.field-wrap.select-narrow {
-  flex: 0 0 160px; /* 固定幅 */
-  max-width: 160px;
-  position: relative;
-  top: -8px; /* iOSでの高さズレ微調整 */
-}
-
-/* ▼selectを親要素幅にフィット */
-.field-wrap.select-narrow select {
-  width: 100%;
-}
-
-/* ▼セレクトボックスの矢印（iOS/Android両対応） */
-.email-input-row select,
-.field-wrap.select-narrow select {
-  background: #fff
-    url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='black' d='M6 8L0 0h12z'/%3E%3C/svg%3E")
-    no-repeat right 10px center;
-  background-size: 12px 8px;
-  padding-right: 30px;
-}
-
-/* ▼@マーク中央揃え */
-.email-input-row .at-mark {
-  display: inline-flex;
-  align-items: center;
-  height: 44px;
-  padding: 0 4px;
-  font-size: 16px;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-/* ▼エラー枠 */
-.input-error {
-  border-color: #d00 !important;
-  box-shadow: 0 0 0 2px rgba(221, 0, 0, 0.15);
-}
-
-/* ▼エラーポップアップ */
-.popover-error {
-  position: absolute;
-  top: -28px;
-  left: 0;
-  background: #d00;
-  color: #fff;
-  font-size: 12px;
-  line-height: 1.6;
-  padding: 2px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
-  z-index: 10;
-  display: none;
-}
-.popover-error::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 12px;
-  border: 6px solid transparent;
-  border-top-color: #d00;
-}
-
-/* ▼Safari / iPhone専用の上下余白ブレ防止 */
-@supports (-webkit-touch-callout: none) {
-  input,
-  select {
-    padding-top: 0;
-    padding-bottom: 0;
-    height: 44px; /* Safariで高さブレないよう固定 */
-  }
-}
-
-/* ▼Chrome(Android)での1pxズレ対策 */
-@media (min-width: 0) {
-  select {
-    position: relative;
-    top: -1px;
-  }
-}
-
-/* ▼小さい画面対応（iPhone SEなど） */
-@media (max-width: 380px) {
-  .email-input-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-
-  #emailDomainSelect,
-  #emailDomainSelect2,
-  .field-wrap.select-narrow {
     flex: 1;
-    max-width: 100%;
-    top: 0;
-  }
+    height: 42px;
+    padding: 0 7px;
+    border: 1px solid #555;
+    border-radius: 3px;
+    font-size: 16px;
+    line-height: normal;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
 
-  .email-input-row .at-mark {
-    display: none; /* スマホ狭画面では省略 */
-  }
+/* ドメイン選択（共通） */
+.email-input-row select.domain-select {
+    flex: 0 0 160px;
+    max-width: 160px;
+    position: relative;
+    top: -10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background:
+        #fff url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='black' d='M6 8L0 0h12z'/%3E%3C/svg%3E") no-repeat right 10px center;
+    background-size: 12px 8px;
+    padding-right: 30px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* @マーク表示部 */
+.email-input-row .at-mark {
+    display: inline-flex;
+    align-items: center;
+    height: 42px;
+    padding: 0 2px;
+    font-size: 16px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* Safari対策 */
+@supports (-webkit-touch-callout: none) {
+    .email-input-row select.domain-select {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+/* Windows Chromeでの微調整 */
+@media (min-width:0) {
+    .email-input-row select.domain-select {
+        top: -1px;
+    }
+}
+
+/* エラー（赤枠） */
+.input-error {
+    border-color: #d00 !important;
+    box-shadow: 0 0 0 2px rgba(221, 0, 0, .12);
+}
+
+/* ラッパー（エラーメッセージ位置の基準） */
+.field-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+/* 狭いセレクト用ラッパ（ドメインセレクト） */
+.field-wrap.select-narrow {
+    flex: 0 0 160px;
+    max-width: 160px;
+}
+.field-wrap.select-narrow select {
+    width: 100%;
+}
+
+/* エラーポップアップ */
+.popover-error {
+    position: absolute;
+    top: -28px;
+    left: 0;
+    background: #d00;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.6;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1;
+    display: none;
+}
+
+.popover-error::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 12px;
+    border: 6px solid transparent;
+    border-top-color: #d00;
 }
 
     </style>
@@ -1149,7 +1115,7 @@ textarea {
                 placeholder="例）taro.yamada" oninput="onEmailLocalInput()" />
 
             <!-- ドメイン選択 -->
-            <select id="emailDomainSelect" onchange="onEmailDomainSelectChange()">
+            <select id="emailDomainSelect" class="domain-select" onchange="onEmailDomainSelectChange()">
                 <option value="" selected>選択</option>
                 <option value="@gmail.com">@gmail.com</option>
                 <option value="@icloud.com">@icloud.com</option>
@@ -1188,7 +1154,7 @@ textarea {
 
             <!-- ドメイン選択（確認） -->
             <div class="field-wrap select-narrow">
-                <select id="emailDomainSelect2" onchange="onEmailDomainSelectChange('2')">
+                <select id="emailDomainSelect2" class="domain-select" onchange="onEmailDomainSelectChange('2')">
                     <option value="" selected>選択</option>
                     <option value="@gmail.com">@gmail.com</option>
                     <option value="@icloud.com">@icloud.com</option>
@@ -1248,12 +1214,11 @@ textarea {
             <div class="labeltyuuou">
                 <span class="highlight-text">オプション</span>
             </div>
-            <div class="irradiations">
-                <button type="button" id="firstirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="secondirradiations" onclick="selectirradiations(this)"
+            <div class="opti">
+                <button type="button" id="firstopti" onclick="selectopti(this)" data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="secondopti" onclick="selectopti(this)"
                     data-price="15000">ベーシックマッサージ〈30分〉</button>
-                <button type="button" id="thirdirradiations" onclick="selectirradiations(this)"
+                <button type="button" id="thirdopti" onclick="selectopti(this)"
                     data-price="15000">リラックスマッサージ〈30分〉</button>
             </div>
         </div>
@@ -1273,22 +1238,16 @@ textarea {
             <div class="labeltyuuou">
                 <span class="highlight-text">オプション</span>
             </div>
-            <div class="irradiations">
-                <button type="button" id="fourthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="fifthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="sixthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="seventhirradiations" onclick="selectirradiations(this)"
+            <div class="opti">
+                <button type="button" id="fourthopti" onclick="selectopti(this)" data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="fifthopti" onclick="selectopti(this)" data-price="15000">襟足〈30分〉</button>
+                <button type="button" id="sixthopti" onclick="selectopti(this)" data-price="15000">背中</button>
+                <button type="button" id="seventhopti" onclick="selectopti(this)"
                     data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="eighthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="ninthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="tenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="eleventhirradiations" onclick="selectirradiations(this)"
+                <button type="button" id="eighthopti" onclick="selectopti(this)" data-price="15000">デコルテ〈30分〉</button>
+                <button type="button" id="ninthopti" onclick="selectopti(this)" data-price="15000">腕〈30分〉</button>
+                <button type="button" id="tenthopti" onclick="selectopti(this)" data-price="15000">保湿パック〈30分〉</button>
+                <button type="button" id="eleventhopti" onclick="selectopti(this)"
                     data-price="15000">美白パック〈30分〉</button>
             </div>
         </div>
@@ -1306,22 +1265,18 @@ textarea {
             <div class="labeltyuuou">
                 <span class="highlight-text">オプション</span>
             </div>
-            <div class="irradiations">
-                <button type="button" id="twelvethirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="thirteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="fourteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="fifteenthirradiations" onclick="selectirradiations(this)"
+            <div class="opti">
+                <button type="button" id="twelvethopti" onclick="selectopti(this)" data-price="15000">眉カット〈30分〉</button>
+                <button type="button" id="thirteenthopti" onclick="selectopti(this)" data-price="15000">襟足〈30分〉</button>
+                <button type="button" id="fourteenthopti" onclick="selectopti(this)" data-price="15000">背中</button>
+                <button type="button" id="fifteenthopti" onclick="selectopti(this)"
                     data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="sixteenthirradiations" onclick="selectirradiations(this)"
+                <button type="button" id="sixteenthopti" onclick="selectopti(this)"
                     data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="seventeenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="eighteenthirradiations" onclick="selectirradiations(this)"
+                <button type="button" id="seventeenthopti" onclick="selectopti(this)" data-price="15000">腕〈30分〉</button>
+                <button type="button" id="eighteenthopti" onclick="selectopti(this)"
                     data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="nineteenthirradiations" onclick="selectirradiations(this)"
+                <button type="button" id="nineteenthopti" onclick="selectopti(this)"
                     data-price="15000">美白パック〈30分〉</button>
             </div>
         </div>
@@ -1386,7 +1341,7 @@ textarea {
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
-        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
+        let optiCount = ''; <!-- 選択された症状を格納する変数 -->
         let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
@@ -1412,7 +1367,7 @@ textarea {
         let selectedVisitTime = 0; // 訪問回数で選択された時間
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
-        let irradiationsTimes = {
+        let optiTimes = {
             '眉カット〈30分〉': 30,
             '襟足〈30分〉': 30,
             '背中(キャミソールライン)〈30分〉': 30,
@@ -1425,7 +1380,7 @@ textarea {
             '美白パック〈30分〉': 30
         };
 
-        let selectedirradiationsTime = 0; // 訪問回数で選択された時間
+        let selectedoptiTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
             '和装プラン〈30分〉': 30,
@@ -1486,9 +1441,9 @@ textarea {
         function applyPreviousSelection() {
             const savedMenu = localStorage.getItem('selectedMenu') || '';
             const savedSymptoms = JSON.parse(localStorage.getItem('selectedSymptoms') || '[]');
-            const savedIrradiations = JSON.parse(localStorage.getItem('selectedIrradiations') || '[]');
+            const savedopti = JSON.parse(localStorage.getItem('selectedopti') || '[]');
 
-            if (!savedMenu && savedSymptoms.length === 0 && savedIrradiations.length === 0) {
+            if (!savedMenu && savedSymptoms.length === 0 && savedopti.length === 0) {
                 alert('前回のメニューが見つかりません💦');
                 return;
             }
@@ -1501,12 +1456,12 @@ textarea {
 
             // ✅ 前回の選択状態を初期化
             // 1. オプションの active クラスを全て外す
-            document.querySelectorAll('.irradiations button.active').forEach(btn => {
+            document.querySelectorAll('.opti button.active').forEach(btn => {
                 btn.classList.remove('active');
             });
 
-            // 2. selectedIrradiations をリセット
-            localStorage.setItem('selectedIrradiations', JSON.stringify([]));
+            // 2. selectedopti をリセット
+            localStorage.setItem('selectedopti', JSON.stringify([]));
 
             // ✅ メニュー表示
             if (savedMenu) {
@@ -1522,7 +1477,7 @@ textarea {
             });
 
             // ✅ オプション再選択（初期化済なので安心）
-            savedIrradiations.forEach(irradiationId => {
+            savedopti.forEach(irradiationId => {
                 const irradiationButton = document.getElementById(irradiationId);
                 if (irradiationButton && !irradiationButton.classList.contains('active')) {
                     irradiationButton.click();
@@ -1618,11 +1573,11 @@ textarea {
                 ? `<span style="color:#0c0c0c;"><strong>メニュー</strong></span><br>・${selectedSymptom.join('<br>')}`
                 : '・メニューが未選択です';
 
-            const irradiationsText = irradiationsCount
-                ? `<span style="color:#0c0c0c;"><strong>オプション</strong></span><br>・${irradiationsCount.split(', ').join('<br>・')}`
+            const optiText = optiCount
+                ? `<span style="color:#0c0c0c;"><strong>オプション</strong></span><br>・${optiCount.split(', ').join('<br>・')}`
                 : '・オプション無し';
 
-            let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
+            let totalMinutes = selectedMenuTime + selectedoptiTime + selectedVisitTime;
             let hours = Math.floor(totalMinutes / 60);
             let minutes = totalMinutes % 60;
             let totalTimeText = `<span style="color:#0c0c0c;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
@@ -1653,8 +1608,8 @@ textarea {
         </div>
         <hr>
         <div class="info-row">
-            <p>${irradiationsText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstirradiations')">修正</button>
+            <p>${optiText}</p>
+            <button class="edit-button" onclick="scrollToElement('firstopti')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1692,7 +1647,7 @@ textarea {
         document.querySelectorAll('.symptoms button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
-        document.querySelectorAll('.irradiations button').forEach(button => {
+        document.querySelectorAll('.opti button').forEach(button => {
             button.addEventListener('click', updateDisplayInfo);
         });
 
@@ -2065,34 +2020,34 @@ textarea {
             updateDisplayInfo();
         }
 
-        function selectirradiations(button) {
+        function selectopti(button) {
             selectedFullDate = '';
 
             // トグル
             button.classList.toggle('active');
 
             // ✅ 現在アクティブなオプションボタンのみを取得し保存（過去データ無視）
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.id);
-            localStorage.setItem('selectedIrradiations', JSON.stringify(selectedIrradiations));
+            const selectedButtons = document.querySelectorAll('.opti button.active');
+            const selectedopti = Array.from(selectedButtons).map(btn => btn.id);
+            localStorage.setItem('selectedopti', JSON.stringify(selectedopti));
 
             // 表示用データ生成
-            const selectedIrradiationsNames = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiationsNames.join(', ');
+            const selectedoptiNames = Array.from(selectedButtons).map(btn => btn.innerText);
+            optiCount = selectedoptiNames.join(', ');
 
             // 合計金額など更新
             optionsPrice = 0;
-            let totalirradiationsTime = 0;
+            let totaloptiTime = 0;
             selectedButtons.forEach(btn => {
                 const price = parseInt(btn.getAttribute('data-price'), 10);
                 optionsPrice += price;
 
                 const irradiationName = btn.innerText;
-                const irradiationTime = irradiationsTimes[irradiationName] || 0;
-                totalirradiationsTime += irradiationTime;
+                const irradiationTime = optiTimes[irradiationName] || 0;
+                totaloptiTime += irradiationTime;
             });
 
-            selectedirradiationsTime = totalirradiationsTime;
+            selectedoptiTime = totaloptiTime;
 
             fetchAvailability(currentDate);
             updateDisplayInfo();
@@ -2176,7 +2131,7 @@ textarea {
 
             // メニューとオプションをリセット
             selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
+            optiCount = '';    // オプションのリセット
             menuPrice = 0;             // メニューの価格リセット
             optionsPrice = 0;          // オプションの価格リセット
             totalAmount = 0;           // 合計金額リセット
@@ -2248,7 +2203,7 @@ textarea {
                 visitCount: typeof visitCount !== 'undefined' ? visitCount : '',
                 selectedMenu: typeof selectedMenu !== 'undefined' ? selectedMenu : '',
                 selectedSymptom: (typeof selectedSymptom !== 'undefined' && selectedSymptom && selectedSymptom.length > 0) ? selectedSymptom : null,
-                irradiationsCount: typeof irradiationsCount !== 'undefined' ? irradiationsCount : '',
+                optiCount: typeof optiCount !== 'undefined' ? optiCount : '',
                 dates: (typeof selectedFullDate !== 'undefined' && selectedFullDate) ? [selectedFullDate] : null,
                 message: document.getElementById('message').value.trim()
             };
@@ -2292,7 +2247,7 @@ textarea {
 
             const durationMin =
                 (typeof selectedMenuTime === 'number' ? selectedMenuTime : 0) +
-                (typeof selectedirradiationsTime === 'number' ? selectedirradiationsTime : 0) +
+                (typeof selectedoptiTime === 'number' ? selectedoptiTime : 0) +
                 (typeof selectedVisitTime === 'number' ? selectedVisitTime : 0) || 60;
 
             /* ▼▼ 追加：SECRET と 冪等性キーを同梱 ▼▼ */
@@ -2302,7 +2257,7 @@ textarea {
                 phone: formData.phone,
                 selectedMenu: formData.selectedMenu,
                 selectedSymptom: formData.selectedSymptom,
-                irradiationsCount: formData.irradiationsCount,
+                optiCount: formData.optiCount,
                 message: formData.message,
                 startIso,
                 durationMin,
@@ -2466,10 +2421,10 @@ textarea {
                     const slotEnd = new Date(slotStart);
                     let menuDuration = selectedMenuTime || 10;
                     let visitDuration = selectedVisitTime || 0;
-                    let irradiationsDuration = selectedirradiationsTime || 0;
+                    let optiDuration = selectedoptiTime || 0;
 
                     // メニュー時間と訪問回数の時間を合計して、終了時間を設定
-                    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+                    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + optiDuration);
 
                     // 終了時間が翌日 (0時以降) になる場合は✕に設定
                     if (slotEnd.getDate() !== slotStart.getDate()) {
