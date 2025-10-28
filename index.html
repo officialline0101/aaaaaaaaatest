@@ -1741,53 +1741,51 @@ function initPicker(baseId, dateDays = 120) {
             updateDisplayInfo();
         }
 
+function submitForm() {
+    const selectedSymptom = formattedSymptom; // ← ここが配列または文字列の場合に対応
+    const formData = {
+        visitCount: visitCount,
+        selectedSymptom: Array.isArray(selectedSymptom)
+            ? selectedSymptom.join('\n')  // 改行区切りで結合
+            : selectedSymptom,            // 文字列ならそのまま
+        irradiationsCount: irradiationsCount,
+        dates: [
+            document.getElementById('date1').value,
+            document.getElementById('date2').value,
+            document.getElementById('date3').value
+        ],
+        message: document.getElementById('message').value.trim()
+    };
 
-        function submitForm() {
-            // selectedSymptomが配列の場合は文字列に変換
-            const formattedSymptom = Array.isArray(selectedSymptom)
-                ? selectedSymptom.join(' / ')
-                : selectedSymptom;
+    const dateWithoutDayOfWeek = formData.dates[0].replace(/（.*?）/, '');
 
-            const formData = {
-                visitCount: visitCount,
-                selectedSymptom: formattedSymptom,
-                irradiationsCount: irradiationsCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value,
-                    document.getElementById('date3').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
 
-            const dateWithoutDayOfWeek = formData.dates[0].replace(/（.*?）/, '');
+    if (!formData.dates[0]) {
+        alert('第1希望日※必須を選択してください。');
+        return;
+    }
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
+    // メッセージ部分を条件付きで作成
+    let messageText = `【予約フォーム】\n《ご性別》\n⇒${formData.visitCount}\n《メニュー》\n⇒${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n⇒${formatDate(formData.dates[0])}\n\n《第二希望日》\n⇒${formatDate(formData.dates[1])}\n\n《第三希望日》\n⇒${formatDate(formData.dates[2])}`;
+    
+    if (formData.message) {
+        messageText += `\n\n《メッセージ》\n⇒${formData.message}`;
+    }
 
-            if (!formData.dates[0]) {
-                alert('第1希望日※必須を選択してください。');
-                return;
-            }
-
-            // メッセージ部分を条件付きで作成
-            let messageText = `【予約フォーム】\nご性別：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}`;
-            if (formData.message) {
-                messageText += `\nメッセージ：${formData.message}`;
-            }
-
-            liff.sendMessages([{
-                type: 'text',
-                text: messageText
-            }]).then(() => {
-                alert('当日キャンセルはくれぐれもお控えくださいますようお願いいたします。\nキャンセル料支払い対象となります');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    liff.sendMessages([{
+        type: 'text',
+        text: messageText
+    }]).then(() => {
+        alert('当日キャンセルはくれぐれもお控えくださいますようお願いいたします。\nキャンセル料支払い対象となります');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
