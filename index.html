@@ -1988,48 +1988,65 @@
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                visitCount: visitCount,
-                selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
-                irradiationsCount: irradiationsCount,
-                dates: [
-                    document.getElementById('date1').value.trim(),
-                    document.getElementById('date2').value.trim(),
-                    document.getElementById('date3').value.trim()
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+  const formData = {
+    name: document.getElementById('name').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    visitCount: visitCount,
+    selectedMenu: selectedMenu,
+    selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+    irradiationsCount: irradiationsCount,
+    dates: [
+      document.getElementById('date1').value.trim(),
+      document.getElementById('date2').value.trim(),
+      document.getElementById('date3').value.trim()
+    ],
+    message: document.getElementById('message').value.trim()
+  };
 
-            // バリデーション
-            if (!formData.name) { alert('お名前を入力してください。'); return; }
-            if (!formData.phone) { alert('電話番号を入力してください。'); return; }
-            if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
+  // バリデーション
+  if (!formData.name) { alert('お名前を入力してください。'); return; }
+  if (!formData.phone) { alert('電話番号を入力してください。'); return; }
+  if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
 
-            // ★ ここを追加：希望日時の必須チェック
-            const [d1, d2, d3] = formData.dates;
-            if (!d1) { alert('《第一希望日》を選択してください。'); return; }
-            if (!d2) { alert('《第二希望日》を選択してください。'); return; }
-            // 第三希望も必須にしたい場合は↓を有効化
-            // if (!d3) { alert('《第三希望日》を選択してください。'); return; }
+  // 必須日付チェック（第1/第2）
+  const [d1, d2] = formData.dates;
+  if (!d1) { alert('《第一希望日》を選択してください。'); return; }
+  if (!d2) { alert('《第二希望日》を選択してください。'); return; }
 
-            // メニューを1行ずつ改行で整形
-            const selectedSymptomText = formData.selectedSymptom
-                ? formData.selectedSymptom.map(item => `⇒${item.name}`).join('\n')
-                : 'メニュー未選択';
+  // メニューは1行1項目（⇒で表示）
+  const selectedSymptomText = formData.selectedSymptom
+    ? formData.selectedSymptom.map(item => `⇒${item.name ?? item.label ?? item}`).join('\n')
+    : '⇒メニュー未選択';
 
-            const irradiationsText = formData.irradiationsCount || 'なし';
+  // ★ irradiations を「・」で箇条書き＆改行
+  const toBulletLines = (value, noneText = 'なし') => {
+    if (value == null) return noneText;
 
-            // 空なら「未選択」として表示
-            const fmtOrNA = v => v ? formatDate(v) : '未選択';
+    let parts = [];
+    if (Array.isArray(value)) {
+      parts = value.map(v => {
+        if (v == null) return '';
+        if (typeof v === 'string' || typeof v === 'number') return String(v).trim();
+        return (v.name ?? v.label ?? v.title ?? String(v)).trim();
+      }).filter(Boolean);
+    } else if (typeof value === 'string') {
+      parts = value.split(/[,、\n]+/).map(s => s.trim()).filter(Boolean);
+    } else {
+      parts = [String(value)];
+    }
 
-            liff.sendMessages([{
-                type: 'text',
-                text:
-                    `【予約フォーム】
+    return parts.length ? parts.map(s => `・${s}`).join('\n') : noneText;
+  };
+
+  const irradiationsText = toBulletLines(formData.irradiationsCount, 'なし');
+
+  const fmtOrNA = v => v ? formatDate(v) : '未選択';
+
+  liff.sendMessages([{
+    type: 'text',
+    text:
+`【予約フォーム】
 《お名前》：${formData.name}
 《電話番号》：${formData.phone}
 《ご来店回数》：${formData.visitCount}
@@ -2039,7 +2056,9 @@
 
 《メニュー》
 ${selectedSymptomText}
-⇒${irradiationsText}
+
+《照射》
+${irradiationsText}
 
 【希望日時】
 《第一希望日》
@@ -2053,13 +2072,13 @@ ${fmtOrNA(formData.dates[2])}
 
 メッセージ
 ⇒${formData.message}`
-            }]).then(() => {
-                alert('当日キャンセルは無いようにお願いいたします。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+  }]).then(() => {
+    alert('当日キャンセルは無いようにお願いいたします。');
+    liff.closeWindow();
+  }).catch((err) => {
+    console.error('メッセージの送信に失敗しました', err);
+  });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
