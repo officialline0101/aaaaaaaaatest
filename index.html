@@ -800,9 +800,11 @@
   opacity: 0.5;
   pointer-events: none; /* クリック無効にしておく（選べない） */
 }
+
+/* menuLabel を常時表示（もしどこかで消されても上書き） */
+#menuLabel { display: block !important; visibility: visible !important; }
     </style>
 </head>
-
 
 <body>
     <div class="container">
@@ -987,17 +989,6 @@
   </div>
 </div>
 
-<!-- 第三希望日時 -->
-<div class="labelueni">第三希望日時<span class="required">必須</span></div>
-<div class="datetime-wrapper" style="text-align: center;">
-  <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
-  <input type="hidden" id="date3" name="date3">
-  <div class="dt-grid">
-    <select id="date3_day" class="datetime-input" aria-label="日付を選択"></select>
-    <select id="date3_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
-  </div>
-</div>
-
         <div class="labelueni">メッセージ<br>（質問等お気軽にご記入ください）</div>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
@@ -1005,6 +996,8 @@
         <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
 
         <button class="submit-button" onclick="submitForm()"><strong>予約を行う</strong></button>
+        <div class="info-textmemo" style="font-size:12px; text-align:center;">空き状況を確認の上、折り返しこちらからご連絡いたします。</div>
+
         <div class="title-with-image">
             <img src="https://www.dropbox.com/scl/fi/fc7hydgsaesylhxxo0qc0/_.png?rlkey=nudq0llox55v0n4xrpedv9p9i&st=h4wvxree&raw=1"
                 alt="ケセラセラロゴ" class="logo-image" />
@@ -1025,7 +1018,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: '2006754667-4pj2eQOW'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -1149,6 +1142,31 @@
             '【女性新規トライアルメニュー】'
         ];
 
+// ---- 日時ブロックの表示/非表示をまとめて切り替える ----
+function setDatetimeVisibility(show) {
+  const wrap1 = document.querySelector('#placeholder1')?.closest('.datetime-wrapper');
+  const wrap2 = document.querySelector('#placeholder2')?.closest('.datetime-wrapper');
+
+  // ラベルは「各 datetime-wrapper の直前の要素」を想定
+  const label1 = wrap1 ? wrap1.previousElementSibling : null; // 「希望日時」
+  const label2 = wrap2 ? wrap2.previousElementSibling : null; // 「第二希望日時」
+
+  [wrap1, wrap2, label1, label2].forEach(el => {
+    if (!el) return;
+    el.style.display = show ? '' : 'none';
+  });
+}
+
+// 初期状態：日時ブロックは非表示、menuLabelは確実に表示
+document.addEventListener('DOMContentLoaded', () => {
+  setDatetimeVisibility(false);
+  const menuLabel = document.getElementById('menuLabel');
+  if (menuLabel) {
+    menuLabel.style.display = '';
+    menuLabel.classList?.remove('hidden');
+  }
+});
+
         // ボタンを取得し非表示にする
         const menuButtons = document.querySelectorAll('#menuSections button');
         menuButtons.forEach((button, index) => {
@@ -1195,12 +1213,10 @@ function updateDisplayInfo() {
   // ★希望日時1〜3の取得＆フォーマット表示
   const d1 = document.getElementById('date1').value;
   const d2 = document.getElementById('date2').value;
-  const d3 = document.getElementById('date3').value;
 
   const hopeDateTexts = [];
   if (d1) hopeDateTexts.push(`第1希望：${formatDateTime(d1)}`);
   if (d2) hopeDateTexts.push(`第2希望：${formatDateTime(d2)}`);
-  if (d3) hopeDateTexts.push(`第3希望：${formatDateTime(d3)}`);
 
   const hopeDatesText =
     hopeDateTexts.length > 0
@@ -1229,71 +1245,72 @@ function updateDisplayInfo() {
             button.addEventListener('click', updateDisplayInfo);
         });
 
+// 既存の ".symptoms button" 用 click リスナーをこのブロックに置き換え
+document.querySelectorAll('.symptoms button').forEach(button => {
+  button.addEventListener('click', () => {
+    // 選択状態の判定：active/selected クラス or selectedSymptom 配列の長さをざっくり見る
+    const hasAnySelection =
+      document.querySelector('.symptoms button.active, .symptoms button.selected') ||
+      (Array.isArray(selectedSymptom) && selectedSymptom.length > 0);
 
-        // 日付セルのクリックイベントで希望日時を更新
-        document.querySelectorAll('.symptoms button').forEach(button => {
-            button.addEventListener('click', () => {
-                const calendarContainer = document.querySelector('.calendar-container');
+    // 日時ブロックの表示/非表示
+    setDatetimeVisibility(!!hasAnySelection);
 
-                // 選択されたメニューがあればカレンダーを表示
-                if (document.querySelectorAll('.symptoms button.active').length > 0) {
-                    calendarContainer.style.display = 'block';
-                } else {
-                    // 選択が解除された場合、カレンダーを非表示
-                    calendarContainer.style.display = 'none';
-                }
-            });
-        });
+    // （既存挙動）カレンダー表示/非表示も維持
+    const calendarContainer = document.querySelector('.calendar-container');
+    if (calendarContainer) {
+      calendarContainer.style.display = hasAnySelection ? 'block' : 'none';
+    }
+  });
+});
 
         // 初期状態でカレンダーを非表示にする
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.calendar-container').style.display = 'none';
         });
 
-  const JP_WD = ['日','月','火','水','木','金','土'];
-  const pad = n => String(n).padStart(2,'0');
+const JP_WD = ['日','月','火','水','木','金','土'];
+const pad = n => String(n).padStart(2,'0');
 
-  function toISODateTimeLocal(dayStr, timeStr) {
-    if (!dayStr || !timeStr) return "";
-    return `${dayStr}T${timeStr}`;
+function toISODateTimeLocal(dayStr, timeStr) {
+  if (!dayStr || !timeStr) return "";
+  return `${dayStr}T${timeStr}`;
+}
+
+// 日付セレクト：今日から 'days' 日ぶんの候補を作る（★月曜スキップを削除）
+function buildDateOptions(selectEl, days = 120, startDate = new Date()) {
+  const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
+
+  for (let i = 0; i < days; i++) {
+    const wd = d.getDay(); // 0=日曜 … 6=土曜
+
+    // ★スキップ条件削除（月曜も表示）
+    const y = d.getFullYear();
+    const m = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const value = `${y}-${m}-${day}`;
+    const label = `${y}/${m}/${day}（${JP_WD[wd]}）`;
+
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = label;
+    selectEl.appendChild(opt);
+
+    d.setDate(d.getDate() + 1);
   }
+}
 
-  // 日付セレクト：今日から 'days' 日ぶんの候補を作る（月曜・火曜は除外）
-  function buildDateOptions(selectEl, days = 120, startDate = new Date()) {
-    const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-    selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
-
-    for (let i = 0; i < days; i++) {
-      const wd = d.getDay(); // 0=日曜 … 6=土曜
-
-      // ★月曜(1)と火曜(2)はスキップ
-      if (wd !== 1 && wd !== 2) {
-        const y = d.getFullYear();
-        const m = pad(d.getMonth() + 1);
-        const day = pad(d.getDate());
-        const value = `${y}-${m}-${day}`;
-        const label = `${y}/${m}/${day}（${JP_WD[wd]}）`;
-
-        const opt = document.createElement('option');
-        opt.value = value;
-        opt.textContent = label;
-        selectEl.appendChild(opt);
-      }
-
-      d.setDate(d.getDate() + 1);
-    }
-  }
-
-  // 曜日ごとの営業時間設定（0=日曜, 1=月曜, …, 6=土曜）
-  const WEEKLY_HOURS = {
-    0: { start: 10, end: 16 }, // 日曜 10:00〜16:30
-    1: { start: 10, end: 18 }, // 月曜 10:00〜18:30
-    2: { start: 10, end: 18 }, // 火曜 10:00〜18:30
-    3: { start: 10, end: 18 }, // 水曜
-    4: { start: 10, end: 18 }, // 木曜
-    5: { start: 10, end: 18 }, // 金曜
-    6: { start: 10, end: 16 }  // 土曜 10:00〜16:30
-  };
+// ★全曜日共通で 11:00〜19:00（19:30なし）
+const WEEKLY_HOURS = {
+  0: { start: 11, end: 19 }, // 日曜
+  1: { start: 11, end: 19 }, // 月曜
+  2: { start: 11, end: 19 }, // 火曜
+  3: { start: 11, end: 19 }, // 水曜
+  4: { start: 11, end: 19 }, // 木曜
+  5: { start: 11, end: 19 }, // 金曜
+  6: { start: 11, end: 19 }  // 土曜
+};
 
 // 指定曜日の12:00〜の休憩帯を除外（上限を含む）
 function isBlockedTime(weekday, h, m) {
@@ -1312,73 +1329,69 @@ function isBlockedTime(weekday, h, m) {
   return false;
 }
 
-  // 時間セレクト生成（曜日ごと）
-  function buildHalfHourOptions(selectEl, weekday) {
-    selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
+// 時間セレクト生成
+function buildHalfHourOptions(selectEl, weekday) {
+  selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
 
-    // 月曜・火曜は日付自体を出していないが、万一選ばれた場合は時間を出さない
-    if (weekday === 1 || weekday === 2) return;
+  const { start, end } = WEEKLY_HOURS[weekday] || { start: 0, end: 23 };
 
-    const { start, end } = WEEKLY_HOURS[weekday] || { start: 0, end: 23 };
+  for (let h = start; h <= end; h++) {
+    for (const m of [0, 30]) {
+      // ★休憩帯スキップ
+      if (isBlockedTime(weekday, h, m)) continue;
 
-    for (let h = start; h <= end; h++) {
-      for (const m of [0, 30]) {
-        // ★休憩帯はスキップ（選択肢に出さない）
-        if (isBlockedTime(weekday, h, m)) continue;
+      // ★19:30は不要なので除外（end=19でm=30は出さない）
+      if (h === 19 && m === 30) continue;
 
-        const hh = pad(h);
-        const mm = pad(m);
-        const opt = document.createElement('option');
-        opt.value = `${hh}:${mm}`;
-        opt.textContent = `${hh}:${mm}`;
-        selectEl.appendChild(opt);
-      }
+      const hh = pad(h);
+      const mm = pad(m);
+      const opt = document.createElement('option');
+      opt.value = `${hh}:${mm}`;
+      opt.textContent = `${hh}:${mm}`;
+      selectEl.appendChild(opt);
     }
   }
+}
 
-  // 既存の updateHiddenAndPlaceholder にこの1行を追加（表示用更新）
-  function updateHiddenAndPlaceholder(baseId) {
-    const day = document.getElementById(`${baseId}_day`).value;
-    const time = document.getElementById(`${baseId}_time`).value;
-    const hidden = document.getElementById(baseId);
-    const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
+// 表示更新など（変更なし）
+function updateHiddenAndPlaceholder(baseId) {
+  const day = document.getElementById(`${baseId}_day`).value;
+  const time = document.getElementById(`${baseId}_time`).value;
+  const hidden = document.getElementById(baseId);
+  const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
 
-    hidden.value = day && time ? `${day}T${time}` : "";
+  hidden.value = day && time ? `${day}T${time}` : "";
 
-    if (ph) ph.style.display = hidden.value ? 'none' : '';
+  if (ph) ph.style.display = hidden.value ? 'none' : '';
 
-    // ★表示用パネルを即更新（存在すれば）
-    if (typeof updateDisplayInfo === 'function') updateDisplayInfo();
+  if (typeof updateDisplayInfo === 'function') updateDisplayInfo();
+}
+
+function restoreIfAny(baseId) {
+  const hidden = document.getElementById(baseId);
+  if (!hidden.value) return;
+  const [d, t] = hidden.value.split('T');
+  const daySel = document.getElementById(`${baseId}_day`);
+  const timeSel = document.getElementById(`${baseId}_time`);
+
+  if (d && ![...daySel.options].some(o => o.value === d)) {
+    const tmp = document.createElement('option');
+    tmp.value = d; tmp.textContent = d.replaceAll('-', '/') + '（選択日）';
+    daySel.insertBefore(tmp, daySel.options[1]);
   }
+  if (d) daySel.value = d;
 
-  // 既存 hidden の値（編集時）をセレクトへ復元。日付は範囲外なら一時的に先頭へ追加
-  function restoreIfAny(baseId) {
-    const hidden = document.getElementById(baseId);
-    if (!hidden.value) return;
-    const [d, t] = hidden.value.split('T');
-    const daySel = document.getElementById(`${baseId}_day`);
-    const timeSel = document.getElementById(`${baseId}_time`);
-
-    if (d && ![...daySel.options].some(o => o.value === d)) {
-      const tmp = document.createElement('option');
-      tmp.value = d; tmp.textContent = d.replaceAll('-', '/') + '（選択日）';
-      daySel.insertBefore(tmp, daySel.options[1]); // 先頭のplaceholderの次に追加
+  if (t) {
+    const t5 = t.slice(0,5);
+    if (d) {
+      const wd = new Date(d).getDay();
+      buildHalfHourOptions(timeSel, wd);
     }
-    if (d) daySel.value = d;
-
-    // 時間はブロック帯の場合、復元されない（選び直しになる）
-    if (t) {
-      const t5 = t.slice(0,5);
-      // いったん時間候補を生成してから復元を試みる
-      if (d) {
-        const wd = new Date(d).getDay();
-        buildHalfHourOptions(timeSel, wd);
-      }
-      if ([...timeSel.options].some(o => o.value === t5)) {
-        timeSel.value = t5;
-      }
+    if ([...timeSel.options].some(o => o.value === t5)) {
+      timeSel.value = t5;
     }
   }
+}
 
 function initPicker(baseId, dateDays = 120) {
   const daySel = document.getElementById(`${baseId}_day`);
@@ -1386,7 +1399,6 @@ function initPicker(baseId, dateDays = 120) {
 
   buildDateOptions(daySel, dateDays);
 
-  // 初期状態：まだ日付を選んでいないのでグレー＆非活性風
   timeSel.innerHTML = '<option value="" selected hidden>時間を選択</option>';
   timeSel.classList.add('time-disabled');
 
@@ -1396,10 +1408,8 @@ function initPicker(baseId, dateDays = 120) {
       const d = new Date(dateVal);
       const wd = d.getDay();
       buildHalfHourOptions(timeSel, wd);
-      // 日付を選んだら有効化
       timeSel.classList.remove('time-disabled');
     } else {
-      // 日付を未選択に戻したら再びグレー＆非活性風
       timeSel.innerHTML = '<option value="" selected hidden>時間を選択</option>';
       timeSel.classList.add('time-disabled');
     }
@@ -1412,8 +1422,9 @@ function initPicker(baseId, dateDays = 120) {
   updateHiddenAndPlaceholder(baseId);
 }
 
-  // 3つ分を初期化
-  ['date1','date2','date3'].forEach(id => initPicker(id, 120));
+// 3つ分を初期化
+['date1','date2'].forEach(id => initPicker(id, 120));
+
 
         function selectSymptom(button, treatmentId) {
             // 選択された日時をリセット
@@ -1741,51 +1752,52 @@ function initPicker(baseId, dateDays = 120) {
             updateDisplayInfo();
         }
 
-function submitForm() {
-    const selectedSymptom = formattedSymptom; // ← ここが配列または文字列の場合に対応
-    const formData = {
-        visitCount: visitCount,
-        selectedSymptom: Array.isArray(selectedSymptom)
-            ? selectedSymptom.join('\n')  // 改行区切りで結合
-            : selectedSymptom,            // 文字列ならそのまま
-        irradiationsCount: irradiationsCount,
-        dates: [
-            document.getElementById('date1').value,
-            document.getElementById('date2').value,
-            document.getElementById('date3').value
-        ],
-        message: document.getElementById('message').value.trim()
-    };
 
-    const dateWithoutDayOfWeek = formData.dates[0].replace(/（.*?）/, '');
+        function submitForm() {
+            // selectedSymptomが配列の場合は文字列に変換
+            const formattedSymptom = Array.isArray(selectedSymptom)
+                ? selectedSymptom.join(' / ')
+                : selectedSymptom;
 
-    if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
-        return;
-    }
+            const formData = {
+                visitCount: visitCount,
+                selectedSymptom: formattedSymptom,
+                irradiationsCount: irradiationsCount,
+                dates: [
+                    document.getElementById('date1').value,
+                    document.getElementById('date2').value
+                ],
+                message: document.getElementById('message').value.trim()
+            };
 
-    if (!formData.dates[0]) {
-        alert('第1希望日※必須を選択してください。');
-        return;
-    }
+            const dateWithoutDayOfWeek = formData.dates[0].replace(/（.*?）/, '');
 
-    // メッセージ部分を条件付きで作成
-    let messageText = `【予約フォーム】\n《ご性別》\n⇒${formData.visitCount}\n《メニュー》\n⇒${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n⇒${formatDate(formData.dates[0])}\n\n《第二希望日》\n⇒${formatDate(formData.dates[1])}\n\n《第三希望日》\n⇒${formatDate(formData.dates[2])}`;
-    
-    if (formData.message) {
-        messageText += `\n\n《メッセージ》\n⇒${formData.message}`;
-    }
+            if (!formData.selectedSymptom) {
+                alert('メニューを選択してください。');
+                return;
+            }
 
-    liff.sendMessages([{
-        type: 'text',
-        text: messageText
-    }]).then(() => {
-        alert('当日キャンセルはくれぐれもお控えくださいますようお願いいたします。\nキャンセル料支払い対象となります');
-        liff.closeWindow();
-    }).catch((err) => {
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+            if (!formData.dates[0]) {
+                alert('第1希望日※必須を選択してください。');
+                return;
+            }
+
+            // メッセージ部分を条件付きで作成
+            let messageText = `【予約フォーム】\n《ご性別》\n⇒${formData.visitCount}\n《メニュー》\n⇒${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n⇒${formatDate(formData.dates[0])}\n\n《第二希望日》\n⇒${formatDate(formData.dates[1])}`;
+            if (formData.message) {
+                messageText += `\n\n《メッセージ》\n⇒${formData.message}`;
+            }
+
+            liff.sendMessages([{
+                type: 'text',
+                text: messageText
+            }]).then(() => {
+                alert('当日キャンセルはくれぐれもお控えくださいますようお願いいたします。\nキャンセル料支払い対象となります');
+                liff.closeWindow();
+            }).catch((err) => {
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
