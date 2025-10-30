@@ -688,7 +688,7 @@
         }
 
         .submit-button:hover {
-            background-color: #ffffff;
+            background-color: #272727;
         }
 
         @media (max-width: 768px) {
@@ -1142,7 +1142,7 @@
     </div>
 
     <div class="container">
-        <h1>予約フォームA<br>予約フォーム
+        <h1>予約フォームのみで予約<br>予約フォームA
         </h1>
         <!-- 追加するボタン -->
         <div class="repeat-booking-wrapper">
@@ -1435,14 +1435,8 @@ function hideSubmitOverlay() {
 function showFinalScreen() {
   const fs = document.getElementById('finalScreen');
   fs.style.display = 'flex';
-  try {
-    if (window.liff && liff.isInClient && liff.isInClient()) {
-      const btn = document.getElementById('closeLiffBtn');
-      btn.style.display = 'inline-flex';
-      btn.onclick = () => { try { liff.closeWindow(); } catch(e) {} };
-    }
-  } catch(e) {}
-  document.body.classList.add('locked'); // 完了後はずっとロック
+  // 完了後はずっとロック
+  document.body.classList.add('locked');
 }
 
 // 予約内容の要点をコピー（任意）
@@ -2294,7 +2288,7 @@ function copySummaryForUser() {
         }
 
         // ★GASのWebアプリURL（必ず /exec を使う）
-        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbzPHFSx9RQqKBEH04ivxxe-eReb6LQl45aMKYcfwnjJ6tTuJL5IaW0YZARDIDSrrN_K/exec';
+        const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycby9e7EEi86jqvZgOngVQuyVXWEM5fr4asvdzQUBOWUhaUjUZwCOH02DnzO4chRY35bA/exec';
 
         /* ▼▼ 追加：サーバと同じ合言葉（簡易署名の鍵） ▼▼
            ※公開ページに置くと閲覧者も読めます。実運用では中継サーバ等で秘匿がベター。 */
@@ -2447,7 +2441,7 @@ async function submitForm() {
     unlockAll();
     SUBMITTING = false;
     if (err && err.message && err.message !== 'val') {
-      alert('ご予約登録でエラーが発生しました：' + err.message);
+      alert('ご予約が埋まっていたためご予約できませんでした。別のお日にちを変更ください。');
     }
   }
 }
@@ -2472,7 +2466,7 @@ async function submitForm() {
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -2624,7 +2618,7 @@ async function submitForm() {
                                 overlapping++;
                             }
                         });
-                        if (overlapping >= 3) {
+                        if (overlapping >= 2) {
                             overLimit = true;
                             break;
                         }
@@ -2808,12 +2802,8 @@ async function submitForm() {
   <div class="box">
     <div class="title">送信が完了しました</div>
     <div class="msg">この画面を閉じてください。</div>
-    <div style="display:flex; gap:8px; justify-content:center;">
-      <button id="closeLiffBtn" class="btn-primary" style="display:none;">画面を閉じる</button>
-      <button class="btn-ghost" onclick="copySummaryForUser()"></button>
-    </div>
   </div>
-  </div>
+</div>
 </body>
 
 </html>
