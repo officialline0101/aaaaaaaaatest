@@ -688,7 +688,7 @@
         }
 
         .submit-button:hover {
-            background-color: #ffffff;
+            background-color: #272727;
         }
 
         @media (max-width: 768px) {
@@ -1095,6 +1095,40 @@
             border: 6px solid transparent;
             border-top-color: #d00;
         }
+
+  .submit-overlay, .final-screen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(255,255,255,0.92);
+    display: none; align-items: center; justify-content: center;
+    text-align: center; padding: 24px;
+  }
+  .submit-overlay .box, .final-screen .box {
+    max-width: 420px; width: 92%;
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 28px 24px;
+  }
+  .submit-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid #e5e7eb; border-top-color: #22c55e; border-radius: 50%;
+    margin: 0 auto 12px; animation: submitspin 0.9s linear infinite;
+  }
+  @keyframes submitspin { to { transform: rotate(360deg);} }
+  .submit-overlay .title { font-weight: 700; margin-bottom: 6px; }
+  .submit-overlay .msg   { color: #4b5563; font-size: 14px; }
+  .final-screen .title   { font-weight: 800; font-size: 20px; margin-bottom: 6px; }
+  .final-screen .msg     { color: #374151; line-height: 1.7; margin-bottom: 16px; }
+
+  .btn-primary, .btn-ghost {
+    appearance: none; border: 0; cursor: pointer;
+    padding: 10px 14px; border-radius: 10px; font-weight: 700;
+  }
+  .btn-primary { background:#22c55e; color:#fff; }
+  .btn-ghost  { background:#f3f4f6; color:#111827; }
+
+  /* 全タップ不可（overlay/完了画面は操作可に） */
+  body.locked * { pointer-events: none !important; }
+  body.locked .submit-overlay, body.locked .final-screen,
+  body.locked .submit-overlay * , body.locked .final-screen * { pointer-events: auto !important; }
     </style>
 </head>
 
@@ -1108,7 +1142,7 @@
     </div>
 
     <div class="container">
-        <h1>予約フォームA<br>予約フォーム
+        <h1>予約フォームのみで予約<br>予約フォームA
         </h1>
         <!-- 追加するボタン -->
         <div class="repeat-booking-wrapper">
@@ -1367,6 +1401,54 @@
         let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
+/* ✅ 送信フロー共通ユーティリティ（既存<script>内に追加） */
+let SUBMITTING = false;
+
+function lockAll() {
+  document.body.classList.add('locked');
+  document.querySelectorAll('button, input, select, textarea').forEach(el => {
+    el.setAttribute('data-prev-disabled', el.disabled ? '1' : '0');
+    el.disabled = true;
+  });
+}
+
+function unlockAll() {
+  document.body.classList.remove('locked');
+  document.querySelectorAll('button, input, select, textarea').forEach(el => {
+    const prev = el.getAttribute('data-prev-disabled');
+    if (prev === '0') el.disabled = false;
+    el.removeAttribute('data-prev-disabled');
+  });
+}
+
+function showSubmitOverlay(text = 'しばらくお待ちください。') {
+  const ov = document.getElementById('submitOverlay');
+  ov.querySelector('.msg').textContent = text;
+  ov.style.display = 'flex';
+}
+
+function hideSubmitOverlay() {
+  const ov = document.getElementById('submitOverlay');
+  ov.style.display = 'none';
+}
+
+function showFinalScreen() {
+  const fs = document.getElementById('finalScreen');
+  fs.style.display = 'flex';
+  // 完了後はずっとロック
+  document.body.classList.add('locked');
+}
+
+// 予約内容の要点をコピー（任意）
+function copySummaryForUser() {
+  const text = (document.getElementById('displayInfo')?.innerText || '').trim();
+  if (!text) return alert('コピーできる内容が見つかりませんでした。');
+  navigator.clipboard?.writeText(text).then(
+    () => alert('内容をコピーしました。'),
+    () => alert('コピーに失敗しました。')
+  );
+}
+
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
@@ -2249,121 +2331,120 @@
             if (typeof updateDisplayInfo === 'function') updateDisplayInfo();
         }
 
-        async function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                email: (document.getElementById('email').value || '').trim(),
-                visitCount: typeof visitCount !== 'undefined' ? visitCount : '',
-                selectedMenu: typeof selectedMenu !== 'undefined' ? selectedMenu : '',
-                selectedSymptom: (typeof selectedSymptom !== 'undefined' && selectedSymptom && selectedSymptom.length > 0) ? selectedSymptom : null,
-                optiCount: typeof optiCount !== 'undefined' ? optiCount : '',
-                dates: (typeof selectedFullDate !== 'undefined' && selectedFullDate) ? [selectedFullDate] : null,
-                message: document.getElementById('message').value.trim()
-            };
+/* ✅ 既存の submitForm をまるっと置換 */
+async function submitForm() {
+  // --- ここから：追加したい冒頭処理 ---
+  if (SUBMITTING) return;      // 二重タップ防止
+  SUBMITTING = true;
+  lockAll();                   // 全UIをタップ不可に
+  showSubmitOverlay();         // 「送信中…」表示
+  // --- ここまで：追加したい冒頭処理 ---
 
-            // 必須
-            if (!formData.name) { alert('お名前を入力してください。'); return; }
-            if (!formData.phone) { alert('電話番号を入力してください。'); return; }
+  try {
+    // ======== ここからはあなたの元の処理（バリデーション～payload作成） ========
+    const formData = {
+      name: document.getElementById('name').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      email: (document.getElementById('email').value || '').trim(),
+      visitCount: typeof visitCount !== 'undefined' ? visitCount : '',
+      selectedMenu: typeof selectedMenu !== 'undefined' ? selectedMenu : '',
+      selectedSymptom: (typeof selectedSymptom !== 'undefined' && selectedSymptom && selectedSymptom.length > 0) ? selectedSymptom : null,
+      optiCount: typeof optiCount !== 'undefined' ? optiCount : '',
+      dates: (typeof selectedFullDate !== 'undefined' && selectedFullDate) ? [selectedFullDate] : null,
+      message: document.getElementById('message').value.trim()
+    };
 
-            // 1組目・2組目を再構成して厳密一致確認
-            const email1 = normalizeEmail(buildEmailFromParts(''));
-            const email2 = normalizeEmail(buildEmailFromParts('2'));
+    if (!formData.name) { alert('お名前を入力してください。'); throw new Error('val'); }
+    if (!formData.phone) { alert('電話番号を入力してください。'); throw new Error('val'); }
 
-            if (!email1) { alert('メールアドレスを入力してください。'); return; }
-            if (!email2) { alert('確認用のメールアドレスを入力してください。'); return; }
-            if (email1 !== email2) {
-                alert('入力が一致していません。メールアドレスをもう一度ご確認ください。');
-                document.getElementById('emailLocal2').focus();
-                return;
-            }
+    const email1 = normalizeEmail(buildEmailFromParts(''));
+    const email2 = normalizeEmail(buildEmailFromParts('2'));
+    if (!email1) { alert('メールアドレスを入力してください。'); throw new Error('val'); }
+    if (!email2) { alert('確認用のメールアドレスを入力してください。'); throw new Error('val'); }
+    if (email1 !== email2) {
+      alert('入力が一致していません。メールアドレスをもう一度ご確認ください。');
+      document.getElementById('emailLocal2').focus();
+      throw new Error('val');
+    }
+    formData.email = email1;
+    document.getElementById('email').value = formData.email;
+    if (!isValidEmailStrict(formData.email)) {
+      document.getElementById('emailError').style.display = '';
+      alert('メールアドレスの形式が正しくありません。例：example@example.com');
+      document.getElementById('emailLocal').focus();
+      throw new Error('val');
+    } else {
+      document.getElementById('emailError').style.display = 'none';
+    }
 
-            // 隠しフィールドを一致したメールで同期
-            formData.email = email1;
-            document.getElementById('email').value = formData.email;
+    if (!formData.selectedSymptom) { alert('メニューを選択してください。'); throw new Error('val'); }
+    if (!formData.dates) { alert('希望日時を選択してください。'); throw new Error('val'); }
 
-            // 形式チェック
-            if (!isValidEmailStrict(formData.email)) {
-                document.getElementById('emailError').style.display = '';
-                alert('メールアドレスの形式が正しくありません。例：example@example.com');
-                // 1組目をフォーカス
-                document.getElementById('emailLocal').focus();
-                return;
-            } else {
-                document.getElementById('emailError').style.display = 'none';
-            }
+    const startIso = jpToISO(formData.dates[0]);
+    if (!startIso) { alert('日時の形式が不正です。'); throw new Error('val'); }
 
-            if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
-            if (!formData.dates) { alert('希望日時を選択してください。'); return; }
+    const durationMin =
+      (typeof selectedMenuTime === 'number' ? selectedMenuTime : 0) +
+      (typeof selectedoptiTime === 'number' ? selectedoptiTime : 0) +
+      (typeof selectedVisitTime === 'number' ? selectedVisitTime : 0) || 60;
 
-            const startIso = jpToISO(formData.dates[0]);
-            if (!startIso) { alert('日時の形式が不正です。'); return; }
+    const utm = parseUtm();
+    const metaReferrer = document.referrer || '';
+    const metaUA = navigator.userAgent || '';
 
-            const durationMin =
-                (typeof selectedMenuTime === 'number' ? selectedMenuTime : 0) +
-                (typeof selectedoptiTime === 'number' ? selectedoptiTime : 0) +
-                (typeof selectedVisitTime === 'number' ? selectedVisitTime : 0) || 60;
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      selectedMenu: formData.selectedMenu,
+      selectedSymptom: formData.selectedSymptom,
+      optiCount: formData.optiCount,
+      message: formData.message,
+      startIso,
+      durationMin,
+      secret: SECURITY_SECRET,
+      requestId: genRequestId(),
+      referrer: metaReferrer,
+      userAgent: metaUA,
+      utmSource: utm.utmSource,
+      utmMedium: utm.utmMedium,
+      utmCampaign: utm.utmCampaign
+    };
 
-            // 既存：payload 作成直前に追加（差分）
-            const utm = parseUtm();                         // ← 追加
-            const metaReferrer = document.referrer || '';   // ← 追加
-            const metaUA = navigator.userAgent || '';       // ← 追加
+    const res = await fetch(WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
 
-            /* ▼▼ 追加：SECRET と 冪等性キーを同梱 ▼▼ */
-            const payload = {
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone,
-                selectedMenu: formData.selectedMenu,
-                selectedSymptom: formData.selectedSymptom,
-                optiCount: formData.optiCount,
-                message: formData.message,
-                startIso,
-                durationMin,
-                secret: SECURITY_SECRET,        // ←サーバ側の SECURITY_SECRET と一致必須
-                requestId: genRequestId(),      // ←二重送信防止（サーバ側で検証）
+    const text = await res.text();
+    let json = null; try { json = JSON.parse(text); } catch(_) {}
 
-                // ▼▼ 追加：媒体推定用メタ情報 ▼▼
-                referrer: metaReferrer,         // 例: https://liff.line.me/... や https://instagram.com/...
-                userAgent: metaUA,              // 例: "Line/...", "Instagram ...", "Mozilla/..."
-                utmSource: utm.utmSource,       // 例: google, google_maps, line, instagram など
-                utmMedium: utm.utmMedium,       // 例: cpc, organic, liff, social など
-                utmCampaign: utm.utmCampaign    // 任意のキャンペーン名
-            };
+    if (!res.ok || !json || !json.ok) {
+      const msg = (json && json.error) ? json.error
+        : (res.status === 302 || text.includes('ServiceLogin')) ? '認証が必要なURL（/dev等）です'
+        : `HTTP ${res.status}`;
+      throw new Error(msg);
+    }
 
-            try {
-                // ★ポイント：application/jsonではなく text/plain で送る（プリフライト回避）
-                const res = await fetch(WEBAPP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
+    // ======== ここまであなたの元の処理 ========
 
-                const contentType = res.headers.get('content-type') || '';
-                const text = await res.text();
+    // --- 成功時：ローディング→完了画面、以後はずっとロック ---
+    hideSubmitOverlay();
+    showFinalScreen();
+    // SUBMITTINGはtrueのまま（再送不可）
 
-                // 受け取った本文をJSONとして頑張って解釈（HTMLが来てもログに残す）
-                let json = null;
-                try { json = JSON.parse(text); } catch (_) { }
-
-                // デバッグログ
-                console.log('[reservation] status:', res.status, 'ct:', contentType);
-                console.log('[reservation] body preview:', text?.slice(0, 300));
-
-                if (!res.ok || !json || !json.ok) {
-                    const msg = (json && json.error) ? json.error
-                        : (res.status === 302 || text.includes('ServiceLogin')) ? '認証が必要なURL（/dev等）です'
-                            : `HTTP ${res.status}`;
-                    alert('ご予約登録でエラーが発生しました：' + msg);
-                    return;
-                }
-
-                alert('ご予約ありがとうございます！送信されました。');
-            } catch (err) {
-                console.error(err);
-                alert('通信エラー：ネットワークまたはCORSの可能性があります。');
-            }
-        }
+  } catch (err) {
+    // バリデーションエラーや通信エラー時は元に戻す
+    console.error(err);
+    hideSubmitOverlay();
+    unlockAll();
+    SUBMITTING = false;
+    if (err && err.message && err.message !== 'val') {
+      alert('ご予約が埋まっているか、すでにご予約されております。');
+    }
+  }
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
@@ -2385,7 +2466,7 @@
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbyMCpwPdMBLFe3VETd_2vY9MQAhvCJLWehDMtOGYTsbf5Y0OkapnazmB1FMBJN4i-YK/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -2537,7 +2618,7 @@
                                 overlapping++;
                             }
                         });
-                        if (overlapping >= 3) {
+                        if (overlapping >= 2) {
                             overLimit = true;
                             break;
                         }
@@ -2709,6 +2790,20 @@
             document.getElementById('loadingSpinner').style.display = 'none';
         }
     </script>
+<div id="submitOverlay" class="submit-overlay" aria-live="polite" aria-busy="true">
+  <div class="box">
+    <div class="submit-spinner"></div>
+    <div class="title">送信中です…</div>
+    <div class="msg">しばらくお待ちください。</div>
+  </div>
+</div>
+
+<div id="finalScreen" class="final-screen" role="dialog" aria-modal="true">
+  <div class="box">
+    <div class="title">送信が完了しました</div>
+    <div class="msg">この画面を閉じてください。</div>
+  </div>
+</div>
 </body>
 
 </html>
