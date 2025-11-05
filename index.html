@@ -93,7 +93,16 @@
       <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">まつげパーマ</button>
       <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">美眉スタイリング</button>
       <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">顔タイプ診断×マツパ&眉Wax</button>
-      <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">W診断(顔タイプ,4タイプカラー) <br>×<br> マツパ&眉Wax＆メイク</button>
+
+      <!-- ▼ 表示は改行、送信値は1行で保持（data-value） -->
+      <button
+        type="button"
+        onclick="selectSingle('eyeBrowMenuGroup', this)"
+        data-value="W診断(顔タイプ,4タイプカラー) × マツパ&眉Wax＆メイク"
+      >
+        W診断(顔タイプ,4タイプカラー) <br>×<br> マツパ&眉Wax＆メイク
+      </button>
+      <!-- ▲ -->
     </div>
 
     <!-- ⑤ まつ毛 オフ -->
@@ -102,13 +111,31 @@
       <button type="button" onclick="selectSingle('lashOffGroup', this)">なし（リペア）</button>
       <button type="button" onclick="selectSingle('lashOffGroup', this)">当店 ¥550（15分）</button>
       <button type="button" onclick="selectSingle('lashOffGroup', this)">他店 ¥1,100（15分）</button>
-      <button type="button" onclick="selectSingle('lashOffGroup', this)">LED/バインド/ボリューム ¥1,650（30分）</button>
+
+      <!-- ▼ 改行表示 + data-value -->
+      <button
+        type="button"
+        onclick="selectSingle('lashOffGroup', this)"
+        data-value="LED/バインド/ボリューム ¥1,650（30分）"
+      >
+        LED/バインド/ボリューム<br> ¥1,650（30分）
+      </button>
+      <!-- ▲ -->
     </div>
+    <div class="labelContent">※料金は現行の区分けで設定しています（ご希望で<strong>一律¥1,100</strong>にも変更可能）。</div>
 
     <!-- ⑥ まつ毛 オプション -->
     <div class="label">まつ毛 オプション（任意）</div>
     <div class="irradiations" id="lashOptionGroup">
-      <button type="button" onclick="toggleMulti(this)">マスカラオフ＋アイシャンプー ¥1,100（15分）</button>
+      <!-- ▼ 改行表示 + data-value -->
+      <button
+        type="button"
+        onclick="toggleMulti(this)"
+        data-value="マスカラオフ＋アイシャンプー ¥1,100（15分）"
+      >
+        マスカラオフ＋アイシャンプー<br> ¥1,100（15分）
+      </button>
+      <!-- ▲ -->
       <button type="button" onclick="toggleMulti(this)">アイパック</button>
     </div>
 
@@ -163,7 +190,7 @@
     </div>
     <div class="labelContent">※「亀裂補強」「長さ出し」を選択された方は、<strong>備考欄に本数</strong>をご記入ください。</div>
 
-    <!-- ⑪ フットメニュー（任意） → 元フォームどおり維持 -->
+    <!-- ⑪ フットメニュー（任意） -->
     <div class="label">フットメニュー<span class="required">必須</span></div>
     <div class="symptoms" id="footMenuGroup">
       <button type="button" onclick="selectSingle('footMenuGroup', this)">ワンカラー</button>
@@ -245,6 +272,7 @@
     // ====== 初期化 ======
     document.addEventListener('DOMContentLoaded', function () {
       liff.init({ liffId: '2005254357-zKma9BZk' }).catch(console.error);
+
       const savedName = localStorage.getItem('name');
       const savedPhone = localStorage.getItem('phone');
       if (savedName) document.getElementById('name').value = savedName;
@@ -259,15 +287,39 @@
         el && el.addEventListener('input', updateDisplayInfo);
         el && el.addEventListener('change', updateDisplayInfo);
       });
+
+      updateDisplayInfo();
     });
 
-    function saveInput(id){ localStorage.setItem(id, document.getElementById(id).value); updateDisplayInfo(); }
+    function saveInput(id){
+      localStorage.setItem(id, document.getElementById(id).value);
+      updateDisplayInfo();
+    }
 
     // ====== 単一/複数選択 ======
-    function selectSingle(groupId, btn){ const group = document.getElementById(groupId); group.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateDisplayInfo(); }
-    function toggleMulti(btn){ btn.classList.toggle('active'); updateDisplayInfo(); }
-    function getSingle(groupId){ const active = document.querySelector(`#${groupId} button.active`); return active ? active.innerText.trim() : ''; }
-    function getMultiTexts(groupId){ return Array.from(document.querySelectorAll(`#${groupId} button.active`)).map(b => b.innerText.trim()); }
+    function selectSingle(groupId, btn){
+      const group = document.getElementById(groupId);
+      group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateDisplayInfo();
+    }
+    function toggleMulti(btn){
+      btn.classList.toggle('active');
+      updateDisplayInfo();
+    }
+
+    // 表示は <br> を使ってOK。送信用ラベルは data-value を優先し、なければ改行→スペースに正規化。
+    function labelOf(btn){
+      const raw = btn.dataset.value ?? btn.textContent;
+      return raw.replace(/\s*\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
+    }
+    function getSingle(groupId){
+      const active = document.querySelector(`#${groupId} button.active`);
+      return active ? labelOf(active) : '';
+    }
+    function getMultiTexts(groupId){
+      return Array.from(document.querySelectorAll(`#${groupId} button.active`)).map(labelOf);
+    }
 
     // ====== 日時ピッカー ======
     const JP_WD = ['日','月','火','水','木','金','土'];
@@ -293,23 +345,79 @@
       const d = new Date(dateStr + 'T00:00');
       const dow = d.getDay();
       if(dow===2){ // 火曜定休
-        const opt = document.createElement('option'); opt.textContent='定休日のため選択不可'; opt.disabled=true; selectEl.appendChild(opt); selectEl.disabled=true; return; }
+        const opt = document.createElement('option');
+        opt.textContent='定休日のため選択不可';
+        opt.disabled=true;
+        selectEl.appendChild(opt);
+        selectEl.disabled=true;
+        return;
+      }
       const isWeekend = (dow===0 || dow===6);
       const isHoliday = JP_HOLIDAYS.includes(dateStr);
       const end = (isWeekend||isHoliday) ? {h:18,m:30} : {h:21,m:0};
       for(let h=10; h<=end.h; h++){
-        for(const m of [0,30]){ if(h===end.h && m>end.m) break; const opt=document.createElement('option'); opt.value=`${pad(h)}:${pad(m)}`; opt.textContent=`${pad(h)}:${pad(m)}`; selectEl.appendChild(opt); }
+        for(const m of [0,30]){
+          if(h===end.h && m>end.m) break;
+          const opt=document.createElement('option');
+          opt.value=`${pad(h)}:${pad(m)}`;
+          opt.textContent=`${pad(h)}:${pad(m)}`;
+          selectEl.appendChild(opt);
+        }
       }
       selectEl.disabled=false;
     }
 
-    function updateHiddenAndPlaceholder(baseId){ const day=document.getElementById(`${baseId}_day`).value; const time=document.getElementById(`${baseId}_time`).value; const hidden=document.getElementById(baseId); const ph=document.getElementById(`placeholder${baseId.slice(-1)}`); hidden.value=(day&&time)?`${day}T${time}`:""; if(ph) ph.style.display = hidden.value ? 'none' : ''; updateDisplayInfo(); }
+    function updateHiddenAndPlaceholder(baseId){
+      const day=document.getElementById(`${baseId}_day`).value;
+      const time=document.getElementById(`${baseId}_time`).value;
+      const hidden=document.getElementById(baseId);
+      const ph=document.getElementById(`placeholder${baseId.slice(-1)}`);
+      hidden.value=(day&&time)?`${day}T${time}`:"";
+      if(ph) ph.style.display = hidden.value ? 'none' : '';
+      updateDisplayInfo();
+    }
 
-    function restoreIfAny(baseId){ const hidden=document.getElementById(baseId); if(!hidden.value) return; const [d,t]=hidden.value.split('T'); const daySel=document.getElementById(`${baseId}_day`); const timeSel=document.getElementById(`${baseId}_time`); if(d && ![...daySel.options].some(o=>o.value===d)){ const tmp=document.createElement('option'); tmp.value=d; tmp.textContent=d.replaceAll('-','/')+'（選択日）'; daySel.insertBefore(tmp, daySel.options[1]); } if(d) daySel.value=d; buildTimeOptionsForDay(timeSel, d); if(t && [...timeSel.options].some(o=>o.value===t)) timeSel.value=t; }
+    function restoreIfAny(baseId){
+      const hidden=document.getElementById(baseId);
+      if(!hidden.value) return;
+      const [d,t]=hidden.value.split('T');
+      const daySel=document.getElementById(`${baseId}_day`);
+      const timeSel=document.getElementById(`${baseId}_time`);
+      if(d && ![...daySel.options].some(o=>o.value===d)){
+        const tmp=document.createElement('option');
+        tmp.value=d;
+        tmp.textContent=d.replaceAll('-','/')+'（選択日）';
+        daySel.insertBefore(tmp, daySel.options[1]);
+      }
+      if(d) daySel.value=d;
+      buildTimeOptionsForDay(timeSel, d);
+      if(t && [...timeSel.options].some(o=>o.value===t)) timeSel.value=t;
+    }
 
-    function initPicker(baseId, dateDays=120){ const daySel=document.getElementById(`${baseId}_day`); const timeSel=document.getElementById(`${baseId}_time`); buildDateOptions(daySel, dateDays); timeSel.innerHTML='<option value="" selected hidden>時間を選択</option>'; daySel.addEventListener('change', ()=>{ buildTimeOptionsForDay(timeSel, daySel.value); updateHiddenAndPlaceholder(baseId); }); timeSel.addEventListener('change', ()=>updateHiddenAndPlaceholder(baseId)); restoreIfAny(baseId); updateHiddenAndPlaceholder(baseId); }
+    function initPicker(baseId, dateDays=120){
+      const daySel=document.getElementById(`${baseId}_day`);
+      const timeSel=document.getElementById(`${baseId}_time`);
+      buildDateOptions(daySel, dateDays);
+      timeSel.innerHTML='<option value="" selected hidden>時間を選択</option>';
+      daySel.addEventListener('change', ()=>{
+        buildTimeOptionsForDay(timeSel, daySel.value);
+        updateHiddenAndPlaceholder(baseId);
+      });
+      timeSel.addEventListener('change', ()=>updateHiddenAndPlaceholder(baseId));
+      restoreIfAny(baseId);
+      updateHiddenAndPlaceholder(baseId);
+    }
 
-    function formatISOToJP(iso){ if(!iso) return ''; const [d,t]=iso.split('T'); if(!d||!t) return ''; const [Y,M,D]=d.split('-').map(n=>parseInt(n,10)); const [h,m]=t.split(':').map(n=>parseInt(n,10)); if([Y,M,D,h,m].some(Number.isNaN)) return ''; const p=n=>String(n).padStart(2,'0'); return `${Y}年${M}月${D}日 ${p(h)}:${p(m)}`; }
+    function formatISOToJP(iso){
+      if(!iso) return '';
+      const [d,t]=iso.split('T');
+      if(!d||!t) return '';
+      const [Y,M,D]=d.split('-').map(n=>parseInt(n,10));
+      const [h,m]=t.split(':').map(n=>parseInt(n,10));
+      if([Y,M,D,h,m].some(Number.isNaN)) return '';
+      const p=n=>String(n).padStart(2,'0');
+      return `${Y}年${M}月${D}日 ${p(h)}:${p(m)}`;
+    }
 
     // ====== サマリー ======
     function updateDisplayInfo(){
@@ -409,16 +517,17 @@
       });
     }
 
-    // ====== 日付・時間 初期化 ======
-    function initPicker(baseId, dateDays=120){ const daySel=document.getElementById(`${baseId}_day`); const timeSel=document.getElementById(`${baseId}_time`); buildDateOptions(daySel, dateDays); timeSel.innerHTML='<option value="" selected hidden>時間を選択</option>'; daySel.addEventListener('change', ()=>{ buildTimeOptionsForDay(timeSel, daySel.value); updateHiddenAndPlaceholder(baseId); }); timeSel.addEventListener('change', ()=>updateHiddenAndPlaceholder(baseId)); updateHiddenAndPlaceholder(baseId); }
-
-    function updateHiddenAndPlaceholder(baseId){ const day=document.getElementById(`${baseId}_day`).value; const time=document.getElementById(`${baseId}_time`).value; const hidden=document.getElementById(baseId); const ph=document.getElementById(`placeholder${baseId.slice(-1)}`); hidden.value=(day&&time)?`${day}T${time}`:""; if(ph) ph.style.display = hidden.value ? 'none' : ''; updateDisplayInfo(); }
-
-    function formatISOToJP(iso){ if(!iso) return ''; const [d,t]=iso.split('T'); if(!d||!t) return ''; const [Y,M,D]=d.split('-').map(n=>parseInt(n,10)); const [h,m]=t.split(':').map(n=>parseInt(n,10)); if([Y,M,D,h,m].some(Number.isNaN)) return ''; const p=n=>String(n).padStart(2,'0'); return `${Y}年${M}月${D}日 ${p(h)}:${p(m)}`; }
-
     // スムーズスクロール
-    document.querySelectorAll('.side-nav a').forEach(a=>{ a.addEventListener('click', e=>{ e.preventDefault(); const id = a.getAttribute('href').substring(1); const el = document.getElementById(id); if(el){ window.scrollTo({ top: el.offsetTop - 20, behavior:'smooth'}); } }); });
+    document.querySelectorAll('.side-nav a').forEach(a=>{
+      a.addEventListener('click', e=>{
+        e.preventDefault();
+        const id = a.getAttribute('href').substring(1);
+        const el = document.getElementById(id);
+        if(el){
+          window.scrollTo({ top: el.offsetTop - 20, behavior:'smooth'});
+        }
+      });
+    });
   </script>
 </body>
-
 </html>
