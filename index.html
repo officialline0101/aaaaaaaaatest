@@ -1,395 +1,424 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>予約フォーム</title>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    :root{
-      --brand:#13ca5e;
-      --brand-ink:#0fa958;
-      --ink:#1a1a1a;
-      --muted:#6b7280;
-      --bg:#f6f7fb;
-      --card:#ffffff;
-      --line:#e5e7eb;
-      --danger:#dc3545;
-      --focus:rgba(19,202,94,.25);
-      --radius:14px;
-      --shadow:0 10px 28px rgba(2,8,20,.06), 0 2px 6px rgba(2,8,20,.05);
-    }
+    /* 右端の細いナビ（固定） */
+    .side-nav { position: fixed; right: -5px; top: 80%; transform: translateY(-50%) translateX(16px); background: #45c4b7; display: flex; flex-direction: column; align-items: center; padding: 4px; border-radius: 10px 0 0 10px; z-index: 1000; width: 35px; }
+    .side-nav a:active { transform: scale(1.0); }
+    .side-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: 10px; margin: 5px 0; padding: 5px; transition: background 0.3s, transform 0.2s; border-radius: 5px; width: 30px; height: 30px; text-align: center; }
+    .side-nav a span { font-size: 24px; position: absolute; left: 2px; top: 13px; }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; padding:24px 12px;
-      font-family: "Noto Sans JP", system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      color:var(--ink); background:
-        radial-gradient(1200px 600px at 100% 0%, #e7fff1 0%, transparent 60%),
-        radial-gradient(900px 500px at 0% 100%, #eef7ff 0%, transparent 55%),
-        var(--bg);
-    }
+    @media (max-width: 600px) { .side-nav { right: 2px; width: 30px; } .side-nav a { width: 28px; height: 28px; } .side-nav a i { font-size: 12px; } }
 
-    .wrap{ max-width:720px; margin:0 auto; }
-    .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+    body { font-family: 'Poppins', sans-serif; background-color: #ffffff; display: flex; justify-content: center; align-items: flex-start; height: 100vh; margin: 0; padding-top: 5px; overflow-x: hidden; }
+    .container { background-color: #fdfdfd; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); width: 96%; max-width: 500px; padding: 25px; box-sizing: border-box; margin: 0 auto; }
 
-    .hero{
-      padding:28px 22px;
-      background:linear-gradient(150deg, var(--brand), var(--brand-ink));
-      color:#fff;
-    }
-    .hero h1{margin:0 0 6px; font-size:22px; letter-spacing:.02em}
-    .hero p{margin:0; opacity:.95; font-size:13px}
+    h1 { background: linear-gradient(135deg, #45c4b7, #45c4b7); color: white; padding: 20px; border-radius: 0; text-align: center; display: block; margin: -20px -15px 20px -15px; font-size: 26px; font-weight: 100; box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05); position: relative; overflow: hidden; }
 
-    .content{padding:18px; display:grid; gap:18px}
-    .section{border:1px dashed var(--line); border-radius:12px; padding:14px}
-    .section-title{display:flex; align-items:center; gap:10px; margin-bottom:12px; font-weight:700; font-size:15px; letter-spacing:.02em;}
+    .label, .labelkibounitizi, .labeltyuuou, .labelmessezi { display: block; padding: 3px; background-color: #45c4b7; color: #ffffff; border-radius: 0; font-size: 18px; text-align: center; position: relative; overflow: hidden; border-top: 1px solid black; border-bottom: 1px solid black; }
+    .label { margin-bottom: 20px; text-indent: 20px; }
+    .labelkibounitizi { margin: 10px 0; line-height: 1.2; text-indent: 20px; }
+    .labeltyuuou { margin-bottom: 20px; text-indent: 0; }
+    .labelmessezi { margin: 10px 0 20px; text-indent: 0; }
 
-    .grid{display:grid; gap:12px; grid-template-columns:1fr;}
-    @media (min-width:640px){ .grid.two{grid-template-columns:1fr 1fr} }
+    .labelContent { display: block; margin: 6px 0 10px; padding: 8px 10px; background-color: #ffffff; color: #141414; font-size: 14px; border: 1px solid #000; border-radius: 4px; }
 
-    .field{display:flex; flex-direction:column; gap:8px}
-    .label{font-weight:700; font-size:14px; display:flex; gap:8px; align-items:center}
-    .hint{font-size:12px; color:var(--muted)}
+    .required { color: #ffffff; font-weight: lighter; font-size: 0.6em; margin-left: 5px; vertical-align: 0.8em; background-color: rgb(255, 15, 15); padding: 0 5px; border-radius: 3px; margin-right: 5px; }
 
-    .input, .textarea, .dt{
-      width:100%; padding:12px 14px;
-      border:1px solid var(--line); border-radius:10px; background:#fff; font-size:16px;
-      transition:border .15s, box-shadow .15s, transform .06s;
-    }
-    .input:focus, .textarea:focus, .dt:focus{ border-color:var(--brand); box-shadow:0 0 0 4px var(--focus); outline:0; }
-    .textarea{min-height:110px; resize:vertical}
+    input[type="text"], input[type="tel"], textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #555; border-radius: 3px; box-sizing: border-box; font-size: 16px; transition: all 0.3s; position: relative; top: -5px; }
 
-    .chips{display:flex; flex-wrap:wrap; gap:10px}
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 14px; border:1px solid var(--line); border-radius:999px; background:#fff;
-      cursor:pointer; transition:all .15s ease; user-select:none;
-    }
-    .chip:hover{transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.04)}
-    .chip input{appearance:none; width:16px; height:16px; border:2px solid var(--brand); border-radius:50%; display:inline-block}
-    .chip input:checked{background:var(--brand)}
-    .chip.active{border-color:var(--brand); background:rgba(19,202,94,.08)}
+    .visit-buttons, .symptoms, .menu-sections, .irradiations { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .visit-buttons button, .symptoms button, .menu-sections button, .irradiations button { flex: 1; padding: 10px; border: 1px solid #2e2e2e; border-radius: 4px; background-color: #f7f7f7; cursor: pointer; box-sizing: border-box; text-align: center; white-space: nowrap; }
+    .visit-buttons button.active, .symptoms button.active, .menu-sections button.active, .irradiations button.active { background-color: #ffffff; color: #141414; }
 
-    /* 必須バッジ（赤＋アイコン） */
-    .req{
-      display:inline-flex; align-items:center; gap:1px;
-      color:#fff; background:#ef4444; border:1px solid #ef4444;
-      padding:2px 4px; border-radius:999px; font-size:11px; font-weight:800; letter-spacing:.02em;
-    }
-    .req i{font-size:11px}
+    .submit-button { width: 100%; padding: 15px; border: none; border-radius: 4px; background-color: #45c4b7; color: #fff; font-size: 18px; cursor: pointer; margin-top: 12px; }
+    .submit-button:hover { background-color: #45c4b7; }
 
-    .error{font-size:12px; color:#b91c1c; display:none}
-    .invalid .input, .invalid .textarea, .invalid .dt{border-color:#ef4444; box-shadow:0 0 0 4px rgba(239,68,68,.18)}
-    .invalid .error{display:block}
+    .dt-grid { display: flex; gap: 8px; align-items: center; }
+    .dt-grid .datetime-input { flex: 1 1 50%; }
+    @media (max-width: 480px) { .dt-grid { flex-direction: column; } }
 
-    .submit{ position:sticky; bottom:8px; z-index:2; margin-top:4px; }
-    .submit .btn{
-      width:100%; padding:15px 16px; font-size:17px; font-weight:700; letter-spacing:.02em;
-      border:none; border-radius:12px; color:#fff; background:linear-gradient(160deg, #ff6b6b, #dc3545);
-      box-shadow:0 12px 24px rgba(220,53,69,.25); cursor:pointer; transition:transform .06s ease, filter .15s ease;
-    }
-    .submit .btn:hover{filter:brightness(1.06)}
-    .submit .btn:active{transform:translateY(1px)}
-    .btn[disabled]{opacity:.75; cursor:not-allowed}
+    .datetime-input { width: 100%; padding: 18px; font-size: 18px; border: 1px solid #000; border-radius: 8px; box-sizing: border-box; background-color: #fff; color: #333; appearance: none; touch-action: manipulation; transition: border-color 0.3s, box-shadow 0.3s; }
+    .datetime-input:focus { border-color: #007BFF; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2); outline: none; }
 
-    /* フローティング送信ショートカット */
-    .fab{
-      position:fixed; right:16px; bottom:18px; width:52px; height:52px; border-radius:50%;
-      background:var(--brand); color:#fff; display:flex; align-items:center; justify-content:center;
-      box-shadow:0 12px 24px rgba(19,202,94,.35); text-decoration:none; font-size:20px;
-    }
+    #designer, #eyeBrowMenu { width: 100%; box-sizing: border-box; appearance: none; background-color: #fff; background-image: url("data:image/svg+xml,%3Csvg width='22' height='22' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%2399A3AE' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px 16px; padding: 12px 44px 12px 14px; border: 1.5px solid #e5e7eb; border-radius: 10px; color: #111827; font-size: 16px; line-height: 1.2; transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; position: relative; top: -10px; }
+    #designer:hover, #eyeBrowMenu:hover { border-color: #cbd5e1; }
+    #designer:focus, #eyeBrowMenu:focus { outline: none; border-color: #06C755; box-shadow: 0 0 0 3px rgba(6,199,85,.2); }
 
-    /* 送信中オーバーレイ */
-    .overlay{
-      position:fixed; inset:0; background:rgba(255,255,255,.6); backdrop-filter:blur(3px);
-      display:none; align-items:center; justify-content:center; z-index:9999;
-    }
-    .overlay.active{display:flex}
-    .spinner{
-      width:56px; height:56px; border-radius:50%;
-      border:5px solid #eaeaea; border-top-color:var(--brand); animation:spin 1s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
+    button { padding: 12px; border: none; border-radius: 6px; background-color: #3e3f41; color: #000000; font-size: 16px; cursor: pointer; transition: all 0.3s; }
+    button:hover { background-color: #e9e9e9; transform: scale(1.05); }
+    button.active { outline: 1px solid #2b2b2b; outline-offset: 2px; box-shadow: 0 0 0 3px #45c4b7 }
   </style>
 </head>
+
 <body>
-  <a class="fab" href="#submitBtn" aria-label="送信へ移動"><i class="fas fa-paper-plane"></i></a>
+  <!-- 右側の追従ナビ -->
+  <div class="side-nav" id="sideNav">
+    <a href="#section-message">
+      <span>⇩</span>
+      <i class="fas fa-comment"></i>
+    </a>
+  </div>
 
-  <div class="wrap">
-    <div class="card">
-      <div class="hero">
-        <h1><i class="far fa-calendar-check"></i> 予約フォーム</h1>
-        <p>必須項目をご入力のうえ、送信してください。</p>
-      </div>
+  <div class="container">
+    <h1>
+      <span class="small-text">ネイル・まつ毛同時施術<br />予約フォーム</span>
+    </h1>
 
-      <form id="reserveForm" class="content" novalidate>
-        <!-- 基本情報 -->
-        <div class="section">
-          <div class="section-title"><i class="fas fa-user"></i> 基本情報</div>
+    <!-- ① お名前 -->
+    <div class="label">お名前<span class="required">必須</span></div>
+    <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')" />
 
-          <div class="grid two">
-            <div class="field" id="f-name">
-              <label class="label" for="name">お名前 <span class="req"><i class="fas fa-asterisk"></i> 必須</span></label>
-              <input class="input" id="name" name="name" type="text" placeholder="例）山田 太郎" autocomplete="name" autocapitalize="off" required />
-              <div class="error">お名前を入力してください。</div>
-            </div>
+    <!-- ② お電話番号 -->
+    <div class="label">お電話番号<span class="required">必須</span></div>
+    <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')" />
 
-            <div class="field" id="f-tel">
-              <label class="label" for="tel">電話番号 <span class="req"><i class="fas fa-asterisk"></i> 必須</span></label>
-              <input class="input" id="tel" name="tel" type="tel" inputmode="tel" autocomplete="tel"
-                     placeholder="例）09012345678" pattern="^[0-9+\\-\\s]{9,}$" required />
-              <div class="hint">ハイフン有り無しどちらでも可</div>
-              <div class="error">電話番号を正しく入力してください（数字9桁以上）。</div>
-            </div>
-          </div>
-
-          <div class="grid">
-            <div class="field" id="f-gender">
-              <div class="label">性別 <span class="req"><i class="fas fa-asterisk"></i> 必須</span></div>
-              <div class="chips" data-group="gender">
-                <label class="chip"><input type="radio" name="gender" value="男性"><span><i class="fas fa-mars"></i> 男性</span></label>
-                <label class="chip"><input type="radio" name="gender" value="女性"><span><i class="fas fa-venus"></i> 女性</span></label>
-              </div>
-              <div class="error">性別を選択してください。</div>
-            </div>
-
-            <div class="field" id="f-birthday">
-              <label class="label" for="birthday">生年月日 <span class="req"><i class="fas fa-asterisk"></i> 必須</span></label>
-              <input class="dt" id="birthday" name="birthday" type="date" required />
-              <div class="error">生年月日を選択してください。</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 来店方法 -->
-        <div class="section">
-          <div class="section-title"><i class="fas fa-route"></i> 来店方法</div>
-          <div class="field" id="f-access">
-            <div class="label">来店方法 <span class="req"><i class="fas fa-asterisk"></i> 必須</span></div>
-            <div class="chips" data-group="access">
-              <label class="chip"><input type="radio" name="access" value="車"><span><i class="fas fa-car-side"></i> 車</span></label>
-              <label class="chip"><input type="radio" name="access" value="電車"><span><i class="fas fa-subway"></i> 電車</span></label>
-              <label class="chip"><input type="radio" name="access" value="徒歩"><span><i class="fas fa-walking"></i> 徒歩</span></label>
-              <label class="chip"><input type="radio" name="access" value="その他"><span><i class="fas fa-ellipsis-h"></i> その他</span></label>
-            </div>
-            <input class="input other-input" id="accessOther" type="text" placeholder="来店方法（その他）を入力" style="display:none" />
-            <div class="error">来店方法を選択してください。</div>
-          </div>
-        </div>
-
-        <!-- 希望日時 -->
-        <div class="section">
-          <div class="section-title"><i class="far fa-clock"></i> 希望日時</div>
-          <div class="grid">
-            <div class="field" id="f-wish1">
-              <label class="label" for="wish1">第一希望 <span class="req"><i class="fas fa-asterisk"></i> 必須</span></label>
-              <input class="dt" id="wish1" name="wish1" type="datetime-local" required />
-              <div class="error">第一希望日時を入力してください。</div>
-            </div>
-
-            <div class="field">
-              <label class="label" for="wish2">第二希望（任意）</label>
-              <input class="dt" id="wish2" name="wish2" type="datetime-local" />
-            </div>
-
-            <div class="field">
-              <label class="label" for="wish3">第三希望（任意）</label>
-              <input class="dt" id="wish3" name="wish3" type="datetime-local" />
-            </div>
-          </div>
-        </div>
-
-        <!-- 備考 -->
-        <div class="section">
-          <div class="section-title"><i class="far fa-sticky-note"></i> 備考（任意）</div>
-          <div class="field">
-            <textarea class="textarea" id="note" placeholder="ご要望や連絡事項があればご記入ください"></textarea>
-          </div>
-        </div>
-
-        <div class="submit">
-          <button id="submitBtn" class="btn" type="submit"><i class="fas fa-paper-plane"></i> 送信</button>
-        </div>
-      </form>
+    <!-- ③ ご来店回数（選択制） -->
+    <div class="label">ご来店回数<span class="required">必須</span></div>
+    <div class="visit-buttons" id="visitCountGroup">
+      <button type="button" onclick="selectSingle('visitCountGroup', this)">初回</button>
+      <button type="button" onclick="selectSingle('visitCountGroup', this)">二回目以降</button>
     </div>
+    <div class="labelContent">※ネイルのご来店歴があっても、<strong>まつ毛メニューが初めて</strong>の方は「初回」をお選びください。</div>
+
+    <!-- ④ まつ毛・眉毛メニュー（必須） -->
+    <div class="label">まつ毛・眉毛メニュー<span class="required">必須</span></div>
+    <div class="symptoms" id="eyeBrowMenuGroup">
+      <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">まつ毛パーマ&美眉スタイリング</button>
+      <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">まつげパーマ</button>
+      <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">美眉スタイリング</button>
+      <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">顔タイプ診断×マツパ&眉Wax</button>
+      <button type="button" onclick="selectSingle('eyeBrowMenuGroup', this)">W診断(顔タイプ,4タイプカラー) × マツパ&眉Wax＆メイク</button>
+    </div>
+
+    <!-- ⑤ まつ毛 オフ -->
+    <div class="label">まつ毛 オフ<span class="required">必須</span></div>
+    <div class="visit-buttons" id="lashOffGroup">
+      <button type="button" onclick="selectSingle('lashOffGroup', this)">なし（リペア）</button>
+      <button type="button" onclick="selectSingle('lashOffGroup', this)">当店 ¥550（15分）</button>
+      <button type="button" onclick="selectSingle('lashOffGroup', this)">他店 ¥1,100（15分）</button>
+      <button type="button" onclick="selectSingle('lashOffGroup', this)">LED/バインド/ボリューム ¥1,650（30分）</button>
+    </div>
+
+    <!-- ⑥ まつ毛 オプション -->
+    <div class="label">まつ毛 オプション（任意）</div>
+    <div class="irradiations" id="lashOptionGroup">
+      <button type="button" onclick="toggleMulti(this)">マスカラオフ＋アイシャンプー ¥1,100（15分）</button>
+      <button type="button" onclick="toggleMulti(this)">アイパック</button>
+    </div>
+
+    <!-- ⑦ ネイルのご指名（必須） -->
+    <div class="label">ネイルのご指名<span class="required">必須</span></div>
+    <select id="designer" required>
+      <option value="" disabled selected>選択してください</option>
+      <option>指名無し</option>
+      <option>YUKO</option>
+      <option>MAKI</option>
+      <option>YUKA</option>
+      <option>TOMOMI</option>
+      <option>SHIORI</option>
+      <option>MEGU</option>
+    </select>
+
+    <!-- ⑧ ハンドメニュー（必須） -->
+    <div class="label">ハンドメニュー<span class="required">必須</span></div>
+    <div class="symptoms" id="handMenuGroup">
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">ワンカラー</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">マグネット・フラッシュワンカラー</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">シンプルニュアンス</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">シーズンコレクション</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">art A</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">art B</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">artC</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">90分持ち込み</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">120分持ち込み</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">フレンチ</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">オフのみ</button>
+      <button type="button" onclick="selectSingle('handMenuGroup', this)">ケアのみ</button>
+    </div>
+
+    <!-- ⑨ ネイル（ハンド）オフ -->
+    <div class="label">ネイル（ハンド）<span class="required">必須</span></div>
+    <div class="visit-buttons" id="handOffGroup">
+      <button type="button" onclick="selectSingle('handOffGroup', this)">オフあり</button>
+      <button type="button" onclick="selectSingle('handOffGroup', this)">オフなし</button>
+    </div>
+
+    <!-- ⑩ ハンドメニューオプション（任意） -->
+    <div class="label">ハンドメニューオプション（任意）</div>
+    <div class="irradiations" id="handOptionGroup">
+      <button type="button" onclick="toggleMulti(this)">アート・パーツ1本〜</button>
+      <button type="button" onclick="toggleMulti(this)">亀裂補強（¥550)</button>
+      <button type="button" onclick="toggleMulti(this)">長さ出し（¥1100）</button>
+      <button type="button" onclick="toggleMulti(this)">ミラー</button>
+      <button type="button" onclick="toggleMulti(this)">オーロラパウダー1本（¥150）</button>
+      <button type="button" onclick="toggleMulti(this)">1色追加（¥550)</button>
+      <button type="button" onclick="toggleMulti(this)">ラメライン（¥120）</button>
+      <button type="button" onclick="toggleMulti(this)">フレンチベース（¥1100）</button>
+    </div>
+    <div class="labelContent">※「亀裂補強」「長さ出し」を選択された方は、<strong>備考欄に本数</strong>をご記入ください。</div>
+
+    <!-- ⑪ フットメニュー（任意） → 元フォームどおり維持 -->
+    <div class="label">フットメニュー<span class="required">必須</span></div>
+    <div class="symptoms" id="footMenuGroup">
+      <button type="button" onclick="selectSingle('footMenuGroup', this)">ワンカラー</button>
+      <button type="button" onclick="selectSingle('footMenuGroup', this)">マグネット・フラッシュワンカラー</button>
+      <button type="button" onclick="selectSingle('footMenuGroup', this)">90分持ち込み</button>
+      <button type="button" onclick="selectSingle('footMenuGroup', this)">ジェルオフのみ</button>
+      <button type="button" onclick="selectSingle('footMenuGroup', this)">ケアのみ</button>
+    </div>
+
+    <!-- ⑫ ネイル（フット）オフ -->
+    <div class="label">ネイル（フット）<span class="required">必須</span></div>
+    <div class="visit-buttons" id="footOffGroup">
+      <button type="button" onclick="selectSingle('footOffGroup', this)">オフあり</button>
+      <button type="button" onclick="selectSingle('footOffGroup', this)">オフなし</button>
+    </div>
+
+    <!-- ⑬ フットメニューオプション（必須・複数可） -->
+    <div class="label">フットメニューオプション<span class="required">必須</span></div>
+    <div class="irradiations" id="footOptionGroup">
+      <button type="button" onclick="toggleMulti(this)">角質ケア（¥2500)</button>
+      <button type="button" onclick="toggleMulti(this)">巻き爪ジェル（¥3500）</button>
+      <button type="button" onclick="toggleMulti(this)">アート・パーツ1本〜</button>
+    </div>
+
+    <!-- 希望日時（第1〜第3） -->
+    <div class="labelkibounitizi" style="margin-top:18px;">希望日時<span class="required">必須</span></div>
+    <div class="labelContent">※<strong>火曜日は定休日</strong>のため選択不可／<strong>土日祝</strong>は最終受付<strong>18:30</strong>／<strong>平日</strong>は最終受付<strong>21:00</strong></div>
+
+    <div class="datetime-wrapper" style="text-align: center;">
+      <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
+      <input type="hidden" id="date1" name="date1" />
+      <div class="dt-grid">
+        <select id="date1_day" class="datetime-input" aria-label="日付を選択"></select>
+        <select id="date1_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
+      </div>
+    </div>
+
+    <div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
+    <div class="datetime-wrapper" style="text-align: center;">
+      <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
+      <input type="hidden" id="date2" name="date2" />
+      <div class="dt-grid">
+        <select id="date2_day" class="datetime-input" aria-label="日付を選択"></select>
+        <select id="date2_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
+      </div>
+    </div>
+
+    <div class="labelkibounitizi">第三希望日時<span class="required">必須</span></div>
+    <div class="datetime-wrapper" style="text-align: center;">
+      <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
+      <input type="hidden" id="date3" name="date3" />
+      <div class="dt-grid">
+        <select id="date3_day" class="datetime-input" aria-label="日付を選択"></select>
+        <select id="date3_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
+      </div>
+    </div>
+
+    <!-- その他ご要望 -->
+    <div class="labelmessezi">その他ご要望<br />（質問等お気軽にご記入ください）</div>
+    <textarea id="message" rows="4" placeholder="その他ご要望を入力してください"></textarea>
+
+    <!-- サマリー -->
+    <div class="labeltyuuou">ご予約内容</div>
+    <div id="displayInfo"></div>
+
+    <button class="submit-button" onclick="submitForm()" id="section-message">予約を行う</button>
   </div>
 
-  <!-- 送信中オーバーレイ -->
-  <div id="overlay" class="overlay" aria-hidden="true">
-    <div class="spinner" role="status" aria-label="送信中"></div>
-  </div>
-
-  <!-- LIFF SDK -->
+  <!-- LIFF & Script -->
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
   <script>
-    // ===== LIFF 初期化 =====
+    // ===== 祝日（必要分） =====
+    const JP_HOLIDAYS = [
+      '2025-11-03','2025-11-23','2025-11-24',
+      '2026-01-01','2026-01-12','2026-02-11','2026-02-23','2026-03-20',
+      '2026-04-29','2026-05-03','2026-05-04','2026-05-05','2026-05-06'
+    ];
+
+    // ====== 初期化 ======
     document.addEventListener('DOMContentLoaded', function () {
-      liff.init({ liffId: '2005254357-zKma9BZk' })
-        .then(() => console.log('LIFF初期化成功'))
-        .catch(err => console.error('LIFF初期化失敗', err));
+      liff.init({ liffId: '2005254357-zKma9BZk' }).catch(console.error);
+      const savedName = localStorage.getItem('name');
+      const savedPhone = localStorage.getItem('phone');
+      if (savedName) document.getElementById('name').value = savedName;
+      if (savedPhone) document.getElementById('phone').value = savedPhone;
+
+      // 日時ピッカー初期化（第1〜第3）
+      ['date1','date2','date3'].forEach(id => initPicker(id, 120));
+
+      // 入力変更でサマリー更新
+      ['name','phone','designer','message'].forEach(id=>{
+        const el = document.getElementById(id);
+        el && el.addEventListener('input', updateDisplayInfo);
+        el && el.addEventListener('change', updateDisplayInfo);
+      });
     });
 
-    // ===== ユーティリティ =====
-    const $ = s => document.querySelector(s);
+    function saveInput(id){ localStorage.setItem(id, document.getElementById(id).value); updateDisplayInfo(); }
 
-    // ===== ローカル保存キー =====
-    const LS = {
-      name: 'rf_name',
-      tel: 'rf_tel',
-      gender: 'rf_gender',
-      birthday: 'rf_birthday',
-    };
+    // ====== 単一/複数選択 ======
+    function selectSingle(groupId, btn){ const group = document.getElementById(groupId); group.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateDisplayInfo(); }
+    function toggleMulti(btn){ btn.classList.toggle('active'); updateDisplayInfo(); }
+    function getSingle(groupId){ const active = document.querySelector(`#${groupId} button.active`); return active ? active.innerText.trim() : ''; }
+    function getMultiTexts(groupId){ return Array.from(document.querySelectorAll(`#${groupId} button.active`)).map(b => b.innerText.trim()); }
 
-    function saveLS(key, val){
-      try{ localStorage.setItem(key, val ?? ''); }catch(e){}
+    // ====== 日時ピッカー ======
+    const JP_WD = ['日','月','火','水','木','金','土'];
+    const pad = n => String(n).padStart(2,'0');
+
+    function buildDateOptions(selectEl, days=120, startDate=new Date()){
+      const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
+      for(let i=0;i<days;i++){
+        const y=d.getFullYear(), m=pad(d.getMonth()+1), day=pad(d.getDate()), wd=d.getDay();
+        const opt=document.createElement('option');
+        opt.value=`${y}-${m}-${day}`;
+        opt.textContent=`${y}/${m}/${day}（${JP_WD[wd]}）${wd===2 ? '【定休】' : ''}`;
+        if(wd===2) opt.disabled = true; // 火曜は定休
+        selectEl.appendChild(opt);
+        d.setDate(d.getDate()+1);
+      }
     }
-    function loadLS(key){
-      try{ return localStorage.getItem(key) || ''; }catch(e){ return ''; }
+
+    function buildTimeOptionsForDay(selectEl, dateStr){
+      selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
+      if(!dateStr) return;
+      const d = new Date(dateStr + 'T00:00');
+      const dow = d.getDay();
+      if(dow===2){ // 火曜定休
+        const opt = document.createElement('option'); opt.textContent='定休日のため選択不可'; opt.disabled=true; selectEl.appendChild(opt); selectEl.disabled=true; return; }
+      const isWeekend = (dow===0 || dow===6);
+      const isHoliday = JP_HOLIDAYS.includes(dateStr);
+      const end = (isWeekend||isHoliday) ? {h:18,m:30} : {h:21,m:0};
+      for(let h=10; h<=end.h; h++){
+        for(const m of [0,30]){ if(h===end.h && m>end.m) break; const opt=document.createElement('option'); opt.value=`${pad(h)}:${pad(m)}`; opt.textContent=`${pad(h)}:${pad(m)}`; selectEl.appendChild(opt); }
+      }
+      selectEl.disabled=false;
     }
 
-    // ===== UI：チップの見た目切り替え & 「その他」入力表示 =====
-    function activateChips(container){
-      const labels = container.querySelectorAll('label.chip');
-      labels.forEach(l => {
-        const input = l.querySelector('input');
-        input.addEventListener('change', () => {
-          labels.forEach(x => x.classList.remove('active'));
-          if(input.checked) l.classList.add('active');
-          // 来店方法「その他」
-          if(input.name === 'access'){
-            const other = $('#accessOther');
-            if(input.value === 'その他'){ other.style.display = ''; other.focus(); }
-            else { other.value = ''; other.style.display = 'none'; }
-          }
-          // 性別は変更時に保存
-          if(input.name === 'gender'){ saveLS(LS.gender, input.value); }
-        });
+    function updateHiddenAndPlaceholder(baseId){ const day=document.getElementById(`${baseId}_day`).value; const time=document.getElementById(`${baseId}_time`).value; const hidden=document.getElementById(baseId); const ph=document.getElementById(`placeholder${baseId.slice(-1)}`); hidden.value=(day&&time)?`${day}T${time}`:""; if(ph) ph.style.display = hidden.value ? 'none' : ''; updateDisplayInfo(); }
+
+    function restoreIfAny(baseId){ const hidden=document.getElementById(baseId); if(!hidden.value) return; const [d,t]=hidden.value.split('T'); const daySel=document.getElementById(`${baseId}_day`); const timeSel=document.getElementById(`${baseId}_time`); if(d && ![...daySel.options].some(o=>o.value===d)){ const tmp=document.createElement('option'); tmp.value=d; tmp.textContent=d.replaceAll('-','/')+'（選択日）'; daySel.insertBefore(tmp, daySel.options[1]); } if(d) daySel.value=d; buildTimeOptionsForDay(timeSel, d); if(t && [...timeSel.options].some(o=>o.value===t)) timeSel.value=t; }
+
+    function initPicker(baseId, dateDays=120){ const daySel=document.getElementById(`${baseId}_day`); const timeSel=document.getElementById(`${baseId}_time`); buildDateOptions(daySel, dateDays); timeSel.innerHTML='<option value="" selected hidden>時間を選択</option>'; daySel.addEventListener('change', ()=>{ buildTimeOptionsForDay(timeSel, daySel.value); updateHiddenAndPlaceholder(baseId); }); timeSel.addEventListener('change', ()=>updateHiddenAndPlaceholder(baseId)); restoreIfAny(baseId); updateHiddenAndPlaceholder(baseId); }
+
+    function formatISOToJP(iso){ if(!iso) return ''; const [d,t]=iso.split('T'); if(!d||!t) return ''; const [Y,M,D]=d.split('-').map(n=>parseInt(n,10)); const [h,m]=t.split(':').map(n=>parseInt(n,10)); if([Y,M,D,h,m].some(Number.isNaN)) return ''; const p=n=>String(n).padStart(2,'0'); return `${Y}年${M}月${D}日 ${p(h)}:${p(m)}`; }
+
+    // ====== サマリー ======
+    function updateDisplayInfo(){
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const visit = getSingle('visitCountGroup');
+      const eyeBrowMenu = getSingle('eyeBrowMenuGroup');
+      const lashOff = getSingle('lashOffGroup');
+      const lashOpts = getMultiTexts('lashOptionGroup');
+      const designer = document.getElementById('designer').value || '';
+
+      const handMenu = getSingle('handMenuGroup');
+      const handOff = getSingle('handOffGroup');
+      const handOpts = getMultiTexts('handOptionGroup');
+
+      const footMenu = getSingle('footMenuGroup');
+      const footOff = getSingle('footOffGroup');
+      const footOpts = getMultiTexts('footOptionGroup');
+
+      const d1 = formatISOToJP(document.getElementById('date1').value);
+      const d2 = formatISOToJP(document.getElementById('date2').value);
+      const d3 = formatISOToJP(document.getElementById('date3').value);
+
+      document.getElementById('displayInfo').innerHTML = `
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【お名前】</strong></span><br>・${name || '-'}</p></div><hr>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【お電話番号】</strong></span><br>・${phone || '-'}</p></div><hr>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【ご来店回数】</strong></span><br>・${visit || '-'}</p></div><hr>
+
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【まつ毛・眉毛メニュー】</strong></span><br>・${eyeBrowMenu || '-'}</p></div>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【まつ毛オフ】</strong></span><br>・${lashOff || '（未選択）'}</p></div>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【まつ毛オプション】</strong></span><br>${lashOpts.length ? '・' + lashOpts.join('<br>・') : '・なし'}</p></div><hr>
+
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【ネイルご指名】</strong></span><br>・${designer || '-'}</p></div><hr>
+
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【ハンドメニュー】</strong></span><br>・${handMenu || '-'}</p></div>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【ハンド（オフ）】</strong></span><br>・${handOff || (handMenu ? '（未選択）':'-')}</p></div>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【ハンドオプション】</strong></span><br>${handOpts.length ? '・' + handOpts.join('<br>・') : '・なし'}</p></div><hr>
+
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【フットメニュー】</strong></span><br>・${footMenu || '-'}</p></div>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【フット（オフ）】</strong></span><br>・${footOff || (footMenu ? '（未選択）':'-')}</p></div>
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【フットオプション】</strong></span><br>${footOpts.length ? '・' + footOpts.join('<br>・') : (footMenu ? '・（未選択）' : '・-')}</p></div><hr>
+
+        <div class="info-row"><p><span style="color:#45c4b7;"><strong>【希望日時】</strong></span><br>
+          ・第1希望：${d1 || '-'}<br>
+          ・第2希望：${d2 || '-'}<br>
+          ・第3希望：${d3 || '-'}</p></div>
+      `;
+    }
+
+    // ====== 送信 ======
+    function submitForm(){
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const visit = getSingle('visitCountGroup');
+      const eyeBrowMenu = getSingle('eyeBrowMenuGroup');
+      const lashOff = getSingle('lashOffGroup');
+      const lashOpts = getMultiTexts('lashOptionGroup');
+      const designer = document.getElementById('designer').value;
+
+      const handMenu = getSingle('handMenuGroup');
+      const handOff = getSingle('handOffGroup');
+      const handOpts = getMultiTexts('handOptionGroup');
+
+      const footMenu = getSingle('footMenuGroup');
+      const footOff = getSingle('footOffGroup');
+      const footOpts = getMultiTexts('footOptionGroup');
+
+      const date1 = document.getElementById('date1').value;
+      const date2 = document.getElementById('date2').value;
+      const date3 = document.getElementById('date3').value;
+      const message = document.getElementById('message').value.trim();
+
+      // バリデーション
+      if(!name){ alert('お名前を入力してください。'); return; }
+      if(!phone){ alert('お電話番号を入力してください。'); return; }
+      if(!visit){ alert('ご来店回数を選択してください。'); return; }
+      if(!eyeBrowMenu){ alert('まつ毛・眉毛メニューを選択してください。'); return; }
+      if(!lashOff){ alert('まつ毛オフを選択してください。'); return; }
+      if(!designer){ alert('ネイルのご指名を選択してください。'); return; }
+      if(!handMenu){ alert('ハンドメニューを選択してください。'); return; }
+      if(!handOff){ alert('ネイル（ハンド）のオフ有無を選択してください。'); return; }
+      if(!footMenu){ alert('フットメニューを選択してください。'); return; }
+      if(!footOff){ alert('ネイル（フット）のオフ有無を選択してください。'); return; }
+      if(footOpts.length === 0){ alert('フットメニューオプションを1つ以上選択してください。'); return; }
+      if(!date1){ alert('第1希望日時を選択してください。'); return; }
+      if(!date2){ alert('第2希望日時を選択してください。'); return; }
+      if(!date3){ alert('第3希望日時を選択してください。'); return; }
+
+      const text = `【予約フォーム】\n\nネイル・まつ毛同時施術のご予約\n\n《お名前》${name}\n《お電話番号》${phone}\n《ご来店回数》${visit}\n\n— まつ毛 —\n《メニュー》${eyeBrowMenu}\n《オフ》${lashOff}\n《オプション》\n${lashOpts.length ? '・' + lashOpts.join('\n・') : '・なし'}\n\n— ネイル（ハンド） —\n《メニュー》${handMenu}\n《オフ》${handOff}\n《オプション》\n${handOpts.length ? '・' + handOpts.join('\n・') : '・なし'}\n\n— ネイル（フット） —\n《メニュー》${footMenu}\n《オフ》${footOff}\n《オプション》\n・${footOpts.join('\n・')}\n\n【希望日時】\n《第1希望》\n${formatISOToJP(date1)}\n《第2希望》\n${formatISOToJP(date2)}\n《第3希望》\n${formatISOToJP(date3)}\n\n《その他ご要望》\n${message || '（なし）'}\n\n※「亀裂補強」「長さ出し」を選択された方は、備考欄に本数をご記入ください。`;
+
+      liff.sendMessages([{ type:'text', text }]).then(()=>{
+        alert('確認してご連絡差し上げます。');
+        liff.closeWindow();
+      }).catch(err=>{
+        console.error('メッセージの送信に失敗しました', err);
+        alert('送信に失敗しました。電波状況をご確認の上、再度お試しください。');
       });
     }
-    document.querySelectorAll('.chips').forEach(activateChips);
 
-    // ===== 前回入力の復元（基本情報：名前・電話番号・性別・生年月日） =====
-    (function restoreBasicInfo(){
-      // 名前・電話番号・生年月日
-      const name = loadLS(LS.name);
-      const tel = loadLS(LS.tel);
-      const birthday = loadLS(LS.birthday);
-      if(name) $('#name').value = name;
-      if(tel) $('#tel').value = tel;
-      if(birthday) $('#birthday').value = birthday; // type="date" は "YYYY-MM-DD" でOK
+    // ====== 日付・時間 初期化 ======
+    function initPicker(baseId, dateDays=120){ const daySel=document.getElementById(`${baseId}_day`); const timeSel=document.getElementById(`${baseId}_time`); buildDateOptions(daySel, dateDays); timeSel.innerHTML='<option value="" selected hidden>時間を選択</option>'; daySel.addEventListener('change', ()=>{ buildTimeOptionsForDay(timeSel, daySel.value); updateHiddenAndPlaceholder(baseId); }); timeSel.addEventListener('change', ()=>updateHiddenAndPlaceholder(baseId)); updateHiddenAndPlaceholder(baseId); }
 
-      // 性別
-      const g = loadLS(LS.gender);
-      if(g){
-        const r = document.querySelector(`input[name="gender"][value="${g}"]`);
-        if(r){
-          r.checked = true;
-          // activeクラスを反映
-          const chip = r.closest('label.chip');
-          if(chip){ chip.classList.add('active'); }
-        }
-      }
-    })();
+    function updateHiddenAndPlaceholder(baseId){ const day=document.getElementById(`${baseId}_day`).value; const time=document.getElementById(`${baseId}_time`).value; const hidden=document.getElementById(baseId); const ph=document.getElementById(`placeholder${baseId.slice(-1)}`); hidden.value=(day&&time)?`${day}T${time}`:""; if(ph) ph.style.display = hidden.value ? 'none' : ''; updateDisplayInfo(); }
 
-    // ===== 入力の自動保存（基本情報のみ） =====
-    $('#name').addEventListener('input', e => saveLS(LS.name, e.target.value));
-    $('#tel').addEventListener('input', e => saveLS(LS.tel, e.target.value));
-    $('#birthday').addEventListener('change', e => saveLS(LS.birthday, e.target.value));
-    // 性別は chips の change で保存済み
+    function formatISOToJP(iso){ if(!iso) return ''; const [d,t]=iso.split('T'); if(!d||!t) return ''; const [Y,M,D]=d.split('-').map(n=>parseInt(n,10)); const [h,m]=t.split(':').map(n=>parseInt(n,10)); if([Y,M,D,h,m].some(Number.isNaN)) return ''; const p=n=>String(n).padStart(2,'0'); return `${Y}年${M}月${D}日 ${p(h)}:${p(m)}`; }
 
-    // ===== バリデーション補助 =====
-    function setInvalid(id, on, msg){
-      const field = document.getElementById(id);
-      if(!field) return;
-      field.classList.toggle('invalid', !!on);
-      if(msg){ const el = field.querySelector('.error'); if(el) el.textContent = msg; }
-    }
-    function firstInvalidScroll(){
-      const target = document.querySelector('.invalid');
-      if(target) target.scrollIntoView({behavior:'smooth', block:'center'});
-    }
-    function isTelOK(val){ return /^[0-9+\-\s]{9,}$/.test(val.trim()); }
-
-    // ===== 日付整形 =====
-    function fDate(d){
-      if(!d) return '';
-      const x = new Date(d + 'T00:00');
-      if(isNaN(x)) return d;
-      return `${x.getFullYear()}年${x.getMonth()+1}月${x.getDate()}日`;
-    }
-    function fDT(dt){
-      if(!dt) return '';
-      const x = new Date(dt);
-      if(isNaN(x)) return dt;
-      const pad = n => String(n).padStart(2,'0');
-      return `${x.getFullYear()}年${x.getMonth()+1}月${x.getDate()}日 ${pad(x.getHours())}:${pad(x.getMinutes())}`;
-    }
-
-    // ===== 送信処理 =====
-    const form = document.getElementById('reserveForm');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = $('#name').value.trim();
-      const tel = $('#tel').value.trim();
-      const gender = (document.querySelector('input[name="gender"]:checked') || {}).value || '';
-      const birthday = $('#birthday').value;
-      const accessEl = (document.querySelector('input[name="access"]:checked') || {});
-      const access = accessEl.value || '';
-      const accessOther = $('#accessOther').value.trim();
-      const wish1 = $('#wish1').value;
-      const wish2 = $('#wish2').value;
-      const wish3 = $('#wish3').value;
-      const note = $('#note').value.trim();
-
-      ['f-name','f-tel','f-gender','f-birthday','f-access','f-wish1'].forEach(id=>setInvalid(id,false));
-
-      let bad = false;
-      if(!name){ setInvalid('f-name', true); bad = true; }
-      if(!tel || !isTelOK(tel)){ setInvalid('f-tel', true); bad = true; }
-      if(!gender){ setInvalid('f-gender', true); bad = true; }
-      if(!birthday){ setInvalid('f-birthday', true); bad = true; }
-      if(!access){ setInvalid('f-access', true); bad = true; }
-      if(access === 'その他' && !accessOther){ setInvalid('f-access', true, '「その他」の内容を入力してください。'); bad = true; }
-      if(!wish1){ setInvalid('f-wish1', true); bad = true; }
-
-      if(bad){ firstInvalidScroll(); return; }
-
-      const accessText = access === 'その他' && accessOther ? `その他（${accessOther}）` : access;
-
-      const lines = [
-        '≪予約フォーム≫',
-        `【お名前】\n・${name}`,
-        `【電話番号】\n・${tel}`,
-        `【性別】\n・${gender}`,
-        `【生年月日】\n・${fDate(birthday)}`,
-        `【来店方法】\n・${accessText}`,
-        '【希望日時】',
-        `・第一希望：${fDT(wish1)}`,
-        wish2 ? `・第二希望：${fDT(wish2)}` : '',
-        wish3 ? `・第三希望：${fDT(wish3)}` : '',
-        note ? `【備考】\n・${note}` : ''
-      ].filter(Boolean).join('\n');
-
-      const overlay = document.getElementById('overlay');
-      const btn = document.getElementById('submitBtn');
-      try{
-        overlay.classList.add('active');
-        overlay.setAttribute('aria-hidden','false');
-        btn.setAttribute('disabled','true');
-        await liff.sendMessages([{ type:'text', text: lines }]);
-        alert('送信ありがとうございました。担当者から折り返しご連絡いたします。');
-        liff.closeWindow();
-      }catch(err){
-        console.error('送信失敗', err);
-        alert('送信に失敗しました。電波状況をご確認のうえ再度お試しください。');
-      }finally{
-        overlay.classList.remove('active');
-        overlay.setAttribute('aria-hidden','true');
-        btn.removeAttribute('disabled');
-      }
-    });
+    // スムーズスクロール
+    document.querySelectorAll('.side-nav a').forEach(a=>{ a.addEventListener('click', e=>{ e.preventDefault(); const id = a.getAttribute('href').substring(1); const el = document.getElementById(id); if(el){ window.scrollTo({ top: el.offsetTop - 20, behavior:'smooth'}); } }); });
   </script>
 </body>
+
 </html>
