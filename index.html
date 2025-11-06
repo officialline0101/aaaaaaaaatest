@@ -2144,65 +2144,65 @@ function removeSymptom(button) {
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                visitCount: visitCount,
-                selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                irradiationsCount: irradiationsCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value,
-                    document.getElementById('date3').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        visitCount: visitCount,
+        selectedMenu: selectedMenu,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+        irradiationsCount: irradiationsCount,
+        dates: [
+            document.getElementById('date1').value,
+            document.getElementById('date2').value,
+            document.getElementById('date3').value
+        ],
+        message: document.getElementById('message').value.trim()
+    };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
+    // フォームデータのチェック
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
 
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
-            }
+    if (!formData.phone) {
+        alert('電話番号を入力してください。');
+        return;
+    }
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
 
-            if (!formData.dates[0]) {
-                alert('第1希望日※必須を選択してください。');
-                return;
-            }
+    if (!formData.dates[0]) {
+        alert('第1希望日※必須を選択してください。');
+        return;
+    }
 
-            // selectedSymptomを文字列に整形
-            const selectedSymptomText = formData.selectedSymptom
-                ? formData.selectedSymptom.map(item => `${item.name}`).join(',')
-                : 'メニュー未選択';
+    // selectedSymptomを文字列に整形（複数選択時は改行で区切る）
+    const selectedSymptomText = formData.selectedSymptom && formData.selectedSymptom.length > 0
+        ? formData.selectedSymptom.map(item => `・${item.name}`).join('\n')
+        : 'メニュー未選択';
 
-            // irradiationsCountの整形（nullチェック）
-            const irradiationsText = formData.irradiationsCount || 'なし';
+    // irradiationsCountの整形（nullチェック）
+    const irradiationsText = formData.irradiationsCount || 'なし';
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n《ご来店回数》${formData.visitCount}\n《コース》${formData.selectedMenu}\n《メニュー》${selectedSymptomText}\n《オプション》${irradiationsText}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('確認してご連絡差し上げます。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // LINEトークにメッセージを送信
+    liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\n《お名前》${formData.name}\n《電話番号》${formData.phone}\n\n《コース》${formData.selectedMenu}\n《メニュー》\n${selectedSymptomText}\n《オプション》\n⇒${irradiationsText}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《第三希望日》\n${formatDate(formData.dates[2])}\n\n《メッセージ》\n${formData.message}`
+    }]).then(() => {
+        /* メッセージ送信成功時の処理 */
+        alert('確認してご連絡差し上げます。');
+        /* LIFFウィンドウを閉じる */
+        liff.closeWindow();
+    }).catch((err) => {
+        /* メッセージ送信失敗時の処理 */
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
