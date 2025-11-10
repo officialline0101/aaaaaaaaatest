@@ -6,45 +6,164 @@
   <title>予約フォーム</title>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    /* ====== 既存CSS（前回と同じ） ====== */
-    .side-nav{position:fixed;right:-5px;top:80%;transform:translateY(-50%) translateX(10px);background:#45c4b7;display:flex;flex-direction:column;align-items:center;padding:4px;border-radius:10px 0 0 10px;z-index:1000;width:35px}
-    .side-nav a:active{transform:scale(1.0)}
-    .side-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;text-decoration:none;font-size:10px;margin:5px 0;padding:5px;transition:background .3s,transform .2s;border-radius:5px;width:30px;height:30px;text-align:center}
-    .side-nav a span{font-size:24px;position:absolute;left:2px;top:13px}
-    @media (max-width:600px){.side-nav{right:2px;width:30px}.side-nav a{width:28px;height:28px}.side-nav a i{font-size:12px}}
-    body{font-family:'Poppins',sans-serif;background-color:#ffffff;display:flex;justify-content:center;align-items:flex-start;height:100vh;margin:0;padding-top:5px;overflow-x:hidden}
-    .container{background-color:#fdfdfd;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.1);width:90%;max-width:500px;padding:25px;box-sizing:border-box;margin:0 auto}
-    h1{background:linear-gradient(135deg,#45c4b7,#45c4b7);color:white;padding:20px;border-radius:0;text-align:center;display:block;margin:-20px -15px 20px -15px;font-size:26px;font-weight:100;box-shadow:inset 0 -5px 10px rgba(0,0,0,.05);position:relative;overflow:hidden}
-    .label,.labelkibounitizi,.labeltyuuou,.labelmessezi{display:block;margin-bottom:20px;padding:3px;background-color:#45c4b7;color:#ffffff;border-radius:0px;font-size:18px;text-align:center;text-indent:0px;position:relative;overflow:hidden;border-top:1px solid black;border-bottom:1px solid black}
-    .label{font-weight:400;text-indent:20px}
-    .labelkibounitizi{margin:10px 0;line-height:1.2}
-    .labelContent{display:block;margin-bottom:10px;padding:3px;font-weight:400;background-color:#ffffff;color:#141414;border-radius:0px;font-size:18px;text-align:center;text-indent:0px;position:relative;overflow:hidden;border-top:1px solid black;border-bottom:1px solid black}
-    .required{color:#ffffff;font-weight:lighter;font-size:.6em;margin-left:5px;vertical-align:.8em;background-color:rgb(255,15,15);padding:0 5px;border-radius:3px;margin-right:5px}
-    input[type="text"],input[type="tel"],textarea,select{width:100%;padding:12px;margin-bottom:10px;border:1px solid #555;border-radius:3px;box-sizing:border-box;font-size:16px;transition:all .3s;position:relative;top:-5px}
-    .visit-buttons,.symptoms,.menu-sections,.irradiations,.options{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
-    .visit-buttons button,.symptoms button,.menu-sections button,.irradiations button,.options button{flex:1;padding:10px;border:1px solid #2e2e2e;border-radius:4px;background-color:#f7f7f7;cursor:pointer;box-sizing:border-box;text-align:center;white-space:nowrap}
-    .visit-buttons button.active,.symptoms button.active,.menu-sections button.active,.irradiations button.active,.options button.active{background-color:#ffffff;color:#141414;outline:1px solid #2b2b2b;outline-offset:2px;box-shadow:0 0 0 3px #45c4b7}
-    input:focus,textarea:focus,select:focus{border-color:#45c4b7;outline:none;box-shadow:0 0 8px rgba(0,123,255,.2)}
-    button{padding:12px;border:none;border-radius:6px;background-color:#3e3f41;color:#000;font-size:16px;cursor:pointer;transition:all .3s}
-    button:hover{background-color:#e9e9e9;transform:scale(1.05)}
-    .submit-button{width:100%;padding:15px;font-size:18px;background-color:#45c4b7;margin-top:12px}
-    .submit-button:hover{background-color:#45c4b7}
-    .info-row{display:flex;justify-content:space-between;align-items:center;margin:-6px 0}
-    hr{margin:-5px 0}
-    .edit-button{background-color:#fff;color:#1a1a1a;border:1px solid #000;border-radius:5px;padding:5px 10px;cursor:pointer;transition:background-color .3s;white-space:nowrap}
-    .edit-button:hover{background-color:#45c4b7;color:#fff}
-    @media (max-width:768px){.container{padding:15px}h1{font-size:22px}input,button{font-size:14px}}
-    .small-text{font-size:18px}
-    /* 追加 */
-    .helper{font-size:12px;color:#333;opacity:.8;margin-top:-6px;margin-bottom:6px}
-    .menu-section{display:none}
-    .menu-section.active{display:block}
-    /* 日時UI（元コードと同名クラス） */
-    .datetime-input{width:100%;padding:18px;font-size:18px;border:1px solid #000;border-radius:8px;box-sizing:border-box;background-color:#fff;color:#333;appearance:none;touch-action:manipulation;transition:border-color .3s,box-shadow .3s}
-    .dt-grid{display:flex;gap:8px;align-items:center}
-    @media (max-width:480px){.dt-grid{flex-direction:column}}
-    .time-disabled{opacity:.5;pointer-events:none}
-    .placeholder{display:block;color:#aaa;font-size:16px;margin-bottom:6px}
+/* ====== Black × White × Gold Theme ====== */
+:root{
+  --bg:#ffffff;            /* 背景（白） */
+  --base:#000000;          /* ベース（黒） */
+  --gold:#d4af37;          /* 文字等の金色 */
+  --gold-soft:#e2c766;     /* ホバー/発光用の淡金 */
+  --line:#000000;          /* 罫線（黒） */
+}
+
+/* 右側の追従ナビ */
+.side-nav{
+  position:fixed;right:-5px;top:80%;
+  transform:translateY(-50%) translateX(15px);
+  background:var(--base);
+  display:flex;flex-direction:column;align-items:center;
+  padding:4px;border-radius:10px 0 0 10px;z-index:1000;width:35px
+}
+.side-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--gold);text-decoration:none;font-size:10px;margin:5px 0;padding:5px;
+  transition:background .3s,transform .2s;border-radius:5px;width:30px;height:30px;text-align:center}
+.side-nav a:active{transform:scale(1.0)}
+.side-nav a:hover{background:rgba(212,175,55,.12)}
+.side-nav a span{font-size:24px;position:absolute;left:2px;top:13px}
+@media (max-width:600px){.side-nav{right:2px;width:30px}.side-nav a{width:28px;height:28px}.side-nav a i{font-size:12px}}
+
+/* ベース */
+body{
+  font-family:'Poppins',sans-serif;
+  background-color:var(--bg);
+  color:var(--gold);
+  display:flex;justify-content:center;align-items:flex-start;
+  height:100vh;margin:0;padding-top:5px;overflow-x:hidden
+}
+.container{
+  background-color:var(--bg);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+  width:95%;max-width:500px;padding:25px;box-sizing:border-box;margin:0 auto
+}
+
+/* 見出し */
+h1{
+  background:var(--base);
+  color:var(--gold);
+  padding:20px;border-radius:0;text-align:center;display:block;
+  margin:-20px -15px 20px -15px;font-size:26px;font-weight:100;
+  box-shadow:inset 0 -5px 10px rgba(0,0,0,.2);position:relative;overflow:hidden
+}
+
+/* ラベル */
+.label,.labelkibounitizi,.labeltyuuou,.labelmessezi{
+  display:block;margin-bottom:20px;padding:3px;
+  background-color:var(--base);color:var(--gold);
+  border-radius:0px;font-size:18px;text-align:center;text-indent:0px;position:relative;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)
+}
+.label{font-weight:400;text-indent:20px}
+.labelkibounitizi{margin:10px 0;line-height:1.2}
+
+/* 中見出し（白バー） */
+.labelContent{
+  display:block;margin-bottom:10px;padding:3px;font-weight:400;
+  background-color:var(--bg);color:var(--gold);
+  border-radius:0px;font-size:18px;text-align:center;text-indent:0px;position:relative;overflow:hidden;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line)
+}
+
+/* 必須バッジ（赤は視認性のため継続） */
+.required{
+  color:#ffffff;font-weight:lighter;font-size:.6em;margin-left:5px;vertical-align:.8em;
+  background-color:rgb(255,15,15);padding:0 5px;border-radius:3px;margin-right:5px
+}
+
+/* 入力系 */
+input[type="text"],input[type="tel"],textarea,select{
+  width:100%;padding:12px;margin-bottom:10px;
+  border:1px solid var(--line);border-radius:3px;box-sizing:border-box;font-size:16px;
+  background:#fff;color:var(--base); /* 入力は可読性重視で黒文字 */
+  transition:all .3s;position:relative;top:-5px
+}
+input::placeholder,textarea::placeholder{color:#777}
+
+/* ボタン群 */
+.visit-buttons,.symptoms,.menu-sections,.irradiations,.options{
+  display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px
+}
+.visit-buttons button,.symptoms button,.menu-sections button,.irradiations button,.options button{
+  flex:1;padding:10px;border:1px solid var(--line);border-radius:4px;
+  background-color:#f7f7f7;cursor:pointer;box-sizing:border-box;text-align:center;white-space:nowrap;
+  color:var(--base)
+}
+.visit-buttons button.active,.symptoms button.active,.menu-sections button.active,.irradiations button.active,.options button.active{
+  background-color:#fff;color:var(--gold);
+  outline:1px solid var(--line);outline-offset:2px;box-shadow:0 0 0 3px var(--gold-soft)
+}
+
+/* フォーカス */
+input:focus,textarea:focus,select:focus{
+  border-color:var(--gold);
+  outline:none;box-shadow:0 0 8px rgba(212,175,55,.45)
+}
+
+/* 汎用ボタン */
+button{
+  padding:12px;border:none;border-radius:6px;background-color:var(--base);
+  color:var(--gold);font-size:16px;cursor:pointer;transition:all .2s
+}
+button:hover{background-color:#111;transform:translateY(-1px)}
+
+/* 送信ボタン */
+.submit-button{
+  width:100%;padding:15px;font-size:18px;background-color:var(--base);color:var(--gold);margin-top:12px
+}
+.submit-button:hover{background-color:#111}
+
+/* 情報表示 */
+.info-row{display:flex;justify-content:space-between;align-items:center;margin:-6px 0}
+hr{margin:-5px 0;border:none;border-top:1px solid var(--line)}
+.edit-button{
+  background-color:var(--base);color:var(--gold);
+  border:1px solid var(--line);border-radius:5px;padding:5px 10px;cursor:pointer;transition:background-color .2s;white-space:nowrap
+}
+.edit-button:hover{background-color:#111;color:var(--gold)}
+
+/* 細かい文字 */
+.small-text{font-size:18px}
+.helper{font-size:12px;color:var(--gold);opacity:.85;margin-top:-6px;margin-bottom:6px}
+
+/* メニュー表示制御 */
+.menu-section{display:none}
+.menu-section.active{display:block}
+
+/* 日時UI */
+.datetime-input{
+  width:100%;padding:18px;font-size:18px;border:1px solid var(--line);border-radius:8px;
+  box-sizing:border-box;background-color:#fff;color:var(--base);
+  appearance:none;touch-action:manipulation;transition:border-color .3s,box-shadow .3s
+}
+.dt-grid{display:flex;gap:8px;align-items:center}
+@media (max-width:480px){.dt-grid{flex-direction:column}}
+.time-disabled{opacity:.5;pointer-events:none}
+.placeholder{display:block;color:#888;font-size:16px;margin-bottom:6px}
+
+/* 画像枠 */
+img{border:1px solid var(--line) !important;border-radius:6px}
+
+/* 600px以下調整 */
+@media (max-width:768px){
+  .container{padding:15px}
+  h1{font-size:22px}
+  input,button{font-size:14px}
+}
+
+/* JSが埋め込む旧アクセント色(#45c4b7)を金色に強制上書き */
+[style*="color:#45c4b7"]{color:var(--gold) !important}
+[style*="box-shadow:0 0 0 3px #45c4b7"]{box-shadow:0 0 0 3px var(--gold-soft) !important}
+
   </style>
 </head>
 <body>
@@ -54,7 +173,7 @@
   </div>
 
   <div class="container">
-    <h1><span class="small-text">トレーフルカイロプラクティック</span><br>予約フォーム</h1>
+    <h1><span class="small-text">NEO LUXE</span><br>予約フォーム</h1>
 
     <!-- お名前 -->
     <div class="label">お名前<span class="required">必須</span></div>
@@ -188,14 +307,13 @@
     <div class="labeltyuuou">ご予約内容</div>
     <div id="displayInfo"></div>
 
-    <!-- 送信 -->
-    <button class="submit-button" id="section-submit" onclick="submitForm()">予約を行う</button>
-
     <!-- 画像（最下部） -->
     <div style="margin-top:16px;">
       <img src="https://www.dropbox.com/scl/fi/2jb432033he7o96gtmbsj/.png?rlkey=pfp5o40pb3iodpo7x246wflfz&st=kuzragj7&raw=1" alt="ご案内画像" style="width:100%;height:auto;border:1px solid #ddd;border-radius:6px"/>
     </div>
-  </div>
+
+    <!-- 送信 -->
+    <button class="submit-button" id="section-submit" onclick="submitForm()">予約を行う</button>
 
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
   <script>
