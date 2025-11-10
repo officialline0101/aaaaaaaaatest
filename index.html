@@ -538,9 +538,9 @@
                 <span class="highlight-text">◆フィットネス◆</span>
             </div>
             <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000" data-duration="60">ヨガ（60分）</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000" data-duration="70">ヨガ（60分）</button>
                 <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000" data-duration="50">TRXサスペンショントレーニング（50分）</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000" data-duration="60">WINBACK×TRXセットコース（60分）</button>
+                <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000" data-duration="90">WINBACK×TRXセットコース（60分）</button>
             </div>
             <div class="highlight-background">
                 <span class="highlight-text">オプション</span>
@@ -664,15 +664,13 @@
 // ※同名でも画面側で data-duration を持つ場合は、data-duration を優先してください。
 let irradiationsTimes = {
   '【オプション】WINBACK施術（部位別30分）': 30,
-  '【オプション】WINBACK施術（全身60分）': 60,
-  '【オプション】メディカルチネイザン（60分）': 70,
+  '【オプション】WINBACK施術（全身60分）': 90,
+  '【オプション】メディカルチネイザン（60分）': 60,
   '【オプション】全身オイルリンパマッサージ（60分）': 60,
-  '【オプション】全身オイルリンパ×チネイザン（75分）': 75,
-  // ①おがくず酵素風呂 & ③フィットネスではシステム30分、②マッサージでは20分
-  // 画面の data-duration があればそちらを優先してください
+  '【オプション】全身オイルリンパ×チネイザン（75分）': 90,
   '【オプション】貼るだけWINBACK施術（部位別20分）': 30,
   '【オプション】ヘッドマッサージ（10分）': 10,
-  '【オプション】ヨガ（60分）': 60,
+  '【オプション】ヨガ（60分）': 70,
   '【オプション】TRXサスペンショントレーニング（50分）': 50,
   '【オプション】WINBACK×TRXセットコース（60分）': 90,
   '【オプション】おがくず酵素風呂（60分）': 60
@@ -684,17 +682,18 @@ let irradiationsTimes = {
             'おがくず酵素風呂温浴': 60,
             'おがくず酵素風呂ペア温浴': 90,
             '貸し切りおがくず酵素風呂温浴': 90,
-            'メディカルチネイザン': 70,
+            'メディカルチネイザン': 60,
             'オイルリンパマッサージ': 70,
             'WINBACK施術（部位別30分）': 30,
             'WINBACK施術（全身60分）': 90,
-            'メディカルチネイザン（60分）': 70,
-            '全身オイルリンパマッサージ（60分）': 70,
+            'メディカルチネイザン（60分）': 60,
+            '全身オイルリンパマッサージ（60分）': 60,
             '全身オイルリンパ×チネイザン（75分）': 90,
             '貼るだけWINBACK施術（部位別20分）': 30,
             'WINBACK施術': 30,
             'ヨガ': 70,
-            'TRXサスペンショントレーニング': 70,
+            'TRXサスペンショントレーニング': 50,
+            'WINBACK×TRXセットコース（60分）': 90,
             'おがくず酵素風呂温浴＋メディカルチネイザン': 120,
             'おがくず酵素風呂温浴＋オイルリンパマッサージ': 120,
             'おがくず酵素風呂温浴＋WINBACK施術': 120,
@@ -829,35 +828,39 @@ let irradiationsTimes = {
             });
         });
 
-        function selectSymptom(button, treatmentId) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+function selectSymptom(button, treatmentId) {
+    // 選択された日時をリセット
+    selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    // ボタンの選択状態を切り替える
+    button.classList.toggle('active');
 
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+    // 選択されたオプションを取得
+    const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
 
-            // メニュー時間と価格をリセット
-            selectedMenuTime = 0;
-            selectedSymptom = [];
-            menuPrice = 0;
+    // メニュー時間と価格をリセット
+    selectedMenuTime = 0;
+    selectedSymptom = [];
+    menuPrice = 0;
 
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
-            } else {
-                // 選択された各ボタンについて処理
-                updatedSelectedButtons.forEach((btn) => {
-                    const selectedMenu = btn.textContent;
-                    selectedMenuTime += menuTimes[selectedMenu] || 0; // 各メニューの時間を合計
-                    selectedSymptom.push(selectedMenu); // 選択されたメニューを配列に追加
-                    menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0; // 各メニューの価格を合計
-                });
-            }
+    if (updatedSelectedButtons.length === 0) {
+        // すべてのボタンの選択が解除された場合
+        selectedMenuTime = 0;
+        selectedSymptom = [];
+        menuPrice = 0;
+    } else {
+        // 選択された各ボタンについて処理
+        updatedSelectedButtons.forEach((btn) => {
+            const selectedMenuName = btn.textContent.trim();
+
+            // data-duration があればそれを優先し、なければ menuTimes を参照
+            const duration = parseInt(btn.dataset.duration || menuTimes[selectedMenuName] || 0);
+            selectedMenuTime += duration;
+
+            selectedSymptom.push(selectedMenuName);
+            menuPrice += parseInt(btn.dataset.price || 0);
+        });
+    }
 
             console.log('選択されたメニューの時間:', selectedMenuTime);
 
