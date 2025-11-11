@@ -1357,12 +1357,22 @@ async function submitForm() {
     }
 
     // 成功表示：「送信されました」＋ 閉じるボタン
-    showSubmitModal('done', '送信されました');
-   // ★ 予約確定直後にカレンダーを最新化（キャッシュ無視）
-   fetchAvailability(currentDate, true);
-   // ★ 直前に選んだ日時は埋まっている可能性があるので選択解除して表示を更新
-   selectedFullDate = '';
-   updateDisplayInfo()
+// 成功表示：「送信されました」＋ 閉じるボタン
+showSubmitModal('done', '送信されました');
+
+// ★ 予約確定直後にカレンダーを最新化（キャッシュ無視）
+fetchAvailability(currentDate, true);
+
+// ★ 直前に選んだ日時は埋まっている可能性があるので選択解除して表示を更新
+selectedFullDate = '';
+updateDisplayInfo();
+
+// ★★ ここを追加：ページ全体をリロード ★★
+setTimeout(() => {
+  // モーダルを即時閉じたいなら次行を有効化
+  // document.getElementById('submitModal').classList.add('hidden');
+  location.reload();   // 最新状態でページを再読み込み
+}, 1000);
 
   } catch (err) {
     console.error(err);
