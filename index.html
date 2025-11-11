@@ -718,7 +718,7 @@
 <body>
 
     <div class="container">
-        <h1>予約フォームA<br>予約フォーム
+        <h1>misomitsu33様用<br>予約フォーム
         </h1>
 
         <div class="label">お客様名<span class="required">必須</span></div>
@@ -726,7 +726,7 @@
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
         <!-- ▼ お客様選択（クラスを少し追加） -->
-        <div class="label">お客様選択</div>
+        <div class="label">お客様選択<span class="required">必須</span></div>
 <div class="select-wrap">
   <select id="customerSelect" class="select">
     <option value="">（選択してください）</option>
@@ -743,7 +743,7 @@
   </div>
 </div>
 
-<small id="customerHint" class="hint">※ スプレッドシートから読み込みます</small>
+<small id="customerHint" class="hint">※ スプレッドシートから読み込み中です</small>
 
         <div class="label">電話番号<span class="required">必須</span></div>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
@@ -1386,6 +1386,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+// ▼ お客様セレクト変更でID/名前を保持
+document.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('customerSelect');
+  if (sel) {
+    sel.addEventListener('change', (e) => {
+      const opt = e.target.selectedOptions && e.target.selectedOptions[0];
+      selectedCustomerId = e.target.value || '';
+      selectedCustomerName = opt ? (opt.textContent || '') : '';
+      // 表示欄を更新したい場合
+      if (typeof updateDisplayInfo === 'function') updateDisplayInfo();
+    });
+  }
+});
+
         function selectSymptom(button, treatmentId) {
             // 直近で選び直したら日時はリセット
             selectedFullDate = '';
@@ -1655,6 +1669,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // バリデーション
             if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
             if (!formData.dates) { alert('希望日時を選択してください。'); return; }
+
+// ★追加：お客様選択のチェック
+const customerSel = document.getElementById('customerSelect');
+if (!customerSel || !customerSel.value) {
+  alert('お客様を選択してください。');
+  return;
+}
 
             const startIso = jpToISO(formData.dates[0]);
             if (!startIso) { alert('日時の形式が不正です。'); return; }
