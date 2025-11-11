@@ -95,14 +95,32 @@
             /* セル幅を均等にする */
         }
 
-        .calendar th, .calendar td {
-            text-align: center; padding: 5px; cursor: pointer; vertical-align: top;
-            width: 14.28%; box-sizing: border-box; border: 1px solid #000;
+        .calendar th,
+        .calendar td {
+            font-size: 12.5px;
+            /* ここでフォントサイズを変更 */
+            text-align: center;
+            padding: 5px;
+            cursor: pointer;
+            vertical-align: top;
+            width: auto;
+            /* 通常のセルは自動調整 */
+            box-sizing: border-box;
+            border: 1px solid #1a1a1a;
         }
 
-        .calendar th { background-color: #f7f7f7; }
-        .calendar td:hover { background-color: #ddd; }
-        .calendar td.selected { background-color: #111111; color: #fff; }
+        .calendar th {
+            background-color: #f7f7f7;
+        }
+
+        .calendar td:hover {
+            background-color: #ddd;
+        }
+
+        .calendar td.selected {
+            background-color: #3e3f41;
+            color: #fff;
+        }
 
         .week-button-container {
             display: flex;
@@ -406,6 +424,21 @@
 
         let selectedMenuTime = 0;
 
+        // 入力内容をローカルストレージに保存
+        function saveInput(id) {
+            const value = document.getElementById(id).value;
+            localStorage.setItem(id, value);
+        }
+
+        // ページが読み込まれたときに前回の入力内容を復元
+        document.addEventListener('DOMContentLoaded', function () {
+            const savedName = localStorage.getItem('name');
+            const savedPhone = localStorage.getItem('phone');
+
+            if (savedName) document.getElementById('name').value = savedName;
+            if (savedPhone) document.getElementById('phone').value = savedPhone;
+        });
+
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
             const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
@@ -560,7 +593,7 @@
 
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 alert('当日キャンセルは無いようにお願いいたします。');
                 liff.closeWindow();
