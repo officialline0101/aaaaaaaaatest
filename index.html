@@ -18,13 +18,9 @@
         /* 右端の細いナビ（固定） */
         .side-nav {
             position: fixed;
-            /* 画面スクロールしても固定 */
             right: -5px;
-            /* さらに右へ */
             top: 80%;
-            /* 画面中央に固定 */
             transform: translateY(-50%) translateX(15px);
-            /* 中央配置と右ずらし */
             background: #000000;
             display: flex;
             flex-direction: column;
@@ -33,12 +29,10 @@
             border-radius: 10px 0 0 10px;
             z-index: 1000;
             width: 35px;
-            /* さらに細く */
         }
 
         .side-nav a:active {
             transform: scale(1.0);
-            /* タップした後に元のサイズに戻す */
         }
 
         .side-nav a {
@@ -60,21 +54,15 @@
 
         .side-nav a span {
             font-size: 24px;
-            /* 矢印をさらに大きく */
             position: absolute;
             left: 2px;
-            /* 左端に寄せる */
             top: 13px;
-            /* さらに下へ */
         }
 
-        /* スマホ用の微調整 */
         @media (max-width: 600px) {
             .side-nav {
                 right: 2px;
-                /* スマホではさらに右端に */
                 width: 30px;
-                /* もっと細く */
             }
 
             .side-nav a {
@@ -84,7 +72,6 @@
 
             .side-nav a i {
                 font-size: 12px;
-                /* スマホではもっと小さく */
             }
         }
 
@@ -141,7 +128,7 @@ h1{
 input[type="text"],input[type="tel"],textarea,select{
   width:100%;padding:12px;margin-bottom:10px;
   border:1px solid var(--line);border-radius:3px;box-sizing:border-box;font-size:16px;
-  background:#fff;color:var(--base); /* 入力は可読性重視で黒文字 */
+  background:#fff;color:var(--base);
   transition:all .3s;position:relative;top:-5px
 }
 input::placeholder,textarea::placeholder{color:#777}
@@ -316,39 +303,25 @@ img{border:1px solid var(--line) !important;border-radius:6px}
       </div>
     </div>
 
-    <!-- ★★★ 希望日時（いただいたブロックをそのまま設置） ★★★ -->
-    <!-- ② HTML：各ブロックの「日付入力」をラップして“日付を選択”を重ねる -->
-    <div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
+    <!-- 希望日時 -->
+    <div class="label">希望日時<span class="required">必須</span></div>
     <div class="datetime-wrapper" style="text-align: center;">
       <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-      <!-- 提出/既存処理用：ISO(YYYY-MM-DDTHH:MM) を入れる -->
       <input type="hidden" id="date1" name="date1">
       <div class="dt-grid">
-        <!-- 日付も<select>にして時間と同じ見た目 -->
         <select id="date1_day" class="datetime-input" aria-label="日付を選択"></select>
         <select id="date1_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
       </div>
     </div>
 
     <!-- 第二希望日時 -->
-    <div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
+    <div class="labelkibounitizi">第二希望日時</div>
     <div class="datetime-wrapper" style="text-align: center;">
       <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
       <input type="hidden" id="date2" name="date2">
       <div class="dt-grid">
         <select id="date2_day" class="datetime-input" aria-label="日付を選択"></select>
         <select id="date2_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
-      </div>
-    </div>
-
-    <!-- 第三希望日時 -->
-    <div class="labelkibounitizi">第三希望日時<span class="required">必須</span></div>
-    <div class="datetime-wrapper" style="text-align: center;">
-      <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
-      <input type="hidden" id="date3" name="date3">
-      <div class="dt-grid">
-        <select id="date3_day" class="datetime-input" aria-label="日付を選択"></select>
-        <select id="date3_time" class="datetime-input" aria-label="時間（00/30のみ）"></select>
       </div>
     </div>
 
@@ -378,15 +351,15 @@ img{border:1px solid var(--line) !important;border-radius:6px}
 
     // ===== LIFF初期化 =====
     document.addEventListener('DOMContentLoaded', function () {
-      liff.init({ liffId: '2005254357-zKma9BZk' })
+      liff.init({ liffId: '2008453222-VyWPnMex' })
         .then(() => console.log('LIFF初期化成功'))
         .catch(err => console.log('LIFF初期化失敗', err));
 
       // 入力の復元
       restoreInputs();
 
-      // 日時ピッカー初期化
-      ['date1','date2','date3'].forEach(id => initPicker(id, 120));
+      // 日時ピッカー初期化（date1 / date2 のみ）
+      ['date1','date2'].forEach(id => initPicker(id, 120));
 
       // 表示更新
       updateDisplayInfo();
@@ -457,17 +430,15 @@ img{border:1px solid var(--line) !important;border-radius:6px}
       updateDisplayInfo();
     }
 
-    // ===== 希望日時：セレクト生成＆同期（元コードの挙動を踏襲） =====
+    // ===== 希望日時：セレクト生成＆同期 =====
     const JP_WD = ['日','月','火','水','木','金','土'];
     const pad = n => String(n).padStart(2,'0');
 
-    // 日付セレクト：今日から 'days' 日ぶん（例：月曜・火曜を除外する仕様にも拡張可）
     function buildDateOptions(selectEl, days=120, startDate=new Date()){
       const d = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
       selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
       for(let i=0;i<days;i++){
         const wd = d.getDay();
-        // ここで除外したい曜日があれば条件追加（例：if(wd===1||wd===2){ d.setDate(d.getDate()+1); continue; }）
         const y = d.getFullYear(), m = pad(d.getMonth()+1), day = pad(d.getDate());
         const value = `${y}-${m}-${day}`;
         const label = `${y}/${m}/${day}（${JP_WD[wd]}）`;
@@ -479,7 +450,7 @@ img{border:1px solid var(--line) !important;border-radius:6px}
       }
     }
 
-    // 営業時間テーブル（必要に応じて調整）
+    // 営業時間テーブル
     const WEEKLY_HOURS = {
       0:{start:10,end:16}, // 日
       1:{start:10,end:18}, // 月
@@ -609,11 +580,9 @@ img{border:1px solid var(--line) !important;border-radius:6px}
 
       const d1 = document.getElementById('date1').value;
       const d2 = document.getElementById('date2').value;
-      const d3 = document.getElementById('date3').value;
 
       const d1Text = d1 ? `・<span style="color:#45c4b7;"><strong>第1希望日</strong></span><br>${formatDateTime(d1)}` : '・第1希望日が未選択です';
       const d2Text = d2 ? `・<span style="color:#45c4b7;"><strong>第2希望日</strong></span><br>${formatDateTime(d2)}` : '・第2希望日が未選択です';
-      const d3Text = d3 ? `・<span style="color:#45c4b7;"><strong>第3希望日</strong></span><br>${formatDateTime(d3)}` : '・第3希望日が未選択です';
 
       document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
@@ -653,10 +622,6 @@ img{border:1px solid var(--line) !important;border-radius:6px}
           <button class="edit-button" onclick="scrollToId('date2_day')">修正</button>
         </div><hr>
         <div class="info-row">
-          <p>${d3Text}</p>
-          <button class="edit-button" onclick="scrollToId('date3_day')">修正</button>
-        </div><hr>
-        <div class="info-row">
           <p><span style="color:#45c4b7;"><strong>【備考】</strong></span><br>${msg?msg:'（未入力）'}</p>
           <button class="edit-button" onclick="scrollToId('message')">修正</button>
         </div>
@@ -686,7 +651,6 @@ img{border:1px solid var(--line) !important;border-radius:6px}
 
       const d1 = document.getElementById('date1').value;
       const d2 = document.getElementById('date2').value;
-      const d3 = document.getElementById('date3').value;
 
       // バリデーション
       if(!name){ alert('お名前は必須です'); return; }
@@ -718,9 +682,6 @@ ${formatDate(d1)}
 
 《第二希望日》
 ${d2?formatDate(d2):'（未入力）'}
-
-《第三希望日》
-${d3?formatDate(d3):'（未入力）'}
 
 《備考》
 ${msg || '（なし）'}`;
