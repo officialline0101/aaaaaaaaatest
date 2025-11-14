@@ -456,30 +456,52 @@
       }
     }
 
-/* ▼ スマホ幅（〜900px）のとき：MENU DETAIL を画面下に追従させる ▼ */
+/* ▼ MENU レイアウト（モバイル基準） */
+.menu-layout {
+  display: block; /* スマホは1カラムで縦並び */
+}
+
+/* ▼ MENU DETAIL の共通デザイン（見た目だけ） */
+.detail-panel {
+  background: #f9f7ff;
+  border-radius: 20px;
+  padding: 16px 16px 18px;
+  border: 1px solid rgba(60, 45, 92, 0.18);
+}
+
+/* ▼ スマホ（〜900px）のとき：画面下に固定＆スクロール追従 */
 @media (max-width: 900px) {
-  /* DETAIL パネルがかぶらないように、下に余白を足す */
+  /* 下に固定される DETAIL パネルと被らないよう、ページの下に余白を足す */
   body {
-    padding-bottom: 220px; /* パネルの高さに合わせて調整してOK */
+    padding-bottom: 220px; /* パネルの高さに合わせて調整OK */
   }
 
-  /* レイアウトは 1 カラムに */
-  .menu-layout {
-    display: block;
-  }
-
-  /* MENU DETAIL を画面下に固定（スクロールしてもついてくる） */
   .detail-panel {
-    position: fixed;
+    position: fixed;   /* 画面に対して固定 */
     left: 16px;
     right: 16px;
-    bottom: 16px;   /* ぴったり下にくっつけたいなら 0 にしてもOK */
+    bottom: 16px;      /* ぴったり下なら 0 でもOK */
     top: auto;
-    max-height: 55vh;      /* 中身が長いときはパネル内だけスクロール */
+    max-height: 55vh;  /* 中身が長いときはパネル内だけスクロール */
     overflow-y: auto;
     border-radius: 20px;
     box-shadow: 0 18px 40px rgba(32, 17, 58, 0.35);
     z-index: 999;
+  }
+}
+
+/* ▼ PC（901px〜）：2カラム＋右カラム sticky */
+@media (min-width: 901px) {
+  .menu-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: flex-start;
+  }
+
+  .detail-panel {
+    position: sticky;
+    top: 24px;
   }
 }
 
