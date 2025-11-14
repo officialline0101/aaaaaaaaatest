@@ -5,6 +5,33 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Elegram エステサロン｜メニュー一覧</title>
   <style>
+/* ▼ スマホ幅（〜900px）のときのレイアウト調整 ▼ */
+@media (max-width: 900px) {
+  /* 下に固定した DETAIL パネルのぶんだけ余白を足す */
+  body {
+    padding-bottom: 200px;
+  }
+
+  /* メニューは縦並び（デフォルト）でOK */
+  .menu-layout {
+    display: block;
+  }
+
+  /* MENU DETAIL を画面下に固定するボトムシート風 */
+  .detail-panel {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    top: auto;
+    max-height: 55vh;           /* 中身だけスクロールできるように */
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(32, 17, 58, 0.35);
+    z-index: 999;
+  }
+}
+
     :root {
       --bg: #f7f4fb;
       --accent: #cab8d9;
@@ -139,19 +166,22 @@
       font-weight: 600;
     }
 
-    /* レイアウト */
-    .menu-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-      gap: 28px;
-      align-items: flex-start;
-    }
+/* レイアウト */
+.menu-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: flex-start;
+}
 
-    @media (max-width: 900px) {
-      .menu-layout {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
+/* ★ここを書き換え（上書き） */
+@media (max-width: 900px) {
+  .menu-layout {
+    display: flex;
+    flex-direction: column; /* 上から順に縦並び */
+    gap: 20px;
+  }
+}
 
     /* カテゴリタブ */
     .category-tabs {
@@ -323,21 +353,22 @@
       box-shadow: 0 10px 20px rgba(171, 131, 230, 0.35);
     }
 
-    /* 詳細パネル */
-    .detail-panel {
-      background: #f9f7ff;
-      border-radius: 20px;
-      padding: 16px 16px 18px;
-      border: 1px solid rgba(60, 45, 92, 0.18);
-      position: sticky;
-      top: 24px;
-    }
+.detail-panel {
+  background: #f9f7ff;
+  border-radius: 20px;
+  padding: 16px 16px 18px;
+  border: 1px solid rgba(60, 45, 92, 0.18);
+  position: sticky;
+  top: 24px;
+}
 
-    @media (max-width: 900px) {
-      .detail-panel {
-        position: static;
-      }
-    }
+/* ★ここをこう変更 */
+@media (max-width: 900px) {
+  .detail-panel {
+    position: static; /* sticky はオフ */
+    order: -1;        /* flex 内で一番上に移動 */
+  }
+}
 
     .detail-heading {
       font-size: 13px;
@@ -2250,9 +2281,10 @@
         '<p class="treatment-placeholder">このメニューの詳細がまだ設定されていません。</p>';
     }
 
-    // 詳細エリアへスクロール（PCではほぼ動かず、SPで効くイメージ）
-    detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
+// 詳細エリアへスクロール（PCのみ）
+if (window.innerWidth > 900) {
+  detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
 </script>
 </body>
 </html>
