@@ -1,1734 +1,2258 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予約フォーム</title>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <style>
-        /* 右端の細いナビ（固定） */
-        .side-nav {
-            position: fixed;
-            /* 画面スクロールしても固定 */
-            right: -5px;
-            /* さらに右へ */
-            top: 80%;
-            /* 画面中央に固定 */
-            transform: translateY(-50%) translateX(13px);
-            /* 中央配置と右ずらし */
-            background: #a8b9a7;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4px;
-            border-radius: 10px 0 0 10px;
-            z-index: 1000;
-            width: 35px;
-            /* さらに細く */
-        }
-
-        .side-nav a:active {
-            transform: scale(1.0);
-            /* タップした後に元のサイズに戻す */
-        }
-
-        .side-nav a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            font-size: 10px;
-            margin: 5px 0;
-            padding: 5px;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 5px;
-            width: 30px;
-            height: 30px;
-            text-align: center;
-        }
-
-        .side-nav a span {
-            font-size: 24px;
-            /* 矢印をさらに大きく */
-            position: absolute;
-            left: -0px;
-            /* 左端に寄せる */
-            top: 13px;
-            /* さらに下へ */
-        }
-
-        /* スマホ用の微調整 */
-        @media (max-width: 600px) {
-            .side-nav {
-                right: 2px;
-                /* スマホではさらに右端に */
-                width: 30px;
-                /* もっと細く */
-            }
-
-            .side-nav a {
-                width: 28px;
-                height: 28px;
-            }
-
-            .side-nav a i {
-                font-size: 12px;
-                /* スマホではもっと小さく */
-            }
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #e7e7e7;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            margin: 0;
-            padding-top: 5px;
-            overflow-x: hidden;
-        }
-
-        .container {
-            background-color: #fdfdfd;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 500px;
-            padding: 25px;
-            box-sizing: border-box;
-            margin: 0 auto;
-        }
-
-        h1 {
-            background: linear-gradient(135deg, #a8b9a7, #667965);
-            color: white;
-            padding: 20px;
-            border-radius: 0 15px 0px 45px;
-            text-align: center;
-            display: block;
-            margin: -20px -15px 20px -15px;
-            font-size: 26px;
-            font-weight: 600;
-            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .label {
-            display: block;
-            margin-top: 10px;
-            /* ← ここを変更 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #a8b9a7;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .labelhidarizurasi {
-            display: block;
-            margin-top: 10px;
-            /* ← ここを変更 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #a8b9a7;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 0px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .labelkakikukeko {
-            display: block;
-            margin-top: 10px;
-            /* ← ここを変更 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #a8b9a7;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .labelContent {
-            display: block;
-            margin-top: 10px;
-            /* ← これを追加 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #a8b9a7;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 0px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* 必須マークのスタイル */
-        .required {
-            color: red;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-
-        .required-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            color: #a8b9a7;
-            font-weight: bold;
-            font-size: 0.9em;
-            border-radius: 4px;
-            padding: 2px 6px;
-            border: 2px solid #a8b9a7;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 3px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .visit-buttons,
-        .hairmakeup-buttons,
-        .kimono-buttons,
-        .preparationphoto-buttons,
-        .Freshflowerphotography-buttons,
-        .highschool-buttons,
-        .symptoms,
-        .menu-sections,
-        .irradiations {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .visit-buttons button,
-        .hairmakeup-buttons button,
-        .kimono-buttons button,
-        .preparationphoto-buttons button,
-        .Freshflowerphotography-buttons button,
-        .highschool-buttons button,
-        .symptoms button,
-        .menu-sections button,
-        .irradiations button {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            box-sizing: border-box;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .visit-buttons button.active,
-        .hairmakeup-buttons button.active,
-        .kimono-buttons button.active,
-        .preparationphoto-buttons button.active,
-        .Freshflowerphotography-buttons button.active,
-        .highschool-buttons button.active,
-        .symptoms button.active,
-        .menu-sections button.active,
-        .irradiations button.active {
-            background-color: #444;
-            color: #fff;
-        }
-
-        .date-inputs input[type="datetime-local"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 4px;
-            background-color: #ff4c4c;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .calendar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            position: relative;
-            width: 100%;
-        }
-
-        .calendar {
-            flex: 1;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .calendar table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            /* セル幅を均等にする */
-        }
-
-        .calendar th,
-        .calendar td {
-            font-size: 12.5px;
-            /* ここでフォントサイズを変更 */
-            text-align: center;
-            padding: 5px;
-            cursor: pointer;
-            vertical-align: top;
-            width: auto;
-            /* 通常のセルは自動調整 */
-            box-sizing: border-box;
-            border: 2px solid #696969;
-        }
-
-        .calendar th:first-child,
-        .calendar td:first-child {
-            width: 17%;
-            /* ここで時間列の幅を調整 */
-            font-size: 12.5px;
-            /* フォントサイズを変更 */
-        }
-
-        .calendar th {
-            background-color: #f7f7f7;
-        }
-
-        .calendar td:hover {
-            background-color: #ddd;
-        }
-
-        .calendar td.selected {
-            background-color: #a8b9a7;
-            color: #fff;
-        }
-
-        .week-button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .week-button {
-            padding: 10px 20px;
-            background-color: #444444;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .month-button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .month-button {
-            padding: 10px 20px;
-            background-color: #444;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .current-month {
-            font-size: 16px;
-            font-weight: bold;
-            color: #444;
-            margin-top: 20px;
-            /* 下にずらす */
-            display: inline-block;
-            /* margin-top を適用しやすくする */
-        }
-
-        .loading-spinner {
-            position: fixed;
-            /* 画面全体に対応 */
-            top: 50%;
-            /* 縦中央 */
-            left: 50%;
-            /* 横中央 */
-            transform: translate(-50%, -50%);
-            display: none;
-            /* 初期状態は非表示 */
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.6);
-            /* 半透明の黒背景で注目度アップ */
-            padding: 40px;
-            /* 周囲に余白をつける */
-            border-radius: 10px;
-            /* 角丸で柔らかい印象 */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            /* 少し立体感を追加 */
-        }
-
-        .spinner {
-            width: 60px;
-            /* スピナーをさらに大きく */
-            height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.2);
-            /* 薄い白で枠を柔らかく */
-            border-top-color: #00d1ff;
-            /* 明るい青で目立たせる */
-            border-radius: 50%;
-            /* 丸い形状 */
-            animation: spin 0.7s linear infinite;
-            /* 滑らかで速い回転 */
-            margin-left: 12px;
-            /* スピナーを右にずらす */
-        }
-
-        .loading-text {
-            margin-top: 20px;
-            /* スピナーとテキストの間隔 */
-            font-size: 15px;
-            /* さらに大きなフォントサイズ */
-            font-weight: bold;
-            /* 太字で目立たせる */
-            color: #ffffff;
-            /* 純白で高いコントラスト */
-            letter-spacing: 1px;
-            /* 文字間隔を広げてモダンな印象に */
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-            /* テキストに影をつけて視認性アップ */
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .available {
-            color: red;
-        }
-
-        .unavailable {
-            background-color: #d3d3d3;
-        }
-
-        .menu-section {
-            display: none;
-        }
-
-        .menu-section.active {
-            display: block;
-        }
-
-        #repairLabel,
-        #repairButtons {
-            display: none;
-        }
-
-        #treatment-text {
-            background-color: #eef9f5;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 1px;
-        }
-
-        .highlight-background {
-            background-color: #f9f9d6;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            margin-top: 10px;
-            /* 上に余白を追加 */
-            text-align: center;
-            /* コンテナ内の要素を中央に配置 */
-        }
-
-        .highlight-text {
-            display: block;
-            font-weight: bold;
-            text-align: center;
-            /* テキストを中央揃えにする */
-        }
-
-        .red-circle {
-            color: red;
-            /* 赤色に設定 */
-        }
-
-        .bold-cross {
-            font-weight: bold;
-            /* 太文字に設定 */
-        }
-
-        .info-text {
-            margin-top: 20px;
-            /* 上の余白 */
-            margin-bottom: 10px;
-            /* 下に白い隙間を追加 */
-            font-size: 13px;
-            color: #000000;
-            line-height: 1.5;
-            text-align: center;
-            word-wrap: break-word;
-            background-color: #eef9f5;
-            /* 青っぽい背景色を追加 */
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        /* 携帯端末向けのレスポンシブデザイン */
-        @media (max-width: 768px) {
-            .info-text {
-                font-size: 11.5px;
-                /* スマホでは少し小さく */
-                margin-top: 10px;
-                /* 上下のマージンを調整 */
-                line-height: 2.0;
-                /* テキストの高さ調整 */
-            }
-        }
-
-        .symptoms,
-        .options {
-            display: block;
-            /* ボタンを縦並びに */
-        }
-
-        .symptoms button,
-        .options button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            box-sizing: border-box;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .symptoms button.active,
-        .options button.active {
-            background-color: #444;
-            color: #fff;
-        }
-
-        .highlight-background {
-            cursor: pointer;
-            background-color: #a8b9a7;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .symptoms,
-        .options {
-            display: block;
-            /* ボタンを縦並びに */
-        }
-
-        .highlight-text {
-            font-weight: bold;
-            display: inline-block;
-            color: #fff;
-            /* オプションテキストの色 */
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: -5px 0;
-        }
-
-        hr {
-            margin: -5px 0;
-        }
-
-        .edit-button {
-            background-color: #ff6b6b;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            white-space: nowrap;
-            /* 改行を防ぐ */
-            width: 80px;
-            /* 横幅を固定 */
-            text-align: center;
-            /* テキストを中央揃え */
-        }
-
-        .edit-button:hover {
-            background-color: #ff4f4f;
-        }
-
-
-        /* 100点の予約フォームCSS */
-
-        input:focus,
-        textarea:focus {
-            border-color: #a8b9a7;
-            outline: none;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-        }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #a8b9a7;
-            color: #000000;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            background-color: #444;
-            transform: scale(1.05);
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            /* ← これを追加 */
-            background-color: #a8b9a7;
-        }
-
-        .submit-button:hover {
-            background-color: #a8b9a7;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            input,
-            button {
-                font-size: 14px;
-            }
-        }
-
-        button.active {
-            outline: 2px solid #696969;
-            /* ここで枠線を指定 */
-            outline-offset: 2px;
-        }
-
-        /* 必須マークのスタイル */
-        .required {
-            color: #ffffff;
-            /* ゴールド（黄色） */
-            font-weight: lighter;
-            /* 文字を細くする */
-            font-size: 0.6em;
-            margin-left: 5px;
-            vertical-align: 0.8em;
-            /* 位置を少し上に調整 */
-
-            /* 白色背景の四角形 */
-            background-color: rgb(255, 15, 15);
-            padding: 0 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-        }
-
-        .current-month {
-            text-align: center;
-            display: block;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, -10px);
-            /* Y方向に上げる */
-            background-color: #a8b9a7;
-            color: #fff;
-            padding: 3px 12px;
-            /* ボックスのパディングを縮小 */
-            border-radius: 8px;
-            /* 角の丸みを少し減少 */
-            font-size: 1.4rem;
-            /* フォントサイズを小さく */
-            font-weight: bold;
-            box-shadow: 0 2px 6px rgba(47, 103, 167, 0.2);
-            /* 影も控えめに */
-        }
-
-        /* ナビゲーションバー */
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #1e1e2d;
-            padding: 10px;
-            border-radius: 10px 0 0 10px;
-            z-index: 1000;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 15px;
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 10px;
-            background: #4a90e2;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-
-        .sidebar a:hover {
-            background: #357ac4;
-        }
-
-        /* スクロール用のセクション */
-        .section {
-            padding: 50px 10px;
-            margin-top: 30px;
-        }
-
-        .datetime-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            color: #aaa;
-            font-size: 16px;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        .datetime-input {
-            width: 100%;
-            padding: 18px;
-            /* 少し大きめにして押しやすく */
-            font-size: 18px;
-            border: 2px solid #888;
-            /* 少し濃くして視認性アップ */
-            border-radius: 8px;
-            /* 指触りの良いデザイン */
-            box-sizing: border-box;
-            background-color: #fff;
-            color: #333;
-            appearance: none;
-            /* OSに左右されにくくする */
-            touch-action: manipulation;
-            /* モバイルのタップ精度向上 */
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .datetime-input:focus {
-            border-color: #007BFF;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
-            /* タップ時の視覚的フィードバック */
-            outline: none;
-        }
-
-        .kibounitizi {
-            display: block;
-            /* ブロック要素として表示。幅いっぱいに広がるよ！ */
-            margin-bottom: 1px;
-            /* 下に10pxのスペースをあける（余白） */
-            padding: 3px;
-            /* 内側に3pxのスペースをつける（中身がくっつかないように） */
-            font-weight: 600;
-            /* 文字を少し太くする（600は太さの目安） */
-            background-color: #a8b9a7;
-            /* 背景の色をくすんだ緑にする */
-            color: white;
-            /* 文字の色を白にする */
-            border-radius: 6px;
-            /* 角を6pxだけ丸くする（ふんわりした見た目に） */
-            font-size: 20px;
-            /* 文字の大きさを18pxにする（ちょっと大きめ） */
-            text-align: center;
-            /* 文字を中央に揃える */
-            /* ↑ 中央揃えにしています */
-            text-indent: 20px;
-            /* 最初の行だけ、文字を右に20pxずらす */
-            /* ↑ テキストの先頭をちょっと右にずらしてるよ！ */
-            position: relative;
-            /* 子要素を自由に配置できるようにする準備（位置調整） */
-            overflow: hidden;
-            /* はみ出た中身を隠す（枠から出ないようにする） */
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: -5px 0;
-        }
-
-        hr {
-            margin: -5px 0;
-        }
-
-        .edit-button {
-            background-color: #ff6b6b;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            white-space: nowrap;
-            /* 改行を防ぐ */
-            width: 80px;
-            /* 横幅を固定 */
-            text-align: center;
-            /* テキストを中央揃え */
-        }
-
-        .edit-button:hover {
-            background-color: #ff4f4f;
-        }
-
-        /* time入力欄 */
-        #mugwortreservationtime {
-            width: 100%;
-            /* スマホ画面いっぱいに広げる */
-            padding: 1em;
-            /* タップしやすく内側余白を増やす */
-            font-size: 1rem;
-            /* 入力しやすい文字サイズ */
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #fff;
-            box-sizing: border-box;
-            appearance: none;
-            /* iOS Safariで余計なスタイルを消す */
-            -webkit-appearance: none;
-            transition: border-color 0.3s;
-        }
-
-        /* フォーカス時の装飾 */
-        #mugwortreservationtime:focus {
-            border-color: #a8b9a7;
-            outline: none;
-            background-color: #f9fefc;
-        }
-
-        .info-textmemo {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 13px;
-            color: #000000;
-            line-height: 1.5;
-            text-align: center;
-            word-wrap: break-word;
-            background-color: #eef9f5;
-            padding: 10px;
-            border-radius: 4px;
-
-            /* 横一杯に広げるための追加 */
-            width: 100%;
-            box-sizing: border-box;
-            /* padding含めて100%に収まるように */
-            display: block;
-        }
-
-        /* 携帯端末向けのレスポンシブデザイン */
-        @media (max-width: 768px) {
-            .info-textmemo {
-                font-size: 11.5px;
-                margin-top: 10px;
-                line-height: 2.0;
-            }
-        }
-
-        .info-textmenu {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 13px;
-            color: #000000;
-            line-height: 1.5;
-            text-align: center;
-            word-wrap: break-word;
-            background-color: #eef9f5;
-            padding: 10px;
-            border-radius: 4px;
-
-            /* 横一杯に広げるための追加 */
-            width: 100%;
-            box-sizing: border-box;
-            /* padding含めて100%に収まるように */
-            display: block;
-        }
-
-        /* 携帯端末向けのレスポンシブデザイン */
-        @media (max-width: 768px) {
-            .info-textmenu {
-                font-size: 9.5px;
-                margin-top: -10px;
-                line-height: 2.0;
-            }
-        }
-
-        .labelnigyou {
-            display: block;
-            margin-top: 3px;
-            /* ← 追加 */
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #a8b9a7;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            text-indent: 0px;
-            position: relative;
-            overflow: hidden;
-        }
-
-.info-textokosan {
-    position: relative;
-    top: -20px; /* ← 上にずらす（必要に応じて調整） */
-    margin-top: 0;
-    margin-bottom: 0px;
-    font-size: 13px;
-    color: #000000;
-    line-height: 1.5;
-    text-align: center;
-    word-wrap: break-word;
-    background-color: #ffffff;
-    padding: 8px; /* 少し余白をつけると見やすい */
-    border-radius: 0 0 4px 4px;
-    border: 1px solid rgb(206, 206, 206);
-    border-top: none;
-
-    width: 100%;          /* 横いっぱい */
-    display: block;       /* ブロック要素として扱う */
-    box-sizing: border-box; /* borderやpaddingを含めて幅100% */
-}
-
-/* スマホ対応 */
-@media (max-width: 768px) {
-    .info-textokosan {
-        font-size: 8.5px;
-        top: -5px; /* モバイルでは少し控えめ */
-        line-height: 2.0;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Elegram エステサロン｜メニュー一覧</title>
+  <style>
+    :root {
+      --bg: #f7f4fb;
+      --accent: #cab8d9;
+      --accent-strong: #ab83e6;
+      --ink: #26232f;
+      --ink-muted: #77738a;
+      --card: #ffffff;
+      --radius-lg: 22px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 18px 40px rgba(32, 17, 58, 0.18);
+      --line: #111;
+      --ink-muted-2: #666;
+      --hairline: #f2f2f2;
     }
-}
 
-    </style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP",
+        "Yu Gothic", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, #ffeaf9 0, #f7f4fb 30%, #f3f8ff 90%);
+      color: var(--ink);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1120px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(18px);
+      border-radius: 32px;
+      box-shadow: var(--shadow-soft);
+      padding: 26px 20px 32px;
+    }
+
+    @media (min-width: 768px) {
+      .shell {
+        padding: 32px 40px 40px;
+      }
+    }
+
+    /* ヘッダー */
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .salon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #cab8d9, #f5d5ff);
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    .salon-badge span {
+      font-size: 16px;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      line-height: 1.4;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-title span {
+      display: inline-block;
+      background: linear-gradient(120deg, #ab83e6, #ff8ab8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 600;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.8;
+    }
+
+    @media (min-width: 768px) {
+      .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header-main {
+        max-width: 520px;
+      }
+    }
+
+    .header-main {
+      flex: 1;
+    }
+
+    .header-note {
+      font-size: 12px;
+      color: var(--ink-muted);
+      background: #f8f5ff;
+      border-radius: 16px;
+      padding: 10px 12px;
+      max-width: 260px;
+    }
+
+    .header-note strong {
+      color: var(--accent-strong);
+      font-weight: 600;
+    }
+
+    /* レイアウト */
+    .menu-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 900px) {
+      .menu-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* カテゴリタブ */
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .category-tab {
+      border: none;
+      cursor: pointer;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      background: #f5f1fb;
+      color: var(--ink-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease,
+        color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .category-tab span {
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .category-tab.active {
+      background: linear-gradient(135deg, #cab8d9, #ab83e6);
+      color: #fff;
+      box-shadow: 0 10px 22px rgba(155, 117, 213, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .category-tab:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    /* メニューグループ */
+    .menu-group {
+      display: none;
+      gap: 18px;
+    }
+
+    .menu-group.active {
+      display: block;
+    }
+
+    .menu-group-header {
+      margin-bottom: 10px;
+    }
+
+    .menu-group-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 0 0 4px;
+    }
+
+    .menu-group-title span {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-strong);
+      margin-left: 8px;
+    }
+
+    .menu-group-desc {
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .menu-columns {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 720px) {
+      .menu-columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .menu-subgroup {
+      background: #faf7ff;
+      border-radius: 18px;
+      padding: 12px 12px 14px;
+      border: 1px solid rgba(150, 134, 180, 0.16);
+    }
+
+    .menu-subgroup-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin: 0 0 8px;
+      color: var(--accent-strong);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .menu-subgroup-title::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #cab8d9, #ab83e6);
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .menu-item-btn {
+      width: 100%;
+      text-align: left;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: #ffffff;
+      padding: 9px 11px;
+      font-size: 13px;
+      line-height: 1.5;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.18s ease, box-shadow 0.18s ease,
+        transform 0.08s ease, border-color 0.18s ease;
+      color: var(--ink);
+    }
+
+    .menu-item-btn span.menu-label {
+      flex: 1;
+    }
+
+    .menu-item-btn span.menu-tag {
+      font-size: 11px;
+      color: var(--accent-strong);
+      opacity: 0.9;
+    }
+
+    .menu-item-btn .chevron {
+      font-size: 13px;
+      opacity: 0.45;
+    }
+
+    .menu-item-btn:hover {
+      background: #fdf9ff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      border-color: rgba(160, 135, 215, 0.7);
+      transform: translateY(-0.5px);
+    }
+
+    .menu-item-btn.is-active {
+      background: #efe7ff;
+      border-color: #ab83e6;
+      box-shadow: 0 10px 20px rgba(171, 131, 230, 0.35);
+    }
+
+    /* 詳細パネル */
+    .detail-panel {
+      background: #f9f7ff;
+      border-radius: 20px;
+      padding: 16px 16px 18px;
+      border: 1px solid rgba(60, 45, 92, 0.18);
+      position: sticky;
+      top: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .detail-panel {
+        position: static;
+      }
+    }
+
+    .detail-heading {
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-strong);
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-heading::before {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: linear-gradient(90deg, #ab83e6, transparent);
+    }
+
+    .detail-sub {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.7;
+    }
+
+    .treatment-placeholder {
+      font-size: 13px;
+      color: var(--ink-muted);
+      padding: 16px 12px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px dashed rgba(151, 132, 200, 0.5);
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* ▼▼ メニュー詳細カード（元コードに合わせたクラス） ▼▼ */
+
+    .treatment-container {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 16px 16px 18px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(122, 102, 167, 0.16);
+    }
+
+    .treatment-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .treatment-image {
+      position: relative;
+      width: 100%;
+      margin: 8px 0 14px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .treatment-image img {
+      width: 100%;
+      display: block;
+    }
+
+    .treatment-description,
+    .treatment-price {
+      position: relative;
+      margin-top: 14px;
+      padding: 14px 0 6px;
+      background: #fff;
+      border-top: 2px solid var(--line);
+      border-bottom: 0;
+      border-radius: 0;
+      line-height: 1.8;
+      color: #222;
+      font-size: 13px;
+    }
+
+    .treatment-description::before,
+    .treatment-price::before {
+      content: "";
+      position: absolute;
+      top: -14px;
+      left: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .treatment-description::before {
+      content: "DETAIL";
+    }
+
+    .treatment-price::before {
+      content: "PRICE";
+    }
+
+    .treatment-price strong {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .treatment-price span {
+      color: var(--ink-muted-2);
+    }
+
+    .treatment-price > span:first-child {
+      display: none;
+    }
+
+    @media (min-width: 720px) {
+      .treatment-title {
+        font-size: 20px;
+      }
+
+      .treatment-price strong {
+        font-size: 17px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-
-    <div class="container">
-        <h1><span style="font-size: 18px;">すずき写真事務所</span><br>七五三
-            <div class="info-text">こちらのフォームは携帯専用です。<br>パソコンからは送信できません</div>
+  <div class="shell">
+    <!-- ヘッダー -->
+    <header class="header">
+      <div class="header-main">
+        <div class="header-top">
+          <div class="salon-badge">
+            <span>✧</span>
+            ELEGRAM ESTHETIC MENU
+          </div>
+        </div>
+        <h1 class="hero-title">
+          <span>Elegram</span> エステサロン<br />
+          メニュー一覧
         </h1>
-        <div class="labelkakikukeko">お客様名<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+        <p class="hero-sub">
+          小顔矯正・美肌脱毛・ボディエステ・ブライダルまで。<br />
+          Elegramがご提供するメニューをカテゴリ別にご覧いただけます。<br />
+          気になるメニュー名をタップすると、右側に〈詳細〉と〈料金〉が表示されます。
+        </p>
+      </div>
+      <p class="header-note">
+        ご予約は<br />
+        <strong>LINE 予約フォーム</strong> より承っております。<br />
+        こちらのページはメニュー内容のご案内専用です。
+      </p>
+    </header>
 
-        <div class="labelkakikukeko">ご住所<span class="required">必須</span></div>
-        <input type="text" id="Yourresidentialaddress" placeholder="ご住所を入力してください"
-            oninput="saveInput('Yourresidentialaddress')">
-
-        <div class="labelkakikukeko">電話番号<span class="required">必須</span></div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
-
-        <div class="label">希望日時<span class="required">必須</span></div>
-
-        <!-- カスタム placeholder 表示用 -->
-        <div class="datetime-wrapper" style="text-align: center;">
-            <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
-            <input type="date" id="date1" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
+    <main class="menu-layout">
+      <!-- 左：メニュー一覧 -->
+      <section>
+        <!-- カテゴリタブ -->
+        <div class="category-tabs">
+          <button class="category-tab active" data-target="cat-kogao">
+            小顔矯正リフトアップ <span>Face lift</span>
+          </button>
+          <button class="category-tab" data-target="cat-datsumo">
+            美肌脱毛 <span>Hair removal</span>
+          </button>
+          <button class="category-tab" data-target="cat-peeling">
+            お悩み別ピーリング <span>Peeling</span>
+          </button>
+          <button class="category-tab" data-target="cat-keana">
+            毛穴・肌質改善 <span>Pores / Texture</span>
+          </button>
+          <button class="category-tab" data-target="cat-body">
+            ボディーエステ <span>Body</span>
+          </button>
+          <button class="category-tab" data-target="cat-relax">
+            リラクゼーション <span>Relax</span>
+          </button>
+          <button class="category-tab" data-target="cat-eyebrow">
+            眉毛スタイリング <span>Eyebrow</span>
+          </button>
+          <button class="category-tab" data-target="cat-bridal">
+            ブライダルエステ <span>Bridal</span>
+          </button>
         </div>
 
-        <div class="label">第2希望日<span class="required">必須</span></div>
-
-        <!-- カスタム placeholder 表示用 -->
-        <div class="datetime-wrapper" style="text-align: center;">
-            <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
-            <input type="date" id="date2" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
-        </div>
-
-        <div class="labelhidarizurasi">第3希望日</div>
-
-        <!-- カスタム placeholder 表示用 -->
-        <div class="datetime-wrapper" style="text-align: center;">
-            <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
-            <input type="date" id="date3" class="datetime-input" placeholder=" " aria-label="タップして日時を入力">
-        </div>
-
-        <div class="label">プランをお選びください<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">お参り同行プラン 47000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタジオ3歳男の子 53000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタジオ3歳女の子 56000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタジオ5歳男の子 55000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタジオ7歳女の子 60000円+税</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">スタジオきょうだい同時撮影</button>
-            <span class="info-textmemo" id="placeholder3">※複数人の場合は、<br>上のお子さんのプラン+きょうだい1人につき5500円</span>
-        </div>
-
-        <div class="labelhidarizurasi">
-            祈祷されるお子様のお名前・年齢・性別<br>
-            <span style="font-size: 14px;">(複数の場合は全員分)</span>
-            <span class="required">必須</span>
-        </div>
-
-        <textarea id="mugwortmainkid"></textarea>
-
-        <script>
-            document.getElementById("mugwortmainkid").placeholder =
-                "例：山田花子・7歳・女の子\n山田太郎・5歳・男の子\n山田次郎・3歳・男の子";
-        </script>
-
-        <div class="labelhidarizurasi">付き添いご兄弟のお名前・年齢・性別</div>
-        <textarea id="mugwortsiblinginfo" placeholder="お名前・年齢・性別をご記入ください。"></textarea>
-
-        <div class="labelhidarizurasi">撮影に参加される方の人数と続柄</div>
-        <input type="text" id="mugwortparticipants" placeholder="例：祖母2人、父、母 など">
-
-        <div class="labelhidarizurasi">同行撮影の方はお参りされる神社名</div>
-        <input type="text" id="mugwortshrinename" placeholder="神社名をご記入ください">
-
-        <div class="labelhidarizurasi">ご祈祷の予約時間</div>
-        <input type="time" id="mugwortreservationtime">
-
-        <div class="labelnigyou">生花撮影ご希望の有無<br><span style="font-size: 14px;">（スタジオのみ/オプション5500円）</span></div>
-        <div class="Freshflowerphotography-buttons">
-            <button type="button" onclick="selectFreshflowerphotography(this)">有り</button>
-            <button type="button" onclick="selectFreshflowerphotography(this)">無し</button>
-            <button type="button" onclick="selectFreshflowerphotography(this)">検討中</button>
-        </div>
-
-        <div class="label">お支度風景撮影ご希望の有無<span class="required">必須</span><br><span
-                style="font-size: 14px;">(オプション5500円)</span></div>
-        <div class="preparationphoto-buttons">
-            <button type="button" onclick="selectpreparationphoto(this)">有り</button>
-            <button type="button" onclick="selectpreparationphoto(this)">無し</button>
-            <button type="button" onclick="selectpreparationphoto(this)">検討中</button>
-        </div>
-
-        <div class="label">和装レンタルの有無<span class="required">必須</span></div>
-        <div class="kimono-buttons">
-            <button type="button" onclick="selectkimono(this)">有り</button>
-            <button type="button" onclick="selectkimono(this)">無し</button>
-            <button type="button" onclick="selectkimono(this)">検討中</button>
-        </div>
-
-        <div class="label">お支度ご希望の有無<span class="required">必須</span></div>
-        <div class="info-text">ヘアメイクさんのスケジュール確認が必要になりますので、<br>追って希望日の空き状況をお知らせします</div>
-        <div class="hairmakeup-buttons">
-            <button type="button" onclick="selecthairmakeup(this)">有り</button>
-            <button type="button" onclick="selecthairmakeup(this)">無し</button>
-            <button type="button" onclick="selecthairmakeup(this)">検討中</button>
-            <button type="button" onclick="selecthairmakeup(this)">プラン内のお支度を利用</button>
-        </div>
-
-        <div class="info-text">
-            ※衣装、お支度の料金表は下記リンクをご確認ください。<br>
-            大変恐縮ですが、交通費以外のお見積りにつきましては、<br>
-            各自料金表をご参照くださいますようお願い申し上げます。<br>
-            <a href="https://suzu-photo.com/wp-content/uploads/2025/04/%E6%96%99%E9%87%91%E8%A1%A82025.jpg"
-                target="_blank" rel="noopener noreferrer">
-                <br>＞＞お支度料金表＜＜
-            </a><br><br>
-            <a href="https://suzu-photo.com/wp-content/uploads/2025/04/%E4%B8%83%E4%BA%94%E4%B8%89%E3%83%BB%E7%94%A3%E7%9D%80%E3%83%BB%E8%A8%AA%E5%95%8F%E7%9D%80_%E6%96%99%E9%87%91%E8%A1%A8-scaled.jpg"
-                target="_blank" rel="noopener noreferrer">
-                ＞＞衣装レンタル料金表＜＜
-            </a>
-        </div>
-
-        <div class="labelhidarizurasi">ご質問/ご相談</div>
-        <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
-
-        <button class="submit-button" onclick="submitForm()" div id="section-message">送信</button>
-    </div>
-
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <script>
-        let visitCount = '';
-        let hairmakeupCount = '';
-        let kimonoCount = '';
-        let preparationphotoCount = '';
-        let FreshflowerphotographyCount = '';
-        let selectedMenu = '';
-        let highschoolCount = '';
-        let selectedSymptom = [];  // 配列として定義
-        let selectedFullDate = '';
-        let currentDate = new Date();
-        let availabilityCache = {};
-        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
-        let totalAmount = 0; // 合計金額を格納する変数
-        let menuPrice = 0; // メニューの価格
-        let optionsPrice = 0; // オプションの合計価格
-
-        document.addEventListener('DOMContentLoaded', function () {
-            liff.init({
-                liffId: '2005254357-zKma9BZk'
-            }).then(() => {
-                console.log('LIFF初期化成功');
-            }).catch((err) => {
-                console.log('LIFF初期化失敗', err);
-            });
-
-            fetchAvailability(currentDate);
-        });
-
-        // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
-        let visitTimes = {
-            '初回': 0,
-            'リピーター様': 0
-        };
-
-        let selectedVisitTime = 0; // 訪問回数で選択された時間
-
-        // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
-        let irradiationsTimes = {
-            '美白パック〈30分〉': 0
-        };
-
-        let selectedirradiationsTime = 0; // 訪問回数で選択された時間
-
-        let menuTimes = {
-            'ハリウッドブロウリフト(HBL)': 0,
-            '眉デザインWAX': 0,
-            'セルマン-ツヤ玉トリートメント-': 0,
-            'フェイシャルWAX': 0,
-            'クイックコース 30分': 0,
-            '全身コース 60分': 0,
-            'デフォルトコース 60分': 0,
-            'オイルコース 90分': 0,
-            'クイックコース 30分': 0,
-            'じっくりコース 50分': 0,
-            'あなただけの魅力ファッション診断': 0
-        };
-
-        let selectedMenuTime = 0;
-
-        // 入力内容をローカルストレージに保存
-        function saveInput(id) {
-            const value = document.getElementById(id).value;
-            localStorage.setItem(id, value);
-        }
-
-        // ページが読み込まれたときに前回の入力内容を復元
-        document.addEventListener('DOMContentLoaded', function () {
-            const savedName = localStorage.getItem('name');
-            const savedYourresidentialaddress = localStorage.getItem('Yourresidentialaddress');
-            const savedPhone = localStorage.getItem('phone');
-
-            if (savedName) document.getElementById('name').value = savedName;
-            if (savedYourresidentialaddress) document.getElementById('Yourresidentialaddress').value = savedYourresidentialaddress;
-            if (savedPhone) document.getElementById('phone').value = savedPhone;
-        });
-
-        // スムーズスクロール
-        document.querySelectorAll('.side-nav a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        window.addEventListener('DOMContentLoaded', function () {
-            const ua = navigator.userAgent.toLowerCase();
-            const isLine = ua.includes("line");
-            const isMobile = ua.includes("iphone") || ua.includes("android");
-
-            if (isLine && isMobile) {
-                const infoText = document.querySelector('.info-text');
-                if (infoText) {
-                    infoText.style.display = 'none';
-                }
-            }
-        });
-
-        function formatDateTime(dateTimeString) {
-            const date = new Date(dateTimeString);
-
-            if (isNaN(date)) {
-                return '無効な日時です'; // 無効な日付の場合のエラーメッセージ
-            }
-
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1; // 月は0から始まるため+1
-            const day = date.getDate();
-            const hours = date.getHours();
-            const minutes = String(date.getMinutes()).padStart(2, '0'); // 分を2桁に整形
-
-            return `${year}年${month}月${day}日　${hours}時${minutes}分`;
-        }
-
-        function updateDisplayInfo() {
-            const name = document.getElementById('name').value;
-            const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-            const selectedMenuText = selectedMenu ? `<span style="color:#13ca5e;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
-
-            // メニューが選択されていたら、各メニューを改行して表示
-            const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:#13ca5e;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
-                : '・メニューが未選択です';
-
-            // オプションが選択されていたら、各オプションを改行して表示
-            const irradiationsText = irradiationsCount
-                ? `<span style="color:#13ca5e;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
-                : '・オプション無し';
-
-            // 所要時間を計算
-            let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
-            let hours = Math.floor(totalMinutes / 60);
-            let minutes = totalMinutes % 60;
-
-            // 所要時間の表示形式：○○時間○○分
-            let totalTimeText = `・<span style="color:#13ca5e;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
-
-            // 合計金額の表示
-            const totalAmountText = `・<span style="color:#13ca5e;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
-
-            // 第1希望日が選択された場合の表示
-            const selectedDate1 = document.getElementById('date1').value;
-            const selectedDate1Text = selectedDate1
-                ? `・<span style="color:#13ca5e;"><strong>第1希望日</strong></span>：${formatDateTime(selectedDate1)}`
-                : '・第1希望日が未選択です';
-
-            // 第2希望日が選択された場合の表示
-            const selectedDate2 = document.getElementById('date2').value;
-            const selectedDate2Text = selectedDate2
-                ? `・<span style="color:#13ca5e;"><strong>第2希望日</strong></span>：${formatDateTime(selectedDate2)}`
-                : '・第2希望日が未選択です';
-
-            // 第3希望日が選択された場合の表示
-            const selectedDate3 = document.getElementById('date3').value;
-            const selectedDate3Text = selectedDate3
-                ? `・<span style="color:#13ca5e;"><strong>第3希望日</strong></span>：${formatDateTime(selectedDate3)}`
-                : '・第3希望日が未選択です';
-
-
-            // 修正ボタン付きのHTMLを作成
-            document.getElementById('displayInfo').innerHTML = `
-        <div class="info-row">
-            <p><span style="color:#13ca5e;"><strong>【お名前】</strong></span><br>・${name}</p>
-            <button class="edit-button" onclick="scrollToElement('name')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${visitCountText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstVisit')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedMenuText}</p>
-            <button class="edit-button" onclick="scrollToElement('course')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedSymptomText}</p>
-            <button class="edit-button" onclick="scrollToElement('beautifuleyebrows'); scrollToElement('shinyskin'); scrollToElement('Cosmetologyasawhole');">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${irradiationsText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstirradiations')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedDate1Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date1')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedDate2Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date2')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedDate3Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date3')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${totalTimeText}</p>
-        </div>
-        <hr>
-    `;
-        }
-
-        // スクロール関数
-        function scrollToElement(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
-        document.getElementById('name').addEventListener('input', updateDisplayInfo);
-        document.querySelectorAll('.visit-buttons button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.symptoms button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-        document.querySelectorAll('.irradiations button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-
-        // 第一希望日、第二希望日、第三希望日でupdateDisplayInfoを呼び出す
-        document.getElementById('date1').addEventListener('change', updateDisplayInfo);
-        document.getElementById('date2').addEventListener('change', updateDisplayInfo);
-        document.getElementById('date3').addEventListener('change', updateDisplayInfo);
-
-        // 日付セルのクリックイベントで希望日時を更新
-        document.querySelectorAll('.calendar td').forEach(cell => {
-            cell.addEventListener('click', () => {
-                selectDate(cell);
-                updateDisplayInfo();  // 日付を選択したら即座に表示を更新
-            });
-        });
-
-        // 初期状態でカレンダーを非表示にする
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('.calendar-container').style.display = 'none';
-        });
-
-        // 日付セルのクリックイベントで希望日時を更新
-        document.querySelectorAll('.calendar td').forEach(cell => {
-            cell.addEventListener('click', () => {
-                selectDate(cell);
-                updateDisplayInfo();  // 日付を選択したら即座に表示を更新
-            });
-        });
-
-        function selectSymptom(button, treatmentId) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
-
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
-
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
-
-            if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
-                selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
-            } else {
-                // 1つだけ選択状態にする
-                if (updatedSelectedButtons.length > 1) {
-                    updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active'); // クリックしたボタンだけを選択
-                }
-
-                // 選択されたメニューの時間を取得して保存
-                const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
-            }
-
-            console.log('選択されたメニューの時間:', selectedMenuTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-
-            // トリートメントテキストを表示
-            const treatmentText = document.getElementById('treatment-text');
-
-            function createTreatmentContent(title, imageUrl, description, price, time) {
-                return `
-        <div class="treatment-container">
-            <div style="font-size: 18px; font-weight: bold;">${title}</div>
-        </div>
-
-        <div class="treatment-image">
-            <div class="spinner-overlay">
-                <div class="spinner"></div>
+        <!-- ▼▼ カテゴリごとのメニュー ▼▼ -->
+
+        <!-- 小顔矯正リフトアップ -->
+        <section id="cat-kogao" class="menu-group active">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              小顔矯正リフトアップ
+              <span>FACE LIFT</span>
+            </h2>
+            <p class="menu-group-desc">
+              フェイスラインのもたつき・むくみ・たるみにアプローチする人気の小顔メニュー。
+              骨格・筋肉・脂肪へ多角的に働きかけ、理想のフェイスラインへ導きます。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment1', this)">
+                  <span class="menu-label">リフトアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment2', this)">
+                  <span class="menu-label">むくみデトックスコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment3', this)">
+                  <span class="menu-label">脂肪分解コース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment4', this)">
+                  <span class="menu-label">切らない系リフトコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment5', this)">
+                  <span class="menu-label">プレミアムリフトアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment6', this)">
+                  <span class="menu-label">瞬間小顔ECSコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment7', this)">
+                  <span class="menu-label">ラジオ波リフトアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
             </div>
-            <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 100%; display: none;" 
-                 onload="this.style.display='block'; this.previousElementSibling.style.display='none';">
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment58', this)">
+                  <span class="menu-label">リフトアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment59', this)">
+                  <span class="menu-label">むくみデトックスコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment60', this)">
+                  <span class="menu-label">脂肪分解コース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment61', this)">
+                  <span class="menu-label">切らない系リフトコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment62', this)">
+                  <span class="menu-label">プレミアムリフトアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment63', this)">
+                  <span class="menu-label">瞬間小顔ECSコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment64', this)">
+                  <span class="menu-label">ラジオ波リフトアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 美肌脱毛 -->
+        <section id="cat-datsumo" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              美肌脱毛
+              <span>HAIR REMOVAL</span>
+            </h2>
+            <p class="menu-group-desc">
+              全身からパーツまで、肌にやさしい美肌脱毛。<br />
+              女性・男性・キッズまで、年代やお悩みに合わせたプランをご用意しています。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment8', this)">
+                  <span class="menu-label">全身脱毛＋顔＋VIO</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment9', this)">
+                  <span class="menu-label">全身脱毛＋顔ありVIOなし</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment10', this)">
+                  <span class="menu-label">全身脱毛＋顔なしVIOあり</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment11', this)">
+                  <span class="menu-label">全身脱毛のみ</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment12', this)">
+                  <span class="menu-label">Sパーツ</span>
+                  <span class="menu-tag">両ワキなど</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment13', this)">
+                  <span class="menu-label">Mパーツ</span>
+                  <span class="menu-tag">V・I・O等</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment14', this)">
+                  <span class="menu-label">Lパーツ</span>
+                  <span class="menu-tag">背中など</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment15', this)">
+                  <span class="menu-label">VIOセット</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment16', this)">
+                  <span class="menu-label">顔脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment17', this)">
+                  <span class="menu-label">男性ヒゲ脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment18', this)">
+                  <span class="menu-label">キッズ脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment65', this)">
+                  <span class="menu-label">全身脱毛＋顔＋VIO</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment66', this)">
+                  <span class="menu-label">全身脱毛＋顔ありVIOなし</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment67', this)">
+                  <span class="menu-label">全身脱毛＋顔なしVIOあり</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment68', this)">
+                  <span class="menu-label">全身脱毛のみ</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment69', this)">
+                  <span class="menu-label">Sパーツ</span>
+                  <span class="menu-tag">両ワキなど</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment70', this)">
+                  <span class="menu-label">Mパーツ</span>
+                  <span class="menu-tag">V・I・O等</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment71', this)">
+                  <span class="menu-label">Lパーツ</span>
+                  <span class="menu-tag">背中など</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment72', this)">
+                  <span class="menu-label">VIOセット</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment73', this)">
+                  <span class="menu-label">顔脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment74', this)">
+                  <span class="menu-label">男性ヒゲ脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment75', this)">
+                  <span class="menu-label">キッズ脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- お悩み別ピーリング -->
+        <section id="cat-peeling" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              お悩み別ピーリング
+              <span>PEELING</span>
+            </h2>
+            <p class="menu-group-desc">
+              ニキビ・毛穴・くすみ・エイジングなど、お肌のお悩みに合わせて選べるピーリング。
+              ハーブやエクソソームなど、話題の成分を使ったメニューも充実しています。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment19', this)">
+                  <span class="menu-label">肌再生ハーブピーリング(HAAB)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment20', this)">
+                  <span class="menu-label">肌再生ハーブピーリング(剥離あり)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment21', this)">
+                  <span class="menu-label">エクソソームピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment22', this)">
+                  <span class="menu-label">赤み/敏感肌ピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment23', this)">
+                  <span class="menu-label">ニキビ/ニキビ跡ハーブピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment24', this)">
+                  <span class="menu-label">美白くすみピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment25', this)">
+                  <span class="menu-label">アンチエイジングピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment26', this)">
+                  <span class="menu-label">陶肌トリートメント</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment27', this)">
+                  <span class="menu-label">ガリレオピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment76', this)">
+                  <span class="menu-label">肌再生ハーブピーリング(HAAB)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment77', this)">
+                  <span class="menu-label">肌再生ハーブピーリング(剥離あり)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment78', this)">
+                  <span class="menu-label">エクソソームピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment79', this)">
+                  <span class="menu-label">赤み/敏感肌ピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment80', this)">
+                  <span class="menu-label">ニキビ/ニキビ跡ハーブピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment81', this)">
+                  <span class="menu-label">美白くすみピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment82', this)">
+                  <span class="menu-label">アンチエイジングピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment83', this)">
+                  <span class="menu-label">陶肌トリートメント</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment84', this)">
+                  <span class="menu-label">ガリレオピーリング</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 毛穴・肌質改善 -->
+        <section id="cat-keana" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              毛穴・肌質改善
+              <span>PORES / TEXTURE</span>
+            </h2>
+            <p class="menu-group-desc">
+              毛穴の黒ずみ・ざらつき・開き、くすみなどを集中的にケアするコースです。<br />
+              洗浄・ピーリング・光フォトなどを組み合わせ、なめらかな素肌へ。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment28', this)">
+                  <span class="menu-label">毛穴洗浄コース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment29', this)">
+                  <span class="menu-label">毛穴洗浄ピーリングコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment30', this)">
+                  <span class="menu-label">光フォト美肌コース(ベーシック)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment31', this)">
+                  <span class="menu-label">光フォト美肌コース(スタンダード)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment32', this)">
+                  <span class="menu-label">光フォト美肌コース(プレミアム)</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment85', this)">
+                  <span class="menu-label">毛穴洗浄コース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment86', this)">
+                  <span class="menu-label">毛穴洗浄ピーリングコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment87', this)">
+                  <span class="menu-label">光フォト美肌コース(ベーシック)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment88', this)">
+                  <span class="menu-label">光フォト美肌コース(スタンダード)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment89', this)">
+                  <span class="menu-label">光フォト美肌コース(プレミアム)</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ボディーエステ -->
+        <section id="cat-body" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              ボディーエステ
+              <span>BODY ESTHETIC</span>
+            </h2>
+            <p class="menu-group-desc">
+              最新痩身機器とハンド技術で、気になるパーツをしっかりケア。<br />
+              全身痩せから気になる部分集中ケアまで、理想のボディライン作りをサポートします。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment33', this)">
+                  <span class="menu-label">全身痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment34', this)">
+                  <span class="menu-label">お腹痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment35', this)">
+                  <span class="menu-label">上半身痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment36', this)">
+                  <span class="menu-label">下半身痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment37', this)">
+                  <span class="menu-label">お腹ぽっこりメソット</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment38', this)">
+                  <span class="menu-label">バストアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment39', this)">
+                  <span class="menu-label">ヒップアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment90', this)">
+                  <span class="menu-label">全身痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment91', this)">
+                  <span class="menu-label">お腹痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment92', this)">
+                  <span class="menu-label">上半身痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment93', this)">
+                  <span class="menu-label">下半身痩せコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment94', this)">
+                  <span class="menu-label">お腹ぽっこりメソット</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment95', this)">
+                  <span class="menu-label">バストアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment96', this)">
+                  <span class="menu-label">ヒップアップコース</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- リラクゼーション -->
+        <section id="cat-relax" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              リラクゼーション
+              <span>RELAXATION</span>
+            </h2>
+            <p class="menu-group-desc">
+              アロマオイルリンパや首肩・腰などのお疲れ集中ケア。<br />
+              ゆったりとした時間の中で、身体と心の両方をときほぐします。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment40', this)">
+                  <span class="menu-label">全身オイルリンパマッサージコース(60分)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment41', this)">
+                  <span class="menu-label">全身オイルリンパマッサージコース(90分)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment42', this)">
+                  <span class="menu-label">首・肩マッサージコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment43', this)">
+                  <span class="menu-label">ふくらはぎスッキリマッサージコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment44', this)">
+                  <span class="menu-label">腰痛マッサージコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment45', this)">
+                  <span class="menu-label">打たない肩ボトックス</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment46', this)">
+                  <span class="menu-label">自律神経改善コース</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment97', this)">
+                  <span class="menu-label">全身オイルリンパマッサージコース(60分)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment98', this)">
+                  <span class="menu-label">全身オイルリンパマッサージコース(90分)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment99', this)">
+                  <span class="menu-label">首・肩マッサージコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment100', this)">
+                  <span class="menu-label">ふくらはぎスッキリマッサージコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment101', this)">
+                  <span class="menu-label">腰痛マッサージコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment102', this)">
+                  <span class="menu-label">打たない肩ボトックス</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment103', this)">
+                  <span class="menu-label">自律神経改善コース</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 眉毛スタイリング -->
+        <section id="cat-eyebrow" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              眉毛スタイリング
+              <span>EYEBROW</span>
+            </h2>
+            <p class="menu-group-desc">
+              お顔の印象を大きく左右する眉毛を、骨格や雰囲気に合わせてデザイン。<br />
+              HBLやWAX脱毛で、毎日のメイクをもっとラクに・きれいに。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment47', this)">
+                  <span class="menu-label">HBL(ハリウッドブロウリフト)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment48', this)">
+                  <span class="menu-label">眉毛スタイリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment49', this)">
+                  <span class="menu-label">眉毛スタイリング＋WAX脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment104', this)">
+                  <span class="menu-label">HBL(ハリウッドブロウリフト)</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment105', this)">
+                  <span class="menu-label">眉毛スタイリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment106', this)">
+                  <span class="menu-label">眉毛スタイリング＋WAX脱毛</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ブライダルエステ -->
+        <section id="cat-bridal" class="menu-group">
+          <div class="menu-group-header">
+            <h2 class="menu-group-title">
+              ブライダルエステ
+              <span>BRIDAL</span>
+            </h2>
+            <p class="menu-group-desc">
+              挙式までのスケジュールやドレスラインに合わせた、花嫁さま専用プラン。<br />
+              小顔・美白・ボディライン・背中ケアなど、トータルでサポートいたします。
+            </p>
+          </div>
+          <div class="menu-columns">
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">初回</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment50', this)">
+                  <span class="menu-label">無料ブライダルエステ相談</span>
+                  <span class="menu-tag">0円カウンセリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment51', this)">
+                  <span class="menu-label">小顔フェイシャルコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment52', this)">
+                  <span class="menu-label">美白フェイシャルコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment53', this)">
+                  <span class="menu-label">小顔×美肌フェイシャルコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment54', this)">
+                  <span class="menu-label">二の腕スッキリコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment55', this)">
+                  <span class="menu-label">背中ニキビ美白コース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment56', this)">
+                  <span class="menu-label">フェイシャル×ボディーコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment57', this)">
+                  <span class="menu-label">歯のホワイトニング</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="menu-subgroup">
+              <h3 class="menu-subgroup-title">2回目以降</h3>
+              <div class="menu-list">
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment107', this)">
+                  <span class="menu-label">無料ブライダルエステ相談</span>
+                  <span class="menu-tag">0円カウンセリング</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment108', this)">
+                  <span class="menu-label">小顔フェイシャルコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment109', this)">
+                  <span class="menu-label">美白フェイシャルコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment110', this)">
+                  <span class="menu-label">小顔×美肌フェイシャルコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment111', this)">
+                  <span class="menu-label">二の腕スッキリコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment112', this)">
+                  <span class="menu-label">背中ニキビ美白コース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment113', this)">
+                  <span class="menu-label">フェイシャル×ボディーコース</span>
+                  <span class="chevron">›</span>
+                </button>
+                <button class="menu-item-btn" onclick="showTreatmentDetail('treatment114', this)">
+                  <span class="menu-label">歯のホワイトニング</span>
+                  <span class="chevron">›</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- 右：詳細 -->
+      <aside class="detail-panel">
+        <h3 class="detail-heading">MENU DETAIL</h3>
+        <p class="detail-sub">
+          左のメニュー名をタップすると、こちらに<br />
+          「詳細」と「料金」が表示されます。
+        </p>
+        <div id="treatment-detail">
+          <p class="treatment-placeholder">
+            気になるコースをお選びください。<br />
+            初回価格・2回目以降の料金など、<br />
+            詳細な内容をご確認いただけます。
+          </p>
         </div>
+      </aside>
+    </main>
+  </div>
 
-        <div class="treatment-description">${description}</div>
+  <script>
+  // カテゴリ切り替え
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabs = document.querySelectorAll(".category-tab");
+    const groups = document.querySelectorAll(".menu-group");
 
-        <div class="treatment-price">
-            <span>価格：</span><span>${price}</span><br>
-            <span>所要時間：</span><span>${time}</span>
-        </div>`;
-            }
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.target;
+        tabs.forEach((t) => t.classList.remove("active"));
+        groups.forEach((g) => g.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(target).classList.add("active");
 
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = createTreatmentContent(
-                    'ハリウッドブロウリフト（HBL）',
-                    'https://www.dropbox.com/scl/fi/k0stpqbl53q7ttm46iznw/HBL.png?rlkey=whnz03jog6863gqligzdi4z1h&st=ui5tu3yy&raw=1',
-                    '眉毛を自由自在に操り<br>お顔の80%の印象、額縁とも言われる｢眉毛｣!!<br>眉毛を整える時代、一気に印象が変わります!',
-                    '￥7,000',
-                    '120分'
-                );
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = createTreatmentContent(
-                    '眉デザインWAX',
-                    'https://www.dropbox.com/scl/fi/u0qmgv2p4qzq5clqmyxxa/WAX.png?rlkey=amcpmgn97gk6or1z9oajjzxli&st=bggi2934&raw=1',
-                    '顔の黄金比、パーツ、バランスに合わせ、お客様に似合う眉をデザインし、整えWAXで仕上げていきます。',
-                    '￥5,500',
-                    '90分'
-                );
-            } else {
-                treatmentText.innerHTML = '';
-            }
+        // メニュー選択状態リセット
+        document
+          .querySelectorAll(".menu-item-btn")
+          .forEach((btn) => btn.classList.remove("is-active"));
 
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+        resetDetail();
+      });
+    });
+  });
 
-            // 表示を更新
-            updateDisplayInfo();
-        }
+  function resetDetail() {
+    const detail = document.getElementById("treatment-detail");
+    if (!detail) return;
+    detail.innerHTML =
+      '<p class="treatment-placeholder">メニュー名をタップすると、こちらに詳細と料金が表示されます。</p>';
+  }
 
-        function selectirradiations(button) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+  // 元の createTreatmentContent と同じ引数で使えるように定義
+  function createTreatmentContent(title, imageUrl, description, price, time) {
+    const hasTitle = !!(title && title.trim());
+    const hasImage = !!(imageUrl && imageUrl.trim());
+    const hasDesc = !!(description && description.trim());
+    const hasPrice = !!(price && price.trim());
+    const hasTime = !!(time && time.trim());
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
+    const titleContent = hasTitle
+      ? `<div class="treatment-title">${title}</div>`
+      : "";
 
-            // 選択されたオプションを取得
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiations.join(', ');
+    const imageContent = hasImage
+      ? `
+        <div class="treatment-image">
+          <img src="${imageUrl}" alt="${hasTitle ? title : "treatment image"}">
+        </div>`
+      : "";
 
-            // すべてのオプションの価格を再計算
-            optionsPrice = 0; // 全体をリセットして再計算
-            let totalirradiationsTime = 0; // 選択されたすべてのオプションの合計時間
-            selectedButtons.forEach(btn => {
-                const price = parseInt(btn.getAttribute('data-price'), 10);
-                optionsPrice += price;
+    const descContent = hasDesc
+      ? `<div class="treatment-description">${description}</div>`
+      : "";
 
-                // 各オプションの時間を加算
-                const irradiationName = btn.innerText;
-                const irradiationTime = irradiationsTimes[irradiationName] || 0;
-                totalirradiationsTime += irradiationTime;
-            });
+    const timeContent = hasTime
+      ? `<span>施術時間：</span><strong>${time}</strong><br>`
+      : "";
 
-            // selectedirradiationsTimeに合計時間を設定
-            selectedirradiationsTime = totalirradiationsTime;
+    const priceInner = `
+      ${hasPrice ? `<span>料金：</span><strong>${price}</strong><br>` : ""}
+      ${timeContent}
+    `.trim();
 
-            console.log('選択されたオプションの合計時間:', selectedirradiationsTime);
+    const priceContent = priceInner
+      ? `<div class="treatment-price">${priceInner}</div>`
+      : "";
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
+    const inner = `${titleContent}${imageContent}${descContent}${priceContent}`.trim();
+    return inner ? `<div class="treatment-container">${inner}</div>` : "";
+  }
 
-            // 表示を更新
-            updateDisplayInfo();
-        }
+  // 詳細用のグローバル変数
+  let treatmentText = null;
+  let titleFromButton = "";
 
-        function updateTotalAmount() {
-            totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
-            updateDisplayInfo(); // 表示を更新
-        }
+  // メニュークリック時に呼び出し
+  function showTreatmentDetail(treatmentId, button) {
+    // ボタンの見た目更新
+    document
+      .querySelectorAll(".menu-item-btn")
+      .forEach((btn) => btn.classList.remove("is-active"));
+    if (button) button.classList.add("is-active");
 
-        // 訪問回数の選択（初回・リピート）
-        function selectVisit(element) {
-            document.querySelectorAll('.visit-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            visitCount = element.innerText;
+    // 詳細エリアの参照
+    treatmentText = document.getElementById("treatment-detail");
+    if (!treatmentText) return;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedVisitTime = visitTimes[visitCount];
+    // クリックされたボタンのラベルをタイトルとして利用
+    const labelEl = button ? button.querySelector(".menu-label") : null;
+    titleFromButton = labelEl ? labelEl.textContent.trim() : "";
 
-            console.log('選択された訪問回数の時間:', selectedVisitTime);
+    let html = "";
 
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
+    // ▼▼▼ 元コードの説明＆料金をそのまま流用 ▼▼▼
+    if (treatmentId === "treatment1") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "当店人気No.1。小顔矯正で輪郭矯正し、即効性のある小顔に！",
+        "初回：4,400円 / 2回目以降：8,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment2") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "小顔矯正＋顔、首、肩、デコルテのオイルトリートメント！",
+        "初回：11,000円 / 2回目以降：14,300円",
+        ""
+      );
+    } else if (treatmentId === "treatment3") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "小顔矯正＋脂肪分解ラジオ波でV字輪郭！",
+        "初回：13,200円 / 2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment4") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "小顔矯正＋高周波ECSリフトアップで瞬間小顔！肌のハリ艶もアップ！",
+        "初回：16,500円 / 2回目以降：19,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment5") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "小顔矯正＋脂肪分解ラジオ波＋高周波ECSリフトアップで医療レベルの最高小顔に！",
+        "初回：25,000円 / 2回目以降：35,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment6") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "和歌山初導入の高周波で表情筋を引き締め、むくみ・たるみを即効改善。",
+        "初回：14,300円 / 2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment7") {
+      html = createTreatmentContent(
+        titleFromButton,
+        "",
+        "痛みがなく、若々しい肌に！脂肪分解で下がり気味の頬にアプローチ！",
+        "初回：5,500円 / 2回目以降：7,700円",
+        ""
+      );
+    } else if (treatmentId === "treatment8") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：22,000円<br>男性：27,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment9") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：19,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment10") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：20,900円",
+        ""
+      );
+    } else if (treatmentId === "treatment11") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：17,600円<br>男性：19,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment12") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "両脇・両足指甲・鼻下・両ひざ・両手指甲から1箇所お選び頂けます。",
+        "料金：2,640円<br>男性：3,300円<br>キッズ：1,650円",
+        ""
+      );
+    } else if (treatmentId === "treatment13") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "V•I•O・肩・うなじ・お腹・ヒップから1箇所お選び頂けます。",
+        "料金：3,520円<br>男性：4,400円<br>キッズ：2,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment14") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "両胸乳輪・両ひざ上（ひざ含む）<br>・両ひざ下（ひざ含まない） <br>・両ひじ上（ひじ含む）<br>・両ひじ下（ひじ含まない）<br>・背中上・背中下<br>から1箇所お選び下さい。",
+        "料金：4,950円<br>男性：5,500円<br>キッズ：2,750円",
+        ""
+      );
+    } else if (treatmentId === "treatment15") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：6,600円<br>男性：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment16") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment17") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：6,600円",
+        ""
+      );
+    } else if (treatmentId === "treatment18") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "S.M.Lパーツごとに脱毛可能！",
+        "料金：1,650〜円",
+        ""
+      );
+    } else if (treatmentId === "treatment19") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "肌再生！ツヤ肌＆毛穴・ニキビ跡・くすみケア！<br>※ダウンタイム少ない※敏感肌にも対応",
+        "初回料金：19,800円<br>2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment20") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "剥離で古い角質をオフし、肌再生をサポート。<br>乾燥・小ジワ・ハリ不足を改善し、透明感とふっくら肌へ。<br>施術後は赤みやヒリヒリ感が出ることがありますが、数日で落ち着きます。",
+        "初回料金：16,500円<br>2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment21") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ダーマペンのエステ版！エクソソームで細胞レベルから肌再生をサポート！",
+        "初回料金：22,000円<br>2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment22") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "乳酸菌で角質ケア＆肌バランス整え、敏感肌でも安心！<br>透明感ふっくら肌に！（アンストレス）",
+        "初回料金：13,200円<br>2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment23") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "炎症も角質も改善！ニキビ知らずの柔らか肌に！（ビオフィート）",
+        "初回料金：13,200円<br>2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment24") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "高濃度美白成分でシミ・色ムラをケア。透明感と明るさのある肌へ導きます！（イラストリアス）",
+        "初回料金：16,500円<br>2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment25") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最高の若返りピーリング！ハリ、弾力が蘇ります！",
+        "初回料金：19,800円<br>2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment26") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "300種類の酵素と３種の植物幹細胞で無理なく自然に美しい肌へ！",
+        "料金：13,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment27") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "あらゆるピーリングのいいとこどり！強炭酸×多成分で肌活性！<br>エクソソームやCICAなどを入れ込み短時間で透明感・弾力・ツヤのある肌へ。",
+        "初回料金：13,200円<br>2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment28") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "毛穴な汚れが気になる方",
+        "初回料金：6,600円<br>2回目以降：13,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment29") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "頑固な黒ずみ、毛穴詰まりをリセット",
+        "初回料金：8,250円<br>2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment30") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "特殊な光で肌のハリ・ツヤアップ！<br>シミ・ニキビ・赤ら顔・若返りの4つからお選びいただけます。（気になる部分のみ）",
+        "初回料金：3,300円<br>2回目以降：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment31") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "特殊な光で肌のハリ・ツヤアップ！<br>シミ・ニキビ・赤ら顔・若返りの4つからお選びいただけます。（顔全体）",
+        "初回料金：8,250円<br>2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment32") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "特殊な光で肌のハリ・ツヤアップ！シミ・ニキビ・赤ら顔・若返りの4つからお選びいただけます。（顔全体・W打ち）",
+        "初回料金：11,000円<br>2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment33") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機で脂肪細胞にアプローチし全身のサイズダウンしたい方におすすめ",
+        "初回料金：16,500円<br>2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment34") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機でお腹の筋肉を引き締め、たるみ、くびれにアプローチ",
+        "初回料金：8,800円<br>2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment35") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機で背中・二の腕の脂肪細胞にアプローチ",
+        "初回料金：8,800円<br>2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment36") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機でもも・ふくらはぎの脂肪細胞にアプローチ",
+        "初回料金：8,800円<br>2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment37") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "和歌山初導入。インナーマッスル・アウターマッスルどちらにも強力アプローチ",
+        "初回料金：14,300円<br>2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment38") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "理想のバストへ。オーダーメイド施術でキレイにしっかりバストアップ",
+        "初回料金：11,000円<br>2回目以降：14,300円",
+        ""
+      );
+    } else if (treatmentId === "treatment39") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "お尻の脂肪細胞に最新痩身機でアプローチ。<br>ヒップアップしたい方はにおすすめ",
+        "初回料金：5,500円<br>2回目以降：8,250円",
+        ""
+      );
+    } else if (treatmentId === "treatment40") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "上質アロマオイルのリンパリラクゼーション",
+        "初回料金：6,600円<br>2回目以降：7,700円",
+        ""
+      );
+    } else if (treatmentId === "treatment41") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "上質アロマオイルのリンパリラクゼーション",
+        "初回料金：9,900円<br>2回目以降：11,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment42") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ストレートネック、肩こり、首こりに悩んでる方におすすめ",
+        "初回料金：5,500円<br>2回目以降：8,250円",
+        ""
+      );
+    } else if (treatmentId === "treatment43") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "むくみ・冷え症の方におすすめ。<br>足裏からふくらはぎ・膝にかけてゆっくりほぐします。",
+        "初回料金：4,950円<br>2回目以降：7,700円",
+        ""
+      );
+    } else if (treatmentId === "treatment44") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "凝り固まった腰にしっかりアプローチ。<br>深い腰痛でお悩みの方にもおすすめ。",
+        "初回料金：5,500円<br>2回目以降：8,250円",
+        ""
+      );
+    } else if (treatmentId === "treatment45") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "高周波、直電流により筋肉細胞にアプローチ。<br>慢性的な肩こりにお悩みの方におすすめ",
+        "初回料金：9,900円<br>2回目以降：13,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment46") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "回復電流で身体のイオンバランスを整えることができます",
+        "料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment47") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "眉の生えぐせを根本から改善。毛穴の流れを整えあらゆる眉のお悩みを解決！",
+        "料金：8,400円",
+        ""
+      );
+    } else if (treatmentId === "treatment48") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "詳細：眉毛デザイン、整えスタイリングしやすくします",
+        "料金：2,420円",
+        ""
+      );
+    } else if (treatmentId === "treatment49") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "眉毛のデザイン＋WAX脱毛",
+        "料金：6,270円",
+        ""
+      );
+    } else if (treatmentId === "treatment50") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "挙式までのエステプランをご希望に合わせてプランニングさせていただきます。<br>ご予算もご相談下さい",
+        "料金：0円",
+        ""
+      );
+    } else if (treatmentId === "treatment51") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔になりたい！など悩みに合ったおすすめ体験ができるコース",
+        "初回料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment52") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "毛穴の悩みや美白になりたい！など悩みに合ったおすすめ体験ができるコース",
+        "初回料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment53") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔も美肌の悩みも両方体験できるコース",
+        "初回料金：9,900円",
+        ""
+      );
+    } else if (treatmentId === "treatment54") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ドレスから見えるデコルテから二の腕をマシンとハンドでスッキリ！",
+        "初回料金：8,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment55") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "背中のニキビや肌荒れ、美白が叶う背中集中ケア",
+        "初回料金：8,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment56") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ドレス姿を引き立てる背中、デコルテ、二の腕をスッキリ・小顔ケアのブライダルトータルプラン",
+        "初回料金：9,900円",
+        ""
+      );
+    } else if (treatmentId === "treatment57") {
+      html = createTreatmentContent(
+        "歯のホワイトニング",
+        "",
+        "15min×3回",
+        "初回料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment58") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "当店人気No.1。小顔矯正で輪郭矯正し、即効性のある小顔に！",
+        "2回目以降：8,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment59") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔矯正＋顔、首、肩、デコルテのオイルトリートメント！",
+        "2回目以降：14,300円",
+        ""
+      );
+    } else if (treatmentId === "treatment60") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔矯正＋脂肪分解ラジオ波でV字輪郭！",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment61") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔矯正＋高周波ECSリフトアップで瞬間小顔！肌のハリ艶もアップ！",
+        "2回目以降：19,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment62") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔矯正＋脂肪分解ラジオ波＋高周波ECSリフトアップで医療レベルの最高小顔に！",
+        "2回目以降：35,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment63") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "和歌山初導入の高周波で表情筋を引き締め、むくみ・たるみを即効改善。",
+        "2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment64") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "痛みがなく、若々しい肌に！<br>脂肪分解で下がり気味の頬にアプローチ！",
+        "2回目以降：7,700円",
+        ""
+      );
+    } else if (treatmentId === "treatment65") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：22,000円<br>男性：27,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment66") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：19,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment67") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：20,900円",
+        ""
+      );
+    } else if (treatmentId === "treatment68") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：17,600円<br>男性：19,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment69") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "両脇・両足指甲・鼻下・両ひざ・両手指甲から1箇所お選び頂けます。",
+        "料金：2,640円<br>男性：3,300円<br>キッズ：1,650円",
+        ""
+      );
+    } else if (treatmentId === "treatment70") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "V•I•O・肩・うなじ・お腹・ヒップから1箇所お選び頂けます。",
+        "料金：3,520円<br>男性：4,400円<br>キッズ：2,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment71") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "両胸乳輪・両ひざ上（ひざ含む）<br>・両ひざ下（ひざ含まない） <br>・両ひじ上（ひじ含む）<br>・両ひじ下（ひじ含まない）<br>・背中上・背中下<br>から1箇所お選び下さい。",
+        "料金：4,950円<br>男性：5,500円<br>キッズ：2,750円",
+        ""
+      );
+    } else if (treatmentId === "treatment72") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：6,600円<br>男性：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment73") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment74") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "",
+        "料金：6,600円",
+        ""
+      );
+    } else if (treatmentId === "treatment75") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "S.M.Lパーツごとに脱毛可能！",
+        "料金：1,650〜円",
+        ""
+      );
+    } else if (treatmentId === "treatment76") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "肌再生！ツヤ肌＆毛穴・ニキビ跡・くすみケア！<br>※ダウンタイム少ない※敏感肌にも対応",
+        "2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment77") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "剥離で古い角質をオフし、肌再生をサポート。<br>乾燥・小ジワ・ハリ不足を改善し、透明感とふっくら肌へ。<br>施術後は赤みやヒリヒリ感が出ることがありますが、数日で落ち着きます。",
+        "2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment78") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ダーマペンのエステ版！エクソソームで細胞レベルから肌再生をサポート！",
+        "2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment79") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "乳酸菌で角質ケア＆肌バランス整え、敏感肌でも安心！<br>透明感ふっくら肌に！（アンストレス）",
+        "2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment80") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "炎症も角質も改善！ニキビ知らずの柔らか肌に！（ビオフィート）",
+        "2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment81") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "高濃度美白成分でシミ・色ムラをケア。透明感と明るさのある肌へ導きます！（イラストリアス）",
+        "2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment82") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最高の若返りピーリング！ハリ、弾力が蘇ります！",
+        "2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment83") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "300種類の酵素と３種の植物幹細胞で無理なく自然に美しい肌へ！",
+        "料金：13,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment84") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "あらゆるピーリングのいいとこどり！強炭酸×多成分で肌活性！<br>エクソソームやCICAなどを入れ込み短時間で透明感・弾力・ツヤのある肌へ。",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment85") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "毛穴な汚れが気になる方",
+        "2回目以降：13,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment86") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "頑固な黒ずみ、毛穴詰まりをリセット",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment87") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "特殊な光で肌のハリ・ツヤアップ！<br>シミ・ニキビ・赤ら顔・若返りの4つからお選びいただけます。（気になる部分のみ）",
+        "2回目以降：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment88") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "特殊な光で肌のハリ・ツヤアップ！<br>シミ・ニキビ・赤ら顔・若返りの4つからお選びいただけます。（顔全体）",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment89") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "特殊な光で肌のハリ・ツヤアップ！シミ・ニキビ・赤ら顔・若返りの4つからお選びいただけます。（顔全体・W打ち）",
+        "2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment90") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機で脂肪細胞にアプローチし全身のサイズダウンしたい方におすすめ",
+        "2回目以降：33,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment91") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機でお腹の筋肉を引き締め、たるみ、くびれにアプローチ",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment92") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機で背中・二の腕の脂肪細胞にアプローチ",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment93") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "最新痩身機でもも・ふくらはぎの脂肪細胞にアプローチ",
+        "2回目以降：16,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment94") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "和歌山初導入。インナーマッスル・アウターマッスルどちらにも強力アプローチ",
+        "2回目以降：22,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment95") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "理想のバストへ。オーダーメイド施術でキレイにしっかりバストアップ",
+        "2回目以降：14,300円",
+        ""
+      );
+    } else if (treatmentId === "treatment96") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "お尻の脂肪細胞に最新痩身機でアプローチ。<br>ヒップアップしたい方はにおすすめ",
+        "2回目以降：8,250円",
+        ""
+      );
+    } else if (treatmentId === "treatment97") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "上質アロマオイルのリンパリラクゼーション",
+        "2回目以降：7,700円",
+        ""
+      );
+    } else if (treatmentId === "treatment98") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "上質アロマオイルのリンパリラクゼーション",
+        "2回目以降：11,000円",
+        ""
+      );
+    } else if (treatmentId === "treatment99") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ストレートネック、肩こり、首こりに悩んでる方におすすめ",
+        "2回目以降：8,250円",
+        ""
+      );
+    } else if (treatmentId === "treatment100") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "むくみ・冷え症の方におすすめ。<br>足裏からふくらはぎ・膝にかけてゆっくりほぐします。",
+        "2回目以降：7,700円",
+        ""
+      );
+    } else if (treatmentId === "treatment101") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "凝り固まった腰にしっかりアプローチ。<br>深い腰痛でお悩みの方にもおすすめ。",
+        "2回目以降：8,250円",
+        ""
+      );
+    } else if (treatmentId === "treatment102") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "高周波、直電流により筋肉細胞にアプローチ。<br>慢性的な肩こりにお悩みの方におすすめ",
+        "2回目以降：13,200円",
+        ""
+      );
+    } else if (treatmentId === "treatment103") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "回復電流で身体のイオンバランスを整えることができます",
+        "料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment104") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "眉の生えぐせを根本から改善。毛穴の流れを整えあらゆる眉のお悩みを解決！",
+        "料金：8,400円",
+        ""
+      );
+    } else if (treatmentId === "treatment105") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "詳細：眉毛デザイン、整えスタイリングしやすくします",
+        "料金：2,420円",
+        ""
+      );
+    } else if (treatmentId === "treatment106") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "眉毛のデザイン＋WAX脱毛",
+        "料金：6,270円",
+        ""
+      );
+    } else if (treatmentId === "treatment107") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "挙式までのエステプランをご希望に合わせてプランニングさせていただきます。<br>ご予算もご相談下さい",
+        "料金：0円",
+        ""
+      );
+    } else if (treatmentId === "treatment108") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔になりたい！など悩みに合ったおすすめ体験ができるコース",
+        "料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment109") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "毛穴の悩みや美白になりたい！など悩みに合ったおすすめ体験ができるコース",
+        "料金：5,500円",
+        ""
+      );
+    } else if (treatmentId === "treatment110") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "小顔も美肌の悩みも両方体験できるコース",
+        "料金：9,900円",
+        ""
+      );
+    } else if (treatmentId === "treatment111") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ドレスから見えるデコルテから二の腕をマシンとハンドでスッキリ！",
+        "料金：8,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment112") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "背中のニキビや肌荒れ、美白が叶う背中集中ケア",
+        "料金：8,800円",
+        ""
+      );
+    } else if (treatmentId === "treatment113") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "ドレス姿を引き立てる背中、デコルテ、二の腕をスッキリ・小顔ケアのブライダルトータルプラン",
+        "料金：9,900円",
+        ""
+      );
+    } else if (treatmentId === "treatment114") {
+      html = createTreatmentContent(
+        "",
+        "",
+        "15min×3回",
+        "料金：5,500円",
+        ""
+      );
+    }
 
-        // 訪問回数の選択（初回・リピート）
-        function selectFreshflowerphotography(element) {
-            document.querySelectorAll('.Freshflowerphotography-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            FreshflowerphotographyCount = element.innerText;
+    const detail = document.getElementById("treatment-detail");
+    if (!detail) return;
 
-            // 選択された訪問回数に対応する時間を取得
-            selectedFreshflowerphotographyTime = FreshflowerphotographyTimes[FreshflowerphotographyCount];
+    // html がセットされているパターン（treatment1〜7 など）はここで描画
+    if (html) {
+      detail.innerHTML = html;
+    } else if (!detail.innerHTML.trim()) {
+      // 念のため、何も描画されていないときだけプレースホルダーを出す
+      detail.innerHTML =
+        '<p class="treatment-placeholder">このメニューの詳細がまだ設定されていません。</p>';
+    }
 
-            console.log('選択された訪問回数の時間:', selectedFreshflowerphotographyTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
-        // 訪問回数の選択（初回・リピート）
-        function selecthairmakeup(element) {
-            document.querySelectorAll('.hairmakeup-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            hairmakeupCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedhairmakeupTime = hairmakeupTimes[hairmakeupCount];
-
-            console.log('選択された訪問回数の時間:', selectedhairmakeupTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
-        // 訪問回数の選択（初回・リピート）
-        function selectkimono(element) {
-            document.querySelectorAll('.kimono-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            kimonoCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedkimonoTime = kimonoTimes[kimonoCount];
-
-            console.log('選択された訪問回数の時間:', selectedkimonoTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
-        // 訪問回数の選択（初回・リピート）
-        function selectpreparationphoto(element) {
-            document.querySelectorAll('.preparationphoto-buttons button').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            preparationphotoCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedpreparationphotoTime = preparationphotoTimes[preparationphotoCount];
-
-            console.log('選択された訪問回数の時間:', selectedpreparationphotoTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
-        function selecthighschool(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
-
-            document.getElementById('firsthighschool').classList.remove('active');
-            document.getElementById('repeathighschool').classList.remove('active');
-            element.classList.add('active');
-            highschoolCount = element.innerText;
-
-            // 選択された訪問回数に対応する時間を取得
-            selectedhighschoolTime = highschoolTimes[highschoolCount];
-
-            console.log('選択された訪問回数の時間:', selectedhighschoolTime);
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
-        }
-
-        function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // 選択されたメニューの名前を取得
-            let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
-            if (selectedButton) {
-                selectedMenu = selectedButton.innerText;
-            }
-
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // 選択されたメニューセクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
-
-            // 対応するメニューボタンを選択状態にする
-            if (selectedButton) {
-                selectedButton.classList.add('active');
-            }
-
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // `treatment-text` の内容をリセット
-            document.getElementById("treatment-text").innerHTML = "";
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
-        function selectDate(cell) {
-            // "unavailable" クラスが付いている場合はクリックを無効化
-            if (cell.classList.contains('unavailable')) {
-                return; // 何もせずに終了
-            }
-
-            // 既に選択されているセルの選択を解除
-            const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(td => td.classList.remove('selected'));
-
-            // 新しいセルを選択状態にする
-            cell.classList.add('selected');
-
-            // 選択された日付と時間を取得
-            const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-            const date = new Date(selectedDay);
-
-            // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日`;
-
-            // 希望日時を即座に更新
-            updateDisplayInfo();
-        }
-
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                phone: document.getElementById('phone').value.trim(),
-                mugwortmainkid: document.getElementById('mugwortmainkid').value.trim(),
-                mugwortsiblinginfo: document.getElementById('mugwortsiblinginfo').value.trim(),
-                Yourresidentialaddress: document.getElementById('Yourresidentialaddress').value.trim(),
-                mugwortparticipants: document.getElementById('mugwortparticipants').value.trim(),
-                mugwortshrinename: document.getElementById('mugwortshrinename').value.trim(),
-                mugwortreservationtime: document.getElementById('mugwortreservationtime').value.trim(),
-                visitCount, hairmakeupCount, kimonoCount, preparationphotoCount, FreshflowerphotographyCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value,
-                    document.getElementById('date3').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
-
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
-
-            if (!formData.phone) {
-                alert('電話番号を入力してください。');
-                return;
-            }
-
-            if (!formData.Yourresidentialaddress) {
-                alert('ご住所を入力してください');
-                return;
-            }
-
-            if (!formData.dates[0]) {
-                alert('第1希望日※必須を選択してください。');
-                return;
-            }
-
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【七五三】\n｟お名前｠\n・${formData.name}\n\n｟ご住所｠\n・${formData.Yourresidentialaddress}\n\n｟電話番号｠\n・${formData.phone}\n\n【希望日時】：\n｟第一希望日｠\n${formatDate(formData.dates[0])}\n\n｟第二希望日｠\n${formatDate(formData.dates[1])}\n\n｟第三希望日｠\n${formatDate(formData.dates[2])}\n\n｟プラン｠\n・${formData.visitCount}\n\n｟祈祷されるお子様｠\n・${formData.mugwortmainkid}\n\n｟付き添いご兄弟｠\n・${formData.mugwortsiblinginfo}\n\n｟撮影に参加される方｠\n・${formData.mugwortparticipants}\n\n｟神社名｠\n・${formData.mugwortshrinename}\n\n｟ご祈祷の予約時間｠\n・${formData.mugwortreservationtime}\n\n｟生花撮影｠\n・${formData.FreshflowerphotographyCount}\n\n｟お支度風景｠\n・${formData.preparationphotoCount}\n\n｟和装レンタルの有無｠\n・${formData.kimonoCount}\n\n｟お支度ご希望｠\n・${formData.hairmakeupCount}\n\n｟メッセージ｠${formData.message}`
-            }]).then(() => {
-                alert('お問合せありがとうございます。追って担当者から返信をさせて頂きます。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
-
-        function formatDate(datetime) {
-            /* 日時文字列が空の場合は空文字を返す */
-            if (!datetime) return '';
-            /* 日時文字列をDateオブジェクトに変換 */
-            const date = new Date(datetime);
-            /* 年、月、日、時、分を取得しフォーマット */
-            const year = date.getFullYear();
-            const month = ('0' + (date.getMonth() + 1)).slice(-2);
-            const day = ('0' + date.getDate()).slice(-2);
-            return `${year}年${month}月${day}日`;
-        }
-    </script>
+    // 詳細エリアへスクロール（PCではほぼ動かず、SPで効くイメージ）
+    detail.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+</script>
 </body>
-
 </html>
