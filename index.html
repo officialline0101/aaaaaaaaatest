@@ -48,6 +48,17 @@
             text-align: center;
         }
 
+        .labelsansyuu {
+            display: block;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-weight: bold;
+            background-color: #877059;
+            color: white;
+            border-radius: 4px;
+            text-align: center;
+        }
+
         input[type="text"],
         input[type="tel"],
         textarea {
@@ -516,6 +527,40 @@
             background-color: #444;
             color: #fff;
         }
+
+.labelsansyuu {
+    display: block;
+    max-width: 480px;          /* 横幅を少し制限して中央に */
+    margin: 20px auto 15px;    /* 上下に余白＋中央寄せ */
+    padding: 14px 18px;
+    font-size: 1.1rem;         /* 文字を少し大きく */
+    font-weight: 700;
+    background: linear-gradient(135deg, #877059, #877059); /* 目立つグラデーション */
+    color: #ffffff;
+    border-radius: 999px;      /* 丸みを強くしてバッジ風に */
+    text-align: center;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25); /* 影で浮かせる */
+    position: relative;
+    line-height: 1.5;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.labelsansyuu::before {
+    content: "★";
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}
+
+.labelsansyuu:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+}
+
     </style>
 </head>
 
@@ -535,12 +580,16 @@
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">女性</button>
         </div>
 
-        <!-- ★ ここから追加：クーポン利用 ★ -->
-        <div class="label">クーポン利用される方はこちらをチェック</div>
-        <div class="second-buttons">
-            <button type="button" id="couponButton" onclick="toggleCoupon(this)">クーポンを利用する</button>
-        </div>
-        <!-- ★ ここまで追加 ★ -->
+<!-- ★ ここから追加：クーポン利用 ★ -->
+<div class="labelsansyuu">
+    3周年記念クーポンを<br>ご利用の方はこちらをチェックにする
+</div>
+<div class="second-buttons">
+    <button type="button" id="couponButton" onclick="toggleCoupon(this)">
+        クーポンを利用する
+    </button>
+</div>
+<!-- ★ ここまで追加 ★ -->
 
         <div class="label" id="menuLabel">メニューをお選びください</div>
         <div class="menu-sections" id="menuSections">
@@ -714,7 +763,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk'
+                liffId: '2005612862-y5rJ0deR'
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -823,10 +872,10 @@
                 ? '・<span style="color:#877059;"><strong>クーポン利用</strong></span>：あり'
                 : '・<span style="color:#877059;"><strong>クーポン利用</strong></span>：なし';
 
-            // 所要時間を計算
-            let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
-            let hours = Math.floor(totalMinutes / 60);
-            let minutes = totalMinutes % 60;
+// 所要時間を計算（クーポン利用分も含める）
+let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime + couponTime;
+let hours = Math.floor(totalMinutes / 60);
+let minutes = totalMinutes % 60;
 
             // 所要時間の表示形式：○○時間○○分
             let totalTimeText = `・<span style="color:#877059;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
@@ -876,6 +925,9 @@
         });
 
         function selectSymptom(button, treatmentId) {
+    // ★ 日付リセット
+    resetSelectedDate();
+
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
 
@@ -1291,6 +1343,9 @@
         }
 
         function selectirradiations(button) {
+    // ★ 日付リセット
+    resetSelectedDate();
+
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
 
@@ -1325,6 +1380,9 @@
         }
 
         function selectsecondanniversary(element) {
+    // ★ 日付リセット
+    resetSelectedDate();
+
             document.getElementById('firstsecondanniversary').classList.remove('active');
             document.getElementById('repeatsecondanniversary').classList.remove('active');
             element.classList.add('active');
@@ -1341,6 +1399,9 @@
 
         // クーポン利用ボタンのON/OFF
         function toggleCoupon(button) {
+    // ★ 日付リセット
+    resetSelectedDate();
+
             // ボタンの見た目（activeクラス）の切り替え
             button.classList.toggle('active');
 
@@ -1396,6 +1457,9 @@
         document.getElementById('menuSections').style.display = 'none';
 
         function selectVisit(element) {
+    // ★ 日付リセット
+    resetSelectedDate();
+
             // `treatment-text` を非表示にする
             document.getElementById("treatment-text").style.display = "none";
 
@@ -1488,6 +1552,16 @@
             updateDisplayInfo();
         }
 
+// ★ 日付選択をリセットする共通関数
+function resetSelectedDate() {
+    // 送信用の選択日時をリセット
+    selectedFullDate = '';
+
+    // カレンダーの選択ハイライトをリセット
+    document.querySelectorAll('.calendar td.selected').forEach(td => {
+        td.classList.remove('selected');
+    });
+}
 
         function selectDate(cell) {
             // "unavailable" クラスが付いている場合はクリックを無効化
