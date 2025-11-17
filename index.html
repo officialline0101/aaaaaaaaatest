@@ -507,6 +507,34 @@
             }
         }
 
+        .info-textmenu {
+            margin-top: 20px;
+            /* 上の余白 */
+            margin-bottom: 10px;
+            /* 下に白い隙間を追加 */
+            font-size: 13px;
+            color: #000000;
+            line-height: 1.5;
+            text-align: center;
+            word-wrap: break-word;
+            background-color: #eef9f5;
+            /* 青っぽい背景色を追加 */
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        /* 携帯端末向けのレスポンシブデザイン */
+        @media (max-width: 768px) {
+            .info-textmenu {
+                font-size: 11.5px;
+                /* スマホでは少し小さく */
+                margin-top: 10px;
+                /* 上下のマージンを調整 */
+                line-height: 2.0;
+                /* テキストの高さ調整 */
+            }
+        }
+
         .symptoms,
         .options {
             display: block;
@@ -726,6 +754,37 @@
             padding: 50px 10px;
             margin-top: 30px;
         }
+
+/* メニュー詳細用テキスト */
+.info-textmenu {
+    margin-top: 8px;          /* ボタンのすぐ下に来る想定で少し詰める */
+    margin-bottom: 8px;      /* 下には少し余裕を持たせる */
+    padding: 12px 14px;
+    
+    font-size: 13px;
+    color: #333333;
+    line-height: 1.8;
+    text-align: left;         /* 詳細テキストなので左寄せに変更 */
+    word-wrap: break-word;
+    white-space: pre-line;    /* 改行(\n)をそのまま反映して段落分けしやすく */
+
+    background-color: #f3fbf8; /* 少し落ち着いた淡いグリーン系背景 */
+    border-radius: 4px;
+    border-left: 3px solid #55c1a7; /* メニュー詳細用のアクセントライン */
+    box-sizing: border-box;
+}
+
+/* 携帯端末向けのレスポンシブデザイン */
+@media (max-width: 768px) {
+    .info-textmenu {
+        font-size: 12px;     /* スマホでは少しだけ小さく */
+        margin-top: 1px;     /* 上下のマージンをやや詰める */
+        margin-bottom: 10px;
+        line-height: 1.9;    /* 読みやすいように行間は広めに */
+        padding: 2px 12px;
+    }
+}
+
     </style>
 </head>
 
@@ -758,12 +817,22 @@
         <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
         <div id="treatment-text" style="display: none; margin-bottom: 10px;"></div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">カット(60分)</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">カラー(90分)</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">パーマ(90分)</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">トリートメント(90分)</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">頭皮ケア(30分)</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">縮毛矯正(180分)</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">カット（60分）</button>
+            <div class="info-textmenu">カット/料金：4,180円</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">カラーブロー（90分）</button>
+            <div class="info-textmenu">カラーブロー/料金：7,700円〜</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">カラーカット（120分）</button>
+            <div class="info-textmenu">カラーカット/料金：10,230円〜</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">パーマカット（120分）</button>
+            <div class="info-textmenu">パーマカット/料金：9,130円〜</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">縮毛矯正（180分）</button>
+            <div class="info-textmenu">縮毛矯正/料金：16,500円</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">トリートメント（30分）</button>
+            <div class="info-textmenu">トリートメント/料金：3,300円〜</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">髪質改善トリートメント（90分）</button>
+            <div class="info-textmenu">髪質改善トリートメント/料金：11,000円</div>
+            <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">頭皮ケア（30分）</button>
+            <div class="info-textmenu">頭皮ケア/料金：5,500円</div>
         </div>
         <div class="highlight-background">
             <span class="highlight-text">オプション</span>
@@ -867,12 +936,14 @@
         let selectedirradiationsTime = 0; // 訪問回数で選択された時間
 
         let menuTimes = {
-            'カット(60分)': 60,
-            'カラー(90分)': 120,
-            'パーマ(90分)': 120,
-            '縮毛矯正(180分)': 180,
-            'トリートメント(90分)': 120,
-            '頭皮ケア(30分)': 30
+            'カット（60分）': 60,
+            'カラーブロー（90分）': 90,
+            'カラーカット（120分）': 120,
+            'パーマカット（120分）': 120,
+            '縮毛矯正（180分）': 180,
+            'トリートメント（30分）': 30,
+            '髪質改善トリートメント（90分）': 90,
+            '頭皮ケア（30分）': 30
         };
 
         let selectedMenuTime = 0;
