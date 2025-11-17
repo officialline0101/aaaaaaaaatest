@@ -994,7 +994,7 @@
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">女性</button>
         </div>
 
-        <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
+        <div class="label" id="course">来店回数<span class="required">必須</span></div>
         <div class="menu-sections">
             <button type="button" onclick="showMenu('male')">1回目</button>
             <button type="button" onclick="showMenu('female')">2回目以降</button>
@@ -1004,7 +1004,7 @@
 
         <div id="male" class="menu-section">
             <div class="labeltyuuou">
-                <span class="highlight-text">◆1回目◆</span>
+                <span class="highlight-text">メニューをお選びください<span class="required">必須</span><br>◆1回目◆</span>
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">指圧・もみほぐし 35分</button>
@@ -1035,7 +1035,7 @@
 
         <div id="female" class="menu-section">
             <div class="labeltyuuou">
-                <span class="highlight-text">◆2回目以降◆</span>
+                <span class="highlight-text">メニューをお選びください<span class="required">必須</span><br>◆2回目以降◆</span>
             </div>
             <div class="symptoms">
                 <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="15000">指圧・もみほぐし 30分</button>
@@ -1062,41 +1062,8 @@
             </div>
         </div>
 
-        <div id="whitening" class="menu-section">
-            <div class="labeltyuuou">
-                <span class="highlight-text">◆マッサージコース◆</span>
-            </div>
-            <div class="symptoms">
-                <button type="button" onclick="selectSymptom(this, 'treatment8')"
-                    data-price="15000">リラックスマッサージ〈30分〉</button>
-                <button type="button" onclick="selectSymptom(this, 'treatment9')"
-                    data-price="15000">ベーシックマッサージ〈30分〉</button>
-            </div>
-            <div class="labeltyuuou">
-                <span class="highlight-text">オプション</span>
-            </div>
-            <div class="irradiations">
-                <button type="button" id="twelvethirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">眉カット〈30分〉</button>
-                <button type="button" id="thirteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">襟足〈30分〉</button>
-                <button type="button" id="fourteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中</button>
-                <button type="button" id="fifteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">背中(腰まで)〈30分〉</button>
-                <button type="button" id="sixteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">デコルテ〈30分〉</button>
-                <button type="button" id="seventeenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">腕〈30分〉</button>
-                <button type="button" id="eighteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">保湿パック〈30分〉</button>
-                <button type="button" id="nineteenthirradiations" onclick="selectirradiations(this)"
-                    data-price="15000">美白パック〈30分〉</button>
-            </div>
-        </div>
-
         <!-- ② HTML：各ブロックの「日付入力」をラップして“日付を選択”を重ねる -->
-        <div class="labelkibounitizi">希望日時<span class="required">必須</span></div>
+        <div class="labelkibounitizi" id="kibou1">希望日時<span class="required">必須</span></div>
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
             <!-- 提出/既存処理用：ISO(YYYY-MM-DDTHH:MM) を入れる -->
@@ -1109,7 +1076,7 @@
         </div>
 
         <!-- 第二希望日時 -->
-        <div class="labelkibounitizi">第二希望日時<span class="required">必須</span></div>
+        <div class="labelkibounitizi" id="kibou2">第二希望日時<span class="required">必須</span></div>
         <div class="datetime-wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
             <input type="hidden" id="date2" name="date2">
@@ -1275,17 +1242,17 @@
 
         function updateDisplayInfo() {
             const name = document.getElementById('name').value;
-            const visitCountText = visitCount ? `・<span style="color:#45c4b7;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
-            const selectedMenuText = selectedMenu ? `<span style="color:#45c4b7;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
+            const visitCountText = visitCount ? `<span style="color:#ffa0b8;"><strong>【性別】</strong></span><br>・${visitCount}` : '・性別が未選択です';
+            const selectedMenuText = selectedMenu ? `<span style="color:#ffa0b8;"><strong>【コース】</strong></span><br>・${selectedMenu}` : '・コースが未選択です';
 
             // メニューが選択されていたら、各メニューを改行して表示
             const selectedSymptomText = selectedSymptom.length > 0
-                ? `<span style="color:#45c4b7;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
+                ? `<span style="color:#ffa0b8;"><strong>【メニュー】</strong></span><br>・${selectedSymptom.join('<br>')}`
                 : '・メニューが未選択です';
 
             // オプションが選択されていたら、各オプションを改行して表示
             const irradiationsText = irradiationsCount
-                ? `<span style="color:#45c4b7;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}`
+                ? `<span style="color:#ffa0b8;"><strong>【オプション】</strong></span><br>・${irradiationsCount.split(', ').join('<br>')}`
                 : '・オプション無し';
 
             // 所要時間を計算
@@ -1294,27 +1261,27 @@
             let minutes = totalMinutes % 60;
 
             // 所要時間の表示形式：○○時間○○分
-            let totalTimeText = `・<span style="color:#45c4b7;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
+            let totalTimeText = `・<span style="color:#ffa0b8;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
 
             // 合計金額の表示
-            const totalAmountText = `・<span style="color:#45c4b7;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
+            const totalAmountText = `・<span style="color:#ffa0b8;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
 
             // 第1希望日が選択された場合の表示
             const selectedDate1 = document.getElementById('date1').value;
             const selectedDate1Text = selectedDate1
-                ? `・<span style="color:#45c4b7;"><strong>第1希望日</strong></span><br>${formatDateTime(selectedDate1)}`
+                ? `<span style="color:#ffa0b8;"><strong>【第1希望日】</strong></span><br>・${formatDateTime(selectedDate1)}`
                 : '・第1希望日が未選択です';
 
             // 第2希望日が選択された場合の表示
             const selectedDate2 = document.getElementById('date2').value;
             const selectedDate2Text = selectedDate2
-                ? `・<span style="color:#45c4b7;"><strong>第2希望日</strong></span><br>${formatDateTime(selectedDate2)}`
+                ? `<span style="color:#ffa0b8;"><strong>【第2希望日】</strong></span><br>・${formatDateTime(selectedDate2)}`
                 : '・第2希望日が未選択です';
 
             // 修正ボタン付きのHTMLを作成
             document.getElementById('displayInfo').innerHTML = `
         <div class="info-row">
-            <p><span style="color:#45c4b7;"><strong>【お名前】</strong></span><br>・${name}</p>
+            <p><span style="color:#ffa0b8;"><strong>【お名前】</strong></span><br>・${name}</p>
             <button class="edit-button" onclick="scrollToElement('name')">修正</button>
         </div>
         <hr>
@@ -1325,17 +1292,22 @@
         <hr>
         <div class="info-row">
             <p>${selectedSymptomText}</p>
-            <button class="edit-button" onclick="scrollToElement('beautifuleyebrows'); scrollToElement('shinyskin'); scrollToElement('Cosmetologyasawhole');">修正</button>
+            <button class="edit-button" onclick="scrollToElement('male'); scrollToElement('female');">修正</button>
+        </div>
+        <hr>
+        <div class="info-row">
+            <p>${irradiationsText}</p>
+            <button class="edit-button" onclick="scrollToElement('firstirradiations')">修正</button>
         </div>
         <hr>
         <div class="info-row">
             <p>${selectedDate1Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date1')">修正</button>
+            <button class="edit-button" onclick="scrollToElement('kibou1')">修正</button>
         </div>
         <hr>
         <div class="info-row">
             <p>${selectedDate2Text}</p>
-            <button class="edit-button" onclick="scrollToElement('date2')">修正</button>
+            <button class="edit-button" onclick="scrollToElement('kibou2')">修正</button>
         </div>
         <hr>
     `;
@@ -1844,7 +1816,7 @@ function initPicker(baseId, dateDays = 120) {
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\n《お名前》${formData.name}\n《性別》${formData.visitCount}\n\n《来店回数》${formData.selectedMenu}\n\n《メニュー》\n・${formData.selectedSymptom}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《メッセージ》\n${formData.message}`
+                text: `【予約フォーム】\n《お名前》${formData.name}\n《性別》${formData.visitCount}\n\n《来店回数》${formData.selectedMenu}\n\n《メニュー》\n・${formData.selectedSymptom}\n《オプション》\n・${formData.irradiationsCount}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《メッセージ》\n${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('確認してご連絡差し上げます。');
