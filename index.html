@@ -1778,55 +1778,66 @@ function initPicker(baseId, dateDays = 120) {
             updateDisplayInfo();
         }
 
-        function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                visitCount: visitCount,
-                selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-                irradiationsCount: irradiationsCount,
-                dates: [
-                    document.getElementById('date1').value,
-                    document.getElementById('date2').value
-                ],
-                message: document.getElementById('message').value.trim()
-            };
+function submitForm() {
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        visitCount: visitCount,
+        selectedMenu: selectedMenu,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+        irradiationsCount: irradiationsCount,
+        dates: [
+            document.getElementById('date1').value,
+            document.getElementById('date2').value
+        ],
+        message: document.getElementById('message').value.trim()
+    };
 
-            // フォームデータのチェック
-            if (!formData.name) {
-                alert('お名前を入力してください。');
-                return;
-            }
+    // フォームチェック
+    if (!formData.name) {
+        alert('お名前を入力してください。');
+        return;
+    }
+    if (!formData.selectedSymptom) {
+        alert('メニューを選択してください。');
+        return;
+    }
+    if (!formData.dates[0]) {
+        alert('第1希望日を選択してください。');
+        return;
+    }
+    if (!formData.dates[1]) {
+        alert('第2希望日を選択してください。');
+        return;
+    }
 
-            if (!formData.selectedSymptom) {
-                alert('メニューを選択してください。');
-                return;
-            }
+    // 🔽 オプション部分を条件付きで作成
+    const optionText = formData.irradiationsCount
+        ? `《オプション》\n・${formData.irradiationsCount}\n\n`
+        : '';
 
-            if (!formData.dates[0]) {
-                alert('第1希望日を選択してください。');
-                return;
-            }
+    // 🔽 メッセージ全体
+    const sendText =
+        `【予約フォーム】\n` +
+        `《お名前》${formData.name}\n` +
+        `《性別》${formData.visitCount}\n` +
+        `《来店回数》${formData.selectedMenu}\n\n` +
+        `《メニュー》\n・${formData.selectedSymptom}\n` +
+        optionText +
+        `【希望日時】\n` +
+        `《第一希望日》\n${formatDate(formData.dates[0])}\n\n` +
+        `《第二希望日》\n${formatDate(formData.dates[1])}\n\n` +
+        `《メッセージ》\n${formData.message}`;
 
-            if (!formData.dates[1]) {
-                alert('第2希望日を選択してください。');
-                return;
-            }
-
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\n《お名前》${formData.name}\n《性別》${formData.visitCount}\n\n《来店回数》${formData.selectedMenu}\n\n《メニュー》\n・${formData.selectedSymptom}\n《オプション》\n・${formData.irradiationsCount}\n\n【希望日時】\n《第一希望日》\n${formatDate(formData.dates[0])}\n\n《第二希望日》\n${formatDate(formData.dates[1])}\n\n《メッセージ》\n${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('確認してご連絡差し上げます。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
+    // LINE 送信
+    liff.sendMessages([
+        { type: 'text', text: sendText }
+    ]).then(() => {
+        alert('確認してご連絡差し上げます。');
+        liff.closeWindow();
+    }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+    });
+}
 
         function formatDate(datetime) {
             /* 日時文字列が空の場合は空文字を返す */
