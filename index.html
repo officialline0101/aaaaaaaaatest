@@ -468,8 +468,8 @@
             <button type="button" class="option-button" data-group="license" data-value="無">無</button>
         </div>
 
-        <div class="label">年齢（任意）</div>
-        <div class="options">
+<div class="label">年齢（任意）</div>
+<div class="options" id="ageBlock">
             <button type="button" class="option-button" data-group="age" data-value="10代">10代</button>
             <button type="button" class="option-button" data-group="age" data-value="20代前半">20代前半</button>
             <button type="button" class="option-button" data-group="age" data-value="20代後半">20代後半</button>
@@ -479,8 +479,8 @@
             <button type="button" class="option-button" data-group="age" data-value="50代">50代</button>
         </div>
 
-        <div class="label">希望エリア（任意）</div>
-        <div class="options">
+<div class="label">希望エリア（任意）</div>
+<div class="options" id="areaBlock">
             <button type="button" class="option-button" data-group="area" data-value="姫路市">姫路市</button>
             <button type="button" class="option-button" data-group="area" data-value="龍野市">龍野市</button>
             <button type="button" class="option-button" data-group="area" data-value="高砂市">高砂市</button>
@@ -490,8 +490,8 @@
             <button type="button" class="option-button" data-group="area" data-value="その他">その他</button>
         </div>
 
-        <div class="label">ドライバー経験（任意）</div>
-        <div class="options">
+<div class="label">ドライバー経験（任意）</div>
+<div class="options" id="expBlock">
             <button type="button" class="option-button" data-group="exp" data-value="あり(宅配)">あり（宅配）</button>
             <button type="button" class="option-button" data-group="exp" data-value="あり(その他配送)">あり（その他配送）</button>
             <button type="button" class="option-button" data-group="exp" data-value="なし">なし</button>
@@ -499,7 +499,7 @@
 
         <!-- 面談希望日 -->
         <div class="labelkibounitizi">面談希望日①<span class="required">必須</span></div>
-        <div class="datetime-wrapper" style="text-align: center;">
+        <div class="datetime-wrapper" id="date1Wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder1">⇩タップして日時を入力⇩</span>
             <!-- 提出/既存処理用：ISO(YYYY-MM-DDTHH:MM) を入れる -->
             <input type="hidden" id="date1" name="date1">
@@ -511,7 +511,7 @@
         </div>
 
         <div class="labelkibounitizi">面談希望日②<span class="required">必須</span></div>
-        <div class="datetime-wrapper" style="text-align: center;">
+        <div class="datetime-wrapper" id="date2Wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder2">⇩タップして日時を入力⇩</span>
             <input type="hidden" id="date2" name="date2">
             <div class="dt-grid">
@@ -521,7 +521,7 @@
         </div>
 
         <div class="labelkibounitizi">面談希望日③（任意）</div>
-        <div class="datetime-wrapper" style="text-align: center;">
+        <div class="datetime-wrapper" id="date3Wrapper" style="text-align: center;">
             <span class="placeholder" id="placeholder3">⇩タップして日時を入力⇩</span>
             <input type="hidden" id="date3" name="date3">
             <div class="dt-grid">
@@ -612,20 +612,24 @@ function updateDisplayInfo() {
         date3:     valueOr(formState.date3,     '未入力', formatDateTimeJP)
     };
 
-    // 行ごとの定義（ラベル・スクロール先・ボタン文言）
-    const rows = [
-        { key: 'nameKanji', label: '【お名前（漢字）】',       targetId: 'nameKanji',    buttonText: '修正' },
-        { key: 'nameKana',  label: '【お名前（フリガナ）】',   targetId: 'nameKana',     buttonText: '修正' },
-        { key: 'phone',     label: '【電話番号】',             targetId: 'phone',        buttonText: '修正' },
-        { key: 'email',     label: '【メールアドレス】',       targetId: 'email',        buttonText: '修正' },
-        { key: 'license',   label: '【運転免許の有無】',       targetId: 'licenseBlock', buttonText: '修正' },
-        { key: 'age',       label: '【年齢】',                 targetId: 'nameKanji',    buttonText: '上へ' },
-        { key: 'area',      label: '【希望エリア】',           targetId: 'nameKanji',    buttonText: '上へ' },
-        { key: 'exp',       label: '【ドライバー経験】',       targetId: 'nameKanji',    buttonText: '上へ' },
-        { key: 'date1',     label: '【面談希望日①】',          targetId: 'date1',        buttonText: '修正' },
-        { key: 'date2',     label: '【面談希望日②】',          targetId: 'date2',        buttonText: '修正' },
-        { key: 'date3',     label: '【面談希望日③】',          targetId: 'date3',        buttonText: '修正' }
-    ];
+// 行ごとの定義（ラベル・スクロール先・ボタン文言）
+const rows = [
+    { key: 'nameKanji', label: '【お名前（漢字）】',       targetId: 'nameKanji',     buttonText: '修正' },
+    { key: 'nameKana',  label: '【お名前（フリガナ）】',   targetId: 'nameKana',      buttonText: '修正' },
+    { key: 'phone',     label: '【電話番号】',             targetId: 'phone',         buttonText: '修正' },
+    { key: 'email',     label: '【メールアドレス】',       targetId: 'email',         buttonText: '修正' },
+    { key: 'license',   label: '【運転免許の有無】',       targetId: 'licenseBlock',  buttonText: '修正' },
+
+    // 任意項目はそれぞれのブロックに飛ばす
+    { key: 'age',       label: '【年齢】',                 targetId: 'ageBlock',      buttonText: '修正' },
+    { key: 'area',      label: '【希望エリア】',           targetId: 'areaBlock',     buttonText: '修正' },
+    { key: 'exp',       label: '【ドライバー経験】',       targetId: 'expBlock',      buttonText: '修正' },
+
+    // 日時は hidden ではなく wrapper に飛ばす
+    { key: 'date1',     label: '【面談希望日①】',          targetId: 'date1Wrapper',  buttonText: '修正' },
+    { key: 'date2',     label: '【面談希望日②】',          targetId: 'date2Wrapper',  buttonText: '修正' },
+    { key: 'date3',     label: '【面談希望日③】',          targetId: 'date3Wrapper',  buttonText: '修正' }
+];
 
     // HTMLの組み立て
     const html = rows.map(row => `
@@ -865,20 +869,20 @@ function updateHiddenAndPlaceholder(baseId) {
             }
 
             const msg =
-                `【ICHIRIKIエントリーフォーム】\n` +
-                `\n《お名前（漢字）》${nameKanji}` +
-                `\n《お名前（フリガナ）》${nameKana}` +
-                `\n《電話番号》${phone}` +
-                `\n《メールアドレス》${email}` +
-                `\n《運転免許の有無》${license}` +
+                `【ICHIRIKI内容】\n` +
+                `\n《お名前（漢字）》\n${nameKanji}` +
+                `\n《お名前（フリガナ）》\n${nameKana}` +
+                `\n《電話番号》\n${phone}` +
+                `\n《メールアドレス》\n${email}` +
+                `\n《運転免許の有無》\n${license}` +
                 `\n\n【任意項目】` +
-                `\n《年齢》${age || '未回答'}` +
-                `\n《希望エリア》${area || '未回答'}` +
-                `\n《ドライバー経験》${exp || '未回答'}` +
+                `\n《年齢》\n${age || '未回答'}` +
+                `\n《希望エリア》\n${area || '未回答'}` +
+                `\n《ドライバー経験》\n${exp || '未回答'}` +
                 `\n\n【面談希望日】` +
-                `\n《第1希望》${formatDateTimeJP(date1)}` +
-                `\n《第2希望》${formatDateTimeJP(date2)}` +
-                `\n《第3希望》${date3 ? formatDateTimeJP(date3) : '（未入力）'}`;
+                `\n《第1希望》\n${formatDateTimeJP(date1)}` +
+                `\n《第2希望》\n${formatDateTimeJP(date2)}` +
+                `\n《第3希望》\n${date3 ? formatDateTimeJP(date3) : '（未入力）'}`;
 
             if (typeof liff === 'undefined') {
                 alert('LIFF SDKの読み込みに失敗しました。LINEアプリから開いているかご確認ください。');
