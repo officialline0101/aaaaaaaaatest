@@ -279,15 +279,13 @@ function submitForm() {
         return;
     }
 
-    // 選択された数だけ、1件ずつメッセージを作成
-    const messages = selectedProblems.map(function (value) {
-        return {
-            type: 'text',
-            text: value   // 例：「乾燥」「しみ」
-        };
-    });
+    // 選択された項目名のみをテキストとして送信（例：乾燥、しみ）
+    const text = selectedProblems.join('、');
 
-    liff.sendMessages(messages).then(() => {
+    liff.sendMessages([{
+        type: 'text',
+        text: text
+    }]).then(() => {
         alert('ご回答ありがとうございます。');
         liff.closeWindow();
     }).catch((err) => {
