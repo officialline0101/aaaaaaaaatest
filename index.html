@@ -6,24 +6,27 @@
     <title>LOENUカウンセリングアンケート</title>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
+        :root {
+            --base-color: #6AB2AF;
+            --base-color-dark: #4F8F8C;
+            --base-color-light: #E8F5F4;
+            --text-main: #333333;
+        }
+
         /* 右端の細いナビ（固定） */
         .side-nav {
             position: fixed;
-            right: -5px;
-            top: 80%;
-            transform: translateY(-50%) translateX(15px);
-            background: #13ca5e;
+            right: 8px;
+            bottom: 20px;
+            background: var(--base-color);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 4px;
-            border-radius: 10px 0 0 10px;
+            padding: 8px;
+            border-radius: 20px;
             z-index: 1000;
-            width: 35px;
-        }
-
-        .side-nav a:active {
-            transform: scale(1.0);
+            width: 44px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
         }
 
         .side-nav a {
@@ -31,190 +34,266 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #ffffff;
             text-decoration: none;
             font-size: 10px;
-            margin: 5px 0;
-            padding: 5px;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 5px;
-            width: 30px;
-            height: 30px;
+            margin: 4px 0;
+            padding: 4px;
+            transition: background 0.2s, transform 0.15s;
+            border-radius: 999px;
+            width: 32px;
+            height: 32px;
             text-align: center;
+            position: relative;
         }
 
         .side-nav a span {
-            font-size: 24px;
+            font-size: 18px;
             position: absolute;
-            left: -0px;
-            top: 13px;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .side-nav a i {
+            margin-top: 16px;
+            font-size: 12px;
+        }
+
+        .side-nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .side-nav a:active {
+            transform: scale(0.96);
         }
 
         @media (max-width: 600px) {
             .side-nav {
-                right: 2px;
-                width: 30px;
+                right: 6px;
+                width: 40px;
+                padding: 6px;
             }
 
             .side-nav a {
-                width: 28px;
-                height: 28px;
+                width: 30px;
+                height: 30px;
             }
 
             .side-nav a i {
-                font-size: 12px;
+                font-size: 11px;
             }
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #f7fbfb, #e3f2f2);
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            padding-top: 20px;
+            padding: 20px 12px;
+            color: var(--text-main);
         }
 
         .container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 520px;
+            padding: 22px 18px 24px;
             box-sizing: border-box;
-        }
-
-        h1 {
-            background: linear-gradient(135deg, #13ca5e, #0fa958);
-            color: white;
-            padding: 20px;
-            border-radius: 0 15px 0px 45px;
-            text-align: center;
-            display: block;
-            margin: -20px -15px 20px -15px;
-            font-size: 26px;
-            font-weight: 600;
-            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
             position: relative;
             overflow: hidden;
         }
 
-        .info-text {
-            margin: 10px 0 20px 0;
+        .container::before {
+            content: "";
+            position: absolute;
+            right: -40px;
+            top: -40px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at center, rgba(106,178,175,0.28), transparent 70%);
+            opacity: 0.9;
+            pointer-events: none;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, var(--base-color), var(--base-color-dark));
+            color: #ffffff;
+            padding: 18px 18px 18px 20px;
+            border-radius: 14px;
+            margin: 0 0 18px;
+            font-size: 22px;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1::after {
+            content: "Counseling";
+            position: absolute;
+            right: 12px;
+            bottom: -6px;
             font-size: 14px;
-            color: #333;
-            background-color: #f8f9fa;
+            color: rgba(255, 255, 255, 0.35);
+            letter-spacing: 0.08em;
+        }
+
+        .info-text {
+            margin: 4px 0 18px 0;
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: var(--base-color-light);
             line-height: 1.8;
             text-align: left;
             word-wrap: break-word;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
+            padding: 12px 12px 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(106, 178, 175, 0.4);
+            position: relative;
         }
 
         .label {
             display: block;
-            margin-bottom: 10px;
-            padding: 6px;
+            margin: 4px 0 8px 0;
+            padding: 7px 10px;
             font-weight: 600;
-            background-color: #13ca5e;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
+            background-color: var(--base-color);
+            color: #ffffff;
+            border-radius: 999px;
+            font-size: 15px;
             text-align: center;
+            letter-spacing: 0.03em;
+            position: relative;
+        }
+
+        .label::before {
+            content: "Q.";
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.9;
         }
 
         .problem-buttons {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 18px;
         }
 
         .problem-buttons button {
-            flex: 1 1 45%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background-color: #f7f7f7;
+            flex: 1 1 calc(50% - 4px);
+            padding: 10px 8px;
+            border-radius: 8px;
+            background-color: #ffffff;
             cursor: pointer;
             box-sizing: border-box;
             text-align: center;
             white-space: nowrap;
             font-size: 14px;
-            transition: all 0.2s;
+            border: 1px solid rgba(106, 178, 175, 0.5);
+            color: var(--base-color-dark);
+            transition: background-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.1s, border-color 0.15s;
+        }
+
+        .problem-buttons button:hover {
+            background-color: var(--base-color-light);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
         }
 
         .problem-buttons button.active {
-            background-color: #444;
-            color: #fff;
-            outline: 2px solid #696969;
-            outline-offset: 2px;
+            background: linear-gradient(135deg, var(--base-color), var(--base-color-dark));
+            color: #ffffff;
+            border-color: var(--base-color-dark);
+            box-shadow: 0 4px 12px rgba(106, 178, 175, 0.35);
         }
 
         button {
             padding: 12px;
             border: none;
-            border-radius: 6px;
-            background-color: #13ca5e;
-            color: #000000;
+            border-radius: 999px;
+            background: var(--base-color);
+            color: #ffffff;
             font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            font-weight: 600;
+            letter-spacing: 0.04em;
         }
 
         button:hover {
-            background-color: #e9e9e9;
-            transform: scale(1.05);
+            background: var(--base-color-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: scale(0.97);
+            box-shadow: none;
         }
 
         .submit-button {
             width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            background-color: #dc3545;
-            color: #fff;
+            padding: 14px;
+            font-size: 17px;
+            margin-top: 6px;
+            background: linear-gradient(135deg, var(--base-color-dark), var(--base-color));
+            box-shadow: 0 6px 18px rgba(106, 178, 175, 0.45);
         }
 
         .submit-button:hover {
-            background-color: #c82333;
+            background: linear-gradient(135deg, var(--base-color), var(--base-color-dark));
+        }
+
+        .submit-button span {
+            font-size: 13px;
+            display: block;
+            margin-top: 2px;
+            opacity: 0.85;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 18px 14px 22px;
             }
 
             h1 {
-                font-size: 22px;
+                font-size: 20px;
+                padding: 16px 14px 16px 16px;
+            }
+
+            h1::after {
+                font-size: 12px;
             }
 
             .problem-buttons button {
                 font-size: 13px;
+                padding: 9px 6px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- 右側の追従ナビ -->
-    <div class="side-nav" id="sideNav">
-        <a href="#section-message">
-            <span>⇩</span>
-            <i class="fas fa-comment"></i>
-        </a>
-    </div>
 
     <div class="container">
         <h1>LOENUカウンセリングアンケート</h1>
 
-        <div class="label">あなたのお悩みを下記からお選び下さい。</div>
+        <div class="label">あなたのお悩みを下記からお選びください</div>
         <div class="info-text">
             ▼下記8項目よりお悩みをお選びください。<br>
-            <span style="color:#dc3545; font-weight:bold;">※2個まで選択可能です。</span><br>
+            <span style="color:#e55353; font-weight:bold;">※2個まで選択可能です。</span><br>
             送信ボタンを押すと、<br>
             <strong>選択した項目名のみ</strong>がテキストで送信されます。
         </div>
@@ -230,7 +309,9 @@
             <button type="button" onclick="toggleProblem(this)" data-value="その他">その他</button>
         </div>
 
-        <button class="submit-button" onclick="submitForm()" id="section-message">送信</button>
+        <button class="submit-button" onclick="submitForm()" id="section-message">
+            送信する
+        </button>
     </div>
 
     <!-- LIFF SDK -->
@@ -273,25 +354,25 @@
             }
         }
 
-function submitForm() {
-    if (selectedProblems.length === 0) {
-        alert('お悩みを1つ以上お選びください。');
-        return;
-    }
+        function submitForm() {
+            if (selectedProblems.length === 0) {
+                alert('お悩みを1つ以上お選びください。');
+                return;
+            }
 
-    // 選択された項目名のみをテキストとして送信（例：乾燥、しみ）
-    const text = selectedProblems.join('、');
+            // 選択された項目名のみをテキストとして送信（例：乾燥、しみ）
+            const text = selectedProblems.join('、');
 
-    liff.sendMessages([{
-        type: 'text',
-        text: text
-    }]).then(() => {
-        alert('ご回答ありがとうございます。');
-        liff.closeWindow();
-    }).catch((err) => {
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+            liff.sendMessages([{
+                type: 'text',
+                text: text
+            }]).then(() => {
+                alert('ご回答ありがとうございます。');
+                liff.closeWindow();
+            }).catch((err) => {
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
     </script>
 </body>
 </html>
