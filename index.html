@@ -202,18 +202,23 @@
 
         /* --- 治療内容テキスト表示エリア --- */
         #treatment-text {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border: 1px solid var(--accent-color);
+            display: none;
+            /* 初期非表示 */
+            position: absolute;
+            /* 画面上の好きな位置に出す */
+            z-index: 1500;
+            /* 他の要素より手前に表示 */
+            background-color: #fffcf5;
+            /* ほんの少し色付きの背景 */
+            padding: 14px 16px;
             border-radius: 4px;
-            margin-top: -15px;
-            /* ボタンとの隙間を埋める */
-            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
             font-size: 14px;
             line-height: 1.6;
             color: var(--text-color);
-            display: none;
-            /* 初期非表示 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            max-width: 90vw;
+            /* 画面からはみ出さないように */
         }
 
         /* メニューセクションの表示制御 */
@@ -1088,7 +1093,7 @@
                 : '・メニューが未選択です';
 
             const irradiationsText = irradiationsCount
-                ? `<span style="${labelStyle}"><strong>オプション</strong></span>・${irradiationsCount.split(', ').join('<br>・')}`
+                ? `<span style="${labelStyle}"><strong>オプション</strong></span>‣${irradiationsCount.split(', ').join('<br>・')}`
                 : '・オプション無し';
 
             let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
@@ -1264,13 +1269,34 @@
             // 固定位置のカードを表示
             treatmentText.style.display = 'block';
 
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+            // ▼ メニューボタンのすぐ下にカードを表示させるための位置調整 ▼
+            const rect = button.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-            // 表示を更新
-            updateDisplayInfo();
+            // 一旦左上に置いて幅を取得
+            treatmentText.style.top = '0px';
+            treatmentText.style.left = '0px';
+
+            // 幅を取得（初回でもそれなりの値が取れるように）
+            const cardWidth = treatmentText.offsetWidth || 280;
+
+            // 左位置（ボタンの左端に合わせる）
+            let left = rect.left + scrollLeft;
+
+            // 右端からはみ出さないように補正
+            const maxLeft = scrollLeft + document.documentElement.clientWidth - cardWidth - 16;
+            if (left > maxLeft) {
+                left = maxLeft;
+            }
+            if (left < 8) {
+                left = 8;
+            }
+
+            // 実際の表示位置（ボタンの下 + 8px）
+            treatmentText.style.left = left + 'px';
+            treatmentText.style.top = (rect.bottom + scrollTop + 8) + 'px';
+            // ▲ ここまで位置調整 ▲  
         }
 
         function selectirradiations(button) {
