@@ -286,95 +286,229 @@
             color: var(--white);
         }
 
+/* --- カレンダー (〇✕視認性重視版) --- */
+        .calendar-container {
+            margin-bottom: 20px;
+            background-color: transparent;
+            display: none; /* 初期非表示 */
+        }
+
+        /* カレンダーヘッダー（月表示） */
+        .calendar-header {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 12px;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .current-month {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* 操作ボタンエリア */
+        .calendar-controls {
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-top: none;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .month-button,
+        .week-button {
+            padding: 5px 12px;
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .month-button:hover,
+        .week-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* 凡例（〇✕の説明） */
+        .calendar-legend {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 8px 10px;
+            background: #fff;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-marker {
+            width: 14px;
+            height: 14px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .marker-ok {
+            background-color: #fff;
+            border: 1px solid var(--accent-color);
+            position: relative;
+        }
+        .marker-ok::after {
+            content: "〇";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10px;
+            color: var(--accent-color);
+            line-height: 1;
+        }
+
+        .marker-ng {
+            background-color: #e0e0e0;
+            color: #999;
+            text-align: center;
+            line-height: 14px;
+            font-size: 10px;
+        }
+
         /* カレンダー本体 */
         .calendar {
             width: 100%;
             overflow-x: auto;
-            padding: 10px 5px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
         }
 
         .calendar table {
             width: 100%;
-            border-collapse: separate; /* セルの角丸を有効にするため */
-            border-spacing: 2px; /* セル間の隙間 */
+            border-collapse: collapse;
             table-layout: fixed;
-            min-width: 300px; /* スマホでの極端な縮小防止 */
+            min-width: 320px;
         }
 
         .calendar th {
-            background-color: transparent;
-            color: #888;
-            font-weight: normal;
-            padding: 10px 0;
+            background-color: #f9f9f9;
+            color: #333;
+            font-weight: bold;
+            padding: 8px 0;
+            font-size: 12px;
+            border-bottom: 2px solid #ddd;
+            border-right: 1px solid #eee;
+        }
+        
+        /* 最初の列（時間軸）の調整 */
+        .calendar th:first-child,
+        .calendar td:first-child {
+            width: 50px;
+            background-color: #f9f9f9;
+            font-weight: bold;
             font-size: 11px;
-            border: none;
-            border-bottom: 1px solid #eee;
+            color: #555;
         }
 
-        /* 日付・時間セル */
+        /* セル共通設定 */
         .calendar td {
-            padding: 12px 2px;
+            padding: 10px 0;
             text-align: center;
-            border: 1px solid #969696;
-            border-radius: 4px;
+            border: 1px solid #eee;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             transition: all 0.2s;
-            background-color: #fff;
-            color: var(--text-color);
+            height: 50px; /* タップしやすい高さ */
+            vertical-align: middle;
             position: relative;
         }
 
-        /* ホバー時 */
-        .calendar td:hover {
-            background-color: #fdf8e8; /* 薄いゴールド */
-            border-color: var(--accent-color);
-        }
-
-        /* 選択時 */
-        .calendar td.selected {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border-color: var(--primary-color);
+        /* --- 予約可能 (〇) のデザイン --- */
+        .calendar td {
+            background-color: #fff;
+            color: var(--primary-color); /* 〇の色 */
             font-weight: bold;
-            box-shadow: 0 2px 6px rgba(27, 42, 78, 0.4);
-            transform: scale(1.05); /* 少し大きく強調 */
-            z-index: 1;
-        }
-
-        /* 予約不可 */
-        .calendar td.unavailable {
-            background-color: #818181;
-            color: #ccc;
-            border-color: #f0f0f0;
-            cursor: not-allowed;
-            pointer-events: none;
         }
         
-        /* ×印などを表現する場合の補助クラス（必要に応じてJSで付与） */
-        .calendar td.unavailable::after {
-            /* content: "×";  必要であればJSでテキストを入れるか、ここで擬似要素で表示 */
+        /* もしJSでテキストが入らない場合、強制的に〇を表示させるCSS (必要に応じて有効化) */
+        /* .calendar td:not(.unavailable):not(:first-child):empty::after {
+            content: "〇";
+            color: var(--accent-color);
+        } */
+
+        /* ホバー時 */
+        .calendar td:not(.unavailable):not(:first-child):hover {
+            background-color: #fffbe6; /* 薄い黄色 */
+            border: 1px solid var(--accent-color);
+        }
+
+        /* --- 予約不可 (✕) のデザイン --- */
+        .calendar td.unavailable {
+            background-color: #dcdcdc; /* 濃いめのグレーではっきり区別 */
+            color: #999;
+            cursor: not-allowed;
+            pointer-events: none;
+            font-size: 16px; /* ✕印を少し大きく */
+        }
+        
+        /* ✕印のスタイル強化 */
+        .calendar td.unavailable:not(:first-child) {
+            background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 50%, #eee 50%, #eee 75%, transparent 75%, transparent);
+            background-size: 10px 10px; /* 斜線を入れて不可感を出す */
+        }
+
+        /* --- 選択中 のデザイン --- */
+        .calendar td.selected {
+            background-color: var(--primary-color) !important;
+            color: var(--white) !important;
+            border: 1px solid var(--primary-color);
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 0 0 2px rgba(27, 42, 78, 0.3);
+        }
+        
+        /* 選択中のセルにはチェックマークなどを出す場合 */
+        .calendar td.selected::after {
+            content: "✔";
             display: block;
             font-size: 10px;
-            color: #ddd;
+            line-height: 1;
+            margin-top: 2px;
         }
 
         /* --- ローディングスピナー（変更なし） --- */
         .loading-spinner {
-             /* ...元のコードのまま... */
-             position: fixed;
-             top: 50%;
-             left: 50%;
-             transform: translate(-50%, -50%);
-             display: none;
-             text-align: center;
-             background-color: rgba(0, 0, 0, 0.6);
-             padding: 40px;
-             border-radius: 10px;
-             z-index: 2000;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 10px;
+            z-index: 2000;
         }
         .spinner {
-             /* ...元のコードのまま... */
             width: 60px;
             height: 60px;
             border: 5px solid rgba(255, 255, 255, 0.2);
@@ -384,7 +518,6 @@
             margin: 0 auto;
         }
         .loading-text {
-             /* ...元のコードのまま... */
             margin-top: 20px;
             font-size: 15px;
             font-weight: bold;
@@ -705,14 +838,23 @@
 
             <div class="calendar-controls">
                 <div class="control-group">
-                    <button class="month-button" onclick="previousmonth()"><i class="fas fa-chevron-left"></i> 前月</button>
-                    <span class="control-label">月切替</span>
-                    <button class="month-button" onclick="nextmonth()">翌月 <i class="fas fa-chevron-right"></i></button>
+                    <button class="month-button" onclick="previousmonth()">◀ 前月</button>
+                    <button class="month-button" onclick="nextmonth()">翌月 ▶</button>
                 </div>
                 <div class="control-group">
-                    <button class="week-button" onclick="previousWeek()"><i class="fas fa-angle-left"></i> 前週</button>
-                    <span class="control-label">週切替</span>
-                    <button class="week-button" onclick="nextWeek()">翌週 <i class="fas fa-angle-right"></i></button>
+                    <button class="week-button" onclick="previousWeek()">◀ 前週</button>
+                    <button class="week-button" onclick="nextWeek()">翌週 ▶</button>
+                </div>
+            </div>
+
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <span class="legend-marker marker-ok"></span>
+                    <span>予約可</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-marker marker-ng">✕</span>
+                    <span>満席</span>
                 </div>
             </div>
 
@@ -720,8 +862,7 @@
                 <table>
                     <thead>
                         <tr id="calendar-header">
-                            <th>時間</th>
-                            <th>月</th>
+                            <th>時間</th> <th>月</th>
                             <th>火</th>
                             <th>水</th>
                             <th>木</th>
