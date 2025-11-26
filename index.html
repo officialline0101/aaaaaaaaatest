@@ -200,49 +200,6 @@
             background-color: #f1f1f1;
         }
 
-        /* --- 治療内容テキスト表示エリア --- */
-        #treatment-text {
-            display: none;
-            /* 初期非表示 */
-            position: absolute;
-            /* 画面上の好きな位置に出す */
-            z-index: 1500;
-            /* 他の要素より手前に表示 */
-            background-color: #fffcf5;
-            /* ほんの少し色付きの背景 */
-            padding: 14px 16px;
-            border-radius: 4px;
-            border-left: 4px solid var(--accent-color);
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text-color);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-            max-width: 90vw;
-            /* 画面からはみ出さないように */
-        }
-
-        /* ▼ 治療内容ポップアップの閉じるボタン ▼ */
-        #treatment-text .treatment-close {
-            float: right;
-            /* 右上に寄せる */
-            border: none;
-            background: transparent;
-            font-size: 18px;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0;
-        }
-
-        /* 閉じるボタンの下から本文を始めるため */
-        #treatment-text .treatment-body {
-            clear: both;
-        }
-
-        /* メニューセクションの表示制御 */
-        .menu-section {
-            display: none;
-        }
-
         /* --- カレンダー (デザイン改修版) --- */
         .calendar-container {
             margin-bottom: 30px;
@@ -723,20 +680,167 @@
             }
         }
 
-        /* --- 治療内容テキスト表示エリア --- */
+        /* --- 治療内容テキスト表示エリア (デザイン改修版) --- */
         #treatment-text {
             display: none;
-            /* 初期非表示 */
-            background-color: #fffcf5;
-            /* ほんの少し色付きの背景 */
-            padding: 14px 16px;
-            border-radius: 4px;
-            border-left: 4px solid var(--accent-color);
-            margin: 10px 0 20px;
+            position: absolute;
+            z-index: 1500;
+            background-color: var(--white);
+            /* 背景を白にしてクッキリさせる */
+            width: 300px;
+            /* 幅を固定してレイアウトを安定させる */
+            max-width: 90vw;
+            padding: 0;
+            /* 内側の余白は個別に設定 */
+            border-radius: 8px;
+            /* 枠線を廃止し、影を強めにして浮かび上がらせる */
+            box-shadow: 0 10px 25px rgba(27, 42, 78, 0.25);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-top: 5px solid var(--accent-color);
+            /* 上部にアクセントカラー */
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* 閉じるボタン */
+        #treatment-text .treatment-close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #f0f0f0;
+            color: #999;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        #treatment-text .treatment-close:hover {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        /* コンテンツのレイアウト */
+        .treatment-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 時間表示エリア */
+        .t-time-row {
+            display: flex;
+            align-items: center;
             font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 8px;
+        }
+
+        .t-icon {
+            margin-right: 6px;
+        }
+
+        /* 料金表示エリア（一番目立たせる） */
+        .t-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            background: #fdfdfd;
+        }
+
+        .t-price-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .t-price-val {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent-color);
+            /* 金色で強調 */
+            line-height: 1;
+            letter-spacing: 0.05em;
+        }
+
+        .t-price-sub {
+            font-size: 11px;
+            color: #999;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        /* 注意書き */
+        .t-note {
+            font-size: 11px;
+            color: #888;
+            background-color: #f4f6f9;
+            padding: 8px;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        /* 詳細テキスト */
+        .t-detail {
+            font-size: 12px;
+            color: #555;
             line-height: 1.6;
-            color: var(--text-color);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        /* メニュー名（タイトル）表示エリア */
+        .t-title-row {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-color);
+            padding-bottom: 6px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .t-title-row .t-icon {
+            margin-right: 6px;
+        }
+
+        .t-title {
+            letter-spacing: 0.05em;
+        }
+
+        /* 詳細テキスト（まだ入れてなければ） */
+        .t-detail {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+
+        /* フェードインアニメーション */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* メニューセクションの表示制御 */
+        .menu-section {
+            display: none;
         }
 
         .menu-section.active {
@@ -1217,85 +1321,203 @@
             });
         });
 
+        // 共通のHTMLテンプレート生成関数
+        // title: メニュー名（コース名）
+        // time: 所要時間
+        // price: 料金表示文字列
+        // hasInitialFee: 初診料の有無（true/false）
+        // detail: コースごとの詳細説明（HTML可）
+        // note: 下部の注意書き（省略可）
+        const createContent = (
+            title,
+            time,
+            price,
+            hasInitialFee,
+            detail = '',
+            note = "※症状によりお時間が前後する場合がございます"
+        ) => {
+            const initialFeeHtml = hasInitialFee
+                ? '<div class="t-price-sub">初診料：＋2,200円</div>'
+                : '';
+
+            const detailHtml = detail
+                ? `<div class="t-detail">
+                <i class="fas fa-list-ul t-icon"></i>
+                ${detail}
+           </div>`
+                : '';
+
+            return `
+        <div class="treatment-content">
+            <div class="t-title-row">
+                <i class="fas fa-star t-icon"></i>
+                <span class="t-title">${title}</span>
+            </div>
+            <div class="t-time-row">
+                <i class="fas fa-clock t-icon"></i> 所要時間：${time}
+            </div>
+            <div class="t-price-container">
+                <div class="t-price-row">
+                    <span class="t-price-label">料金</span>
+                    <span class="t-price-val">${price}</span>
+                </div>
+                ${initialFeeHtml}
+            </div>
+            ${detailHtml}
+            <div class="t-note">
+                <i class="fas fa-info-circle"></i> ${note}
+            </div>
+        </div>
+    `;
+        };
+
+
         function selectSymptom(button, treatmentId) {
             // 選択された日時をリセット
             selectedFullDate = '';
 
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
-
-            // ローカルストレージに保存する配列を取得
-            let selectedSymptoms = JSON.parse(localStorage.getItem('selectedSymptoms') || '[]');
-
-            // 選択した症状をローカルストレージに保存（1つだけ保持）
-            selectedSymptoms = [treatmentId];
-            localStorage.setItem('selectedSymptoms', JSON.stringify(selectedSymptoms));
-
-            // 選択されたオプションを取得
-            const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
             const treatmentText = document.getElementById('treatment-text');
             const closeButtonHtml = '<button type="button" class="treatment-close" onclick="closeTreatmentText()">×</button>';
-            let content = '';
 
+            // クリック前にそのボタンがアクティブだったか
+            const wasActive = button.classList.contains('active');
+
+            // 一旦トグル
+            button.classList.toggle('active');
+
+            // 今アクティブなメニューボタン一覧
+            let updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+
+            // もし今回のクリックで「全部オフ」になったら、各種リセットして終了
             if (updatedSelectedButtons.length === 0) {
-                // すべてのボタンの選択が解除された場合、メニュー時間を0にリセット
                 selectedMenuTime = 0;
-                selectedSymptom = null; // 選択されたメニューをリセット
-                menuPrice = 0; // メニュー価格をリセット
+                selectedSymptom = [];
+                menuPrice = 0;
                 treatmentText.style.display = 'none';
-                return; // ここで処理を終了
-            } else {
-                // 1つだけ選択状態にする
-                if (updatedSelectedButtons.length > 1) {
-                    updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active'); // クリックしたボタンだけを選択
-                }
-
-                // 選択されたメニューの時間を取得して保存
-                const selectedMenu = button.textContent;
-                selectedMenuTime = menuTimes[selectedMenu] || 0; // メニュー時間を取得して保存
-                selectedSymptom = [selectedMenu]; // 選択されたメニュー名を配列として保存
-                menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;  // メニューの価格を取得
+                treatmentText.innerHTML = '';
+                return;
             }
+
+            // 常に1つだけ active にする（複数選択されていた場合の保険）
+            if (updatedSelectedButtons.length > 1) {
+                updatedSelectedButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
+            }
+
+            // 選択されたメニューの表示テキスト（タイトルに使う）
+            const selectedMenuLabel = button.textContent;
+
+            // メニュー時間や表示用配列・価格を更新
+            selectedMenuTime = menuTimes[selectedMenuLabel] || 0;
+            selectedSymptom = [selectedMenuLabel];
+            menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;
 
             console.log('選択されたメニューの時間:', selectedMenuTime);
 
-            // カレンダーを更新するために取得する日付を渡す
+            // ローカルストレージにも保存（treatmentId を保存する仕様のまま）
+            let selectedSymptoms = [treatmentId];
+            localStorage.setItem('selectedSymptoms', JSON.stringify(selectedSymptoms));
+
+            // カレンダーを更新
             fetchAvailability(currentDate);
 
+            // ▼ ポップアップ用コンテンツ作成 ▼
+            let content = '';
+
             if (treatmentId === 'treatment1') {
-                content = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '90分',
+                    '6,500円',
+                    true,
+                    '・和装に合わせたシェービングとスキンケアを中心に行います。<br>' +
+                    '・うなじ〜フェイスラインまでしっかり整え、写真映えするお肌へ仕上げます。'
+                );
             } else if (treatmentId === 'treatment2') {
-                content = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '60分',
+                    '4,500円',
+                    true,
+                    '・洋装向けのベーシックなブライダルケアコースです。<br>' +
+                    '・お顔〜首元を中心に、くすみケアと保湿を行います。'
+                );
             } else if (treatmentId === 'treatment3') {
-                content = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '120分',
+                    '8,700円',
+                    true,
+                    '・フェイシャル・デコルテ・背中までしっかりケアするフルコースです。<br>' +
+                    '・挙式前のスペシャルケアとしておすすめです。'
+                );
             } else if (treatmentId === 'treatment4') {
-                content = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '30分',
+                    '1,700円',
+                    true,
+                    '・洋装向けのポイントケアコースです。<br>' +
+                    '・短時間で気になる部分だけ整えたい方に。'
+                );
             } else if (treatmentId === 'treatment5') {
-                content = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '60分',
+                    '6,500円',
+                    false,
+                    '・お顔全体のシェービング＋保湿ケアのスタンダードコースです。<br>' +
+                    '・初めての方にもおすすめです。'
+                );
             } else if (treatmentId === 'treatment6') {
-                content = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '30分',
+                    '4,500円',
+                    false,
+                    '・お時間がない方に向けたクイックコースです。<br>' +
+                    '・気になる部分を中心にシェービングを行います。'
+                );
             } else if (treatmentId === 'treatment7') {
-                content = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '90分',
+                    '8,700円',
+                    false,
+                    '・しっかりケアしたい方向けのロングコースです。<br>' +
+                    '・シェービング＋マッサージでリラックスしたい方に。'
+                );
             } else if (treatmentId === 'treatment8') {
-                content = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '15分',
+                    '1,700円',
+                    false,
+                    '・短時間で受けられるリラックスマッサージです。<br>' +
+                    '・他メニューとの組み合わせにもおすすめです。'
+                );
             } else if (treatmentId === 'treatment9') {
-                content = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
+                content = createContent(
+                    selectedMenuLabel,
+                    '15分',
+                    '1,700円',
+                    false,
+                    '・基本のマッサージコースです。<br>' +
+                    '・首・肩まわりのコリが気になる方に。'
+                );
             } else {
                 content = '';
             }
 
+            // ★ここが今回抜けていたポイント★
             if (content) {
-                treatmentText.innerHTML = `
-        ${closeButtonHtml}
-        <div class="treatment-body">
-            ${content}
-        </div>
-    `;
+                treatmentText.innerHTML = `${closeButtonHtml}${content}`;
             } else {
                 treatmentText.innerHTML = '';
+                treatmentText.style.display = 'none';
+                return;
             }
-
 
             // 固定位置のカードを表示
             treatmentText.style.display = 'block';
@@ -1309,25 +1531,16 @@
             treatmentText.style.top = '0px';
             treatmentText.style.left = '0px';
 
-            // 幅を取得（初回でもそれなりの値が取れるように）
             const cardWidth = treatmentText.offsetWidth || 280;
-
-            // 左位置（ボタンの左端に合わせる）
             let left = rect.left + scrollLeft;
 
-            // 右端からはみ出さないように補正
             const maxLeft = scrollLeft + document.documentElement.clientWidth - cardWidth - 16;
-            if (left > maxLeft) {
-                left = maxLeft;
-            }
-            if (left < 8) {
-                left = 8;
-            }
+            if (left > maxLeft) left = maxLeft;
+            if (left < 8) left = 8;
 
-            // 実際の表示位置（ボタンの下 + 8px）
             treatmentText.style.left = left + 'px';
             treatmentText.style.top = (rect.bottom + scrollTop + 8) + 'px';
-            // ▲ ここまで位置調整 ▲  
+            // ▲ ここまで位置調整 ▲
         }
 
         function closeTreatmentText() {
