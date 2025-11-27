@@ -3,251 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>出張買取予約フォーム</title>
+    <title>カウンセリングシート</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        /* 全体のフォント設定（画像に合わせて明朝体・セリフ体を優先） */
+        /* --- 基本設定 --- */
         body {
-            font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "HGS Mincho E", serif;
-            background-color: #aaaaaa; /* 画像の背景色に合わせたグレー */
+            font-family: 'Noto Sans JP', sans-serif; /* フォント変更 */
+            background-color: #f0fdf4; /* 淡いグリーン系の背景 */
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 20px 0;
+            padding-top: 20px;
+            padding-bottom: 40px;
             color: #333;
         }
 
         .container {
             background-color: #fff;
-            border-radius: 4px; /* 角を少しだけ丸くして上品に */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(19, 202, 94, 0.15); /* 緑色の淡い影 */
             width: 90%;
-            max-width: 600px;
-            padding: 30px;
+            max-width: 600px; /* 少し幅を広げる */
+            padding: 25px;
             box-sizing: border-box;
         }
 
-        /* ヘッダーデザイン（ロゴイメージに合わせる） */
+        /* --- 見出し --- */
         h1 {
-            color: #333;
+            background: linear-gradient(135deg, #13ca5e, #0e9645);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
-            font-weight: normal;
-            letter-spacing: 0.1em;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 15px;
+            margin: -25px -25px 25px -25px; /* 親要素のpaddingを無視して広げる */
+            font-size: 22px;
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* ラベルスタイル */
+        /* --- ラベルと必須マーク --- */
         .label {
-            display: block;
-            margin-top: 20px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 15px;
-            color: #000;
+            display: flex;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #2c3e50;
+            border-left: 5px solid #13ca5e; /* 左側に緑のライン */
+            padding-left: 10px;
         }
 
-        /* 必須マーク */
-        .required {
-            background-color: #333; /* 黒に変更 */
-            color: #fff;
+        .required-badge {
+            background-color: #ff4d4f;
+            color: white;
             font-size: 11px;
             padding: 2px 6px;
-            border-radius: 2px;
+            border-radius: 4px;
             margin-left: 8px;
             vertical-align: middle;
-            font-weight: normal;
         }
 
-        .optional {
+        .optional-badge {
             background-color: #999;
-            color: #fff;
+            color: white;
             font-size: 11px;
             padding: 2px 6px;
-            border-radius: 2px;
+            border-radius: 4px;
             margin-left: 8px;
             vertical-align: middle;
-            font-weight: normal;
         }
 
-        /* 入力フィールド */
+        /* --- 入力フォーム --- */
         input[type="text"],
         input[type="tel"],
-        input[type="datetime-local"],
+        input[type="date"],
         textarea {
             width: 100%;
             padding: 12px;
-            margin-bottom: 5px;
-            border: 1px solid #ccc;
-            border-radius: 0px; /* 高級感を出すため角丸をなくす、または小さく */
+            border: 1px solid #ddd;
+            border-radius: 6px;
             box-sizing: border-box;
             font-size: 16px;
-            font-family: sans-serif; /* 入力文字は読みやすいゴシック体で */
-            background-color: #f9f9f9;
             transition: all 0.3s;
+            background-color: #fafafa;
+            font-family: inherit; /* フォント継承 */
         }
 
         input:focus,
         textarea:focus {
-            border-color: #555;
-            outline: none;
+            border-color: #13ca5e;
             background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(19, 202, 94, 0.1);
         }
 
-        /* ボタンエリア */
+        textarea {
+            resize: vertical; /* 縦方向のみリサイズ可 */
+            min-height: 80px;
+        }
+
+        /* --- 選択ボタン群 --- */
         .selection-group {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 10px;
         }
 
         .selection-group button {
-            flex: 1;
-            padding: 12px;
+            flex: 1 1 30%; /* 3列並び基本 */
+            padding: 12px 5px;
             border: 1px solid #ccc;
+            border-radius: 6px;
             background-color: #fff;
-            color: #333;
+            color: #555;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        /* 「はい/いいえ」用の調整 */
+        .yes-no-group button {
+            flex: 1 1 45%;
+        }
+
+        .selection-group button:hover {
+            background-color: #f1fcf5;
         }
 
         .selection-group button.active {
-            background-color: #333; /* 選択時は黒 */
+            background-color: #13ca5e;
             color: #fff;
-            border-color: #333;
+            border-color: #13ca5e;
+            font-weight: bold;
+            transform: scale(1.02);
         }
 
-        /* 日時入力エリア */
-        .date-group {
-            margin-bottom: 15px;
-            background: #f4f4f4;
-            padding: 15px;
-            border-radius: 4px;
-        }
-        .date-label {
-            font-size: 13px;
-            margin-bottom: 5px;
-            display: block;
-            color: #555;
-        }
-
-        /* 送信ボタン */
+        /* --- 送信ボタン --- */
         .submit-button {
             width: 100%;
             padding: 18px;
-            margin-top: 30px;
             border: none;
-            background-color: #333; /* 黒 */
+            border-radius: 8px;
+            background-color: #333; /* 落ち着いた黒/ダークグレー */
             color: #fff;
             font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            letter-spacing: 0.1em;
-            font-family: serif;
-            transition: background-color 0.3s;
+            margin-top: 40px;
+            transition: background 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .submit-button:hover {
-            background-color: #000;
+            background-color: #555;
+            transform: translateY(-2px);
         }
 
-        /* 注意書きテキスト */
-        .note-text {
-            font-size: 12px;
+        /* --- 説明書き --- */
+        .info-text {
+            font-size: 13px;
             color: #666;
-            margin-bottom: 15px;
-            font-family: sans-serif;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
 
-        /* スマホ対応 */
+        /* --- スマホレスポンシブ --- */
         @media (max-width: 600px) {
             .container {
                 width: 95%;
-                padding: 20px;
+                padding: 15px;
+            }
+            .selection-group button {
+                flex: 1 1 45%; /* スマホでは2列 */
             }
             h1 {
-                font-size: 20px;
+                font-size: 18px;
             }
         }
     </style>
 </head>
 
 <body>
+
     <div class="container">
-        <h1>出張買取予約フォーム</h1>
+        <h1>カウンセリングシート</h1>
+        <div class="info-text">
+            ご来院ありがとうございます。<br>
+            より良い施術を提供するため、以下の項目にご協力をお願いいたします。<br>
+            入力後、一番下の【送信】ボタンを押してください。
+        </div>
 
-        <div class="label">お名前<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="例：買取 太郎">
+        <div class="label">お名前<span class="required-badge">必須</span></div>
+        <input type="text" id="name" placeholder="例：整体 太郎">
 
-        <div class="label">お電話番号<span class="required">必須</span></div>
+        <div class="label">お電話番号<span class="required-badge">必須</span></div>
         <input type="tel" id="phone" placeholder="例：090-1234-5678">
 
-        <div class="label">ご住所<span class="required">必須</span></div>
-        <input type="text" id="address" placeholder="例：東京都渋谷区...">
+        <div class="label">ご職業<span class="optional-badge">任意</span></div>
+        <input type="text" id="occupation" placeholder="例：会社員、主婦など">
 
-        <div class="label">買取品目<span class="required">必須</span></div>
-        <textarea id="items" rows="3" placeholder="例：ブランドバッグ、時計、ジャケットなど"></textarea>
+        <div class="label">生年月日<span class="optional-badge">任意</span></div>
+        <input type="text" id="birthday" placeholder="例：1990年1月1日">
 
-        <div class="label">買取数量<span class="required">必須</span></div>
-        <div class="note-text">※運搬の際の参考にしますのでおおまかで大丈夫です</div>
-        <input type="text" id="quantity" placeholder="例：バッグ2点、服5着くらい">
+        <div class="label">本日来院された主な理由<span class="required-badge">必須</span></div>
+        <textarea id="reason" placeholder="例：腰が痛い、肩こりがひどい、姿勢を治したい等"></textarea>
 
-        <div class="label">駐車場の有無<span class="required">必須</span></div>
-        <div class="selection-group" id="parking-group">
-            <button type="button" onclick="selectParking(this, '有り')">有り</button>
-            <button type="button" onclick="selectParking(this, '無し')">無し</button>
+        <div class="label">これまでに大きな怪我や<br>病気をされたことはありますか？<span class="required-badge">必須</span></div>
+        <div class="selection-group yes-no-group">
+            <button type="button" onclick="selectHistory(this)">はい</button>
+            <button type="button" onclick="selectHistory(this)">いいえ</button>
         </div>
 
-        <div class="label">希望日時<span class="required">必須</span></div>
-        <div class="note-text">※第3希望までご入力ください</div>
-        <div class="date-group">
-            <span class="date-label">第1希望</span>
-            <input type="datetime-local" id="date1">
-            
-            <span class="date-label">第2希望</span>
-            <input type="datetime-local" id="date2">
-            
-            <span class="date-label">第3希望</span>
-            <input type="datetime-local" id="date3">
+        <div class="label">⑥で【はい】と答えた方は<br>内容をお聞かせください<span class="optional-badge">任意</span></div>
+        <textarea id="history_detail" placeholder="例：3年前に交通事故でむち打ち、ヘルニア手術など"></textarea>
+
+        <div class="label">不調を感じたり<br>気になる箇所を教えてください<span class="required-badge">必須</span></div>
+        <div class="selection-group">
+            <button type="button" onclick="selectSymptom(this)">頭</button>
+            <button type="button" onclick="selectSymptom(this)">目</button>
+            <button type="button" onclick="selectSymptom(this)">鼻</button>
+            <button type="button" onclick="selectSymptom(this)">耳</button>
+            <button type="button" onclick="selectSymptom(this)">ほうれい線</button>
+            <button type="button" onclick="selectSymptom(this)">しわ・たるみ</button>
+            <button type="button" onclick="selectSymptom(this)">首</button>
+            <button type="button" onclick="selectSymptom(this)">肩</button>
+            <button type="button" onclick="selectSymptom(this)">腕・肘・手指</button>
+            <button type="button" onclick="selectSymptom(this)">デコルテ</button>
+            <button type="button" onclick="selectSymptom(this)">お腹</button>
+            <button type="button" onclick="selectSymptom(this)">背中</button>
+            <button type="button" onclick="selectSymptom(this)">腰</button>
+            <button type="button" onclick="selectSymptom(this)">股関節</button>
+            <button type="button" onclick="selectSymptom(this)">足・膝・足趾</button>
+            <button type="button" onclick="selectSymptom(this)">その他</button>
         </div>
 
-        <div class="label">その他注意事項<span class="optional">任意</span></div>
-        <textarea id="notes" rows="3" placeholder="例：表札が違う、インターホンが鳴らないなど"></textarea>
+        <div class="label">⑧で【その他】をお選びの方は<br>内容をお書きください<span class="optional-badge">任意</span></div>
+        <textarea id="symptom_other" placeholder="具体的な症状など"></textarea>
 
-        <button class="submit-button" onclick="submitForm()">予約を申し込む</button>
+        <button class="submit-button" onclick="submitForm()">送信</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        // グローバル変数
-        let parkingSelection = '';
+        // 選択値を格納する変数
+        let selectedHistory = '';
+        let selectedSymptom = '';
 
         // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk' // 元のIDを保持しています
+                liffId: '2005254357-zKma9BZk' // 既存のIDを維持
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
                 console.error('LIFF初期化失敗', err);
-                // テスト用にアラートを出す場合はコメントアウトを外してください
-                // alert('LIFF初期化エラー: ' + err); 
             });
         });
 
-        // 駐車場選択処理
-        function selectParking(element, value) {
-            // 全てのボタンからactiveを外す
-            const buttons = document.querySelectorAll('#parking-group button');
+        // 怪我・病気の履歴選択
+        function selectHistory(element) {
+            // 他のボタンの選択解除
+            const buttons = element.parentElement.querySelectorAll('button');
             buttons.forEach(btn => btn.classList.remove('active'));
             
-            // 選択されたボタンにactiveをつける
+            // 選択状態にする
             element.classList.add('active');
-            parkingSelection = value;
+            selectedHistory = element.innerText;
+        }
+
+        // 気になる箇所の選択
+        // ※現状は単一選択の仕様ですが、複数選択にしたい場合はJSの変更が必要です
+        function selectSymptom(element) {
+            const buttons = element.parentElement.querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            element.classList.add('active');
+            selectedSymptom = element.innerText;
         }
 
         // 送信処理
@@ -255,57 +293,45 @@
             // 値の取得
             const name = document.getElementById('name').value;
             const phone = document.getElementById('phone').value;
-            const address = document.getElementById('address').value;
-            const items = document.getElementById('items').value;
-            const quantity = document.getElementById('quantity').value;
-            const date1 = document.getElementById('date1').value;
-            const date2 = document.getElementById('date2').value;
-            const date3 = document.getElementById('date3').value;
-            const notes = document.getElementById('notes').value;
+            const occupation = document.getElementById('occupation').value;
+            const birthday = document.getElementById('birthday').value;
+            const reason = document.getElementById('reason').value;
+            const historyDetail = document.getElementById('history_detail').value;
+            const symptomOther = document.getElementById('symptom_other').value;
 
-            // バリデーション（必須項目のチェック）
-            if (!name) { alert('お名前を入力してください。'); return; }
-            if (!phone) { alert('お電話番号を入力してください。'); return; }
-            if (!address) { alert('ご住所を入力してください。'); return; }
-            if (!items) { alert('買取品目を入力してください。'); return; }
-            if (!quantity) { alert('買取数量を入力してください。'); return; }
-            if (!parkingSelection) { alert('駐車場の有無を選択してください。'); return; }
-            if (!date1 || !date2 || !date3) { alert('希望日時を第3希望まで全て入力してください。'); return; }
-
-            // 日時のフォーマット整形（見やすくする）
-            const formatDate = (dateStr) => {
-                if(!dateStr) return "";
-                const d = new Date(dateStr);
-                return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
-            };
+            // バリデーション（必須項目チェック）
+            if (!name) { alert('「お名前」を入力してください。'); return; }
+            if (!phone) { alert('「お電話番号」を入力してください。'); return; }
+            if (!reason) { alert('「来院された理由」を入力してください。'); return; }
+            if (!selectedHistory) { alert('「怪我や病気の履歴」を選択してください。'); return; }
+            if (!selectedSymptom) { alert('「気になる箇所」を選択してください。'); return; }
 
             // 送信メッセージの作成
-            const msgText = `≪出張買取予約≫\n\n` +
-                            `【お名前】\n${name}\n\n` +
-                            `【お電話番号】\n${phone}\n\n` +
-                            `【ご住所】\n${address}\n\n` +
-                            `【買取品目】\n${items}\n\n` +
-                            `【買取数量】\n${quantity}\n\n` +
-                            `【駐車場の有無】\n${parkingSelection}\n\n` +
-                            `【希望日時】\n` +
-                            `1. ${formatDate(date1)}\n` +
-                            `2. ${formatDate(date2)}\n` +
-                            `3. ${formatDate(date3)}\n\n` +
-                            `【その他・注意事項】\n${notes || 'なし'}`;
+            const msg = `【カウンセリングシート】\n` +
+                        `\n[お名前]\n${name}` +
+                        `\n\n[電話番号]\n${phone}` +
+                        `\n\n[ご職業]\n${occupation || '未記入'}` +
+                        `\n\n[生年月日]\n${birthday || '未記入'}` +
+                        `\n\n[来院理由]\n${reason}` +
+                        `\n\n[怪我・病歴]\n${selectedHistory}` +
+                        `\n(詳細: ${historyDetail || 'なし'})` +
+                        `\n\n[気になる箇所]\n${selectedSymptom}` +
+                        `\n(その他詳細: ${symptomOther || 'なし'})`;
 
-            // LIFFでメッセージ送信
+            // LINEトークへ送信
             if (!liff.isInClient()) {
-                alert('LINEアプリ内から開いてください。\n\n送信内容プレビュー:\n' + msgText);
+                // ブラウザで開いている場合のデバッグ用
+                alert('LINEアプリ外のため送信できませんが、以下の内容で作成されました:\n\n' + msg);
             } else {
                 liff.sendMessages([{
                     type: 'text',
-                    text: msgText
+                    text: msg
                 }]).then(() => {
-                    alert('予約内容を送信しました。参考までにお写真を事前にお送りいただけますと助かります');
+                    alert('送信しました。カウンセリングを開始します。');
                     liff.closeWindow();
                 }).catch((err) => {
                     console.error('送信エラー', err);
-                    alert('メッセージの送信に失敗しました。\n' + err);
+                    alert('送信に失敗しました。');
                 });
             }
         }
