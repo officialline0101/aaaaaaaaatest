@@ -3,263 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>カウンセリングシート</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <title>ママとも助産院 カウンセリングシート</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        /* --- 基本設定 --- */
+        :root {
+            /* おしゃれなカラーパレット定義 */
+            --main-bg: #f9f8f6; /* 生成り色 */
+            --card-bg: #ffffff;
+            --text-color: #5a524c; /* 真っ黒ではなく温かみのある焦げ茶 */
+            --accent-green: #8a9a5b; /* セージグリーン（ハーブのような緑） */
+            --accent-pink: #d8b4a0; /* ダスティピンク（落ち着いた赤み） */
+            --input-bg: #fdfdfd;
+            --border-color: #e6e3de;
+        }
+
         body {
-            font-family: 'Noto Sans JP', sans-serif; /* フォント変更 */
-            background-color: #f0fdf4; /* 淡いグリーン系の背景 */
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--main-bg);
+            /* 背景にうっすらノイズを入れて紙のような質感を出す */
+            background-image: 
+                linear-gradient(var(--main-bg), var(--main-bg)),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding-top: 20px;
-            padding-bottom: 40px;
-            color: #333;
+            padding: 30px 15px;
+            line-height: 1.6;
+        }
+
+        /* フェードインアニメーション */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(19, 202, 94, 0.15); /* 緑色の淡い影 */
-            width: 90%;
-            max-width: 600px; /* 少し幅を広げる */
-            padding: 25px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            /* 柔らかい影 */
+            box-shadow: 0 10px 40px rgba(90, 82, 76, 0.05);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
             box-sizing: border-box;
+            border: 1px solid #fff;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
         }
 
-        /* --- 見出し --- */
+        /* 上部の装飾線 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--accent-green),
+                var(--accent-green) 10px,
+                #fff 10px,
+                #fff 20px
+            );
+            border-radius: 12px 12px 0 0;
+            opacity: 0.5;
+        }
+
         h1 {
-            background: linear-gradient(135deg, #13ca5e, #0e9645);
-            color: white;
-            padding: 15px;
-            border-radius: 6px;
+            font-family: 'Shippori Mincho', serif;
+            color: var(--text-color);
             text-align: center;
-            margin: -25px -25px 25px -25px; /* 親要素のpaddingを無視して広げる */
-            font-size: 22px;
-            font-weight: 700;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        /* --- ラベルと必須マーク --- */
-        .label {
-            display: flex;
-            align-items: center;
-            margin-top: 25px;
+            font-size: 26px;
             margin-bottom: 10px;
-            font-weight: 700;
-            font-size: 16px;
-            color: #2c3e50;
-            border-left: 5px solid #13ca5e; /* 左側に緑のライン */
-            padding-left: 10px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
         }
 
-        .required-badge {
-            background-color: #ff4d4f;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 8px;
+        h1 span {
+            display: block;
+            font-size: 13px;
+            color: var(--accent-green);
+            margin-top: 5px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.2em;
+        }
+
+        .description {
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 40px;
+            color: #888;
+        }
+
+        .label-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 15px;
+            letter-spacing: 0.05em;
+        }
+
+        /* 必須・任意バッジ（ミニマルに） */
+        .badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
             vertical-align: middle;
+            letter-spacing: 0.05em;
+        }
+        .badge-required {
+            background-color: #fff;
+            border: 1px solid var(--accent-pink);
+            color: var(--accent-pink);
+        }
+        .badge-optional {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            color: #999;
         }
 
-        .optional-badge {
-            background-color: #999;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        /* --- 入力フォーム --- */
         input[type="text"],
         input[type="tel"],
-        input[type="date"],
         textarea {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 16px;
-            transition: all 0.3s;
-            background-color: #fafafa;
-            font-family: inherit; /* フォント継承 */
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            font-family: 'Zen Maru Gothic', sans-serif;
         }
 
         input:focus,
         textarea:focus {
-            border-color: #13ca5e;
+            border-color: var(--accent-green);
             background-color: #fff;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(19, 202, 94, 0.1);
+            box-shadow: 0 4px 12px rgba(138, 154, 91, 0.1);
         }
 
         textarea {
-            resize: vertical; /* 縦方向のみリサイズ可 */
-            min-height: 80px;
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.8;
         }
 
-        /* --- 選択ボタン群 --- */
-        .selection-group {
+        /* 選択ボタンのデザイン */
+        .select-buttons {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .selection-group button {
-            flex: 1 1 30%; /* 3列並び基本 */
-            padding: 12px 5px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+        .select-buttons button {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             background-color: #fff;
-            color: #555;
+            color: #888;
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
+            font-size: 15px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            transition: all 0.3s;
         }
 
-        /* 「はい/いいえ」用の調整 */
-        .yes-no-group button {
-            flex: 1 1 45%;
+        .select-buttons button:hover {
+            background-color: #fcfcfc;
+            border-color: #ccc;
         }
 
-        .selection-group button:hover {
-            background-color: #f1fcf5;
+        .select-buttons button.active {
+            background-color: var(--accent-green);
+            color: white;
+            border-color: var(--accent-green);
+            box-shadow: 0 4px 10px rgba(138, 154, 91, 0.3);
         }
 
-        .selection-group button.active {
-            background-color: #13ca5e;
-            color: #fff;
-            border-color: #13ca5e;
-            font-weight: bold;
-            transform: scale(1.02);
-        }
-
-        /* --- 送信ボタン --- */
+        /* 送信ボタン */
         .submit-button {
             width: 100%;
             padding: 18px;
             border: none;
-            border-radius: 8px;
-            background-color: #333; /* 落ち着いた黒/ダークグレー */
+            border-radius: 50px; /* 丸みのあるボタン */
+            background: linear-gradient(135deg, var(--accent-green), #758654);
             color: #fff;
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 40px;
-            transition: background 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            letter-spacing: 0.15em;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            box-shadow: 0 4px 15px rgba(117, 134, 84, 0.3);
         }
 
         .submit-button:hover {
-            background-color: #555;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(117, 134, 84, 0.4);
         }
 
-        /* --- 説明書き --- */
-        .info-text {
-            font-size: 13px;
-            color: #666;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            line-height: 1.6;
+        .submit-button:active {
+            transform: translateY(0);
         }
 
-        /* --- スマホレスポンシブ --- */
+        /* スマホ向けの微調整 */
         @media (max-width: 600px) {
             .container {
-                width: 95%;
-                padding: 15px;
+                padding: 30px 20px;
+                box-shadow: none; /* スマホではフラットに */
             }
-            .selection-group button {
-                flex: 1 1 45%; /* スマホでは2列 */
+            body {
+                padding: 0;
+                background-color: #fff;
             }
-            h1 {
-                font-size: 18px;
+            .container::before {
+                display: none;
+            }
+            .container {
+                border-radius: 0;
             }
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
-        <h1>カウンセリングシート</h1>
-        <div class="info-text">
-            ご来院ありがとうございます。<br>
-            より良い施術を提供するため、以下の項目にご協力をお願いいたします。<br>
-            入力後、一番下の【送信】ボタンを押してください。
+        <h1>ママとも助産院<br><span>Counseling Sheet</span></h1>
+        <p class="description">
+            リラックスしてご記入ください。<br>
+            ご不明な点はお気軽にご相談ください。
+        </p>
+
+        <div class="label-group">
+            <label>①お名前<span class="badge badge-required">必須</span></label>
+            <input type="text" id="name" placeholder="助産 花子">
         </div>
 
-        <div class="label">お名前<span class="required-badge">必須</span></div>
-        <input type="text" id="name" placeholder="例：整体 太郎">
-
-        <div class="label">お電話番号<span class="required-badge">必須</span></div>
-        <input type="tel" id="phone" placeholder="例：090-1234-5678">
-
-        <div class="label">ご職業<span class="optional-badge">任意</span></div>
-        <input type="text" id="occupation" placeholder="例：会社員、主婦など">
-
-        <div class="label">生年月日<span class="optional-badge">任意</span></div>
-        <input type="text" id="birthday" placeholder="例：1990年1月1日">
-
-        <div class="label">本日来院された主な理由<span class="required-badge">必須</span></div>
-        <textarea id="reason" placeholder="例：腰が痛い、肩こりがひどい、姿勢を治したい等"></textarea>
-
-        <div class="label">これまでに大きな怪我や<br>病気をされたことはありますか？<span class="required-badge">必須</span></div>
-        <div class="selection-group yes-no-group">
-            <button type="button" onclick="selectHistory(this)">はい</button>
-            <button type="button" onclick="selectHistory(this)">いいえ</button>
+        <div class="label-group">
+            <label>②お電話番号<span class="badge badge-required">必須</span></label>
+            <input type="tel" id="tel" placeholder="090-1234-5678">
         </div>
 
-        <div class="label">⑥で【はい】と答えた方は<br>内容をお聞かせください<span class="optional-badge">任意</span></div>
-        <textarea id="history_detail" placeholder="例：3年前に交通事故でむち打ち、ヘルニア手術など"></textarea>
-
-        <div class="label">不調を感じたり<br>気になる箇所を教えてください<span class="required-badge">必須</span></div>
-        <div class="selection-group">
-            <button type="button" onclick="selectSymptom(this)">頭</button>
-            <button type="button" onclick="selectSymptom(this)">目</button>
-            <button type="button" onclick="selectSymptom(this)">鼻</button>
-            <button type="button" onclick="selectSymptom(this)">耳</button>
-            <button type="button" onclick="selectSymptom(this)">ほうれい線</button>
-            <button type="button" onclick="selectSymptom(this)">しわ・たるみ</button>
-            <button type="button" onclick="selectSymptom(this)">首</button>
-            <button type="button" onclick="selectSymptom(this)">肩</button>
-            <button type="button" onclick="selectSymptom(this)">腕・肘・手指</button>
-            <button type="button" onclick="selectSymptom(this)">デコルテ</button>
-            <button type="button" onclick="selectSymptom(this)">お腹</button>
-            <button type="button" onclick="selectSymptom(this)">背中</button>
-            <button type="button" onclick="selectSymptom(this)">腰</button>
-            <button type="button" onclick="selectSymptom(this)">股関節</button>
-            <button type="button" onclick="selectSymptom(this)">足・膝・足趾</button>
-            <button type="button" onclick="selectSymptom(this)">その他</button>
+        <div class="label-group">
+            <label>③当院のご利用回数<span class="badge badge-required">必須</span></label>
+            <div class="select-buttons">
+                <button type="button" onclick="selectVisit(this, '初回')">初回</button>
+                <button type="button" onclick="selectVisit(this, '2回目以降')">2回目以降</button>
+            </div>
+            <input type="hidden" id="visit_count">
         </div>
 
-        <div class="label">⑧で【その他】をお選びの方は<br>内容をお書きください<span class="optional-badge">任意</span></div>
-        <textarea id="symptom_other" placeholder="具体的な症状など"></textarea>
+        <div class="label-group">
+            <label>④ご出産日<span class="badge badge-required">必須</span></label>
+            <input type="text" id="delivery_date" placeholder="2024年10月1日">
+        </div>
 
-        <button class="submit-button" onclick="submitForm()">送信</button>
+        <div class="label-group">
+            <label>⑤何人目のお子様ですか？<span class="badge badge-required">必須</span></label>
+            <input type="text" id="child_count" placeholder="1人目">
+        </div>
+
+        <div class="label-group">
+            <label>⑥ご相談内容<span class="badge badge-required">必須</span></label>
+            <textarea id="consultation" placeholder="育児について悩んでいます。"></textarea>
+        </div>
+
+        <div class="label-group">
+            <label>⑦お住まいの市町村<span class="badge badge-required">必須</span></label>
+            <input type="text" id="address" placeholder="函南町">
+        </div>
+
+        <div class="label-group">
+            <label>⑧備考<span class="badge badge-optional">任意</span></label>
+            <textarea id="remarks" placeholder="その他、伝えておきたいことなどあればご記入ください。" style="min-height: 80px;"></textarea>
+        </div>
+
+        <button class="submit-button" onclick="submitForm()">内容を送信する</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        // 選択値を格納する変数
-        let selectedHistory = '';
-        let selectedSymptom = '';
+        // LIFF IDを設定
+        const MY_LIFF_ID = '2005254357-zKma9BZk';
 
-        // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk' // 既存のIDを維持
+                liffId: MY_LIFF_ID
             }).then(() => {
                 console.log('LIFF初期化成功');
             }).catch((err) => {
@@ -267,73 +314,74 @@
             });
         });
 
-        // 怪我・病気の履歴選択
-        function selectHistory(element) {
-            // 他のボタンの選択解除
+        function selectVisit(element, value) {
             const buttons = element.parentElement.querySelectorAll('button');
             buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // 選択状態にする
             element.classList.add('active');
-            selectedHistory = element.innerText;
+            document.getElementById('visit_count').value = value;
         }
 
-        // 気になる箇所の選択
-        // ※現状は単一選択の仕様ですが、複数選択にしたい場合はJSの変更が必要です
-        function selectSymptom(element) {
-            const buttons = element.parentElement.querySelectorAll('button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            element.classList.add('active');
-            selectedSymptom = element.innerText;
-        }
-
-        // 送信処理
         function submitForm() {
-            // 値の取得
             const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const occupation = document.getElementById('occupation').value;
-            const birthday = document.getElementById('birthday').value;
-            const reason = document.getElementById('reason').value;
-            const historyDetail = document.getElementById('history_detail').value;
-            const symptomOther = document.getElementById('symptom_other').value;
+            const tel = document.getElementById('tel').value;
+            const visitCount = document.getElementById('visit_count').value;
+            const deliveryDate = document.getElementById('delivery_date').value;
+            const childCount = document.getElementById('child_count').value;
+            const consultation = document.getElementById('consultation').value;
+            const address = document.getElementById('address').value;
+            const remarks = document.getElementById('remarks').value;
 
-            // バリデーション（必須項目チェック）
-            if (!name) { alert('「お名前」を入力してください。'); return; }
-            if (!phone) { alert('「お電話番号」を入力してください。'); return; }
-            if (!reason) { alert('「来院された理由」を入力してください。'); return; }
-            if (!selectedHistory) { alert('「怪我や病気の履歴」を選択してください。'); return; }
-            if (!selectedSymptom) { alert('「気になる箇所」を選択してください。'); return; }
+            if (!name) { alert('①お名前を入力してください。'); return; }
+            if (!tel) { alert('②お電話番号を入力してください。'); return; }
+            if (!visitCount) { alert('③ご利用回数を選択してください。'); return; }
+            if (!deliveryDate) { alert('④ご出産日を入力してください。'); return; }
+            if (!childCount) { alert('⑤何人目のお子様か入力してください。'); return; }
+            if (!consultation) { alert('⑥ご相談内容を入力してください。'); return; }
+            if (!address) { alert('⑦お住まいの市町村を入力してください。'); return; }
 
-            // 送信メッセージの作成
-            const msg = `【カウンセリングシート】\n` +
-                        `\n[お名前]\n${name}` +
-                        `\n\n[電話番号]\n${phone}` +
-                        `\n\n[ご職業]\n${occupation || '未記入'}` +
-                        `\n\n[生年月日]\n${birthday || '未記入'}` +
-                        `\n\n[来院理由]\n${reason}` +
-                        `\n\n[怪我・病歴]\n${selectedHistory}` +
-                        `\n(詳細: ${historyDetail || 'なし'})` +
-                        `\n\n[気になる箇所]\n${selectedSymptom}` +
-                        `\n(その他詳細: ${symptomOther || 'なし'})`;
+            const messageText = `
+【ママとも助産院 カウンセリングシート】
 
-            // LINEトークへ送信
+①お名前
+${name}
+
+②お電話番号
+${tel}
+
+③ご利用回数
+${visitCount}
+
+④ご出産日
+${deliveryDate}
+
+⑤お子様
+${childCount}
+
+⑥ご相談内容
+${consultation}
+
+⑦お住まい
+${address}
+
+⑧備考
+${remarks || 'なし'}
+`.trim();
+
             if (!liff.isInClient()) {
-                // ブラウザで開いている場合のデバッグ用
-                alert('LINEアプリ外のため送信できませんが、以下の内容で作成されました:\n\n' + msg);
-            } else {
-                liff.sendMessages([{
-                    type: 'text',
-                    text: msg
-                }]).then(() => {
-                    alert('送信しました。カウンセリングを開始します。');
-                    liff.closeWindow();
-                }).catch((err) => {
-                    console.error('送信エラー', err);
-                    alert('送信に失敗しました。');
-                });
+                alert('この機能はLINEアプリ内でのみ動作します。');
+                return;
             }
+
+            liff.sendMessages([{
+                type: 'text',
+                text: messageText
+            }]).then(() => {
+                alert('送信しました。ありがとうございます。');
+                liff.closeWindow();
+            }).catch((err) => {
+                console.error('送信エラー', err);
+                alert('送信に失敗しました。');
+            });
         }
     </script>
 </body>
