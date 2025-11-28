@@ -494,28 +494,22 @@
         let selectedOptions = [];
 
         // LIFF初期化
-        document.addEventListener('DOMContentLoaded', function () {
-            liff.init({
-                liffId: '2005254357-zKma9BZk'
-            }).then(() => {
-                console.log('LIFF初期化成功');
+document.addEventListener('DOMContentLoaded', function () {
+    liff.init({
+        liffId: '2005254357-zKma9BZk'
+    }).then(() => {
+        console.log('LIFF初期化成功');
 
-                // ログインしていなければログイン
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
+        // そのまま日付/時間の選択肢を生成
+        initDatePickers();
 
-                // 日付/時間の選択肢を生成
-                initDatePickers();
+    }).catch((err) => {
+        console.log('LIFF初期化失敗', err);
+    });
 
-            }).catch((err) => {
-                console.log('LIFF初期化失敗', err);
-            });
-
-            // もし別の用途で使っていた fetchAvailability が無ければコメントアウト推奨
-            // fetchAvailability(currentDate);
-        });
+    // もし別の用途で使っていた fetchAvailability が無ければコメントアウト推奨
+    // fetchAvailability(currentDate);
+});
 
         function selectVisit(btn) {
             document.querySelectorAll('.visit-btn').forEach(b => b.classList.remove('active'));
