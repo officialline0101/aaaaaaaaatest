@@ -2,41 +2,42 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>カウンセリングシート</title>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    /* ===== 設定: カラー＆フォント ===== */
+    /* ===== 設定: カラー＆変数 ===== */
     :root {
       --yellow-base: #ecec83;   /* ベースカラー */
       --pink-accent: #dd5888;   /* アクセントカラー */
-      --text-main: #333333;     /* 読みやすい濃い黒 */
-      --text-sub: #666666;      /* 補足テキスト */
-      --bg-color: #fafafa;      /* 全体の背景 */
+      --text-main: #333333;     /* テキスト色 */
+      --bg-color: #fafafa;      /* 背景色 */
       --card-bg: #ffffff;       /* カード背景 */
-      --input-bg: #f9f9f9;      /* 入力欄の背景 */
-      --border-radius: 12px;    /* 角丸の統一 */
+      --input-bg: #f9f9f9;      /* 入力欄背景 */
+      --border-radius: 12px;    /* 角丸 */
     }
 
+    /* ===== ベーススタイル ===== */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
-      padding: 20px 10px; /* スマホでの左右余白を確保 */
+      padding: 20px;
       display: flex;
       justify-content: center;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
-    /* メインカード */
+    /* メインコンテナ（PC/タブレット用） */
     .container {
       width: 100%;
-      max-width: 600px; /* 少し幅広にしてゆったりさせる */
+      max-width: 600px; /* PCでの最大幅 */
       background: var(--card-bg);
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* 優しい影 */
-      overflow: hidden; /* ヘッダーの角丸用 */
+      box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+      overflow: hidden;
       padding-bottom: 40px;
     }
 
@@ -45,57 +46,58 @@
       background: var(--yellow-base);
       padding: 24px 20px;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     h1 {
       margin: 0;
       font-size: 22px;
-      color: #4a4030; /* 黄色背景に合う濃い茶色 */
+      color: #4a4030;
       font-weight: 700;
       line-height: 1.4;
     }
     .sub-title {
       display: block;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: normal;
-      margin-top: 5px;
+      margin-top: 6px;
       color: #6d6350;
-      opacity: 0.9;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
     }
 
     .content-area {
-      padding: 0 24px;
+      padding: 0 30px; /* PCでの横余白 */
     }
 
+    /* ヘルプボックス */
     .help {
       background: #fff;
       border: 2px solid var(--yellow-base);
-      color: var(--text-main);
-      padding: 15px;
+      padding: 12px 16px;
       border-radius: 8px;
       font-size: 14px;
       line-height: 1.6;
       margin-bottom: 30px;
       text-align: center;
+      color: #555;
     }
 
-    /* ===== フォーム要素のデザイン ===== */
-    
-    /* ラベル周りを整理 */
+    /* ===== フォーム要素 ===== */
     .label-wrapper {
       display: flex;
       align-items: center;
+      flex-wrap: wrap; /* 画面が極端に狭い場合の折り返し */
       margin-top: 24px;
       margin-bottom: 10px;
     }
     
     .label {
       font-weight: 700;
-      font-size: 16px; /* 文字サイズを大きく */
+      font-size: 16px;
       color: var(--text-main);
     }
 
-    /* バッジのデザイン */
+    /* バッジ */
     .badge-required {
       margin-left: 10px;
       padding: 4px 10px;
@@ -104,93 +106,104 @@
       background: var(--pink-accent);
       border-radius: 20px;
       font-weight: bold;
+      white-space: nowrap;
     }
     .badge-optional {
       margin-left: 10px;
       padding: 4px 10px;
       font-size: 11px;
       color: #555;
-      background: #e0e0e0;
+      background: #eee;
       border-radius: 20px;
+      white-space: nowrap;
     }
 
     /* 入力フィールド */
     input[type="text"], input[type="tel"], textarea {
       width: 100%;
       box-sizing: border-box;
-      padding: 16px; /* タップエリアを拡大 */
-      border: 2px solid #eee; /* 境界線をはっきり */
+      padding: 14px;
+      border: 2px solid #eaeaea;
       border-radius: var(--border-radius);
-      font-size: 16px; /* ズーム防止サイズ */
+      font-size: 16px; /* iOSでズーム防止 */
       background: var(--input-bg);
       color: var(--text-main);
       transition: 0.2s;
-      appearance: none; /* iOSのデフォルトスタイル解除 */
+      appearance: none;
     }
     input:focus, textarea:focus {
       outline: none;
-      border-color: var(--pink-accent); /* フォーカス時にピンク */
+      border-color: var(--pink-accent);
       background: #fff;
+      box-shadow: 0 0 0 3px rgba(221, 88, 136, 0.1);
     }
     textarea {
-      min-height: 120px;
+      min-height: 100px;
       resize: vertical;
       line-height: 1.6;
     }
-    ::placeholder {
-      color: #bbb;
-    }
+    ::placeholder { color: #ccc; }
 
-    /* ===== ボタン選択群 ===== */
+    /* ===== グリッドボタンレイアウト ===== */
     .btn-group {
       display: grid;
-      grid-template-columns: 1fr 1fr; /* 2列で均等配置 */
-      gap: 12px;
+      gap: 10px;
+      width: 100%;
     }
-    /* 選択肢が多い箇所は自動折り返し */
+
+    /* 2択ボタン（新規/再来など）: 常に2列 */
+    #visitTypeGroup, #serviceTypeGroup {
+      grid-template-columns: 1fr 1fr; 
+    }
+    
+    /* 選択肢ボタン: 画面幅に応じて列数を自動調整 */
     #nailStylesGroup, #hairPartsGroup {
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* 最小90px幅で敷き詰める */
     }
 
     .btn {
       width: 100%;
-      padding: 14px 10px;
-      border: 2px solid #eee;
+      padding: 12px 5px; /* 横パディングを少し減らして文字切れ防止 */
+      border: 2px solid #eaeaea;
       border-radius: 12px;
       background: #fff;
       color: #666;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 48px; /* タップしやすい高さ確保 */
     }
-    /* 選択された状態 */
+    .btn:hover {
+      background-color: #ffffee;
+    }
     .btn.active {
       background: var(--yellow-base);
       border-color: var(--yellow-base);
-      color: #4a4030; /* 黄色背景上の文字色 */
-      box-shadow: 0 4px 12px rgba(236, 236, 131, 0.4);
+      color: #4a4030;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       transform: translateY(-2px);
     }
-    .btn:hover {
-      background-color: #fffff0;
-    }
 
-    /* ===== セクション切り替え ===== */
+    /* ===== セクション ===== */
     .section {
       display: none;
-      background: #fffdf5; /* セクションの背景をほんのり黄色に */
+      background: #fffcf2; /* ほんのりイエロー */
       border-radius: 12px;
       padding: 20px;
-      margin-top: 20px;
-      border: 1px dashed var(--yellow-base);
+      margin-top: 25px;
+      border: 1px dashed #dcdca0;
     }
     .section.active {
       display: block;
-      animation: slideDown 0.3s ease-out;
+      animation: fadeIn 0.3s ease-out;
     }
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-10px); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -199,31 +212,57 @@
       display: block;
       width: 100%;
       margin-top: 40px;
-      padding: 18px;
+      padding: 16px;
       border: none;
       border-radius: 50px;
-      background: var(--pink-accent); /* 一番目立たせる色 */
+      background: var(--pink-accent);
       color: #fff;
       font-size: 18px;
       font-weight: 700;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(221, 88, 136, 0.3);
-      transition: transform 0.1s;
+      transition: transform 0.1s, background 0.2s;
+    }
+    .submit-button:hover {
+      background: #d04d7c;
     }
     .submit-button:active {
       transform: scale(0.98);
     }
-    
-    /* スマホ調整 */
+
+    /* ===== スマホ専用調整 (Media Queries) ===== */
     @media (max-width: 480px) {
-      .header { padding: 20px 15px; }
-      h1 { font-size: 20px; }
-      .content-area { padding: 0 20px; }
-      .label { font-size: 15px; }
-      .btn { padding: 12px 5px; font-size: 13px; }
-      #nailStylesGroup, #hairPartsGroup {
-        grid-template-columns: 1fr 1fr 1fr; /* スマホで3列 */
+      body {
+        padding: 10px; /* 画面端の余白を減らす */
+        background-color: #f2f2f2;
       }
+      .container {
+        border-radius: 12px;
+        padding-bottom: 30px;
+      }
+      .header {
+        padding: 20px 15px;
+      }
+      h1 { font-size: 20px; }
+      
+      .content-area {
+        padding: 0 16px; /* コンテンツ内の余白も最適化 */
+      }
+      
+      .help {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      .label { font-size: 15px; }
+      
+      /* ボタン文字サイズ調整 */
+      .btn {
+        font-size: 13px; 
+      }
+      
+      /* スマホで3列は狭すぎる場合、2列にする調整（必要に応じて） */
+      /* #nailStylesGroup, #hairPartsGroup { grid-template-columns: repeat(2, 1fr); } */
     }
   </style>
 </head>
