@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>カウンセリングシート</title>
+  <title>工事予約フォーム</title>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
   <style>
-    /* ===== 設定: カラー＆変数 ===== */
+    /* ===== 設定: カラー＆変数（造園・工事向けのアースカラー） ===== */
     :root {
-      --yellow-base: #ecec83;   /* ベースカラー */
-      --pink-accent: #dd5888;   /* アクセントカラー */
+      --main-green: #2d6a4f;    /* メインカラー（濃い緑） */
+      --accent-color: #d08c60;  /* アクセント（土・木の色） */
+      --light-base: #e9edc9;    /* 背景ベース（薄い黄緑） */
       --text-main: #333333;     /* テキスト色 */
-      --bg-color: #fafafa;      /* 背景色 */
+      --bg-color: #f1f3f5;      /* 全体背景 */
       --card-bg: #ffffff;       /* カード背景 */
-      --input-bg: #f9f9f9;      /* 入力欄背景 */
-      --border-radius: 12px;    /* 角丸 */
+      --input-bg: #f8f9fa;      /* 入力欄背景 */
+      --border-radius: 8px;     /* 角丸（少しカッチリさせる） */
     }
 
     /* ===== ベーススタイル ===== */
@@ -30,55 +31,54 @@
       box-sizing: border-box;
     }
 
-    /* メインコンテナ（PC/タブレット用） */
+    /* メインコンテナ */
     .container {
       width: 100%;
       max-width: 600px;
       background: var(--card-bg);
-      border-radius: 16px;
-      box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
       overflow: hidden;
       padding-bottom: 40px;
     }
 
     /* ===== ヘッダー ===== */
     .header {
-      background: var(--yellow-base);
+      background: var(--main-green);
       padding: 24px 20px;
       text-align: center;
       margin-bottom: 25px;
     }
     h1 {
       margin: 0;
-      font-size: 22px;
-      color: #4a4030;
+      font-size: 20px;
+      color: #ffffff;
       font-weight: 700;
-      line-height: 1.4;
+      letter-spacing: 0.05em;
     }
     .sub-title {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: normal;
-      margin-top: 6px;
-      color: #6d6350;
-      opacity: 0.85;
-      letter-spacing: 0.05em;
+      margin-top: 8px;
+      color: #e9edc9;
+      opacity: 0.9;
     }
 
     .content-area {
-      padding: 0 30px;
+      padding: 0 25px;
     }
 
     /* ヘルプボックス */
     .help {
-      background: #fff;
-      border: 2px solid var(--yellow-base);
+      background: #fdfdfd;
+      border: 1px solid #ddd;
+      border-left: 5px solid var(--accent-color);
       padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 4px;
+      font-size: 13px;
       line-height: 1.6;
       margin-bottom: 30px;
-      text-align: center;
       color: #555;
     }
 
@@ -88,42 +88,43 @@
       align-items: center;
       flex-wrap: wrap;
       margin-top: 24px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     
     .label {
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       color: var(--text-main);
+      border-left: 4px solid var(--main-green);
+      padding-left: 10px;
     }
 
     /* バッジ */
     .badge-required {
-      margin-left: 10px;
-      padding: 4px 10px;
+      margin-left: auto;
+      padding: 3px 8px;
       font-size: 11px;
       color: #fff;
-      background: var(--pink-accent);
-      border-radius: 20px;
-      font-weight: bold;
-      white-space: nowrap;
+      background: #c92a2a; /* 必須は赤系で見やすく */
+      border-radius: 4px;
+      font-weight: normal;
     }
     .badge-optional {
-      margin-left: 10px;
-      padding: 4px 10px;
+      margin-left: auto;
+      padding: 3px 8px;
       font-size: 11px;
       color: #555;
       background: #eee;
-      border-radius: 20px;
-      white-space: nowrap;
+      border-radius: 4px;
+      font-weight: normal;
     }
 
     /* 入力フィールド */
     input[type="text"], input[type="tel"], textarea {
       width: 100%;
       box-sizing: border-box;
-      padding: 14px;
-      border: 2px solid #eaeaea;
+      padding: 12px;
+      border: 1px solid #ced4da;
       border-radius: var(--border-radius);
       font-size: 16px;
       background: var(--input-bg);
@@ -133,39 +134,36 @@
     }
     input:focus, textarea:focus {
       outline: none;
-      border-color: var(--pink-accent);
+      border-color: var(--main-green);
       background: #fff;
-      box-shadow: 0 0 0 3px rgba(221, 88, 136, 0.1);
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
     }
     textarea {
-      min-height: 100px;
+      min-height: 120px;
       resize: vertical;
       line-height: 1.6;
     }
-    ::placeholder { color: #ccc; }
+    ::placeholder { color: #adb5bd; font-size: 14px; }
 
-    /* ===== グリッドボタンレイアウト ===== */
+    /* ===== ボタンレイアウト ===== */
     .btn-group {
       display: grid;
       gap: 10px;
       width: 100%;
+      grid-template-columns: 1fr 1fr; /* 基本2列 */
     }
-
-    #visitTypeGroup, #serviceTypeGroup {
-      grid-template-columns: 1fr 1fr; 
-    }
-    
-    #nailStylesGroup, #hairPartsGroup {
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    /* 「庭工事・その他」などが長くなる場合やスマホで見やすくするため調整 */
+    @media (max-width: 400px) {
+        .btn-group { grid-template-columns: 1fr; }
     }
 
     .btn {
       width: 100%;
-      padding: 12px 5px;
-      border: 2px solid #eaeaea;
-      border-radius: 12px;
+      padding: 14px 5px;
+      border: 1px solid #ced4da;
+      border-radius: var(--border-radius);
       background: #fff;
-      color: #666;
+      color: #555;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -174,35 +172,16 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      min-height: 48px;
+      min-height: 50px;
     }
     .btn:hover {
-      background-color: #ffffee;
+      background-color: #f8f9fa;
     }
     .btn.active {
-      background: var(--yellow-base);
-      border-color: var(--yellow-base);
-      color: #4a4030;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      transform: translateY(-2px);
-    }
-
-    /* ===== セクション ===== */
-    .section {
-      display: none;
-      background: #fffcf2;
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 25px;
-      border: 1px dashed #dcdca0;
-    }
-    .section.active {
-      display: block;
-      animation: fadeIn 0.3s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
+      background: var(--main-green);
+      border-color: var(--main-green);
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(45, 106, 79, 0.4);
     }
 
     /* ===== 送信ボタン ===== */
@@ -212,17 +191,17 @@
       margin-top: 40px;
       padding: 16px;
       border: none;
-      border-radius: 50px;
-      background: var(--pink-accent);
+      border-radius: var(--border-radius);
+      background: var(--accent-color);
       color: #fff;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(221, 88, 136, 0.3);
+      box-shadow: 0 4px 10px rgba(208, 140, 96, 0.3);
       transition: transform 0.1s, background 0.2s;
     }
     .submit-button:hover {
-      background: #d04d7c;
+      background: #b57b54;
     }
     .submit-button:active {
       transform: scale(0.98);
@@ -232,25 +211,21 @@
     @media (max-width: 480px) {
       body {
         padding: 10px;
-        background-color: #f2f2f2;
+        background-color: #e9ecef;
       }
       .container {
-        border-radius: 12px;
         padding-bottom: 30px;
       }
       .header {
         padding: 20px 15px;
       }
-      h1 { font-size: 20px; }
+      h1 { font-size: 18px; }
       .content-area {
         padding: 0 16px;
       }
       .help {
-        font-size: 13px;
-        padding: 10px;
+        font-size: 12px;
       }
-      .label { font-size: 15px; }
-      .btn { font-size: 13px; }
     }
   </style>
 </head>
@@ -258,115 +233,49 @@
 
   <div class="container">
     <div class="header">
-      <h1>COUNSELING SHEET<span class="sub-title">BONITA Wax+Flash&Nail</span></h1>
+      <h1>工事予約フォーム<span class="sub-title">Reservation Form</span></h1>
     </div>
     
     <div class="content-area">
       <div class="help">
-        <i class="fas fa-info-circle" style="color:#dd5888; margin-right:5px;"></i>
-        以下の必須項目を入力し、<br>最後に「送信」ボタンを押してください。
+        以下の項目を入力し、<br>最後に「送信する」ボタンを押してください。
       </div>
 
       <div class="label-wrapper">
         <label class="label" for="fullName">お名前</label>
         <span class="badge-required">必須</span>
       </div>
-      <input type="text" id="fullName" placeholder="例）山田 花子" oninput="saveInput('fullName')"/>
+      <input type="text" id="fullName" placeholder="例）建築 太郎" oninput="saveInput('fullName')"/>
 
       <div class="label-wrapper">
-        <label class="label" for="furigana">フリガナ</label>
-        <span class="badge-required">必須</span>
-      </div>
-      <input type="text" id="furigana" placeholder="例）ヤマダ ハナコ" oninput="saveInput('furigana')"/>
-
-      <div class="label-wrapper">
-        <label class="label" for="phone">電話番号</label>
+        <label class="label" for="phone">お電話番号</label>
         <span class="badge-required">必須</span>
       </div>
       <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678" oninput="saveInput('phone')"/>
 
       <div class="label-wrapper">
-        <div class="label">ご来店状況</div>
+        <label class="label" for="address">ご住所</label>
         <span class="badge-required">必須</span>
       </div>
-      <div class="btn-group" id="visitTypeGroup">
-        <button type="button" class="btn" data-value="新規">はじめて（新規）</button>
-        <button type="button" class="btn" data-value="再来">2回目以降（再来）</button>
+      <input type="text" id="address" placeholder="例）〇〇県〇〇市〇〇町1-2-3" oninput="saveInput('address')"/>
+
+      <div class="label-wrapper">
+        <div class="label">希望工事内容</div>
+        <span class="badge-required">必須</span>
+      </div>
+      <div class="btn-group" id="constructionTypeGroup">
+        <button type="button" class="btn" data-value="伐採工事">伐採工事</button>
+        <button type="button" class="btn" data-value="剪定工事">剪定工事</button>
+        <button type="button" class="btn" data-value="除草工事">除草工事</button>
+        <button type="button" class="btn" data-value="外溝工事">外溝工事</button>
+        <button type="button" class="btn" data-value="庭工事・その他">庭工事・その他</button>
       </div>
 
       <div class="label-wrapper">
-        <div class="label">ご希望メニュー</div>
-        <span class="badge-required">必須</span>
+        <label class="label" for="remarks">備考</label>
+        <span class="badge-optional">任意</span>
       </div>
-      <div class="btn-group" id="serviceTypeGroup">
-        <button type="button" class="btn" data-value="ネイル">ネイル</button>
-        <button type="button" class="btn" data-value="脱毛">脱毛</button>
-      </div>
-
-      <div id="nailSection" class="section">
-        <div class="label-wrapper" style="margin-top:0;">
-          <div class="label">なりたいイメージ</div>
-          <span class="badge-required">必須</span>
-        </div>
-        <p style="font-size:12px; color:#888; margin:0 0 10px;">※複数選択可</p>
-        <div class="btn-group" id="nailStylesGroup">
-          <button type="button" class="btn" data-value="シンプル">シンプル</button>
-          <button type="button" class="btn" data-value="かわいい">かわいい</button>
-          <button type="button" class="btn" data-value="エレガント">エレガント</button>
-          <button type="button" class="btn" data-value="ニュアンス">ニュアンス</button>
-          <button type="button" class="btn" data-value="個性的">個性的</button>
-          <button type="button" class="btn" data-value="かっこいい">かっこいい</button>
-          <button type="button" class="btn" data-value="その他">その他</button>
-        </div>
-
-        <div class="label-wrapper">
-          <div class="label">ネイル経験</div>
-          <span class="badge-required">必須</span>
-        </div>
-        <div class="btn-group" id="nailExpGroup">
-          <button type="button" class="btn" data-value="初めて">初めて</button>
-          <button type="button" class="btn" data-value="経験がある">経験がある</button>
-        </div>
-
-        <div class="label-wrapper">
-          <label class="label" for="nailMemo">担当者に伝えたい事</label>
-          <span class="badge-optional">任意</span>
-        </div>
-        <textarea id="nailMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
-      </div>
-
-      <div id="hairSection" class="section">
-        <div class="label-wrapper" style="margin-top:0;">
-          <div class="label">やりたい部位</div>
-          <span class="badge-required">必須</span>
-        </div>
-        <p style="font-size:12px; color:#888; margin:0 0 10px;">※複数選択可</p>
-        <div class="btn-group" id="hairPartsGroup">
-          <button type="button" class="btn" data-value="全身">全身</button>
-          <button type="button" class="btn" data-value="VIO">VIO</button>
-          <button type="button" class="btn" data-value="腕">腕</button>
-          <button type="button" class="btn" data-value="脚">脚</button>
-          <button type="button" class="btn" data-value="背中">背中</button>
-          <button type="button" class="btn" data-value="脇">脇</button>
-          <button type="button" class="btn" data-value="うなじ">うなじ</button>
-          <button type="button" class="btn" data-value="顔">顔</button>
-        </div>
-
-        <div class="label-wrapper">
-          <div class="label">脱毛経験</div>
-          <span class="badge-required">必須</span>
-        </div>
-        <div class="btn-group" id="hairExpGroup">
-          <button type="button" class="btn" data-value="初めて">初めて</button>
-          <button type="button" class="btn" data-value="経験がある">経験がある</button>
-        </div>
-
-        <div class="label-wrapper">
-          <label class="label" for="hairMemo">担当者に伝えたい事</label>
-          <span class="badge-optional">任意</span>
-        </div>
-        <textarea id="hairMemo" placeholder="ご要望や注意してほしい点などがあればご記入ください。"></textarea>
-      </div>
+      <textarea id="remarks" placeholder="ご相談内容の詳細や、連絡のつきやすい時間帯などがあればご記入ください。"></textarea>
 
       <button id="submitArea" class="submit-button" onclick="submitForm()">送信する</button>
     </div>
@@ -376,50 +285,37 @@
   <script>
     // ---- 状態管理 ----
     const state = {
-      visitType: "",
-      serviceType: "",
-      nail: { styles: [], exp: "", memo: "" },
-      hair: { parts: [], exp: "", memo: "" },
+      constructionType: ""
     };
 
-    // ---- 便利な関数: 入力内容をlocalStorageに保存 ----
+    // ---- 入力内容の一時保存 ----
     function saveInput(key) {
       const val = document.getElementById(key).value;
       localStorage.setItem(key, val);
     }
 
-    // ---- LIFF 初期化 & 初期復元処理 ----
+    // ---- 初期化処理 ----
     document.addEventListener("DOMContentLoaded", () => {
       
-      // ★ ページ読み込み時に前回の入力内容を復元
+      // 前回の入力内容を復元
       const savedFullName = localStorage.getItem('fullName');
-      const savedFurigana = localStorage.getItem('furigana');
       const savedPhone = localStorage.getItem('phone');
+      const savedAddress = localStorage.getItem('address');
 
       if (savedFullName) document.getElementById('fullName').value = savedFullName;
-      if (savedFurigana) document.getElementById('furigana').value = savedFurigana;
       if (savedPhone)    document.getElementById('phone').value = savedPhone;
+      if (savedAddress)  document.getElementById('address').value = savedAddress;
 
-      // ここにあなたのLIFF IDを設定
+      // ★ここにあなたのLIFF IDを設定してください
       liff.init({ liffId: "2005254357-zKma9BZk" })
         .then(() => console.log("LIFF初期化成功"))
         .catch(err => console.error("LIFF初期化失敗", err));
 
-      // クリックイベント委譲（単一選択）
-      setupSingleSelect("visitTypeGroup", val => state.visitType = val);
-      setupSingleSelect("serviceTypeGroup", val => {
-        state.serviceType = val;
-        updateSections();
-      });
-      setupSingleSelect("nailExpGroup", val => state.nail.exp = val);
-      setupSingleSelect("hairExpGroup", val => state.hair.exp = val);
-
-      // クリックイベント委譲（複数選択）
-      setupMultiSelect("nailStylesGroup", arr => state.nail.styles = arr);
-      setupMultiSelect("hairPartsGroup", arr => state.hair.parts = arr);
+      // 工事内容の選択（単一選択）
+      setupSingleSelect("constructionTypeGroup", val => state.constructionType = val);
     });
 
-    // ---- UI セットアップ関数 ----
+    // ---- ボタン選択ロジック ----
     function setupSingleSelect(groupId, onChange) {
       const group = document.getElementById(groupId);
       group.addEventListener("click", e => {
@@ -430,100 +326,45 @@
         onChange(btn.dataset.value);
       });
     }
-    function setupMultiSelect(groupId, onChange) {
-      const group = document.getElementById(groupId);
-      group.addEventListener("click", e => {
-        const btn = e.target.closest("button.btn");
-        if (!btn) return;
-        btn.classList.toggle("active");
-        const selected = Array.from(group.querySelectorAll(".btn.active")).map(b => b.dataset.value);
-        onChange(selected);
-      });
-    }
-    function updateSections() {
-      const nail = document.getElementById("nailSection");
-      const hair = document.getElementById("hairSection");
-      if (state.serviceType === "ネイル") {
-        nail.classList.add("active");
-        hair.classList.remove("active");
-        nail.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else if (state.serviceType === "脱毛") {
-        hair.classList.add("active");
-        nail.classList.remove("active");
-        hair.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        nail.classList.remove("active");
-        hair.classList.remove("active");
-      }
-    }
-
-    // ---- バリデーション ----
-    function validate() {
-      const fullName = document.getElementById("fullName").value.trim();
-      const furigana = document.getElementById("furigana").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-
-      if (!fullName) { alert("お名前（フルネーム）を入力してください。"); return false; }
-      if (!furigana) { alert("フリガナを入力してください。"); return false; }
-      if (!phone)    { alert("電話番号を入力してください。"); return false; }
-      if (!state.visitType)  { alert("「新規 or 再来」を選択してください。"); return false; }
-      if (!state.serviceType){ alert("「ネイル or 脱毛」を選択してください。"); return false; }
-
-      if (state.serviceType === "ネイル") {
-        if (!state.nail.styles.length) { alert("ネイルの『なりたいイメージ』を1つ以上選択してください。"); return false; }
-        if (!state.nail.exp) { alert("ネイル経験を選択してください。"); return false; }
-      }
-      if (state.serviceType === "脱毛") {
-        if (!state.hair.parts.length) { alert("脱毛の『やりたい部位』を1つ以上選択してください。"); return false; }
-        if (!state.hair.exp) { alert("脱毛経験を選択してください。"); return false; }
-      }
-      return true;
-    }
 
     // ---- 送信処理 ----
     function submitForm() {
-      if (!validate()) return;
-
-      // 任意メモを反映
-      state.nail.memo = document.getElementById("nailMemo").value.trim();
-      state.hair.memo = document.getElementById("hairMemo").value.trim();
-
+      // 値の取得
       const fullName = document.getElementById("fullName").value.trim();
-      const furigana = document.getElementById("furigana").value.trim();
       const phone    = document.getElementById("phone").value.trim();
+      const address  = document.getElementById("address").value.trim();
+      const remarks  = document.getElementById("remarks").value.trim();
+      const type     = state.constructionType;
 
-      let detail = "";
-      if (state.serviceType === "ネイル") {
-        detail =
-          `— ネイル —\n` +
-          `【なりたいイメージ】${state.nail.styles.join("、")}\n` +
-          `【ネイル経験】${state.nail.exp}\n` +
-          `【担当者へのメッセージ】${state.nail.memo || "（未記入）"}`;
-      } else if (state.serviceType === "脱毛") {
-        detail =
-          `— 脱毛 —\n` +
-          `【やりたい部位】${state.hair.parts.join("、")}\n` +
-          `【脱毛経験】${state.hair.exp}\n` +
-          `【担当者へのメッセージ】${state.hair.memo || "（未記入）"}`;
+      // バリデーション
+      if (!fullName) { alert("お名前を入力してください。"); return; }
+      if (!phone)    { alert("お電話番号を入力してください。"); return; }
+      if (!address)  { alert("ご住所を入力してください。"); return; }
+      if (!type)     { alert("希望工事内容を選択してください。"); return; }
+
+      // 送信テキストの作成
+      const text = 
+        `🔴予約フォーム作成\n` +
+        `①お名前：${fullName}\n` +
+        `②お電話番号：${phone}\n` +
+        `③ご住所：${address}\n` +
+        `④希望工事内容：${type}\n` +
+        `⑤備考：${remarks || "（なし）"}`;
+
+      // LINEトークへ送信
+      if (!liff.isInClient()) {
+        alert("LINEアプリ内から開いてください。\n\n" + text); // ブラウザで開いた場合のデバッグ用
+        return;
       }
 
-      const text =
-        `≪アンケート≫\n` +
-        `【お名前】${fullName}\n` +
-        `【フリガナ】${furigana}\n` +
-        `【電話番号】${phone}\n` +
-        `【新規/再来】${state.visitType}\n` +
-        `【希望メニュー】${state.serviceType}\n\n` +
-        detail;
-
-      liff.sendMessages([{ type: "text", text }])
+      liff.sendMessages([{ type: "text", text: text }])
         .then(() => {
-          alert("ご記入ありがとうございます。送信が完了しました。");
+          alert("送信が完了しました。");
           liff.closeWindow();
         })
         .catch(err => {
-          console.error("メッセージ送信に失敗しました", err);
-          alert("送信に失敗しました。通信状況をご確認のうえ、再度お試しください。");
+          console.error("送信エラー", err);
+          alert("送信に失敗しました。");
         });
     }
   </script>
