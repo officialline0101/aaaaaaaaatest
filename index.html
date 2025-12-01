@@ -33,7 +33,7 @@
     /* メインコンテナ（PC/タブレット用） */
     .container {
       width: 100%;
-      max-width: 600px; /* PCでの最大幅 */
+      max-width: 600px;
       background: var(--card-bg);
       border-radius: 16px;
       box-shadow: 0 4px 25px rgba(0,0,0,0.06);
@@ -66,7 +66,7 @@
     }
 
     .content-area {
-      padding: 0 30px; /* PCでの横余白 */
+      padding: 0 30px;
     }
 
     /* ヘルプボックス */
@@ -86,7 +86,7 @@
     .label-wrapper {
       display: flex;
       align-items: center;
-      flex-wrap: wrap; /* 画面が極端に狭い場合の折り返し */
+      flex-wrap: wrap;
       margin-top: 24px;
       margin-bottom: 10px;
     }
@@ -125,7 +125,7 @@
       padding: 14px;
       border: 2px solid #eaeaea;
       border-radius: var(--border-radius);
-      font-size: 16px; /* iOSでズーム防止 */
+      font-size: 16px;
       background: var(--input-bg);
       color: var(--text-main);
       transition: 0.2s;
@@ -151,19 +151,17 @@
       width: 100%;
     }
 
-    /* 2択ボタン（新規/再来など）: 常に2列 */
     #visitTypeGroup, #serviceTypeGroup {
       grid-template-columns: 1fr 1fr; 
     }
     
-    /* 選択肢ボタン: 画面幅に応じて列数を自動調整 */
     #nailStylesGroup, #hairPartsGroup {
-      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* 最小90px幅で敷き詰める */
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     }
 
     .btn {
       width: 100%;
-      padding: 12px 5px; /* 横パディングを少し減らして文字切れ防止 */
+      padding: 12px 5px;
       border: 2px solid #eaeaea;
       border-radius: 12px;
       background: #fff;
@@ -176,7 +174,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      min-height: 48px; /* タップしやすい高さ確保 */
+      min-height: 48px;
     }
     .btn:hover {
       background-color: #ffffee;
@@ -192,7 +190,7 @@
     /* ===== セクション ===== */
     .section {
       display: none;
-      background: #fffcf2; /* ほんのりイエロー */
+      background: #fffcf2;
       border-radius: 12px;
       padding: 20px;
       margin-top: 25px;
@@ -230,10 +228,10 @@
       transform: scale(0.98);
     }
 
-    /* ===== スマホ専用調整 (Media Queries) ===== */
+    /* ===== スマホ専用調整 ===== */
     @media (max-width: 480px) {
       body {
-        padding: 10px; /* 画面端の余白を減らす */
+        padding: 10px;
         background-color: #f2f2f2;
       }
       .container {
@@ -244,25 +242,15 @@
         padding: 20px 15px;
       }
       h1 { font-size: 20px; }
-      
       .content-area {
-        padding: 0 16px; /* コンテンツ内の余白も最適化 */
+        padding: 0 16px;
       }
-      
       .help {
         font-size: 13px;
         padding: 10px;
       }
-
       .label { font-size: 15px; }
-      
-      /* ボタン文字サイズ調整 */
-      .btn {
-        font-size: 13px; 
-      }
-      
-      /* スマホで3列は狭すぎる場合、2列にする調整（必要に応じて） */
-      /* #nailStylesGroup, #hairPartsGroup { grid-template-columns: repeat(2, 1fr); } */
+      .btn { font-size: 13px; }
     }
   </style>
 </head>
@@ -283,19 +271,19 @@
         <label class="label" for="fullName">お名前</label>
         <span class="badge-required">必須</span>
       </div>
-      <input type="text" id="fullName" placeholder="例）山田 花子"/>
+      <input type="text" id="fullName" placeholder="例）山田 花子" oninput="saveInput('fullName')"/>
 
       <div class="label-wrapper">
         <label class="label" for="furigana">フリガナ</label>
         <span class="badge-required">必須</span>
       </div>
-      <input type="text" id="furigana" placeholder="例）ヤマダ ハナコ"/>
+      <input type="text" id="furigana" placeholder="例）ヤマダ ハナコ" oninput="saveInput('furigana')"/>
 
       <div class="label-wrapper">
         <label class="label" for="phone">電話番号</label>
         <span class="badge-required">必須</span>
       </div>
-      <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678"/>
+      <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678" oninput="saveInput('phone')"/>
 
       <div class="label-wrapper">
         <div class="label">ご来店状況</div>
@@ -394,8 +382,24 @@
       hair: { parts: [], exp: "", memo: "" },
     };
 
-    // ---- LIFF 初期化 ----
+    // ---- 便利な関数: 入力内容をlocalStorageに保存 ----
+    function saveInput(key) {
+      const val = document.getElementById(key).value;
+      localStorage.setItem(key, val);
+    }
+
+    // ---- LIFF 初期化 & 初期復元処理 ----
     document.addEventListener("DOMContentLoaded", () => {
+      
+      // ★ ページ読み込み時に前回の入力内容を復元
+      const savedFullName = localStorage.getItem('fullName');
+      const savedFurigana = localStorage.getItem('furigana');
+      const savedPhone = localStorage.getItem('phone');
+
+      if (savedFullName) document.getElementById('fullName').value = savedFullName;
+      if (savedFurigana) document.getElementById('furigana').value = savedFurigana;
+      if (savedPhone)    document.getElementById('phone').value = savedPhone;
+
       // ここにあなたのLIFF IDを設定
       liff.init({ liffId: "2005254357-zKma9BZk" })
         .then(() => console.log("LIFF初期化成功"))
