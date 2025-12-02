@@ -23,7 +23,7 @@
       --radius-btn: 12px;
 
       /* ガラスモーフィズム */
-      --glass-panel: rgba(255, 255, 255, 0.9);
+      --glass-panel: rgba(255, 255, 255, 0.95);
       --glass-shadow: 0 10px 40px -10px rgba(142, 124, 195, 0.15);
       
       /* レスポンシブ用変数 */
@@ -44,19 +44,16 @@
       background: var(--bg-gradient);
       color: var(--text-main);
       line-height: 1.6;
+      /* オーバーレイ表示時にスクロールさせないための準備 */
+      overflow-x: hidden;
     }
 
-    /* ▼ スマホ向け調整 (Body) ▼ */
     @media (max-width: 768px) {
-      body {
-        padding: 10px; /* 画面端の余白を減らす */
-      }
-      :root {
-        --shell-padding: 20px 16px;
-        --header-margin: 24px;
-      }
+      body { padding: 10px; }
+      :root { --shell-padding: 20px 16px; --header-margin: 24px; }
     }
 
+    /* 全体コンテナ */
     .shell {
       max-width: 1200px;
       margin: 0 auto;
@@ -67,13 +64,12 @@
       border-radius: 32px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
       padding: var(--shell-padding);
+      /* 重要: ここにz-indexを設定しないことで、body直下のモーダルが上にくるようにする */
+      position: relative;
+      z-index: 1; 
     }
     
-    @media (max-width: 768px) {
-        .shell {
-            border-radius: 20px;
-        }
-    }
+    @media (max-width: 768px) { .shell { border-radius: 20px; } }
 
     /* ヘッダー */
     .header { text-align: center; margin-bottom: var(--header-margin); }
@@ -95,13 +91,12 @@
       background: linear-gradient(90deg, #b19cd9, #8ec5fc);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    
     .hero-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
     
     @media (max-width: 480px) {
         .hero-title { font-size: 22px; }
         .hero-sub { font-size: 12px; margin-bottom: 20px; }
-        .hero-sub br { display: none; } /* スマホでは改行しない */
+        .hero-sub br { display: none; }
     }
 
     .reserve-link {
@@ -116,11 +111,10 @@
       box-shadow: 0 8px 20px rgba(142, 124, 195, 0.4); background: #7e6bb0;
     }
 
-    /* レイアウト切り替え */
+    /* レイアウト */
     .menu-layout {
       display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start;
     }
-    /* タブレット・スマホで1カラムに */
     @media (max-width: 960px) { 
         .menu-layout { display: block; } 
     }
@@ -135,40 +129,28 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
     
-    /* スマホ用の横スクロールタブ */
+    /* スマホ用横スクロール */
     @media (max-width: 768px) {
         .category-tabs {
-            flex-wrap: nowrap; /* 折り返さない */
-            overflow-x: auto; /* 横スクロール有効 */
-            padding: 10px 10px 14px 10px; /* スクロールバーの干渉を防ぐ */
-            margin: 0 -10px 24px -10px; /* 画面端まで広げる */
-            border-radius: 0;
-            /* スクロールバーを隠す工夫 */
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+            flex-wrap: nowrap; overflow-x: auto;
+            padding: 10px 10px 14px 10px; margin: 0 -10px 24px -10px;
+            border-radius: 0; -ms-overflow-style: none; scrollbar-width: none;
         }
-        .category-tabs::-webkit-scrollbar {
-            display: none;
-        }
-        /* 左端の余白確保 */
-        .category-tabs::before, .category-tabs::after {
-            content: ''; display: block; width: 8px; flex-shrink: 0;
-        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+        .category-tabs::before, .category-tabs::after { content: ''; display: block; width: 8px; flex-shrink: 0; }
     }
 
     .category-tab {
       border: 1px solid transparent; background: #fcfcfc;
       padding: 8px 14px; border-radius: 50px; font-size: 13px;
-      color: var(--text-muted); cursor: pointer; white-space: nowrap; /* 改行禁止 */
-      transition: all 0.3s; font-family: inherit; flex-shrink: 0; /* 縮小禁止 */
+      color: var(--text-muted); cursor: pointer; white-space: nowrap;
+      transition: all 0.3s; font-family: inherit; flex-shrink: 0;
       display: flex; align-items: center; gap: 6px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
     .category-tab span { font-size: 10px; opacity: 0.5; text-transform: uppercase; font-weight: 700; }
-    
     .category-tab:hover { background: #fff; transform: translateY(-2px); color: var(--accent-dark); }
-    .category-tab:active { transform: translateY(0); } /* タップ時の凹み防止 */
-    
+    .category-tab:active { transform: translateY(0); }
     .category-tab.active {
       background: var(--accent-dark); color: #fff;
       box-shadow: 0 4px 12px rgba(142, 124, 195, 0.4);
@@ -205,13 +187,9 @@
       color: var(--text-main); display: flex; justify-content: space-between;
       align-items: center; transition: all 0.2s ease;
       box-shadow: 0 2px 6px rgba(180, 180, 200, 0.1);
-      /* スマホでのタップ遅延防止 */
       touch-action: manipulation;
     }
-    
-    @media (max-width: 480px) {
-        .menu-item-btn { padding: 14px 16px; font-size: 13px; }
-    }
+    @media (max-width: 480px) { .menu-item-btn { padding: 14px 16px; font-size: 13px; } }
 
     .menu-item-btn:hover {
       transform: translateX(4px); background: #fff;
@@ -224,16 +202,46 @@
     }
     .chevron { font-size: 14px; opacity: 0.3; }
 
-    /* 詳細パネル (PC: Sticky / SP: Bottom Sheet) */
-    .detail-panel {
-      background: var(--glass-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    /* * ▼ PC用 詳細パネル (Sticky) ▼ 
+     * スマホでは非表示にする
+     */
+    .pc-detail-panel {
+      background: var(--glass-panel); 
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-radius: 30px; padding: 0; box-shadow: var(--glass-shadow);
-      position: sticky; top: 80px; /* タブの下に来るように調整 */
+      position: sticky; top: 80px;
       border: 1px solid #fff;
       overflow: hidden; min-height: 400px;
       display: flex; flex-direction: column;
     }
+    @media (max-width: 960px) {
+        .pc-detail-panel { display: none; }
+    }
 
+    /* * ▼ スマホ用 詳細パネル (Bottom Sheet) ▼ 
+     * body直下に配置し、z-indexで最前面に出す
+     */
+    .mobile-bottom-sheet {
+        position: fixed; top: auto; bottom: 0; left: 0; width: 100%; 
+        height: auto; max-height: 85vh; /* 画面の85% */
+        z-index: 2000; /* ★オーバーレイ(999)より確実に上にする */
+        
+        background: #fff;
+        border-radius: 24px 24px 0 0;
+        transform: translateY(110%); /* 初期は隠す */
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto; -webkit-overflow-scrolling: touch;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+        display: flex; flex-direction: column;
+    }
+    .mobile-bottom-sheet.show {
+        transform: translateY(0);
+    }
+    @media (min-width: 961px) {
+        .mobile-bottom-sheet { display: none; }
+    }
+
+    /* 共通コンポーネント */
     .treatment-placeholder {
       flex: 1; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -258,12 +266,17 @@
 
     .treatment-image-wrapper { position: relative; width: 100%; height: 250px; overflow: hidden; flex-shrink: 0; }
     .treatment-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-    @media (min-width: 961px) { .detail-panel:hover .treatment-image { transform: scale(1.05); } }
+    /* PCのみホバーエフェクト */
+    @media (min-width: 961px) { .pc-detail-panel:hover .treatment-image { transform: scale(1.05); } }
+    
+    /* スマホは画像を少し小さく */
+    @media (max-width: 960px) { .treatment-image-wrapper { height: 220px; } }
 
     .treatment-content {
       padding: 30px; background: #fff; flex: 1; display: flex; flex-direction: column; position: relative;
     }
-    @media (max-width: 480px) { .treatment-content { padding: 24px 20px 80px 20px; /* 下部に余白(価格タグ用) */ } }
+    /* スマホの下部余白確保（価格タグが隠れないように） */
+    @media (max-width: 960px) { .treatment-content { padding: 24px 20px 60px 20px; } }
 
     .treatment-content::before {
       content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 30px;
@@ -298,35 +311,25 @@
     }
     .price-value { font-size: 20px; font-weight: 700; color: var(--accent-dark); display: block; }
 
-    /* ▼ スマホ用オーバーレイ (Bottom Sheet) ▼ */
-    @media (max-width: 960px) {
-      .detail-panel {
-        position: fixed; top: auto; bottom: 0; left: 0; width: 100%; height: auto;
-        max-height: 85vh; /* 画面の85%まで */
-        z-index: 1000; border-radius: 24px 24px 0 0;
-        transform: translateY(110%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        overflow-y: auto; 
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.25); border: none;
-        -webkit-overflow-scrolling: touch; /* スムーズスクロール */
-      }
-      .detail-panel.show { transform: translateY(0); }
-      .treatment-image-wrapper { height: 220px; }
-      
-      .overlay-bg {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(40, 40, 50, 0.6); z-index: 999; opacity: 0; pointer-events: none;
-        transition: opacity 0.3s; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-      }
-      .overlay-bg.show { opacity: 1; pointer-events: auto; }
-      
-      .close-detail-btn {
-        position: absolute; top: 16px; right: 16px; 
-        background: rgba(255,255,255,0.95);
-        border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 24px;
-        display: flex; align-items: center; justify-content: center; color: #555;
-        cursor: pointer; z-index: 10; 
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      }
+    /* オーバーレイ (黒いもや) */
+    .overlay-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(40, 40, 50, 0.6); 
+      z-index: 1500; /* ★Shell(1)より上、Bottom Sheet(2000)より下 */
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s; 
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .overlay-bg.show { opacity: 1; pointer-events: auto; }
+    
+    /* 閉じるボタン (スマホ用) */
+    .close-detail-btn {
+      position: absolute; top: 16px; right: 16px; 
+      background: rgba(255,255,255,0.9);
+      border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 24px;
+      display: flex; align-items: center; justify-content: center; color: #555;
+      cursor: pointer; z-index: 10; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     @media (min-width: 961px) { .close-detail-btn, .overlay-bg { display: none; } }
 
@@ -335,6 +338,12 @@
 <body>
 
   <div class="overlay-bg" id="overlay-bg"></div>
+
+  <div id="mobile-bottom-sheet" class="mobile-bottom-sheet">
+    <button class="close-detail-btn" onclick="closeDetail()">×</button>
+    <div id="mobile-detail-content">
+        </div>
+  </div>
 
   <div class="shell">
     <header class="header">
@@ -579,9 +588,8 @@
 
       </section>
 
-      <aside class="detail-panel" id="detail-panel">
-        <button class="close-detail-btn" onclick="closeDetail()">×</button>
-        <div id="detail-content" style="height: 100%;">
+      <aside class="pc-detail-panel" id="pc-detail-panel">
+        <div id="pc-detail-content" style="height: 100%;">
           <div class="treatment-placeholder">
             <div class="placeholder-icon">✨</div>
             <div>
@@ -1062,13 +1070,16 @@
         const targetId = tab.dataset.target;
         document.getElementById(targetId).classList.add('active');
         
-        // PCのみリセット（スマホは保持）
+        // PCのみ、タブ切り替え時に詳細をリセット（スマホは閉じる）
         if(window.innerWidth > 960) {
-            closeDetail(); 
+            // PCならリセットしたい場合はここに書く（今回は維持）
+        } else {
+            closeDetail(); // スマホなら閉じる
         }
       });
     });
     
+    // メニュークリック時のアクティブ表示
     menuItems.forEach(item => {
         item.addEventListener('click', () => {
             menuItems.forEach(i => i.classList.remove('is-active'));
@@ -1076,9 +1087,11 @@
         });
     });
 
+    // 詳細を開く
     function openDetail(id) {
         let data = MENU_DATA[id];
         
+        // データがない場合のフォールバック
         if (!data) {
             data = {
                 title: "Coming Soon",
@@ -1118,21 +1131,34 @@
             </div>
         `;
 
-        const detailContent = document.getElementById('detail-content');
-        detailContent.innerHTML = html;
+        // PC用パネルへ描画
+        const pcContent = document.getElementById('pc-detail-content');
+        if(pcContent) pcContent.innerHTML = html;
 
+        // スマホ用パネルへ描画
+        const mobileContent = document.getElementById('mobile-detail-content');
+        if(mobileContent) mobileContent.innerHTML = html;
+
+        // スマホの場合はオーバーレイを表示
         if (window.innerWidth <= 960) {
-            document.getElementById('detail-panel').classList.add('show');
+            document.getElementById('mobile-bottom-sheet').classList.add('show');
             document.getElementById('overlay-bg').classList.add('show');
+            // 背景スクロールロック
+            document.body.style.overflow = 'hidden';
         }
     }
 
+    // 詳細を閉じる
     function closeDetail() {
-        document.getElementById('detail-panel').classList.remove('show');
+        document.getElementById('mobile-bottom-sheet').classList.remove('show');
         document.getElementById('overlay-bg').classList.remove('show');
         menuItems.forEach(i => i.classList.remove('is-active'));
+        
+        // 背景スクロール解除
+        document.body.style.overflow = '';
     }
 
+    // 背景クリックでも閉じる
     document.getElementById('overlay-bg').addEventListener('click', closeDetail);
 
   </script>
