@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Elegram エステサロン｜メニュー一覧</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,6 +25,10 @@
       /* ガラスモーフィズム */
       --glass-panel: rgba(255, 255, 255, 0.9);
       --glass-shadow: 0 10px 40px -10px rgba(142, 124, 195, 0.15);
+      
+      /* レスポンシブ用変数 */
+      --shell-padding: 40px;
+      --header-margin: 40px;
     }
 
     * {
@@ -42,6 +46,17 @@
       line-height: 1.6;
     }
 
+    /* ▼ スマホ向け調整 (Body) ▼ */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px; /* 画面端の余白を減らす */
+      }
+      :root {
+        --shell-padding: 20px 16px;
+        --header-margin: 24px;
+      }
+    }
+
     .shell {
       max-width: 1200px;
       margin: 0 auto;
@@ -51,23 +66,26 @@
       border: 1px solid #fff;
       border-radius: 32px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
-      padding: 40px;
+      padding: var(--shell-padding);
     }
-
+    
     @media (max-width: 768px) {
-      body { padding: 12px; }
-      .shell { padding: 24px 16px; border-radius: 20px; }
+        .shell {
+            border-radius: 20px;
+        }
     }
 
     /* ヘッダー */
-    .header { text-align: center; margin-bottom: 40px; }
+    .header { text-align: center; margin-bottom: var(--header-margin); }
+    
     .salon-badge {
       display: inline-block; padding: 6px 16px;
       background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
       color: #fff; font-size: 11px; font-weight: 700;
-      letter-spacing: 0.15em; border-radius: 50px; margin-bottom: 16px;
+      letter-spacing: 0.15em; border-radius: 50px; margin-bottom: 12px;
       box-shadow: 0 4px 10px rgba(142, 197, 252, 0.4);
     }
+    
     .hero-title {
       font-size: 28px; font-weight: 500; margin: 0 0 12px;
       color: var(--accent-dark); letter-spacing: 0.05em;
@@ -77,7 +95,15 @@
       background: linear-gradient(90deg, #b19cd9, #8ec5fc);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
+    
     .hero-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+    
+    @media (max-width: 480px) {
+        .hero-title { font-size: 22px; }
+        .hero-sub { font-size: 12px; margin-bottom: 20px; }
+        .hero-sub br { display: none; } /* スマホでは改行しない */
+    }
+
     .reserve-link {
       display: inline-block; text-decoration: none;
       background: var(--accent-dark); color: #fff;
@@ -90,30 +116,59 @@
       box-shadow: 0 8px 20px rgba(142, 124, 195, 0.4); background: #7e6bb0;
     }
 
-    /* レイアウト */
+    /* レイアウト切り替え */
     .menu-layout {
       display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: start;
     }
-    @media (max-width: 900px) { .menu-layout { display: block; } }
+    /* タブレット・スマホで1カラムに */
+    @media (max-width: 960px) { 
+        .menu-layout { display: block; } 
+    }
 
-    /* タブ */
+    /* カテゴリタブ */
     .category-tabs {
       display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
       position: sticky; top: 10px; z-index: 10;
       background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       padding: 12px; border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
+    
+    /* スマホ用の横スクロールタブ */
+    @media (max-width: 768px) {
+        .category-tabs {
+            flex-wrap: nowrap; /* 折り返さない */
+            overflow-x: auto; /* 横スクロール有効 */
+            padding: 10px 10px 14px 10px; /* スクロールバーの干渉を防ぐ */
+            margin: 0 -10px 24px -10px; /* 画面端まで広げる */
+            border-radius: 0;
+            /* スクロールバーを隠す工夫 */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        /* 左端の余白確保 */
+        .category-tabs::before, .category-tabs::after {
+            content: ''; display: block; width: 8px; flex-shrink: 0;
+        }
+    }
+
     .category-tab {
       border: 1px solid transparent; background: #fcfcfc;
       padding: 8px 14px; border-radius: 50px; font-size: 13px;
-      color: var(--text-muted); cursor: pointer;
-      transition: all 0.3s; font-family: inherit;
+      color: var(--text-muted); cursor: pointer; white-space: nowrap; /* 改行禁止 */
+      transition: all 0.3s; font-family: inherit; flex-shrink: 0; /* 縮小禁止 */
       display: flex; align-items: center; gap: 6px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
     .category-tab span { font-size: 10px; opacity: 0.5; text-transform: uppercase; font-weight: 700; }
+    
     .category-tab:hover { background: #fff; transform: translateY(-2px); color: var(--accent-dark); }
+    .category-tab:active { transform: translateY(0); } /* タップ時の凹み防止 */
+    
     .category-tab.active {
       background: var(--accent-dark); color: #fff;
       box-shadow: 0 4px 12px rgba(142, 124, 195, 0.4);
@@ -150,7 +205,14 @@
       color: var(--text-main); display: flex; justify-content: space-between;
       align-items: center; transition: all 0.2s ease;
       box-shadow: 0 2px 6px rgba(180, 180, 200, 0.1);
+      /* スマホでのタップ遅延防止 */
+      touch-action: manipulation;
     }
+    
+    @media (max-width: 480px) {
+        .menu-item-btn { padding: 14px 16px; font-size: 13px; }
+    }
+
     .menu-item-btn:hover {
       transform: translateX(4px); background: #fff;
       box-shadow: 0 4px 12px rgba(180, 180, 200, 0.2); color: var(--accent-dark);
@@ -162,11 +224,12 @@
     }
     .chevron { font-size: 14px; opacity: 0.3; }
 
-    /* 詳細パネル */
+    /* 詳細パネル (PC: Sticky / SP: Bottom Sheet) */
     .detail-panel {
-      background: var(--glass-panel); backdrop-filter: blur(20px);
+      background: var(--glass-panel); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-radius: 30px; padding: 0; box-shadow: var(--glass-shadow);
-      position: sticky; top: 40px; border: 1px solid #fff;
+      position: sticky; top: 80px; /* タブの下に来るように調整 */
+      border: 1px solid #fff;
       overflow: hidden; min-height: 400px;
       display: flex; flex-direction: column;
     }
@@ -193,21 +256,25 @@
     }
     @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    .treatment-image-wrapper { position: relative; width: 100%; height: 250px; overflow: hidden; }
+    .treatment-image-wrapper { position: relative; width: 100%; height: 250px; overflow: hidden; flex-shrink: 0; }
     .treatment-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-    @media (min-width: 901px) { .detail-panel:hover .treatment-image { transform: scale(1.05); } }
+    @media (min-width: 961px) { .detail-panel:hover .treatment-image { transform: scale(1.05); } }
 
     .treatment-content {
       padding: 30px; background: #fff; flex: 1; display: flex; flex-direction: column; position: relative;
     }
+    @media (max-width: 480px) { .treatment-content { padding: 24px 20px 80px 20px; /* 下部に余白(価格タグ用) */ } }
+
     .treatment-content::before {
       content: ''; position: absolute; top: -20px; left: 0; right: 0; height: 30px;
       background: #fff; border-radius: 30px 30px 0 0; z-index: 1;
     }
     .treatment-header { position: relative; z-index: 2; margin-bottom: 20px; text-align: center; }
     .treatment-title {
-      font-size: 22px; font-weight: 500; color: var(--text-main); margin: 0 0 8px;
+      font-size: 22px; font-weight: 500; color: var(--text-main); margin: 0 0 8px; line-height: 1.4;
     }
+    @media (max-width: 480px) { .treatment-title { font-size: 20px; } }
+
     .treatment-divider {
       width: 40px; height: 3px; background: linear-gradient(90deg, #b19cd9, #8ec5fc); margin: 10px auto 0;
     }
@@ -216,6 +283,7 @@
       padding: 20px; border-radius: 16px; margin-bottom: 24px; position: relative; z-index: 2;
     }
     .treatment-description { font-size: 14px; line-height: 1.9; color: #666; margin: 0; }
+    
     .price-tag {
       margin-top: auto; position: relative; z-index: 2;
       background: linear-gradient(135deg, #fff 0%, #fefefe 100%);
@@ -230,30 +298,37 @@
     }
     .price-value { font-size: 20px; font-weight: 700; color: var(--accent-dark); display: block; }
 
-    /* スマホ用オーバーレイ */
-    @media (max-width: 900px) {
+    /* ▼ スマホ用オーバーレイ (Bottom Sheet) ▼ */
+    @media (max-width: 960px) {
       .detail-panel {
         position: fixed; top: auto; bottom: 0; left: 0; width: 100%; height: auto;
-        max-height: 85vh; z-index: 1000; border-radius: 24px 24px 0 0;
-        transform: translateY(110%); transition: transform 0.35s ease;
-        overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); border: none;
+        max-height: 85vh; /* 画面の85%まで */
+        z-index: 1000; border-radius: 24px 24px 0 0;
+        transform: translateY(110%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto; 
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.25); border: none;
+        -webkit-overflow-scrolling: touch; /* スムーズスクロール */
       }
       .detail-panel.show { transform: translateY(0); }
-      .treatment-image-wrapper { height: 200px; }
+      .treatment-image-wrapper { height: 220px; }
+      
       .overlay-bg {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(40, 40, 50, 0.6); z-index: 999; opacity: 0; pointer-events: none;
-        transition: opacity 0.3s; backdrop-filter: blur(4px);
+        transition: opacity 0.3s; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
       }
       .overlay-bg.show { opacity: 1; pointer-events: auto; }
+      
       .close-detail-btn {
-        position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.9);
-        border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 20px;
+        position: absolute; top: 16px; right: 16px; 
+        background: rgba(255,255,255,0.95);
+        border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 24px;
         display: flex; align-items: center; justify-content: center; color: #555;
-        cursor: pointer; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        cursor: pointer; z-index: 10; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       }
     }
-    @media (min-width: 901px) { .close-detail-btn, .overlay-bg { display: none; } }
+    @media (min-width: 961px) { .close-detail-btn, .overlay-bg { display: none; } }
 
   </style>
 </head>
@@ -974,14 +1049,12 @@
 
     // --- ロジック部分 ---
 
-    // カテゴリ切り替え
     const tabs = document.querySelectorAll('.category-tab');
     const groups = document.querySelectorAll('.menu-group');
     const menuItems = document.querySelectorAll('.menu-item-btn');
 
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
-        // アクティブクラスの切り替え
         tabs.forEach(t => t.classList.remove('active'));
         groups.forEach(g => g.classList.remove('active'));
         
@@ -989,14 +1062,13 @@
         const targetId = tab.dataset.target;
         document.getElementById(targetId).classList.add('active');
         
-        // 詳細パネルをリセット
-        if(window.innerWidth > 900) {
-            closeDetail(); // PCのみリセット
+        // PCのみリセット（スマホは保持）
+        if(window.innerWidth > 960) {
+            closeDetail(); 
         }
       });
     });
     
-    // メニュー項目のアクティブ表示管理
     menuItems.forEach(item => {
         item.addEventListener('click', () => {
             menuItems.forEach(i => i.classList.remove('is-active'));
@@ -1004,7 +1076,6 @@
         });
     });
 
-    // 詳細を開く関数
     function openDetail(id) {
         let data = MENU_DATA[id];
         
@@ -1017,7 +1088,6 @@
             };
         }
 
-        // copyFrom対応
         if (data.copyFrom && MENU_DATA[data.copyFrom]) {
             const base = MENU_DATA[data.copyFrom];
             data = { ...base, ...data }; 
@@ -1051,14 +1121,12 @@
         const detailContent = document.getElementById('detail-content');
         detailContent.innerHTML = html;
 
-        // スマホ用オーバーレイ表示
-        if (window.innerWidth <= 900) {
+        if (window.innerWidth <= 960) {
             document.getElementById('detail-panel').classList.add('show');
             document.getElementById('overlay-bg').classList.add('show');
         }
     }
 
-    // 詳細を閉じる
     function closeDetail() {
         document.getElementById('detail-panel').classList.remove('show');
         document.getElementById('overlay-bg').classList.remove('show');
