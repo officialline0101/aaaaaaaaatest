@@ -1,372 +1,716 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>工事予約フォーム</title>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  <style>
-    /* ===== 設定: カラー＆変数（造園・工事向けのアースカラー） ===== */
-    :root {
-      --main-green: #2d6a4f;    /* メインカラー（濃い緑） */
-      --accent-color: #d08c60;  /* アクセント（土・木の色） */
-      --light-base: #e9edc9;    /* 背景ベース（薄い黄緑） */
-      --text-main: #333333;     /* テキスト色 */
-      --bg-color: #f1f3f5;      /* 全体背景 */
-      --card-bg: #ffffff;       /* カード背景 */
-      --input-bg: #f8f9fa;      /* 入力欄背景 */
-      --border-radius: 8px;     /* 角丸（少しカッチリさせる） */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フラワーショップ予約フォーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- デザイン設定 --- */
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #d4a373;
+            --bg-color: #fdfcf8;
+            --text-color: #333333;
+            --white: #ffffff;
+            --select-bg: #f3f0e6;
+            --price-color: #e74c3c;
+        }
 
-    /* ===== ベーススタイル ===== */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding-top: 20px;
+            padding-bottom: 40px;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
 
-    /* メインコンテナ */
-    .container {
-      width: 100%;
-      max-width: 600px;
-      background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      overflow: hidden;
-      padding-bottom: 40px;
-    }
+        .container {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.05);
+            width: 96%;
+            max-width: 600px;
+            padding: 30px;
+            box-sizing: border-box;
+            margin: 0 auto;
+            border-top: 5px solid var(--accent-color);
+        }
 
-    /* ===== ヘッダー ===== */
-    .header {
-      background: var(--main-green);
-      padding: 24px 20px;
-      text-align: center;
-      margin-bottom: 25px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      color: #ffffff;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-    .sub-title {
-      display: block;
-      font-size: 12px;
-      font-weight: normal;
-      margin-top: 8px;
-      color: #e9edc9;
-      opacity: 0.9;
-    }
+        h1 {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 20px 15px;
+            text-align: center;
+            margin: -30px -30px 30px -30px;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            border-radius: 8px 8px 0 0;
+        }
 
-    .content-area {
-      padding: 0 25px;
-    }
+        /* 各種パーツのスタイル */
+        .label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            margin-top: 30px;
+            padding: 6px 12px;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-left: 5px solid var(--accent-color);
+            font-size: 16px;
+            background: #f8f9fa;
+            border-radius: 0 4px 4px 0;
+        }
 
-    /* ヘルプボックス */
-    .help {
-      background: #fdfdfd;
-      border: 1px solid #ddd;
-      border-left: 5px solid var(--accent-color);
-      padding: 12px 16px;
-      border-radius: 4px;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      color: #555;
-    }
+        .required,
+        .optional {
+            font-size: 10px;
+            margin-left: auto;
+            padding: 3px 8px;
+            border-radius: 10px;
+            color: var(--white);
+        }
 
-    /* ===== フォーム要素 ===== */
-    .label-wrapper {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 24px;
-      margin-bottom: 8px;
-    }
-    
-    .label {
-      font-weight: 700;
-      font-size: 15px;
-      color: var(--text-main);
-      border-left: 4px solid var(--main-green);
-      padding-left: 10px;
-    }
+        .required {
+            background-color: #e74c3c;
+            font-weight: bold;
+        }
 
-    /* バッジ */
-    .badge-required {
-      margin-left: auto;
-      padding: 3px 8px;
-      font-size: 11px;
-      color: #fff;
-      background: #c92a2a; /* 必須は赤系で見やすく */
-      border-radius: 4px;
-      font-weight: normal;
-    }
-    .badge-optional {
-      margin-left: auto;
-      padding: 3px 8px;
-      font-size: 11px;
-      color: #555;
-      background: #eee;
-      border-radius: 4px;
-      font-weight: normal;
-    }
+        .optional {
+            background-color: #95a5a6;
+            font-weight: normal;
+        }
 
-    /* 入力フィールド */
-    input[type="text"], input[type="tel"], textarea {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      border: 1px solid #ced4da;
-      border-radius: var(--border-radius);
-      font-size: 16px;
-      background: var(--input-bg);
-      color: var(--text-main);
-      transition: 0.2s;
-      appearance: none;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--main-green);
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
-    }
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-      line-height: 1.6;
-    }
-    ::placeholder { color: #adb5bd; font-size: 14px; }
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
 
-    /* ===== ボタンレイアウト ===== */
-    .btn-group {
-      display: grid;
-      gap: 10px;
-      width: 100%;
-      grid-template-columns: 1fr 1fr; /* 基本2列 */
-    }
-    /* 「庭工事・その他」などが長くなる場合やスマホで見やすくするため調整 */
-    @media (max-width: 400px) {
-        .btn-group { grid-template-columns: 1fr; }
-    }
+        .button-group button {
+            flex: 1 1 30%;
+            padding: 14px 5px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: var(--white);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
 
-    .btn {
-      width: 100%;
-      padding: 14px 5px;
-      border: 1px solid #ced4da;
-      border-radius: var(--border-radius);
-      background: #fff;
-      color: #555;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      min-height: 50px;
-    }
-    .btn:hover {
-      background-color: #f8f9fa;
-    }
-    .btn.active {
-      background: var(--main-green);
-      border-color: var(--main-green);
-      color: #fff;
-      box-shadow: 0 2px 6px rgba(45, 106, 79, 0.4);
-    }
+        .button-group button:hover {
+            background-color: var(--select-bg);
+            border-color: var(--accent-color);
+        }
 
-    /* ===== 送信ボタン ===== */
-    .submit-button {
-      display: block;
-      width: 100%;
-      margin-top: 40px;
-      padding: 16px;
-      border: none;
-      border-radius: var(--border-radius);
-      background: var(--accent-color);
-      color: #fff;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(208, 140, 96, 0.3);
-      transition: transform 0.1s, background 0.2s;
-    }
-    .submit-button:hover {
-      background: #b57b54;
-    }
-    .submit-button:active {
-      transform: scale(0.98);
-    }
+        .button-group button.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(44, 62, 80, 0.2);
+        }
 
-    /* ===== スマホ専用調整 ===== */
-    @media (max-width: 480px) {
-      body {
-        padding: 10px;
-        background-color: #e9ecef;
-      }
-      .container {
-        padding-bottom: 30px;
-      }
-      .header {
-        padding: 20px 15px;
-      }
-      h1 { font-size: 18px; }
-      .content-area {
-        padding: 0 16px;
-      }
-      .help {
-        font-size: 12px;
-      }
-    }
-  </style>
+        .detail-text-area {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-left: 3px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+            display: none;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .detail-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .image-preview-area {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            background: #f0f0f0;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .image-preview-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            background: #fff;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        #displayInfo {
+            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .price-display {
+            font-weight: bold;
+            color: var(--price-color);
+            font-size: 1.4em;
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 2px solid #eee;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s;
+        }
+
+        .submit-button:active {
+            transform: translateY(2px);
+        }
+
+        @media (max-width: 600px) {
+            .button-group button {
+                flex: 1 1 45%;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <div class="container">
-    <div class="header">
-      <h1>工事予約フォーム<span class="sub-title">Reservation Form</span></h1>
+    <div class="container">
+        <h1>Flower Shop Order</h1>
+
+        <div class="label">❶ 店舗選択<span class="required">必須</span></div>
+        <div class="button-group" id="store-group">
+            <button type="button" onclick="selectStore(this, '大阪店')">大阪店</button>
+            <button type="button" onclick="selectStore(this, '奈良店')">奈良店</button>
+        </div>
+
+        <div class="label">❷ 商品選択<span class="required">必須</span></div>
+        <div class="button-group" style="margin-bottom: 10px;">
+            <button type="button" onclick="selectCategory('bouquet')">花束</button>
+            <button type="button" onclick="selectCategory('arrangement')">アレンジメント</button>
+        </div>
+
+        <div id="price-area" class="button-group"></div>
+
+        <div id="product-detail-text" class="detail-text-area">
+            <span class="detail-title">商品詳細</span>
+            <span id="detail-content"></span>
+        </div>
+
+        <div id="product-image" class="image-preview-area"></div>
+
+        <div id="bouquet-style-section" style="display:none;">
+            <div class="label">❸ スタイル選択<span class="optional">任意</span></div>
+            <div class="button-group">
+                <button type="button" onclick="selectOptionSingle(this, 'style', 'ロングタイプ')">ロングタイプ</button>
+                <button type="button" onclick="selectOptionSingle(this, 'style', 'ブーケタイプ')">ブーケタイプ</button>
+            </div>
+            <div id="style-image" class="image-preview-area"></div>
+        </div>
+
+        <div class="label">❹ 色合い<span class="optional">任意</span></div>
+        <div class="button-group">
+            <button type="button" onclick="selectOptionSingle(this, 'color', '白グリーン系')">白グリーン系</button>
+            <button type="button" onclick="selectOptionSingle(this, 'color', 'イエローオレンジ系')">イエローオレンジ系</button>
+            <button type="button" onclick="selectOptionSingle(this, 'color', 'ピンク系')">ピンク系</button>
+            <button type="button" onclick="selectOptionSingle(this, 'color', '赤系')">赤系</button>
+            <button type="button" onclick="selectOptionSingle(this, 'color', 'ブルー紫系')">ブルー紫系</button>
+            <button type="button" onclick="selectOptionSingle(this, 'color', 'おまかせ')">おまかせ</button>
+        </div>
+        <div id="color-image" class="image-preview-area"></div>
+
+        <div class="label">❺ イメージ<span class="optional">任意</span></div>
+        <div class="button-group">
+            <button type="button" onclick="selectOptionSingle(this, 'image', '可愛い')">可愛い</button>
+            <button type="button" onclick="selectOptionSingle(this, 'image', '大人っぽく')">大人っぽく</button>
+            <button type="button" onclick="selectOptionSingle(this, 'image', '渋く')">渋く</button>
+            <button type="button" onclick="selectOptionSingle(this, 'image', '明るくナチュラル')">明るくナチュラル</button>
+            <button type="button" onclick="selectOptionSingle(this, 'image', '季節のお花でおまかせ')">季節のお花でおまかせ</button>
+        </div>
+        <div id="image-image" class="image-preview-area"></div>
+
+        <div class="label">❻ 用途<span class="optional">任意</span></div>
+        <div class="button-group">
+            <button type="button" onclick="selectOptionSingle(this, 'usage', '誕生日')">誕生日</button>
+            <button type="button" onclick="selectOptionSingle(this, 'usage', '送別')">送別</button>
+            <button type="button" onclick="selectOptionSingle(this, 'usage', '記念日')">記念日</button>
+            <button type="button" onclick="selectOptionSingle(this, 'usage', '発表会')">発表会</button>
+            <button type="button" onclick="selectOptionSingle(this, 'usage', 'お供え')">お供え</button>
+            <button type="button" onclick="selectOptionSingle(this, 'usage', '入学卒業')">入学卒業</button>
+        </div>
+        <div id="usage-image" class="image-preview-area"></div>
+
+        <div class="label">❼ オプション<span class="required">必須</span></div>
+        <div class="button-group">
+            <button type="button" onclick="selectOptionMulti(this, 'メッセージカード', 250)">メッセージカード(+250円)</button>
+            <button type="button" onclick="selectOptionMulti(this, 'ラッピング', 300)">ラッピング(+300円)</button>
+            <button type="button" onclick="selectOptionMulti(this, '持ち帰り袋', 300)">持ち帰り袋(+300円)</button>
+            <button type="button" onclick="selectOptionMulti(this, '無し', 0)">無し</button>
+        </div>
+        <div id="option-image" class="image-preview-area"></div>
+
+        <div class="label">❽ 受け取り日時<span class="required">必須</span></div>
+        <p style="font-size:12px; color:#666; margin-bottom:5px;">※本日から1時間後以降で選択可能です。</p>
+
+        <select id="pickup-date" onchange="updateTimeOptions()">
+            <option value="" selected disabled>日付を選択</option>
+        </select>
+
+        <select id="pickup-time" onchange="updateSummary()">
+            <option value="" selected disabled>時間を選択</option>
+        </select>
+
+        <div class="label">お客様情報<span class="required">必須</span></div>
+        <input type="text" id="name" placeholder="お名前" oninput="updateSummary()">
+        <input type="tel" id="phone" placeholder="電話番号" oninput="updateSummary()">
+        <textarea id="message" rows="3" placeholder="その他ご要望（任意）" oninput="updateSummary()"></textarea>
+
+        <div class="label">ご予約内容の確認</div>
+        <div id="displayInfo">
+            <p style="text-align:center; color:#888;">選択するとここに反映されます</p>
+        </div>
+
+        <button class="submit-button" onclick="submitForm()">予約を確定する</button>
     </div>
-    
-    <div class="content-area">
-      <div class="help">
-        以下の項目を入力し、<br>最後に「送信する」ボタンを押してください。
-      </div>
 
-      <div class="label-wrapper">
-        <label class="label" for="fullName">お名前</label>
-        <span class="badge-required">必須</span>
-      </div>
-      <input type="text" id="fullName" placeholder="例）建築 太郎" oninput="saveInput('fullName')"/>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script>
+        // ==========================================
+        // 【設定エリア】
+        // ==========================================
+        const SHOP_DATA = {
+            images: {
+                // カテゴリ
+                'bouquet': 'https://placehold.co/600x400/FFB6C1/FFF?text=Flower+Bouquet',
+                'arrangement': 'https://placehold.co/600x400/ADD8E6/FFF?text=Arrangement',
 
-      <div class="label-wrapper">
-        <label class="label" for="phone">お電話番号</label>
-        <span class="badge-required">必須</span>
-      </div>
-      <input type="tel" id="phone" inputmode="tel" placeholder="例）09012345678" oninput="saveInput('phone')"/>
+                // スタイル
+                'ロングタイプ': 'https://placehold.co/600x400/eee/333?text=Long+Type',
+                'ブーケタイプ': 'https://placehold.co/600x400/eee/333?text=Round+Type',
 
-      <div class="label-wrapper">
-        <label class="label" for="address">ご住所</label>
-        <span class="badge-required">必須</span>
-      </div>
-      <input type="text" id="address" placeholder="例）〇〇県〇〇市〇〇町1-2-3" oninput="saveInput('address')"/>
+                // 色合い
+                '白グリーン系': 'https://placehold.co/600x400/F0FFF0/2E8B57?text=White+Green',
+                'イエローオレンジ系': 'https://placehold.co/600x400/FFA500/FFF?text=Yellow+Orange',
+                'ピンク系': 'https://placehold.co/600x400/FFC0CB/FF1493?text=Pink',
+                '赤系': 'https://placehold.co/600x400/DC143C/FFF?text=Red',
+                'ブルー紫系': 'https://placehold.co/600x400/9370DB/FFF?text=Blue+Purple',
+                'おまかせ': 'https://placehold.co/600x400/D3D3D3/333?text=Omakase',
 
-      <div class="label-wrapper">
-        <div class="label">希望工事内容</div>
-        <span class="badge-required">必須</span>
-      </div>
-      <div class="btn-group" id="constructionTypeGroup">
-        <button type="button" class="btn" data-value="伐採工事">伐採工事</button>
-        <button type="button" class="btn" data-value="剪定工事">剪定工事</button>
-        <button type="button" class="btn" data-value="除草工事">除草工事</button>
-        <button type="button" class="btn" data-value="外溝工事">外溝工事</button>
-        <button type="button" class="btn" data-value="庭工事・その他">庭工事・その他</button>
-      </div>
+                // イメージ (ここが表示されるようになります)
+                '可愛い': 'https://placehold.co/600x400/FFE4E1/333?text=Cute',
+                '大人っぽく': 'https://placehold.co/600x400/800080/FFF?text=Chic',
+                '渋く': 'https://placehold.co/600x400/556B2F/FFF?text=Antique',
+                '明るくナチュラル': 'https://placehold.co/600x400/98FB98/333?text=Natural',
+                '季節のお花でおまかせ': 'https://placehold.co/600x400/FFD700/333?text=Seasonal',
 
-      <div class="label-wrapper">
-        <label class="label" for="remarks">備考</label>
-        <span class="badge-optional">任意</span>
-      </div>
-      <textarea id="remarks" placeholder="ご相談内容の詳細や、連絡のつきやすい時間帯などがあればご記入ください。"></textarea>
+                // 用途
+                '誕生日': 'https://placehold.co/600x400/FF69B4/FFF?text=Birthday',
+                '送別': 'https://placehold.co/600x400/87CEEB/FFF?text=Farewell',
+                '記念日': 'https://placehold.co/600x400/FF0000/FFF?text=Anniversary',
+                '発表会': 'https://placehold.co/600x400/FFA07A/FFF?text=Concert',
+                'お供え': 'https://placehold.co/600x400/F5F5F5/333?text=Offering',
+                '入学卒業': 'https://placehold.co/600x400/FFB6C1/FFF?text=Graduation',
 
-      <button id="submitArea" class="submit-button" onclick="submitForm()">送信する</button>
-    </div>
-  </div>
+                // オプション
+                'メッセージカード': 'https://placehold.co/600x400/eee/333?text=Message+Card',
+                'ラッピング': 'https://placehold.co/600x400/eee/333?text=Wrapping',
+                '持ち帰り袋': 'https://placehold.co/600x400/eee/333?text=Bag',
+                '無し': ''
+            },
 
-  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-  <script>
-    // ---- 状態管理 ----
-    const state = {
-      constructionType: ""
-    };
+            details: {
+                bouquet: {
+                    base: "季節の花材をふんだんに使用した花束です。お渡しするシーンに合わせて最適なサイズ感でお作りします。",
+                    small: "【ミニブーケ】手軽なプレゼントや、ちょっとしたお祝いに最適なサイズです。",
+                    medium: "【スタンダード】両手で抱えるサイズ感。最も人気のあるボリュームです。",
+                    large: "【ラグジュアリー】特別な日に。豪華でインパクトのある仕上がりになります。"
+                },
+                arrangement: {
+                    base: "器に入った吸水スポンジに花を挿したスタイル。花瓶がなくてもそのまま飾っていただけます。",
+                    small: "【Sサイズ】卓上やデスクに飾りやすいコンパクトなサイズ感です。",
+                    medium: "【Mサイズ】玄関やリビングに。存在感のある華やかなアレンジです。",
+                    large: "【Lサイズ〜スタンド】開店祝いや公演祝いなど、特別に豪華な贈り物に。"
+                }
+            },
 
-    // ---- 入力内容の一時保存 ----
-    function saveInput(key) {
-      const val = document.getElementById(key).value;
-      localStorage.setItem(key, val);
-    }
+            prices: {
+                bouquet: [3300, 4400, 5500, 6600, 7700, 10000, 12000, 16500],
+                arrangement: [3300, 4400, 5500, 6600, 7700, 8800, 10000, 11000, 12000, 15000, 20000, 22000]
+            }
+        };
 
-    // ---- 初期化処理 ----
-    document.addEventListener("DOMContentLoaded", () => {
-      
-      // 前回の入力内容を復元
-      const savedFullName = localStorage.getItem('fullName');
-      const savedPhone = localStorage.getItem('phone');
-      const savedAddress = localStorage.getItem('address');
+        const orderData = {
+            store: '',
+            category: '',
+            categoryLabel: '',
+            price: 0,
+            style: '',
+            color: '',
+            image: '',
+            usage: '',
+            options: [],
+            date: '',
+            time: '',
+            name: '',
+            phone: '',
+            message: ''
+        };
 
-      if (savedFullName) document.getElementById('fullName').value = savedFullName;
-      if (savedPhone)    document.getElementById('phone').value = savedPhone;
-      if (savedAddress)  document.getElementById('address').value = savedAddress;
+        // --- 画像表示関数 ---
+        function showStaticImage(elementId, key) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
 
-      // ★ここにあなたのLIFF IDを設定してください
-      liff.init({ liffId: "2005254357-zKma9BZk" })
-        .then(() => console.log("LIFF初期化成功"))
-        .catch(err => console.error("LIFF初期化失敗", err));
+            // 設定からURLを取得
+            const url = SHOP_DATA.images[key];
 
-      // 工事内容の選択（単一選択）
-      setupSingleSelect("constructionTypeGroup", val => state.constructionType = val);
-    });
+            if (url) {
+                container.style.display = 'block';
+                container.innerHTML = `<img src="${url}" alt="${key}">`;
+            } else {
+                container.style.display = 'none';
+            }
+        }
 
-    // ---- ボタン選択ロジック ----
-    function setupSingleSelect(groupId, onChange) {
-      const group = document.getElementById(groupId);
-      group.addEventListener("click", e => {
-        const btn = e.target.closest("button.btn");
-        if (!btn) return;
-        group.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        onChange(btn.dataset.value);
-      });
-    }
-
-    // ---- 送信処理 ----
-    function submitForm() {
-      // 値の取得
-      const fullName = document.getElementById("fullName").value.trim();
-      const phone    = document.getElementById("phone").value.trim();
-      const address  = document.getElementById("address").value.trim();
-      const remarks  = document.getElementById("remarks").value.trim();
-      const type     = state.constructionType;
-
-      // バリデーション
-      if (!fullName) { alert("お名前を入力してください。"); return; }
-      if (!phone)    { alert("お電話番号を入力してください。"); return; }
-      if (!address)  { alert("ご住所を入力してください。"); return; }
-      if (!type)     { alert("希望工事内容を選択してください。"); return; }
-
-      // 送信テキストの作成
-      const text = 
-        `🔴予約フォーム作成\n` +
-        `①お名前：${fullName}\n` +
-        `②お電話番号：${phone}\n` +
-        `③ご住所：${address}\n` +
-        `④希望工事内容：${type}\n` +
-        `⑤備考：${remarks || "（なし）"}`;
-
-      // LINEトークへ送信
-      if (!liff.isInClient()) {
-        alert("LINEアプリ内から開いてください。\n\n" + text); // ブラウザで開いた場合のデバッグ用
-        return;
-      }
-
-      liff.sendMessages([{ type: "text", text: text }])
-        .then(() => {
-          alert("送信が完了しました。");
-          liff.closeWindow();
-        })
-        .catch(err => {
-          console.error("送信エラー", err);
-          alert("送信に失敗しました。");
+        document.addEventListener('DOMContentLoaded', () => {
+            initDateOptions();
+            liff.init({ liffId: '2005254357-zKma9BZk' }) // ★LIFF IDを設定してください
+                .catch(err => console.log('LIFF init failed', err));
         });
-    }
-  </script>
+
+        // 1. 店舗選択
+        function selectStore(btn, storeName) {
+            document.querySelectorAll('#store-group button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            orderData.store = storeName;
+            updateSummary();
+        }
+
+        // 2. 商品カテゴリ選択
+        function selectCategory(cat) {
+            orderData.category = cat;
+            orderData.categoryLabel = cat === 'bouquet' ? '花束' : 'アレンジメント';
+            orderData.price = 0;
+
+            const buttons = document.querySelectorAll('button[onclick^="selectCategory"]');
+            buttons.forEach(b => {
+                if (b.getAttribute('onclick').includes(cat)) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+
+            const priceArea = document.getElementById('price-area');
+            priceArea.innerHTML = '';
+            SHOP_DATA.prices[cat].forEach(p => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = p.toLocaleString() + '円';
+                btn.onclick = () => selectPrice(btn, p);
+                priceArea.appendChild(btn);
+            });
+
+            const styleSec = document.getElementById('bouquet-style-section');
+            if (cat === 'bouquet') {
+                styleSec.style.display = 'block';
+            } else {
+                styleSec.style.display = 'none';
+                orderData.style = '';
+            }
+
+            showStaticImage('product-image', cat);
+            updateDetailText();
+            updateSummary();
+        }
+
+        function selectPrice(btn, price) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            orderData.price = price;
+            updateDetailText();
+            updateSummary();
+        }
+
+        function updateDetailText() {
+            const container = document.getElementById('product-detail-text');
+            const content = document.getElementById('detail-content');
+
+            if (!orderData.category) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            let text = SHOP_DATA.details[orderData.category].base;
+
+            if (orderData.price > 0) {
+                text += "<br><br>";
+                if (orderData.price <= 4400) {
+                    text += SHOP_DATA.details[orderData.category].small;
+                } else if (orderData.price <= 8800) {
+                    text += SHOP_DATA.details[orderData.category].medium;
+                } else {
+                    text += SHOP_DATA.details[orderData.category].large;
+                }
+            } else {
+                text += "<br><br>※ご予算をお選びください";
+            }
+
+            content.innerHTML = text;
+        }
+
+        // 3-6. 単一選択オプション
+        function selectOptionSingle(btn, type, value) {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            orderData[type] = value;
+
+            // 修正箇所: バグのあったID指定ロジックを修正
+            let imgContainerId = type + '-image';
+            // HTML側のIDとJavaScriptの変数名を一致させました
+            // type="image" -> id="image-image"
+
+            showStaticImage(imgContainerId, value);
+            updateSummary();
+        }
+
+        // 7. 複数選択オプション
+        function selectOptionMulti(btn, name, price) {
+            const imgContainer = document.getElementById('option-image');
+
+            if (name === '無し') {
+                orderData.options = [];
+                const group = btn.parentElement;
+                group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                imgContainer.style.display = 'none';
+            } else {
+                const group = btn.parentElement;
+                const noneBtn = Array.from(group.querySelectorAll('button')).find(b => b.textContent === '無し');
+                if (noneBtn) noneBtn.classList.remove('active');
+
+                const idx = orderData.options.findIndex(o => o.name === name);
+                if (idx > -1) {
+                    orderData.options.splice(idx, 1);
+                    btn.classList.remove('active');
+
+                    if (orderData.options.length > 0) {
+                        const lastOption = orderData.options[orderData.options.length - 1].name;
+                        showStaticImage('option-image', lastOption);
+                    } else {
+                        imgContainer.style.display = 'none';
+                    }
+                } else {
+                    orderData.options.push({ name: name, price: price });
+                    btn.classList.add('active');
+                    showStaticImage('option-image', name);
+                }
+            }
+            updateSummary();
+        }
+
+        function initDateOptions() {
+            const dateSelect = document.getElementById('pickup-date');
+            const today = new Date();
+
+            for (let i = 0; i < 60; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+
+                const y = d.getFullYear();
+                const m = (d.getMonth() + 1).toString().padStart(2, '0');
+                const day = d.getDate().toString().padStart(2, '0');
+                const w = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+
+                const val = `${y}-${m}-${day}`;
+                const txt = `${m}/${day}(${w})`;
+
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = txt;
+                dateSelect.appendChild(opt);
+            }
+        }
+
+        function updateTimeOptions() {
+            const dateVal = document.getElementById('pickup-date').value;
+            const timeSelect = document.getElementById('pickup-time');
+            timeSelect.innerHTML = '<option value="" selected disabled>時間を選択</option>';
+
+            if (!dateVal) return;
+
+            const selectedDate = new Date(dateVal);
+            const now = new Date();
+            const isToday = selectedDate.toDateString() === now.toDateString();
+
+            const startHour = 10;
+            const endHour = 20;
+
+            for (let h = startHour; h <= endHour; h++) {
+                for (let m of [0, 30]) {
+                    if (h === endHour && m === 30) continue;
+
+                    let skip = false;
+                    if (isToday) {
+                        const slotTime = new Date(now);
+                        slotTime.setHours(h, m, 0, 0);
+                        const limitTime = new Date(now.getTime() + 60 * 60000);
+                        if (slotTime < limitTime) skip = true;
+                    }
+
+                    if (!skip) {
+                        const timeStr = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                        const opt = document.createElement('option');
+                        opt.value = timeStr;
+                        opt.textContent = timeStr;
+                        timeSelect.appendChild(opt);
+                    }
+                }
+            }
+            orderData.date = dateVal;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            orderData.time = document.getElementById('pickup-time').value;
+            orderData.name = document.getElementById('name').value;
+            orderData.phone = document.getElementById('phone').value;
+            orderData.message = document.getElementById('message').value;
+
+            const optionTotal = orderData.options.reduce((sum, item) => sum + item.price, 0);
+            const total = orderData.price + optionTotal;
+
+            const optionNames = orderData.options.length > 0
+                ? orderData.options.map(o => o.name).join('、')
+                : '未選択';
+
+            const html = `
+                <div class="info-row"><label>店舗</label><span>${orderData.store || '-'}</span></div>
+                <div class="info-row"><label>商品</label><span>${orderData.categoryLabel || '-'} (${orderData.price ? orderData.price.toLocaleString() + '円' : '-'})</span></div>
+                ${orderData.category === 'bouquet' ? `<div class="info-row"><label>スタイル</label><span>${orderData.style || '-'}</span></div>` : ''}
+                <div class="info-row"><label>色合い</label><span>${orderData.color || '-'}</span></div>
+                <div class="info-row"><label>イメージ</label><span>${orderData.image || '-'}</span></div>
+                <div class="info-row"><label>用途</label><span>${orderData.usage || '-'}</span></div>
+                <div class="info-row"><label>オプション</label><span>${optionNames}</span></div>
+                <div class="info-row"><label>受取日時</label><span>${orderData.date} ${orderData.time || ''}</span></div>
+                <div class="price-display">合計目安: ${total.toLocaleString()}円</div>
+            `;
+
+            document.getElementById('displayInfo').innerHTML = html;
+        }
+
+        function submitForm() {
+            if (!orderData.store) return alert('店舗を選択してください');
+            if (!orderData.category || !orderData.price) return alert('商品と金額を選択してください');
+            if (orderData.options.length === 0 && !document.querySelector('button[onclick*="無し"].active')) return alert('オプションを選択してください');
+            if (!orderData.date || !orderData.time) return alert('受け取り日時を選択してください');
+            if (!document.getElementById('name').value) return alert('お名前を入力してください');
+            if (!document.getElementById('phone').value) return alert('電話番号を入力してください');
+
+            const opts = orderData.options.map(o => `${o.name}(+${o.price}円)`).join(', ') || '無し';
+            const total = orderData.price + orderData.options.reduce((sum, item) => sum + item.price, 0);
+
+            const msg = `【来店予約・注文】
+店舗：${orderData.store}
+商品：${orderData.categoryLabel}
+金額：${orderData.price.toLocaleString()}円
+スタイル：${orderData.style || '指定なし'}
+色合い：${orderData.color || '指定なし'}
+イメージ：${orderData.image || '指定なし'}
+用途：${orderData.usage || '指定なし'}
+オプション：${opts}
+----------------
+受取希望：${orderData.date} ${orderData.time}
+お名前：${orderData.name}
+電話：${orderData.phone}
+備考：${orderData.message}
+----------------
+合計目安：${total.toLocaleString()}円`;
+
+            if (liff.isInClient()) {
+                liff.sendMessages([{ type: 'text', text: msg }])
+                    .then(() => {
+                        alert('予約を送信しました！');
+                        liff.closeWindow();
+                    })
+                    .catch(err => {
+                        alert('送信失敗: ' + err);
+                    });
+            } else {
+                alert('LINEアプリ内で実行してください。\n\n' + msg);
+            }
+        }
+    </script>
 </body>
+
 </html>
