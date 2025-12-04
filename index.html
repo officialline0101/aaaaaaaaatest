@@ -931,12 +931,10 @@
         document.addEventListener('DOMContentLoaded', function () {
             const savedName = localStorage.getItem('name');
             const savedPhone = localStorage.getItem('phone');
-            const savedBirth = localStorage.getItem('birth');
             const savednamehurigana = localStorage.getItem('namehurigana');
 
             if (savedName) document.getElementById('name').value = savedName;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
-            if (savedBirth) document.getElementById('birth').value = savedBirth;
             if (savednamehurigana) document.getElementById('namehurigana').value = savednamehurigana;
         });
 
@@ -1001,25 +999,11 @@ function updateDisplayInfo() {
     const name = document.getElementById('name').value;
     const namehurigana = document.getElementById('namehurigana').value;
     const phone = document.getElementById('phone').value;
-    const birth = document.getElementById('birth').value;
-    const youbirth = document.getElementById('youbirth').value;
     const labelStyle = "color:#0c0c0c; font-size:14px; border:1px solid #0c0c0c; padding:0px 3px; border-radius:4px;";
-
-    const visitCountText = visitCount
-        ? `<span style="${labelStyle}"><strong>性別</strong></span> ${visitCount}`
-        : '・性別が未選択です';
 
     const selectedMenuText = selectedMenu
         ? `<span style="${labelStyle}"><strong>希望</strong></span> ${selectedMenu}`
         : '・希望が未選択です';
-
-    const selectedSymptomText = selectedSymptom.length > 0
-        ? `<span style="${labelStyle}"><strong>メニュー</strong></span><br>・${selectedSymptom.join('<br>')}`
-        : '・メニューが未選択です';
-
-    const irradiationsText = irradiationsCount
-        ? `<span style="${labelStyle}"><strong>オプション</strong></span><br>・${irradiationsCount.split(', ').join('<br>・')}`
-        : '・オプション無し';
 
     let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
     let hours = Math.floor(totalMinutes / 60);
@@ -1047,21 +1031,6 @@ function updateDisplayInfo() {
         <div class="info-row">
             <p><span style="${labelStyle}"><strong>電話番号</strong></span> ${phone}</p>
             <button class="edit-button" onclick="scrollToElement('phone')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p><span style="${labelStyle}"><strong>生年月日</strong></span> ${birth}</p>
-            <button class="edit-button" onclick="scrollToElement('birth')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${visitCountText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstVisit')">修正</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p><span style="${labelStyle}"><strong>お相手の生年月日</strong></span> ${youbirth}</p>
-            <button class="edit-button" onclick="scrollToElement('youbirth')">修正</button>
         </div>
         <hr>
         <div class="info-row">
@@ -1378,8 +1347,6 @@ function submitForm() {
         namehurigana: document.getElementById('namehurigana').value.trim(),
         phone: document.getElementById('phone').value.trim(),
         gmail: document.getElementById('gmail').value.trim(),
-        birth: document.getElementById('birth').value.trim(),
-        youbirth: document.getElementById('youbirth').value.trim(),
         visitCount: visitCount,
         selectedMenu: selectedMenu,
         dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
