@@ -4,745 +4,666 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アンケートフォーム</title>
+    <title>Natubelle 予約・注文フォーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        /* 右端の細いナビ（固定） */
-        .side-nav {
-            position: fixed;
-            /* 画面スクロールしても固定 */
-            right: -5px;
-            /* さらに右へ */
-            top: 80%;
-            /* 画面中央に固定 */
-            transform: translateY(-50%) translateX(15px);
-            /* 中央配置と右ずらし */
-            background: #13ca5e;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 4px;
-            border-radius: 10px 0 0 10px;
-            z-index: 1000;
-            width: 35px;
-            /* さらに細く */
-        }
-
-        .side-nav a:active {
-            transform: scale(1.0);
-            /* タップした後に元のサイズに戻す */
-        }
-
-        .side-nav a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            font-size: 10px;
-            margin: 5px 0;
-            padding: 5px;
-            transition: background 0.3s, transform 0.2s;
-            border-radius: 5px;
-            width: 30px;
-            height: 30px;
-            text-align: center;
-        }
-
-        .side-nav a span {
-            font-size: 24px;
-            /* 矢印をさらに大きく */
-            position: absolute;
-            left: -0px;
-            /* 左端に寄せる */
-            top: 13px;
-            /* さらに下へ */
-        }
-
-        /* スマホ用の微調整 */
-        @media (max-width: 600px) {
-            .side-nav {
-                right: 2px;
-                /* スマホではさらに右端に */
-                width: 30px;
-                /* もっと細く */
-            }
-
-            .side-nav a {
-                width: 28px;
-                height: 28px;
-            }
-
-            .side-nav a i {
-                font-size: 12px;
-                /* スマホではもっと小さく */
-            }
+        /* --- カラーパレット設定 --- */
+        :root {
+            --primary-color: #8E8E93; /* 石目調グレー */
+            --primary-light: #F2F2F7; /* 背景用の薄いグレー */
+            --accent-color: #D4AF37; /* 上品なゴールド */
+            --text-color: #4A4A4A; /* 柔らかい黒 */
+            --white: #ffffff;
+            --border-radius: 20px; /* 女性らしい丸み */
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--primary-light);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 0 60px 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            margin: 0;
-            padding-top: 20px;
+            min-height: 100vh;
         }
 
         .container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            width: 94%;
+            max-width: 600px;
+            padding: 30px 20px;
             box-sizing: border-box;
+            border-top: 5px solid var(--primary-color);
         }
 
+        /* ロゴ・ヘッダーエリア */
         h1 {
-            background: linear-gradient(135deg, #13ca5e, #0fa958);
-            color: white;
-            padding: 20px;
-            border-radius: 0 15px 0px 45px;
+            font-family: 'Noto Serif JP', serif;
+            color: var(--primary-color);
             text-align: center;
-            display: block;
-            margin: -20px -15px 20px -15px;
+            margin: 0 0 30px 0;
             font-size: 26px;
             font-weight: 600;
-            box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 0.05em;
         }
 
-        label {
+        h1 .logo-sub {
             display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
+            font-size: 14px;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #999;
+            margin-bottom: 5px;
+            letter-spacing: 0.1em;
         }
 
-        .label {
-            display: block;
-            margin-bottom: 10px;
-            padding: 3px;
-            font-weight: 600;
-            background-color: #13ca5e;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            text-align: center;
-            /* 中央揃え */
-            position: relative;
-            overflow: hidden;
-        }
-
-        input[type="text"],
-        input[type="tel"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .required-icon {
+        /* セクション見出し */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-top: 25px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            background: white;
-            color: #13ca5e;
-            font-weight: bold;
-            font-size: 0.9em;
-            border-radius: 4px;
-            padding: 2px 6px;
-            border: 2px solid #13ca5e;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
         }
 
+        /* 必須・任意バッジ */
+        .badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+            color: white;
+            font-weight: normal;
+        }
+        .required { background-color: #E57373; }
+        .optional { background-color: #BDBDBD; }
+
+        /* 入力フォーム共通 */
         input[type="text"],
         input[type="tel"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             box-sizing: border-box;
-            font-size: 16px;
-            transition: all 0.3s;
+            font-size: 15px;
+            background-color: #FAFAFA;
+            transition: 0.3s;
+            font-family: inherit;
+            appearance: none;
         }
 
-        .priority-buttons,
-        .demand-buttons,
-        .chance-buttons,
-        .Introduction-buttons,
-        .delivery-buttons,
-        .budgety-buttons,
-        .menu-buttons {
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(142, 142, 147, 0.2);
+        }
+
+        /* ラジオボタン・チェックボックスのボタンスタイル化 */
+        .selection-group {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .priority-buttons button,
-        .demand-buttons button,
-        .chance-buttons button,
-        .Introduction-buttons button,
-        .delivery-buttons button,
-        .budgety-buttons button,
-        .menu-buttons button {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #f7f7f7;
-            cursor: pointer;
-            box-sizing: border-box;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .priority-buttons button.active,
-        .demand-buttons button.active,
-        .chance-buttons button.active,
-        .Introduction-buttons button.active,
-        .delivery-buttons button.active,
-        .budgety-buttons button.active,
-        .menu-buttons button.active {
-            background-color: #444;
-            color: #fff;
-        }
-
-        .date-inputs input[type="datetime-local"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 4px;
-            background-color: #322a25;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .menu-section {
-            display: none;
-        }
-
-        .menu-section.active {
-            display: block;
-        }
-
-        .current-month {
-            font-size: 16px;
-            font-weight: bold;
-            color: #444;
-        }
-
-        .menu-section {
-            display: none;
-        }
-
-        .menu-section.active {
-            display: block;
-        }
-
-        #repairLabel,
-        #repairButtons {
-            display: none;
-        }
-
-        .highlight-background {
-            background-color: #f9f9d6;
-            padding: 10px;
-            border-radius: 10px;
             margin-bottom: 15px;
-            margin-top: 10px;
-            /* 上に余白を追加 */
         }
 
-        .datetime-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            color: #aaa;
-            font-size: 16px;
-            pointer-events: none;
-            transition: all 0.3s ease;
-        }
-
-        /* 基本スタイル */
-        .info-text {
-            margin: 20px 0;
-            font-family: "Noto Sans JP", "Roboto", sans-serif;
-            font-size: 14px;
-            color: #333;
-            /* 読みやすい濃い文字色 */
-            background-color: #f8f9fa;
-            line-height: 1.8;
-            text-align: left;
-            word-wrap: break-word;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            max-width: 800px;
-            /* 横幅制限 */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            /* 軽い影を追加 */
-            overflow-y: auto;
-            /* 長文スクロール対応 */
-        }
-
-        /* 見出しスタイル */
-        .info-text h1 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .info-text h2 {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 15px;
-            margin-bottom: 8px;
-        }
-
-        /* 強調テキスト */
-        .info-text strong {
-            color: #007bff;
-        }
-
-        /* モバイル向け調整 */
-        @media (max-width: 768px) {
-            .info-text {
-                font-size: 13px;
-                padding: 15px;
-                max-width: 100%;
-            }
-
-            .info-text h1 {
-                font-size: 16px;
-            }
-
-            .info-text h2 {
-                font-size: 14px;
-            }
-        }
-
-        .info-textmemo {
-            margin-top: 20px;
-            /* 上の余白 */
-            margin-bottom: 10px;
-            /* 下に白い隙間を追加 */
-            font-size: 13px;
-            color: #000000;
-            line-height: 1.5;
-            text-align: center;
-            word-wrap: break-word;
-            background-color: #eef9f5;
-            /* 青っぽい背景色を追加 */
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        /* 携帯端末向けのレスポンシブデザイン */
-        @media (max-width: 768px) {
-            .info-textmemo {
-                font-size: 11.5px;
-                /* スマホでは少し小さく */
-                margin-top: 10px;
-                /* 上下のマージンを調整 */
-                line-height: 2.0;
-                /* テキストの高さ調整 */
-            }
-        }
-
-
-        /* 100点の予約フォームCSS */
-
-        input:focus,
-        textarea:focus {
-            border-color: #13ca5e;
-            outline: none;
-            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-        }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background-color: #13ca5e;
-            color: #000000;
-            font-size: 16px;
+        .check-box-label {
+            flex: 1 1 45%;
+            position: relative;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
-        button:hover {
-            background-color: #e9e9e9;
-            transform: scale(1.05);
+        .check-box-label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
         }
 
+        .custom-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 5px;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        /* 選択時のスタイル */
+        .check-box-label input:checked ~ .custom-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(142, 142, 147, 0.3);
+        }
+
+        /* サブカテゴリ（商品リスト）コンテナ */
+        .subcategory-container {
+            background-color: #f7f7f7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px dashed var(--primary-color);
+        }
+        
+        .subcategory-container.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .subcategory-title {
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 確認エリア */
+        #displayInfo {
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #eee;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 送信ボタン */
         .submit-button {
             width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            background-color: #dc3545;
-        }
-
-        .submit-button:hover {
-            background-color: #c82333;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            h1 {
-                font-size: 22px;
-            }
-
-            input,
-            button {
-                font-size: 14px;
-            }
-        }
-
-        button.active {
-            outline: 2px solid #696969;
-            /* ここで枠線を指定 */
-            outline-offset: 2px;
-        }
-
-        /* 必須マークのスタイル */
-        .required {
-            color: #ffffff;
-            /* ゴールド（黄色） */
-            font-weight: lighter;
-            /* 文字を細くする */
-            font-size: 0.6em;
-            margin-left: 5px;
-            vertical-align: 0.8em;
-            /* 位置を少し上に調整 */
-
-            /* 白色背景の四角形 */
-            background-color: rgb(255, 15, 15);
-            padding: 0 5px;
-            border-radius: 3px;
-            margin-right: 5px;
-        }
-
-        .current-month {
-            text-align: center;
-            display: block;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, -10px);
-            /* Y方向に上げる */
-            background-color: #13ca5e;
-            color: #fff;
-            padding: 3px 12px;
-            /* ボックスのパディングを縮小 */
-            border-radius: 8px;
-            /* 角の丸みを少し減少 */
-            font-size: 1.4rem;
-            /* フォントサイズを小さく */
+            padding: 18px;
+            font-size: 16px;
             font-weight: bold;
-            box-shadow: 0 2px 6px rgba(47, 103, 167, 0.2);
-            /* 影も控えめに */
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+            letter-spacing: 0.05em;
         }
 
-        /* ナビゲーションバー */
-        .sidebar {
-            position: fixed;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #1e1e2d;
-            padding: 10px;
-            border-radius: 10px 0 0 10px;
-            z-index: 1000;
+        .submit-button:active {
+            transform: scale(0.98);
         }
 
-        .sidebar a {
-            display: block;
-            padding: 15px;
-            color: white;
-            text-decoration: none;
-            text-align: center;
-            font-size: 14px;
-            margin-bottom: 10px;
-            background: #4a90e2;
-            border-radius: 5px;
-            transition: background 0.3s;
+        /* カレンダー入力用 */
+        .date-picker-wrapper {
+            position: relative;
         }
 
-        .sidebar a:hover {
-            background: #357ac4;
+        /* 無効化されたセレクトボックス */
+        select:disabled {
+            background-color: #eeeeee;
+            color: #aaaaaa;
+            cursor: not-allowed;
         }
-
-        /* スクロール用のセクション */
-        .section {
-            padding: 50px 10px;
-            margin-top: 30px;
+        
+        /* スマホ調整 */
+        @media (max-width: 480px) {
+            .check-box-label {
+                flex: 1 1 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- 右側の追従ナビ -->
-    <div class="side-nav" id="sideNav">
-        <a href="#section-message">
-            <span>⇩</span>
-            <i class="fas fa-comment"></i>
-        </a>
-    </div>
 
-    <!--編集箇所（見た目部分）-->
     <div class="container">
-        <h1>KwaatsiWam<br>アンケートフォーム</h1>
-        <div class="info-text">以下全て入力後【アンケート送信】ボタンを押してください。</div>
-        <div class="label"><span class="required">必須</span>お名前を教えてください。</div>
-        <textarea id="message" rows="1" placeholder="入力してください"></textarea> <!-- メッセージ入力フィールド -->
+        <h1>
+            <span class="logo-sub">beauty salon</span>
+            Natubelle
+        </h1>
 
-        <div class="label">性別を教えてください。</div>
-        <div class="priority-buttons">
-            <button type="button" id="onepriority" onclick="selectpriority(this)"> 男性</button>
-            <button type="button" id="twopriority" onclick="selectpriority(this)">女性</button>
-            <button type="button" id="threepriority" onclick="selectpriority(this)">その他</button>
+        <div class="section-title">お名前<span class="badge required">必須</span></div>
+        <input type="text" id="name" placeholder="例）山田 花子">
+
+        <div class="section-title">電話番号<span class="badge required">必須</span></div>
+        <input type="tel" id="phone" placeholder="例）090-1234-5678">
+
+        <div class="section-title">①ご依頼内容<span class="badge required">必須</span></div>
+        <div class="selection-group">
+            <label class="check-box-label">
+                <input type="radio" name="requestType" value="取り置き" onchange="updateSummary()">
+                <span class="custom-btn">取り置き</span>
+            </label>
+            <label class="check-box-label">
+                <input type="radio" name="requestType" value="お問い合わせ" onchange="updateSummary()">
+                <span class="custom-btn">お問い合わせ</span>
+            </label>
         </div>
 
-        <div class="label"><span class="required">必須</span>何月生まれですか？</div>
-        <div class="demand-buttons">
-            <button type="button" id="onedemand" onclick="selectdemand(this)">1月</button>
-            <button type="button" id="twodemand" onclick="selectdemand(this)">2月</button>
-            <button type="button" id="threedemand" onclick="selectdemand(this)">3月</button>
-            <button type="button" id="fourdemand" onclick="selectdemand(this)">4月</button>
-            <button type="button" id="fivedemand" onclick="selectdemand(this)">5月</button>
-            <button type="button" id="sixdemand" onclick="selectdemand(this)">6月</button>
-            <button type="button" id="sevendemand" onclick="selectdemand(this)"> 7月</button>
-            <button type="button" id="eightdemand" onclick="selectdemand(this)">8月</button>
-            <button type="button" id="ninedemand" onclick="selectdemand(this)">9月</button>
-            <button type="button" id="tendemand" onclick="selectdemand(this)">10月</button>
-            <button type="button" id="elevendemand" onclick="selectdemand(this)">11月</button>
-            <button type="button" id="twelvedemand" onclick="selectdemand(this)">12月</button>
+        <div class="section-title">②商品カテゴリー<span class="badge required">必須・複数可</span></div>
+        <div class="selection-group">
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="eyelash" onchange="toggleCategory('eyelash')">
+                <span class="custom-btn">まつ毛</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="maremove" onchange="toggleCategory('maremove')">
+                <span class="custom-btn">maremove</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="hitoyorai" onchange="toggleCategory('hitoyorai')">
+                <span class="custom-btn">HITOYORAI</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="c0107" onchange="toggleCategory('c0107')">
+                <span class="custom-btn">0107</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="aiplus" onchange="toggleCategory('aiplus')">
+                <span class="custom-btn">ai PLUS</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="emute" onchange="toggleCategory('emute')">
+                <span class="custom-btn">emute</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="spicare" onchange="toggleCategory('spicare')">
+                <span class="custom-btn">SPICARE</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="other" onchange="toggleCategory('other')">
+                <span class="custom-btn">その他</span>
+            </label>
         </div>
 
-        <div class="label"><span class="required">必須</span>ご年代を教えてください。</div>
-        <div class="chance-buttons">
-            <button type="button" id="onechance" onclick="selectchance(this)">10代</button>
-            <button type="button" id="twochance" onclick="selectchance(this)">20代</button>
-            <button type="button" id="threechance" onclick="selectchance(this)">30代</button>
-            <button type="button" id="fourchance" onclick="selectchance(this)">40代</button>
-            <button type="button" id="fivechance" onclick="selectchance(this)">50代</button>
-            <button type="button" id="sixchance" onclick="selectchance(this)">60代</button>
-            <button type="button" id="sevenchance" onclick="selectchance(this)">70代</button>
-            <button type="button" id="eightchance" onclick="selectchance(this)">80代以上</button>
+        <div id="cat-eyelash" class="subcategory-container">
+            <div class="subcategory-title">◆ まつ毛 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="きーぷっぷ"><span class="custom-btn">きーぷっぷ</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="エグータム"><span class="custom-btn">エグータム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="エグータムプレミアム"><span class="custom-btn">エグータムプレミアム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="ラッシュアディクト"><span class="custom-btn">ラッシュアディクト</span></label>
+            </div>
         </div>
 
-         <div class="label"><span class="required">必須</span>普段ご利用されているメニューを教えてください。（複数選択可）</div>
-        <div class="Introduction-buttons">
-            <button type="button" id="oneIntroduction" onclick="selectIntroduction(this)">カット</button>
-            <button type="button" id="twoIntroduction" onclick="selectIntroduction(this)">カラー</button>
-            <button type="button" id="twoIntroduction" onclick="selectIntroduction(this)">ヘナカラー</button>
-            <button type="button" id="threeIntroduction" onclick="selectIntroduction(this)">縮毛矯正 </button>
-            <button type="button" id="fourIntroduction" onclick="selectIntroduction(this)">パーマ</button>
-            <button type="button" id="fiveIntroduction" onclick="selectIntroduction(this)">トリートメント</button>
-            <button type="button" id="sixIntroduction" onclick="selectIntroduction(this)">ヘッドスパ</button>
-            <button type="button" id="sevenIntroduction" onclick="selectIntroduction(this)">その他</button>
+        <div id="cat-maremove" class="subcategory-container">
+            <div class="subcategory-title">◆ maremove 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="EGFセラム（美容液）"><span class="custom-btn">EGFセラム（美容液）</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="高保湿クリーム"><span class="custom-btn">高保湿クリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="H2スイッチ"><span class="custom-btn">H2スイッチ</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="プレミアムパック"><span class="custom-btn">プレミアムパック</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="365エブリデイパック"><span class="custom-btn">365エブリデイパック</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="チェンジマスク"><span class="custom-btn">チェンジマスク</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="日焼け止め"><span class="custom-btn">日焼け止め</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="おましゃん"><span class="custom-btn">おましゃん</span></label>
+            </div>
         </div>
 
-        <div class="label">興味のあるメニューを教えてください。（複数選択可）</div>
-        <div class="delivery-buttons">
-            <button type="button" id="onedelivery" onclick="selectdelivery(this)">縮毛矯正</button>
-            <button type="button" id="twodelivery" onclick="selectdelivery(this)">パーマ </button>
-            <button type="button" id="threedelivery" onclick="selectdelivery(this)">カラー</button>
-            <button type="button" id="fourdelivery" onclick="selectdelivery(this)">ヘナカラー</button>
-            <button type="button" id="fivedelivery" onclick="selectdelivery(this)">アクセサリーカラーやハイライトなど</button>
-            <button type="button" id="sixdelivery" onclick="selectdelivery(this)">トリートメント</button>
-            <button type="button" id="sevendelivery" onclick="selectdelivery(this)">ヘッドスパ</button>
-            <button type="button" id="fivedelivery" onclick="selectdelivery(this)">眉毛カット</button>
-            <button type="button" id="sixdelivery" onclick="selectdelivery(this)">まつ毛パーマ</button>
-            <button type="button" id="sevendelivery" onclick="selectdelivery(this)">健康食品・美容サプリメント</button>
-            <button type="button" id="eightdelivery" onclick="selectdelivery(this)">その他</button>
+        <div id="cat-hitoyorai" class="subcategory-container">
+            <div class="subcategory-title">◆ HITOYORAI 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="トライアルセット"><span class="custom-btn">トライアルセット</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="ローション"><span class="custom-btn">ローション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="乳液"><span class="custom-btn">乳液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="セラム（美容液）"><span class="custom-btn">セラム（美容液）</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クリーム"><span class="custom-btn">クリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="パック"><span class="custom-btn">パック</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="洗顔"><span class="custom-btn">洗顔</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="日焼け止め"><span class="custom-btn">日焼け止め</span></label>
+            </div>
         </div>
 
-        <button class="submit-button" onclick="submitForm()" div id="section-message">送信</button>
+        <div id="cat-c0107" class="subcategory-container">
+            <div class="subcategory-title">◆ 0107 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="化粧水"><span class="custom-btn">化粧水</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クリーム"><span class="custom-btn">クリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="UVクリーム"><span class="custom-btn">UVクリーム</span></label>
+            </div>
+        </div>
+
+        <div id="cat-aiplus" class="subcategory-container">
+            <div class="subcategory-title">◆ ai PLUS 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="鎮静/修復 美容液"><span class="custom-btn">鎮静/修復 美容液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="引き締め/毛穴改善 美容液"><span class="custom-btn">引き締め/毛穴改善　美容液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="美白 美容液"><span class="custom-btn">美白 美容液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="フェイスマスク30枚入り"><span class="custom-btn">フェイスマスク30枚入り</span></label>
+            </div>
+        </div>
+
+        <div id="cat-emute" class="subcategory-container">
+            <div class="subcategory-title">◆ emute 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="リッチプラセラム"><span class="custom-btn">リッチプラセラム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="リッチミルククリーム"><span class="custom-btn">リッチミルククリーム</span></label>
+            </div>
+        </div>
+
+        <div id="cat-spicare" class="subcategory-container">
+            <div class="subcategory-title">◆ SPICARE 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="インテリジェントファンデーション"><span class="custom-btn">インテリジェントファンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="V3エキサイティングファンデーション"><span class="custom-btn">V3エキサイティングファンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="V3ブリリアントファンデーション"><span class="custom-btn">V3ブリリアントファンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="シャイニングファンデーション"><span class="custom-btn">シャイニングフェンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング洗顔"><span class="custom-btn">クレンジング洗顔</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="化粧水"><span class="custom-btn">化粧水</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="乳液"><span class="custom-btn">乳液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クリーム"><span class="custom-btn">クリーム</span></label>
+            </div>
+        </div>
+
+        <div id="cat-other" class="subcategory-container">
+            <div class="subcategory-title">◆ その他 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="ビューティーパウダー（プロテイン）"><span class="custom-btn">ビューティーパウダー（プロテイン）</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="天恵石鹸"><span class="custom-btn">天恵石鹸</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="スピケアボディウォッシュ"><span class="custom-btn">スピケアボディウォッシュ</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="スピケアボディクリーム"><span class="custom-btn">スピケアボディクリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="エキスパートローション"><span class="custom-btn">エキスパートローション</span></label>
+            </div>
+        </div>
+
+
+        <div class="section-title">③本数・詳細<span class="badge optional">任意</span></div>
+        <textarea id="quantity" rows="2" placeholder="例）エグータム2本、ビューティーパウダー（プロテイン）1つ取り置きお願いします。"></textarea>
+
+
+        <div class="section-title">④施術時に受け取りますか？<span class="badge optional">任意</span></div>
+        <div class="selection-group">
+            <label class="check-box-label">
+                <input type="radio" name="pickupMethod" value="はい" onchange="toggleDate(false)">
+                <span class="custom-btn">はい</span>
+            </label>
+            <label class="check-box-label">
+                <input type="radio" name="pickupMethod" value="いいえ" onchange="toggleDate(true)">
+                <span class="custom-btn">いいえ</span>
+            </label>
+        </div>
+
+
+        <div id="date-section" style="display:none;">
+            <div class="section-title">⑤受取希望日<span class="badge optional">任意</span></div>
+            <div class="date-picker-wrapper">
+                <select id="pickupDate">
+                   </select>
+            </div>
+            <div class="date-picker-wrapper" style="margin-top:10px;">
+                 <select id="pickupTime" disabled>
+                    <option value="" selected>日付を先に選択してください</option>
+                 </select>
+            </div>
+        </div>
+
+        <div class="section-title">確認</div>
+        <div id="displayInfo">
+            内容を入力するとここに表示されます
+        </div>
+
+        <button class="submit-button" onclick="submitForm()">予約・注文を確定する</button>
+
     </div>
-    <!-------------------------------------------------->
 
-    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script> <!-- LIFF SDKの読み込み -->
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        let priorityCount = '';
-        let demandCount = '';
-        let chanceCount = '';
-        let IntroductionCount = '';
-        let deliveryCount = '';
-
         // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk' // ここにあなたのLIFF IDを入力*********************忘れない！！！！******************************
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
-                // LIFF初期化成功時の処理
-                console.log('LIFF初期化成功');
+                console.log('LIFF OK');
             }).catch((err) => {
-                // LIFF初期化失敗時の処理
-                console.error('LIFF初期化失敗', err);
+                console.log('LIFF Error', err);
             });
+
+            // 名前・電話番号の復元
+            const savedName = localStorage.getItem('name');
+            const savedPhone = localStorage.getItem('phone');
+            if (savedName) document.getElementById('name').value = savedName;
+            if (savedPhone) document.getElementById('phone').value = savedPhone;
+
+            // 日付生成
+            initDateSelect();
         });
 
-        // プレースホルダーを非表示にする関数
-        function hidePlaceholder(placeholderId) {
-            document.getElementById(placeholderId).style.display = 'none';
+        // カテゴリ表示切替
+        function toggleCategory(categoryId) {
+            const container = document.getElementById('cat-' + categoryId);
+            const checkboxes = document.querySelectorAll(`input[name="category"][value="${categoryId}"]`);
+            
+            // チェックボックスの状態を確認
+            if (checkboxes[0].checked) {
+                container.classList.add('active');
+            } else {
+                container.classList.remove('active');
+            }
+            updateSummary();
         }
 
-        // プレースホルダーを表示する関数（入力がない場合）
-        function showPlaceholder(inputId, placeholderId) {
-            const input = document.getElementById(inputId);
-            if (!input.value) {
-                document.getElementById(placeholderId).style.display = 'inline';
+        // 受取日表示切替
+        function toggleDate(show) {
+            const sec = document.getElementById('date-section');
+            sec.style.display = show ? 'block' : 'none';
+            updateSummary();
+        }
+
+        // 日付セレクトボックス生成
+        function initDateSelect() {
+            const select = document.getElementById('pickupDate');
+            const d = new Date();
+            const weeks = ['日', '月', '火', '水', '木', '金', '土'];
+            
+            select.innerHTML = '<option value="" selected>日付を選択</option>';
+
+            for(let i=0; i<30; i++) {
+                const y = d.getFullYear();
+                const m = d.getMonth() + 1;
+                const da = d.getDate();
+                const w = weeks[d.getDay()];
+                const val = `${y}/${m}/${da}`;
+                const text = `${m}/${da} (${w})`;
+                
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.text = text;
+                select.appendChild(opt);
+                
+                d.setDate(d.getDate() + 1);
             }
         }
 
-        function selectpriority(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.priority-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
+        // 時間オプション生成（曜日判定）
+        function updateTimeOptions() {
+            const dateVal = document.getElementById('pickupDate').value;
+            const timeSelect = document.getElementById('pickupTime');
+            
+            // 初期化
+            timeSelect.innerHTML = '<option value="" selected>時間を選択</option>';
 
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            priorityCount = element.innerText;
-        }
-
-        function selectdemand(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.demand-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
-
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            demandCount = element.innerText;
-        }
-
-        function selectchance(element) {
-            // 単一選択項目の処理コード
-            const buttons = document.querySelectorAll('.chance-buttons button');
-            buttons.forEach(button => button.classList.remove('active'));
-
-            // 選択されたボタンだけにactiveクラスを追加
-            element.classList.add('active');
-            chanceCount = element.innerText;
-        }
-
-        //複数選択のコード
-        function selectIntroduction(element) {
-            // すでに active クラスが付いていれば外し、付いていなければ追加する（トグル）
-            element.classList.toggle('active');
-
-            // 選択されているすべてのボタンのテキストを取得して配列にする
-            const activeButtons = document.querySelectorAll('.Introduction-buttons button.active');
-            const selectedIntroductions = Array.from(activeButtons).map(button => button.innerText);
-
-            // 必要に応じて選択された内容を格納
-            IntroductionCount = selectedIntroductions;  // 配列として保持
-        }
-
-        function selectdelivery(element) {
-            // すでに active クラスが付いていれば外し、付いていなければ追加する（トグル）
-            element.classList.toggle('active');
-
-            // 選択されているすべてのボタンのテキストを取得して配列にする
-            const activeButtons = document.querySelectorAll('.delivery-buttons button.active');
-            const selecteddeliverys = Array.from(activeButtons).map(button => button.innerText);
-
-            // 必要に応じて選択された内容を格納
-            deliveryCount = selecteddeliverys;  // 配列として保持
-        }
-
-function submitForm() {
-            const message = document.getElementById('message').value;
-            // 以下の行は代入になっていないため、実質意味をなしていませんが
-            // 元のコードの変数をそのままformDataで使用するため残しています
-            priorityCount: priorityCount;
-            demandCount: demandCount;
-            chanceCount: chanceCount;
-            IntroductionCount: IntroductionCount;
-            deliveryCount: deliveryCount;
-
-            const formData = {
-                message,
-                priorityCount,
-                demandCount,
-                chanceCount,
-                IntroductionCount,
-                deliveryCount,
-            };
-
-            // フォームデータのチェック
-            if (!formData.message) {
-                alert('お名前を入力してください。');
+            if (!dateVal) {
+                timeSelect.disabled = true;
+                timeSelect.innerHTML = '<option value="" selected>日付を先に選択してください</option>';
                 return;
             }
 
-            // フォームデータのチェック
-            if (!formData.demandCount) {
-                alert('誕生日月をご選択ください。');
-                return;
+            timeSelect.disabled = false;
+            
+            // 日付オブジェクトから曜日取得
+            const date = new Date(dateVal);
+            const day = date.getDay(); // 0:日 ... 6:土
+
+            // 終了時間の設定
+            // 日(0)・土(6) -> 19:00まで
+            // 月(1)〜金(5) -> 18:00まで
+            let endHour = 18;
+            if (day === 0 || day === 6) {
+                endHour = 19;
             }
 
-            // フォームデータのチェック
-            if (!formData.chanceCount) {
-                alert('ご年代をご選択ください。');
-                return;
-            }
+            const startHour = 10;
 
-            // フォームデータのチェック
-            if (!formData.IntroductionCount || formData.IntroductionCount.length === 0) {
-                alert('普段ご利用されているメニューをご選択ください。');
-                return;
+            // 時間選択肢の生成
+            for (let h = startHour; h <= endHour; h++) {
+                const timeStr = h + ':00';
+                const opt = document.createElement('option');
+                opt.value = timeStr;
+                opt.text = timeStr;
+                timeSelect.appendChild(opt);
             }
+            
+            // 時間変更後も確認画面更新
+            updateSummary();
+        }
 
-            // LINEトークにメッセージを送信
-            // ★ここを修正しました★
-            liff.sendMessages([
-                {
-                    // 1つ目の吹き出し：アンケート回答
-                    type: 'text',
-                    text: `≪アンケート≫\n【お名前】\n・${formData.message}\n\n【性別】\n・${formData.priorityCount}\n\n【誕生月】\n・${formData.demandCount}\n\n【ご年代】\n・${formData.chanceCount}\n\n【普段ご利用されているメニュー】\n・${formData.IntroductionCount}\n\n【興味のあるメニュー】\n・${formData.deliveryCount}`
-                },
-                {
-                    // 2つ目の吹き出し：クーポン番号
-                    type: 'text',
-                    text: "クーポン番号-3h3ga33"
-                }
-            ]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('ご記入ありがとうございます。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-                // エラー内容をアラートで出すとデバッグしやすいです
-                alert('送信エラー: ' + err); 
+        // イベントリスナー: 日付変更時に時間を更新
+        document.getElementById('pickupDate').addEventListener('change', updateTimeOptions);
+        
+        // イベントリスナー: 時間変更時に確認画面更新
+        document.getElementById('pickupTime').addEventListener('change', updateSummary);
+
+        // 表示更新
+        function updateSummary() {
+            const name = document.getElementById('name').value;
+            const req = document.querySelector('input[name="requestType"]:checked');
+            
+            // 選択された商品
+            let products = [];
+            document.querySelectorAll('input[name="product"]:checked').forEach(el => {
+                products.push(el.value);
             });
+
+            const pickup = document.querySelector('input[name="pickupMethod"]:checked');
+            const pDate = document.getElementById('pickupDate').value;
+            const pTime = document.getElementById('pickupTime').value;
+
+            let html = `<strong>お名前：</strong> ${name}<br>`;
+            if(req) html += `<strong>ご依頼：</strong> ${req.value}<br>`;
+            if(products.length > 0) html += `<strong>商品：</strong><br>・${products.join('<br>・')}<br>`;
+            
+            const qty = document.getElementById('quantity').value;
+            if(qty) html += `<strong>詳細：</strong> ${qty}<br>`;
+
+            if(pickup) {
+                html += `<strong>受取：</strong> ${pickup.value === 'はい' ? '施術時' : '来店のみ'}<br>`;
+                if(pickup.value === 'いいえ' && pDate && pTime) {
+                    html += `<strong>希望日時：</strong> ${pDate} ${pTime}`;
+                }
+            }
+
+            document.getElementById('displayInfo').innerHTML = html;
         }
 
+        // その他のイベントリスナー登録
+        document.getElementById('name').addEventListener('input', () => {
+            localStorage.setItem('name', document.getElementById('name').value);
+            updateSummary();
+        });
+        document.getElementById('phone').addEventListener('input', () => {
+            localStorage.setItem('phone', document.getElementById('phone').value);
+            updateSummary();
+        });
+        document.getElementById('quantity').addEventListener('input', updateSummary);
+        
+        // 全チェックボックス・ラジオボタンにイベント付与
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => {
+            el.addEventListener('change', updateSummary);
+        });
+
+
+        // 送信処理
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const req = document.querySelector('input[name="requestType"]:checked');
+            
+            if(!name || !phone || !req) {
+                alert('必須項目（お名前・電話番号・ご依頼内容）を入力してください');
+                return;
+            }
+
+            // カテゴリが選択されているか確認
+            const cats = document.querySelectorAll('input[name="category"]:checked');
+            if(cats.length === 0) {
+                 alert('カテゴリーを選択してください');
+                 return;
+            }
+
+            // 商品リスト作成
+            let productList = [];
+            document.querySelectorAll('input[name="product"]:checked').forEach(p => productList.push(p.value));
+            
+            const qty = document.getElementById('quantity').value;
+            const pickup = document.querySelector('input[name="pickupMethod"]:checked');
+            const pDate = document.getElementById('pickupDate').value;
+            const pTime = document.getElementById('pickupTime').value;
+
+            let msg = `【予約・注文フォーム】\n`;
+            msg += `お名前：${name}\n`;
+            msg += `電話番号：${phone}\n`;
+            msg += `ご依頼内容：${req.value}\n`;
+            msg += `----------------\n`;
+            msg += `【選択商品】\n`;
+            if(productList.length > 0) {
+                msg += productList.join('\n') + '\n';
+            } else {
+                msg += '（カテゴリのみ選択）\n';
+            }
+            msg += `\n【詳細・本数】\n${qty}\n`;
+            
+            if(pickup) {
+                msg += `----------------\n`;
+                msg += `受取方法：${pickup.value === 'はい' ? '施術時受取' : '商品のみ受取'}\n`;
+                if(pickup.value === 'いいえ') {
+                    if(!pDate || !pTime) {
+                         alert('受取日時を選択してください');
+                         return;
+                    }
+                    msg += `受取希望日：${pDate} ${pTime}\n`;
+                }
+            }
+
+            // LIFF送信
+            if (!liff.isInClient()) {
+                alert('LINEアプリ内で開いてください。\n\n送信内容プレビュー:\n' + msg);
+            } else {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: msg
+                }]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+                    console.error('送信エラー', err);
+                    alert('送信に失敗しました。');
+                });
+            }
+        }
     </script>
 </body>
-
 </html>
