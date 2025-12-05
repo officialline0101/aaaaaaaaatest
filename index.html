@@ -199,31 +199,49 @@
             letter-spacing: 0.1em;
         }
 
-        /* 施術詳細テキストエリア */
+/* =========================================
+           施術詳細テキストエリア（修正版）
+           ========================================= */
         #treatment-text {
-            background-color: #fff;
+            background-color: #ffffff;
+            /* 少し温かみのある白背景 */
             padding: 20px;
-            border-radius: var(--border-radius);
+            border-radius: 8px;
+            /* 角丸を少し大きく */
             margin-top: 15px;
-            margin-bottom: 20px;
-            border: 1px solid var(--primary-color);
+            margin-bottom: 25px;
+            border: 1px solid #e6decb;
+            /* 薄いベージュの枠線 */
+            border-left: 5px solid var(--primary-color);
+            /* 左側にアクセントカラーの太線 */
             font-size: 14px;
             line-height: 1.8;
             color: #555;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(191, 159, 98, 0.1);
+            /* ほんのりゴールドの影 */
+            
+            /* アニメーション用設定 */
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            display: none; /* 初期状態 */
         }
 
-        /* 注意書き・インフォテキスト */
-        .info-text {
-            margin: 15px 0;
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-            text-align: center;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: var(--border-radius);
-            border: none;
+        /* 表示時のクラス */
+        #treatment-text.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 内部のテキストレイアウト調整 */
+        #treatment-text strong {
+            color: var(--primary-color);
+            font-size: 15px;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+            display: inline-block;
         }
 
         /* =========================================
@@ -882,56 +900,72 @@
             });
         });
 
-        function selectSymptom(button, treatmentId) {
+function selectSymptom(button, treatmentId) {
+            // 選択された日時をリセット
             selectedFullDate = '';
 
             const treatmentText = document.getElementById('treatment-text');
             const selectedMenusDisplay = document.getElementById("selected-menus-display");
 
+            // トグル処理
             if (button.classList.contains('active')) {
-                button.classList.remove('active'); 
+                button.classList.remove('active'); // 解除
             } else {
                 const activeCount = document.querySelectorAll('.symptoms button.active').length;
                 if (activeCount >= 9) return;
-                button.classList.add('active');   
+                button.classList.add('active'); // 選択
             }
 
+            // 最新状態の取得
             const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
 
+            // リセット
             selectedMenuTime = 0;
             selectedSymptom = [];
             menuPrice = 0;
 
+            // アニメーションクラスを一旦外す
+            treatmentText.classList.remove('show');
+
+            // 0件ならすべて隠す
             if (updatedSelectedButtons.length === 0) {
-                if (treatmentText) {
-                    treatmentText.style.display = 'none';
-                    treatmentText.innerHTML = '';
-                }
+                setTimeout(() => { treatmentText.style.display = 'none'; }, 300); // アニメーション後に消す
+                treatmentText.innerHTML = '';
+                
                 selectedMenusDisplay.style.display = 'none';
                 selectedMenusDisplay.innerHTML = '';
                 return;
             }
 
+            // 選択済みから再計算
             updatedSelectedButtons.forEach((btn) => {
                 const selectedMenuName = btn.textContent;
                 const category = btn.getAttribute('data-category') || 'メニュー';
-                selectedSymptom.push({ category, name: selectedMenuName });
+                selectedSymptom.push({
+                    category,
+                    name: selectedMenuName
+                });
                 selectedMenuTime += menuTimes[selectedMenuName] || 0;
                 menuPrice += parseInt(btn.getAttribute('data-price'), 10) || 0;
             });
 
+            // カレンダー更新
             if (typeof fetchAvailability === 'function') {
                 fetchAvailability(currentDate);
             }
 
+            // === ここが修正ポイント（表示位置とアニメーション） ===
+            
+            // 選択解除された場合は、詳細テキストを隠す
             if (!button.classList.contains('active')) {
-                if (treatmentText) {
-                    treatmentText.style.display = 'none';
-                    treatmentText.innerHTML = '';
-                }
+                // 他に選択されているボタンがあれば、その説明を表示し直すロジックも本来必要ですが、
+                // 今回の仕様では「最後にクリックしたものの詳細」または「非表示」とします。
+                treatmentText.classList.remove('show');
+                setTimeout(() => { treatmentText.style.display = 'none'; }, 300);
             } else {
+                // 表示内容を treatmentId で定義
                 let html = '';
-                // 施術内容の説明文（原文のHTMLをそのまま使用）
+                // (内容は元のまま)
                 if (treatmentId === 'treatment1') {
                     html = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
                 } else if (treatmentId === 'treatment2') {
@@ -993,14 +1027,26 @@
 
                 if (html) {
                     treatmentText.innerHTML = html;
-                    button.parentNode.insertBefore(treatmentText, button.nextSibling);
+                    
+                    // 【修正】ボタンの親要素（.symptoms）の後ろに挿入する
+                    const symptomsContainer = button.closest('.symptoms');
+                    if(symptomsContainer && symptomsContainer.parentNode) {
+                        symptomsContainer.parentNode.insertBefore(treatmentText, symptomsContainer.nextSibling);
+                    }
+                    
                     treatmentText.style.display = 'block';
+                    // 少し遅らせてクラスを追加することでアニメーションさせる
+                    setTimeout(() => {
+                        treatmentText.classList.add('show');
+                    }, 10);
                 } else {
+                    treatmentText.classList.remove('show');
+                    setTimeout(() => { treatmentText.style.display = 'none'; }, 300);
                     treatmentText.innerHTML = '';
-                    treatmentText.style.display = 'none';
                 }
             }
 
+            // 選択リストの描画
             if (selectedSymptom.length > 0) {
                 selectedMenusDisplay.innerHTML = `
             <div class="menu-items-wrapper">
@@ -1064,37 +1110,58 @@
             fetchAvailability(currentDate);
         }
 
-        function showMenu(menu) {
-            document.getElementById("treatment-text").style.display = "none";
+function showMenu(menu) {
+            // 1. 施術詳細テキスト（treatment-text）をリセットして非表示
+            const treatmentText = document.getElementById("treatment-text");
+            if (treatmentText) {
+                treatmentText.innerHTML = "";
+                treatmentText.style.display = "none";
+                treatmentText.classList.remove('show'); // アニメーション用クラスも削除
+            }
 
+            // 2. 【追加】選択済みメニュー表示（selected-menus-display）をリセットして非表示
+            const selectedMenusDisplay = document.getElementById("selected-menus-display");
+            if (selectedMenusDisplay) {
+                selectedMenusDisplay.innerHTML = "";
+                selectedMenusDisplay.style.display = "none";
+            }
+
+            // 3. メニューボタンの選択状態（activeクラス）の切り替え
             let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
             if (selectedButton) {
                 selectedMenu = selectedButton.innerText;
             }
 
+            // すべてのメニューボタンの選択状態をリセット
             document.querySelectorAll('.menu-sections button').forEach(button => {
                 button.classList.remove('active');
             });
 
+            // すべてのメニューセクション（#male, #femaleなど）を非表示
             document.querySelectorAll('.menu-section').forEach(section => {
                 section.classList.remove('active');
+                // セクション内の個別の選択ボタンもリセット
                 section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
             });
 
+            // 押されたボタンをactiveにする
             if (selectedButton) {
                 selectedButton.classList.add('active');
             }
 
+            // 対応するセクションを表示
             document.getElementById(menu).classList.add('active');
 
-            document.getElementById("treatment-text").innerHTML = "";
 
-            selectedSymptom = [];      
-            irradiationsCount = '';    
-            menuPrice = 0;             
-            optionsPrice = 0;          
-            totalAmount = 0;           
-
+            // 4. 内部変数のリセット
+            selectedSymptom = [];      // メニュー配列リセット
+            irradiationsCount = '';    // オプション文字列リセット
+            menuPrice = 0;             // メニュー価格リセット
+            optionsPrice = 0;          // オプション価格リセット
+            totalAmount = 0;           // 合計金額リセット
+            selectedMenuTime = 0;      // 時間リセット
+            
+            // 5. 下部の「ご予約内容確認」エリアを更新
             updateDisplayInfo();
         }
 
