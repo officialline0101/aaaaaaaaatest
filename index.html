@@ -899,17 +899,41 @@
         // エラー防止用のダミー定義（元のコードで参照されているが定義が見当たらないため追加）
         let processingTimes = {}; 
 
-        document.addEventListener('DOMContentLoaded', function () {
-            liff.init({
-                liffId: '2008127855-8DMjKORD'
-            }).then(() => {
-                console.log('LIFF初期化成功');
-            }).catch((err) => {
-                console.log('LIFF初期化失敗', err);
-            });
+const processingImages = {
+        'シルクスクリーン': 'https://www.dropbox.com/scl/fi/wp6p8apdkk4ws6zxou7ll/.jpg?rlkey=fuli6rtzycmdlmozbktaobzbz&st=svchxaq3&raw=1',
+        'DTFプリント': 'https://www.dropbox.com/scl/fi/1e16jdutvd0tuebp1n9qc/DTF.jpg?rlkey=5rwepit3vay93och3u775utn9&st=fylw0dch&raw=1',
+        '刺繍': 'https://www.dropbox.com/scl/fi/l83qp1g4ocnry2odjrg7m/.jpg?rlkey=poi1th0zogfq742ju5vh2ltxz&st=vxtyaqve&raw=1'
+    };
 
-            fetchAvailability(currentDate);
+    // ★追加：画像を先読み（プリロード）する関数
+    function preloadImages() {
+        Object.values(processingImages).forEach(url => {
+            const img = new Image();
+            img.src = url;
         });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        liff.init({
+            liffId: '2008127855-8DMjKORD'
+        }).then(() => {
+            console.log('LIFF初期化成功');
+        }).catch((err) => {
+            console.log('LIFF初期化失敗', err);
+        });
+
+// ★追加：ページ読み込み時に画像を裏でダウンロード開始
+        preloadImages();
+
+        fetchAvailability(currentDate);
+        
+        // ★追加：初期状態でカレンダー等は隠す
+        const calContainer = document.querySelector('.calendar-container');
+        if(calContainer) calContainer.style.display = 'none';
+        
+        // ★追加：初期復元処理（もし以前の入力があれば）
+        // restorePreviousSelections(); // 必要であれば実装
+    });
 
         // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let visitTimes = {
@@ -1105,52 +1129,38 @@
             // ... (元のコードのselectirradiationsロジック) ...
         }
 
-        function selectprocessing(element) {
-            // 選択された日時をリセット
-            selectedFullDate = '';
+function selectprocessing(element) {
+        // 選択された日時をリセット
+        selectedFullDate = '';
 
-            document.getElementById('firstprocessing').classList.remove('active');
-            document.getElementById('repeatprocessing').classList.remove('active');
-            document.getElementById('sanprocessing').classList.remove('active');
-            element.classList.add('active');
-            processingCount = element.innerText;
+        document.getElementById('firstprocessing').classList.remove('active');
+        document.getElementById('repeatprocessing').classList.remove('active');
+        document.getElementById('sanprocessing').classList.remove('active');
+        element.classList.add('active');
+        processingCount = element.innerText;
 
-            // ★追加ロジック: 画像の切り替え表示
-            const imgContainer = document.getElementById('processing-image-container');
-            const imgElement = document.getElementById('processing-image');
+        // ★変更：画像表示ロジック（先読みしたリストを使用）
+        const imgContainer = document.getElementById('processing-image-container');
+        const imgElement = document.getElementById('processing-image');
+        
+        if (processingImages[processingCount]) {
+            imgElement.src = processingImages[processingCount];
+            imgContainer.style.display = 'block';
             
-            // 画像URLマップ（dl=0 を raw=1 に変更済み）
-            const images = {
-                'シルクスクリーン': 'https://www.dropbox.com/scl/fi/wp6p8apdkk4ws6zxou7ll/.jpg?rlkey=fuli6rtzycmdlmozbktaobzbz&st=svchxaq3&raw=1',
-                'DTFプリント': 'https://www.dropbox.com/scl/fi/1e16jdutvd0tuebp1n9qc/DTF.jpg?rlkey=5rwepit3vay93och3u775utn9&st=fylw0dch&raw=1',
-                '刺繍': 'https://www.dropbox.com/scl/fi/l83qp1g4ocnry2odjrg7m/.jpg?rlkey=poi1th0zogfq742ju5vh2ltxz&st=vxtyaqve&raw=1'
-            };
-
-            // 画像を設定して表示
-            if (images[processingCount]) {
-                imgElement.src = images[processingCount];
-                imgContainer.style.display = 'block';
-                // アニメーションをリセットするために一度クラスを削除して追加（オプション）
-                imgContainer.classList.remove('processing-image-wrapper');
-                void imgContainer.offsetWidth; // リフロー
-                imgContainer.classList.add('processing-image-wrapper');
-            } else {
-                imgContainer.style.display = 'none';
-            }
-            // ★追加ロジック終了
-
-            // 選択された訪問回数に対応する時間を取得
-            // ※元コードに processingTimes の定義がなかったため、エラー回避のためチェックを追加
-            if (typeof processingTimes !== 'undefined' && processingTimes[processingCount]) {
-                 // 変数 selectedprocessingTime も宣言が見当たらないため、必要なら var か let で定義が必要ですが、
-                 // とりあえず既存の構造を壊さないようにコメントアウトで示唆のみにします。
-                 // selectedprocessingTime = processingTimes[processingCount];
-                 // console.log('選択された訪問回数の時間:', selectedprocessingTime);
-            }
-
-            // カレンダーを更新するために取得する日付を渡す
-            fetchAvailability(currentDate);
+            // アニメーションの再発火（フワッと出す）
+            imgContainer.classList.remove('processing-image-wrapper');
+            void imgContainer.offsetWidth; // リフロー強制
+            imgContainer.classList.add('processing-image-wrapper');
+        } else {
+            imgContainer.style.display = 'none';
         }
+
+        // カレンダー更新など
+        if (typeof processingTimes !== 'undefined' && processingTimes[processingCount]) {
+             // selectedprocessingTime = processingTimes[processingCount];
+        }
+        fetchAvailability(currentDate);
+    }
 
         function selectVisit(element) {
             // 選択された日時をリセット
