@@ -691,13 +691,19 @@ async function submitForm() {
 
     const date1 = formatDateTime(document.getElementById('date1').value);
     const date2 = formatDateTime(document.getElementById('date2').value);
-    const date3 = formatDateTime(document.getElementById('date3').value);
+
+    // ★ 第三希望は「生の値」を先に取る
+    const rawDate3 = document.getElementById('date3').value;
+    const date3 = formatDateTime(rawDate3);
 
     const visit = visitCountType === "first" ? "1回目"
               : visitCountType === "repeat" ? "2回目以降"
               : "未選択";
 
     const menu = selectedMenuData ? selectedMenuData.name : "未選択";
+
+    // ★ 第三希望があるときだけ追加
+    const thirdLine = rawDate3 ? `\n第三希望：${date3}` : "";
 
     const message =
 `【予約が入りました】
@@ -707,10 +713,8 @@ async function submitForm() {
 メニュー：${menu}
 
 第一希望：${date1}
-第二希望：${date2}
-第三希望：${date3}`;
+第二希望：${date2}${thirdLine}`;
 
-    // ▼ ここで LIFF から返信
     await liff.sendMessages([
         {
             type: "text",
