@@ -4,1128 +4,666 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予約フォーム</title>
+    <title>Natubelle 予約・注文フォーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        /* =========================================
-           全体設定（リクエストのデザインを適用）
-           ========================================= */
+        /* --- カラーパレット設定 --- */
+        :root {
+            --primary-color: #8E8E93; /* 石目調グレー */
+            --primary-light: #F2F2F7; /* 背景用の薄いグレー */
+            --accent-color: #D4AF37; /* 上品なゴールド */
+            --text-color: #4A4A4A; /* 柔らかい黒 */
+            --white: #ffffff;
+            --border-radius: 20px; /* 女性らしい丸み */
+        }
+
         body {
-            font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "HGS Mincho E", serif;
-            background-color: #aaaaaa; /* 画像の背景色に合わせたグレー */
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--primary-light);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 0 60px 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px 0;
-            color: #333;
         }
 
         .container {
-            background-color: #fff;
-            border-radius: 4px; /* 角を少しだけ丸くして上品に */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            width: 90%;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            width: 94%;
             max-width: 600px;
-            padding: 30px;
+            padding: 30px 20px;
             box-sizing: border-box;
-            margin: 0 auto;
+            border-top: 5px solid var(--primary-color);
         }
 
-        /* =========================================
-           ヘッダー・タイトル
-           ========================================= */
+        /* ロゴ・ヘッダーエリア */
         h1 {
-            color: #333;
+            font-family: 'Noto Serif JP', serif;
+            color: var(--primary-color);
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
-            font-weight: normal;
-            letter-spacing: 0.1em;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 15px;
-            background: none; /* 元の背景を削除 */
-            box-shadow: none; /* 元の影を削除 */
-            border-radius: 0;
-        }
-
-        /* =========================================
-           ラベル・テキスト
-           ========================================= */
-        .label, .labelContent {
-            display: block;
-            margin-top: 25px;
-            margin-bottom: 8px;
+            margin: 0 0 30px 0;
+            font-size: 26px;
             font-weight: 600;
-            font-size: 15px;
-            color: #000;
-            background: none; /* 元の背景色を削除 */
-            padding: 0;
-            text-align: left;
-            text-indent: 0;
-            border-radius: 0;
+            letter-spacing: 0.05em;
         }
 
-        /* 必須マーク（黒背景・白文字） */
-        .required {
-            background-color: #333;
-            color: #fff;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 2px;
-            margin-left: 8px;
-            vertical-align: middle;
+        h1 .logo-sub {
+            display: block;
+            font-size: 14px;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #999;
+            margin-bottom: 5px;
+            letter-spacing: 0.1em;
+        }
+
+        /* セクション見出し */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-top: 25px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        /* 必須・任意バッジ */
+        .badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: auto;
+            color: white;
             font-weight: normal;
         }
+        .required { background-color: #E57373; }
+        .optional { background-color: #BDBDBD; }
 
-        /* =========================================
-           入力フィールド
-           ========================================= */
+        /* 入力フォーム共通 */
         input[type="text"],
         input[type="tel"],
-        input[type="datetime-local"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 5px;
-            border: 1px solid #ccc;
-            border-radius: 0px; /* 高級感を出すため角丸をなくす */
-            box-sizing: border-box;
-            font-size: 16px;
-            font-family: sans-serif; /* 入力文字は読みやすいゴシック体 */
-            background-color: #f9f9f9;
-            transition: all 0.3s;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: #555;
-            outline: none;
-            background-color: #fff;
-            box-shadow: none;
-        }
-
-        /* =========================================
-           ボタンエリア（来院回数・症状など）
-           ========================================= */
-        .visit-buttons,
-        .symptoms,
-        .menu-sections,
-        .irradiations,
-        .week-button-container,
-        .month-button-container {
-            display: flex;
-            gap: 10px;
+            padding: 12px 15px;
             margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        
-        /* 共通ボタンスタイル */
-        .visit-buttons button,
-        .symptoms button,
-        .menu-sections button,
-        .irradiations button,
-        .week-button,
-        .month-button {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: "Yu Mincho", serif;
-            border-radius: 0; /* 角丸なし */
-        }
-
-        /* 選択時・ホバー時 */
-        .visit-buttons button.active,
-        .symptoms button.active,
-        .menu-sections button.active,
-        .irradiations button.active,
-        .visit-buttons button:hover {
-            background-color: #333; /* 黒 */
-            color: #fff;
-            border-color: #333;
-            transform: none; /* 元の拡大エフェクトを削除 */
-        }
-        
-        .week-button:hover,
-        .month-button:hover {
-            background-color: #fff; /* 黒 */
-            color: #333;
-            border-color: #ccc;
-            transform: none; /* 元の拡大エフェクトを削除 */
-        }
-
-        .week-button:active,
-        .month-button:active {
-             transform: scale(0.98);
-        }
-
-        /* =========================================
-           カレンダーデザイン
-           ========================================= */
-        .calendar-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        .current-month-container {
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .current-month {
-            font-size: 18px;
-            font-weight: normal;
-            color: #333;
-            background: none;
-            padding: 0;
-            position: static;
-            transform: none;
-            box-shadow: none;
-            display: block;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-
-        .calendar {
-            width: 100%;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .calendar table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        .calendar th,
-        .calendar td {
-            font-size: 12px;
-            text-align: center;
-            padding: 8px 2px;
-            cursor: pointer;
-            border: 1px solid #eee;
-            font-family: sans-serif; /* 数字は見やすくゴシック */
-        }
-
-        .calendar th {
-            background-color: #f4f4f4;
-            color: #555;
-            font-weight: normal;
-        }
-
-        /* 選択されたセル */
-        .calendar td.selected {
-            background-color: #333 !important;
-            color: #fff !important;
-        }
-
-        .calendar td:hover {
-            background-color: #eee;
-        }
-        
-        .calendar td.unavailable {
-            background-color: #b6b6b6;
-            color: #f3f3f3;
-            pointer-events: none;
-        }
-
-        .calendar td.available {
-            color: #333;
-        }
-
-        /* =========================================
-           注意書き・ハイライトエリア
-           ========================================= */
-        .highlight-background {
-            background-color: #f4f4f4; /* 薄いグレーに変更 */
             border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
+            background-color: #FAFAFA;
+            transition: 0.3s;
+            font-family: inherit;
+            appearance: none;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(142, 142, 147, 0.2);
+        }
+
+        /* ラジオボタン・チェックボックスのボタンスタイル化 */
+        .selection-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .check-box-label {
+            flex: 1 1 45%;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .check-box-label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .custom-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 5px;
+            text-align: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        /* 選択時のスタイル */
+        .check-box-label input:checked ~ .custom-btn {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(142, 142, 147, 0.3);
+        }
+
+        /* サブカテゴリ（商品リスト）コンテナ */
+        .subcategory-container {
+            background-color: #f7f7f7;
+            border-radius: 8px;
             padding: 15px;
-            border-radius: 0;
-            margin: 15px 0;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px dashed var(--primary-color);
+        }
+        
+        .subcategory-container.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .subcategory-title {
+            font-size: 13px;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
             text-align: center;
         }
 
-        .highlight-text {
-            font-size: 14px;
-            color: #333;
-            line-height: 1.8;
-            font-weight: normal;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .highlight-text strong {
-            border-bottom: 1px solid #333;
-        }
-
-        /* =========================================
-           確認表示エリア
-           ========================================= */
+        /* 確認エリア */
         #displayInfo {
-            background: #f9f9f9;
-            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
             border: 1px solid #eee;
-            margin-top: 10px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 0;
             font-size: 14px;
+            line-height: 1.6;
         }
 
-        .info-row p {
-            margin: 0;
-            line-height: 1.5;
-        }
-
-        /* 修正ボタン */
-        .edit-button {
-            background-color: #fff;
-            color: #333;
-            border: 1px solid #333;
-            border-radius: 0;
-            padding: 4px 10px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: "Yu Mincho", serif;
-        }
-
-        .edit-button:hover {
-            background-color: #333;
-            color: #fff;
-        }
-
-        hr {
-            border: 0;
-            border-top: 1px solid #eee;
-            margin: 10px 0;
-        }
-
-        /* =========================================
-           送信ボタン
-           ========================================= */
+        /* 送信ボタン */
         .submit-button {
             width: 100%;
             padding: 18px;
-            margin-top: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: var(--primary-color);
+            color: var(--white);
             border: none;
-            border-radius: 0;
-            background-color: #333; /* 黒 */
-            color: #fff;
-            font-size: 18px;
+            border-radius: 50px;
             cursor: pointer;
-            letter-spacing: 0.1em;
-            font-family: serif;
-            transition: background-color 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+            letter-spacing: 0.05em;
         }
 
-        .submit-button:hover {
-            background-color: #000;
-            transform: none;
+        .submit-button:active {
+            transform: scale(0.98);
         }
 
-        /* =========================================
-           サイドナビ（追従ボタン）
-           ========================================= */
-        .side-nav {
-            position: fixed;
-            right: 0;
-            top: 80%;
-            transform: translateY(-50%);
-            background: #333; /* 黒に変更 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 5px;
-            border-radius: 4px 0 0 4px;
-            z-index: 1000;
-            width: 20px;
+        /* カレンダー入力用 */
+        .date-picker-wrapper {
+            position: relative;
         }
 
-        .side-nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 30px;
-            margin: 5px 0;
-            text-align: center;
+        /* 無効化されたセレクトボックス */
+        select:disabled {
+            background-color: #eeeeee;
+            color: #aaaaaa;
+            cursor: not-allowed;
         }
-
-        /* =========================================
-           ローディングスピナー
-           ========================================= */
-        .loading-spinner {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border: 1px solid #ccc;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #eee;
-            border-top-color: #333;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-
-        .loading-text {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #333;
-            font-family: serif;
-            text-shadow: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* =========================================
-           スマホ対応
-           ========================================= */
-        @media (max-width: 600px) {
-            .container {
-                width: 95%;
-                padding: 20px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-            .label, .labelContent {
-                font-size: 14px;
-            }
-            .calendar th, .calendar td {
-                font-size: 11px;
-                padding: 6px 1px;
+        
+        /* スマホ調整 */
+        @media (max-width: 480px) {
+            .check-box-label {
+                flex: 1 1 100%;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="side-nav" id="sideNav">
-        <a href="#section-message">
-            <span>⇩</span>
-            <i class="fas fa-comment"></i>
-        </a>
-    </div>
 
     <div class="container">
-        <h1>きみしま接骨院<br>予約フォーム</h1>
-        <div class="label">お名前<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
+        <h1>
+            <span class="logo-sub">beauty salon</span>
+            Natubelle
+        </h1>
 
-        <div class="label">電話番号<span class="required">必須</span></div>
-        <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
+        <div class="section-title">お名前<span class="badge required">必須</span></div>
+        <input type="text" id="name" placeholder="例）山田 花子">
 
-        <div class="label">来院回数<span class="required">必須</span></div>
-        <div class="visit-buttons">
-            <button type="button" id="firstVisit" onclick="selectVisit(this)">初診</button>
-            <button type="button" id="repeatVisit" onclick="selectVisit(this)">その他</button>
+        <div class="section-title">電話番号<span class="badge required">必須</span></div>
+        <input type="tel" id="phone" placeholder="例）090-1234-5678">
+
+        <div class="section-title">①ご依頼内容<span class="badge required">必須</span></div>
+        <div class="selection-group">
+            <label class="check-box-label">
+                <input type="radio" name="requestType" value="取り置き" onchange="updateSummary()">
+                <span class="custom-btn">取り置き</span>
+            </label>
+            <label class="check-box-label">
+                <input type="radio" name="requestType" value="お問い合わせ" onchange="updateSummary()">
+                <span class="custom-btn">お問い合わせ</span>
+            </label>
         </div>
 
-<div class="label">希望日時<span class="required">必須</span></div>
-<div class="highlight-background">
-    <span class="highlight-text">
-        月・火・水・木・金は<br><strong>午前中のみご予約可能</strong>です。<br>
-        午後に関しては<strong>ご来院順に</strong>ご対応しております。<br>
-        日曜日・祝日　休診
-    </span>
+        <div class="section-title">②商品カテゴリー<span class="badge required">必須・複数可</span></div>
+        <div class="selection-group">
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="eyelash" onchange="toggleCategory('eyelash')">
+                <span class="custom-btn">まつ毛</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="maremove" onchange="toggleCategory('maremove')">
+                <span class="custom-btn">maremove</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="hitoyorai" onchange="toggleCategory('hitoyorai')">
+                <span class="custom-btn">HITOYORAI</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="c0107" onchange="toggleCategory('c0107')">
+                <span class="custom-btn">0107</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="aiplus" onchange="toggleCategory('aiplus')">
+                <span class="custom-btn">ai PLUS</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="emute" onchange="toggleCategory('emute')">
+                <span class="custom-btn">emute</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="spicare" onchange="toggleCategory('spicare')">
+                <span class="custom-btn">SPICARE</span>
+            </label>
+            <label class="check-box-label">
+                <input type="checkbox" name="category" value="other" onchange="toggleCategory('other')">
+                <span class="custom-btn">その他</span>
+            </label>
         </div>
-        <div class="calendar-container">
-            <div class="current-month-container">
-                <span class="current-month" id="currentMonth">月</span>
-            </div>
 
-            <div class="month-button-container">
-                <button class="month-button" onclick="previousmonth()">前月</button>
-                <button class="month-button" onclick="nextmonth()">翌月</button>
-            </div>
-
-            <div class="week-button-container">
-                <button class="week-button" onclick="previousWeek()">前週</button>
-                <button class="week-button" onclick="nextWeek()">翌週</button>
-            </div>
-
-            <div id="calendar1" class="calendar">
-                <table>
-                    <thead>
-                        <tr id="calendar-header">
-                            <th>時間</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        </tbody>
-                </table>
-            </div>
-
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <div class="loading-text">読み込み中...</div>
+        <div id="cat-eyelash" class="subcategory-container">
+            <div class="subcategory-title">◆ まつ毛 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="きーぷっぷ"><span class="custom-btn">きーぷっぷ</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="エグータム"><span class="custom-btn">エグータム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="エグータムプレミアム"><span class="custom-btn">エグータムプレミアム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="ラッシュアディクト"><span class="custom-btn">ラッシュアディクト</span></label>
             </div>
         </div>
 
-        <div class="labelContent">メッセージ<br>（お身体のお悩みや辛い部分を記載ください）</div>
-        <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
+        <div id="cat-maremove" class="subcategory-container">
+            <div class="subcategory-title">◆ maremove 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="EGFセラム（美容液）"><span class="custom-btn">EGFセラム（美容液）</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="高保湿クリーム"><span class="custom-btn">高保湿クリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="H2スイッチ"><span class="custom-btn">H2スイッチ</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="プレミアムパック"><span class="custom-btn">プレミアムパック</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="365エブリデイパック"><span class="custom-btn">365エブリデイパック</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="チェンジマスク"><span class="custom-btn">チェンジマスク</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="日焼け止め"><span class="custom-btn">日焼け止め</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="おましゃん"><span class="custom-btn">おましゃん</span></label>
+            </div>
+        </div>
 
-        <div class="labelContent">ご予約内容</div>
-        <div id="displayInfo"></div> <button class="submit-button" onclick="submitForm()" div id="section-message">予約を行う</button>
+        <div id="cat-hitoyorai" class="subcategory-container">
+            <div class="subcategory-title">◆ HITOYORAI 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="トライアルセット"><span class="custom-btn">トライアルセット</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="ローション"><span class="custom-btn">ローション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="乳液"><span class="custom-btn">乳液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="セラム（美容液）"><span class="custom-btn">セラム（美容液）</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クリーム"><span class="custom-btn">クリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="パック"><span class="custom-btn">パック</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="洗顔"><span class="custom-btn">洗顔</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="日焼け止め"><span class="custom-btn">日焼け止め</span></label>
+            </div>
+        </div>
+
+        <div id="cat-c0107" class="subcategory-container">
+            <div class="subcategory-title">◆ 0107 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="化粧水"><span class="custom-btn">化粧水</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クリーム"><span class="custom-btn">クリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="UVクリーム"><span class="custom-btn">UVクリーム</span></label>
+            </div>
+        </div>
+
+        <div id="cat-aiplus" class="subcategory-container">
+            <div class="subcategory-title">◆ ai PLUS 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="鎮静/修復 美容液"><span class="custom-btn">鎮静/修復 美容液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="引き締め/毛穴改善 美容液"><span class="custom-btn">引き締め/毛穴改善　美容液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="美白 美容液"><span class="custom-btn">美白 美容液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="フェイスマスク30枚入り"><span class="custom-btn">フェイスマスク30枚入り</span></label>
+            </div>
+        </div>
+
+        <div id="cat-emute" class="subcategory-container">
+            <div class="subcategory-title">◆ emute 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング"><span class="custom-btn">クレンジング</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="リッチプラセラム"><span class="custom-btn">リッチプラセラム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="リッチミルククリーム"><span class="custom-btn">リッチミルククリーム</span></label>
+            </div>
+        </div>
+
+        <div id="cat-spicare" class="subcategory-container">
+            <div class="subcategory-title">◆ SPICARE 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="インテリジェントファンデーション"><span class="custom-btn">インテリジェントファンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="V3エキサイティングファンデーション"><span class="custom-btn">V3エキサイティングファンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="V3ブリリアントファンデーション"><span class="custom-btn">V3ブリリアントファンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="シャイニングファンデーション"><span class="custom-btn">シャイニングフェンデーション</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クレンジング洗顔"><span class="custom-btn">クレンジング洗顔</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="化粧水"><span class="custom-btn">化粧水</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="乳液"><span class="custom-btn">乳液</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="クリーム"><span class="custom-btn">クリーム</span></label>
+            </div>
+        </div>
+
+        <div id="cat-other" class="subcategory-container">
+            <div class="subcategory-title">◆ その他 商品選択</div>
+            <div class="selection-group">
+                <label class="check-box-label"><input type="checkbox" name="product" value="ビューティーパウダー（プロテイン）"><span class="custom-btn">ビューティーパウダー（プロテイン）</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="天恵石鹸"><span class="custom-btn">天恵石鹸</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="スピケアボディウォッシュ"><span class="custom-btn">スピケアボディウォッシュ</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="スピケアボディクリーム"><span class="custom-btn">スピケアボディクリーム</span></label>
+                <label class="check-box-label"><input type="checkbox" name="product" value="エキスパートローション"><span class="custom-btn">エキスパートローション</span></label>
+            </div>
+        </div>
+
+
+        <div class="section-title">③本数・詳細<span class="badge optional">任意</span></div>
+        <textarea id="quantity" rows="2" placeholder="例）エグータム2本、ビューティーパウダー（プロテイン）1つ取り置きお願いします。"></textarea>
+
+
+        <div class="section-title">④施術時に受け取りますか？<span class="badge optional">任意</span></div>
+        <div class="selection-group">
+            <label class="check-box-label">
+                <input type="radio" name="pickupMethod" value="はい" onchange="toggleDate(false)">
+                <span class="custom-btn">はい</span>
+            </label>
+            <label class="check-box-label">
+                <input type="radio" name="pickupMethod" value="いいえ" onchange="toggleDate(true)">
+                <span class="custom-btn">いいえ</span>
+            </label>
+        </div>
+
+
+        <div id="date-section" style="display:none;">
+            <div class="section-title">⑤受取希望日<span class="badge optional">任意</span></div>
+            <div class="date-picker-wrapper">
+                <select id="pickupDate">
+                   </select>
+            </div>
+            <div class="date-picker-wrapper" style="margin-top:10px;">
+                 <select id="pickupTime" disabled>
+                    <option value="" selected>日付を先に選択してください</option>
+                 </select>
+            </div>
+        </div>
+
+        <div class="section-title">確認</div>
+        <div id="displayInfo">
+            内容を入力するとここに表示されます
+        </div>
+
+        <button class="submit-button" onclick="submitForm()">予約・注文を確定する</button>
+
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        let visitCount = '';
-        let selectedSymptom = [];  // 配列として定義
-        let selectedFullDate = '';
-        let currentDate = new Date();
-        let availabilityCache = {};
-        let irradiationsCount = ''; let totalAmount = 0; // 合計金額を格納する変数
-        let menuPrice = 0; // メニューの価格
-        let optionsPrice = 0; // オプションの合計価格
-
+        // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
                 liffId: '2005254357-zKma9BZk'
             }).then(() => {
-                console.log('LIFF初期化成功');
+                console.log('LIFF OK');
             }).catch((err) => {
-                console.log('LIFF初期化失敗', err);
+                console.log('LIFF Error', err);
             });
 
-            fetchAvailability(currentDate);
-        });
-
-        // 入力内容をローカルストレージに保存
-        function saveInput(id) {
-            const value = document.getElementById(id).value;
-            localStorage.setItem(id, value);
-        }
-
-        // ページが読み込まれたときに前回の入力内容を復元
-        document.addEventListener('DOMContentLoaded', function () {
+            // 名前・電話番号の復元
             const savedName = localStorage.getItem('name');
             const savedPhone = localStorage.getItem('phone');
-
             if (savedName) document.getElementById('name').value = savedName;
             if (savedPhone) document.getElementById('phone').value = savedPhone;
+
+            // 日付生成
+            initDateSelect();
         });
 
-        // スムーズスクロール
-        document.querySelectorAll('.side-nav a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
+        // カテゴリ表示切替
+        function toggleCategory(categoryId) {
+            const container = document.getElementById('cat-' + categoryId);
+            const checkboxes = document.querySelectorAll(`input[name="category"][value="${categoryId}"]`);
+            
+            // チェックボックスの状態を確認
+            if (checkboxes[0].checked) {
+                container.classList.add('active');
+            } else {
+                container.classList.remove('active');
+            }
+            updateSummary();
+        }
 
-        function updateDisplayInfo() {
+        // 受取日表示切替
+        function toggleDate(show) {
+            const sec = document.getElementById('date-section');
+            sec.style.display = show ? 'block' : 'none';
+            updateSummary();
+        }
+
+        // 日付セレクトボックス生成
+        function initDateSelect() {
+            const select = document.getElementById('pickupDate');
+            const d = new Date();
+            const weeks = ['日', '月', '火', '水', '木', '金', '土'];
+            
+            select.innerHTML = '<option value="" selected>日付を選択</option>';
+
+            for(let i=0; i<30; i++) {
+                const y = d.getFullYear();
+                const m = d.getMonth() + 1;
+                const da = d.getDate();
+                const w = weeks[d.getDay()];
+                const val = `${y}/${m}/${da}`;
+                const text = `${m}/${da} (${w})`;
+                
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.text = text;
+                select.appendChild(opt);
+                
+                d.setDate(d.getDate() + 1);
+            }
+        }
+
+        // 時間オプション生成（曜日判定）
+        function updateTimeOptions() {
+            const dateVal = document.getElementById('pickupDate').value;
+            const timeSelect = document.getElementById('pickupTime');
+            
+            // 初期化
+            timeSelect.innerHTML = '<option value="" selected>時間を選択</option>';
+
+            if (!dateVal) {
+                timeSelect.disabled = true;
+                timeSelect.innerHTML = '<option value="" selected>日付を先に選択してください</option>';
+                return;
+            }
+
+            timeSelect.disabled = false;
+            
+            // 日付オブジェクトから曜日取得
+            const date = new Date(dateVal);
+            const day = date.getDay(); // 0:日 ... 6:土
+
+            // 終了時間の設定
+            // 日(0)・土(6) -> 19:00まで
+            // 月(1)〜金(5) -> 18:00まで
+            let endHour = 18;
+            if (day === 0 || day === 6) {
+                endHour = 19;
+            }
+
+            const startHour = 10;
+
+            // 時間選択肢の生成
+            for (let h = startHour; h <= endHour; h++) {
+                const timeStr = h + ':00';
+                const opt = document.createElement('option');
+                opt.value = timeStr;
+                opt.text = timeStr;
+                timeSelect.appendChild(opt);
+            }
+            
+            // 時間変更後も確認画面更新
+            updateSummary();
+        }
+
+        // イベントリスナー: 日付変更時に時間を更新
+        document.getElementById('pickupDate').addEventListener('change', updateTimeOptions);
+        
+        // イベントリスナー: 時間変更時に確認画面更新
+        document.getElementById('pickupTime').addEventListener('change', updateSummary);
+
+        // 表示更新
+        function updateSummary() {
             const name = document.getElementById('name').value;
-            // 色指定を黒(#333)に変更
-            const visitCountText = visitCount ? `<span style="color:#333;"><strong>【ご来店回数】</strong></span><br>・${visitCount}` : '・来店回数が未選択です';
-            const selectedDateText = selectedFullDate ? `<span style="color:#333;"><strong>【希望日時】</strong></span><br>・${selectedFullDate}` : '・日時が未選択です';
-
-            // 修正ボタン付きのHTMLを作成
-            document.getElementById('displayInfo').innerHTML = `
-        <div class="info-row">
-            <p><span style="color:#333;"><strong>【お名前】</strong></span><br>・${name}</p>
-            <button class="edit-button" onclick="scrollToElement('name')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${visitCountText}</p>
-            <button class="edit-button" onclick="scrollToElement('firstVisit')">修正する</button>
-        </div>
-        <hr>
-        <div class="info-row">
-            <p>${selectedDateText}</p>
-            <button class="edit-button" onclick="scrollToElement('calendar1')">修正する</button>
-        </div>
-        <hr>
-    `;
-        }
-
-        // スクロール関数
-        function scrollToElement(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-
-        // 各ボタンや入力フィールドでupdateDisplayInfoを呼び出すようにする
-        document.getElementById('name').addEventListener('input', updateDisplayInfo);
-        document.querySelectorAll('.visit-buttons button').forEach(button => {
-            button.addEventListener('click', updateDisplayInfo);
-        });
-
-        // 日付セルのクリックイベントで希望日時を更新
-        document.querySelectorAll('.calendar td').forEach(cell => {
-            cell.addEventListener('click', () => {
-                selectDate(cell);
-                updateDisplayInfo();  // 日付を選択したら即座に表示を更新
-            });
-        });
-
-        function selectSymptom(button) {
-            // 全ボタンの選択をリセット
-            const buttons = document.querySelectorAll('.symptoms button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-
-            // クリックされたボタンを選択状態に
-            button.classList.add('active');
-
-            // 選択されたメニューの名前と価格を取得
-            const symptomName = button.textContent;  // ボタンのテキストを取得
-            selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
-            menuPrice = parseInt(button.getAttribute('data-price'), 10);  // メニューの価格を取得
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
-        function selectirradiations(button) {
-            // ボタンの選択状態を切り替える
-            button.classList.toggle('active');
-
-            // 選択されたオプションを取得
-            const selectedButtons = document.querySelectorAll('.irradiations button.active');
-            const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
-            irradiationsCount = selectedIrradiations.join(', ');
-
-            // すべてのオプションの価格を再計算
-            optionsPrice = 0; // 全体をリセットして再計算
-            selectedButtons.forEach(btn => {
-                const price = parseInt(btn.getAttribute('data-price'), 10);
-                optionsPrice += price;
+            const req = document.querySelector('input[name="requestType"]:checked');
+            
+            // 選択された商品
+            let products = [];
+            document.querySelectorAll('input[name="product"]:checked').forEach(el => {
+                products.push(el.value);
             });
 
-            // 表示を更新
-            updateDisplayInfo();
-        }
+            const pickup = document.querySelector('input[name="pickupMethod"]:checked');
+            const pDate = document.getElementById('pickupDate').value;
+            const pTime = document.getElementById('pickupTime').value;
 
-        function updateTotalAmount() {
-            totalAmount = menuPrice + optionsPrice; // オプションの価格も含める
-            updateDisplayInfo(); // 表示を更新
-        }
+            let html = `<strong>お名前：</strong> ${name}<br>`;
+            if(req) html += `<strong>ご依頼：</strong> ${req.value}<br>`;
+            if(products.length > 0) html += `<strong>商品：</strong><br>・${products.join('<br>・')}<br>`;
+            
+            const qty = document.getElementById('quantity').value;
+            if(qty) html += `<strong>詳細：</strong> ${qty}<br>`;
 
-        function selectVisit(element) {
-            document.getElementById('firstVisit').classList.remove('active');
-            document.getElementById('repeatVisit').classList.remove('active');
-            element.classList.add('active');
-            visitCount = element.innerText;
-        }
-
-        function showMenu(menu) {
-            // すべてのメニューボタンの選択状態をリセット
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            // 選択されたメニューセクションを表示
-            document.querySelectorAll('.menu-section').forEach(section => {
-                section.classList.remove('active');
-                section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-            });
-
-            // 対応するメニューボタンを選択状態にする
-            document.querySelectorAll('.menu-sections button').forEach(button => {
-                if (button.getAttribute('onclick') === `showMenu('${menu}')`) {
-                    button.classList.add('active');
+            if(pickup) {
+                html += `<strong>受取：</strong> ${pickup.value === 'はい' ? '施術時' : '来店のみ'}<br>`;
+                if(pickup.value === 'いいえ' && pDate && pTime) {
+                    html += `<strong>希望日時：</strong> ${pDate} ${pTime}`;
                 }
-            });
-
-            // 選択されたメニューセクションを表示
-            document.getElementById(menu).classList.add('active');
-
-            // メニューとオプションをリセット
-            selectedSymptom = '';      // メニューのリセット
-            irradiationsCount = '';    // オプションのリセット
-            menuPrice = 0;             // メニューの価格リセット
-            optionsPrice = 0;          // オプションの価格リセット
-            totalAmount = 0;           // 合計金額リセット
-
-            // 表示を更新
-            updateDisplayInfo();
-        }
-
-        function selectDate(cell) {
-            // "unavailable" クラスが付いている場合はクリックを無効化
-            if (cell.classList.contains('unavailable')) {
-                return; // 何もせずに終了
             }
 
-            // 既に選択されているセルの選択を解除
-            const cells = document.querySelectorAll('.calendar td');
-            cells.forEach(td => td.classList.remove('selected'));
-
-            // 新しいセルを選択状態にする
-            cell.classList.add('selected');
-
-            // 選択された日付と時間を取得
-            const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
-            const selectedTime = cell.parentElement.firstChild.textContent; // 時間
-            const date = new Date(selectedDay);
-
-            // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
-            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
-
-            // 希望日時を即座に更新
-            updateDisplayInfo();
+            document.getElementById('displayInfo').innerHTML = html;
         }
 
+        // その他のイベントリスナー登録
+        document.getElementById('name').addEventListener('input', () => {
+            localStorage.setItem('name', document.getElementById('name').value);
+            updateSummary();
+        });
+        document.getElementById('phone').addEventListener('input', () => {
+            localStorage.setItem('phone', document.getElementById('phone').value);
+            updateSummary();
+        });
+        document.getElementById('quantity').addEventListener('input', updateSummary);
+        
+        // 全チェックボックス・ラジオボタンにイベント付与
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => {
+            el.addEventListener('change', updateSummary);
+        });
+
+
+        // 送信処理
         function submitForm() {
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                visitCount: visitCount,
-                selectedSymptom: selectedSymptom,
-                irradiationsCount: irradiationsCount,
-                dates: [selectedFullDate],
-                message: document.getElementById('message').value
-            };
-
-            // フォームデータのチェック
-            if (!formData.name || !formData.phone || !formData.visitCount) {
-                alert('お名前・電話番号・ご来院回数すべてご記入ください。');
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const req = document.querySelector('input[name="requestType"]:checked');
+            
+            if(!name || !phone || !req) {
+                alert('必須項目（お名前・電話番号・ご依頼内容）を入力してください');
                 return;
             }
 
-            // LINEトークにメッセージを送信
-            liff.sendMessages([{
-                type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来院回数：${formData.visitCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-            }]).then(() => {
-                /* メッセージ送信成功時の処理 */
-                alert('当日キャンセルは無いようにお願いいたします。');
-                /* LIFFウィンドウを閉じる */
-                liff.closeWindow();
-            }).catch((err) => {
-                /* メッセージ送信失敗時の処理 */
-                console.error('メッセージの送信に失敗しました', err);
-            });
-        }
-
-        function formatDate(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
-        }
-
-        async function fetchAvailability(date) {
-            const startTime = new Date(date);
-            const endTime = new Date(date);
-            endTime.setDate(endTime.getDate() + 7);
-
-            const cacheKey = startTime.toISOString() + endTime.toISOString();
-
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-                return;
+            // カテゴリが選択されているか確認
+            const cats = document.querySelectorAll('input[name="category"]:checked');
+            if(cats.length === 0) {
+                 alert('カテゴリーを選択してください');
+                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbxKdubk6OeRwlVUv-VCVD3H3eJbYLuJ1sqSZ80nFeMWwHFQjTfRB7Uo5S60o7BUddD8_A/exec' +
-                `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+            // 商品リスト作成
+            let productList = [];
+            document.querySelectorAll('input[name="product"]:checked').forEach(p => productList.push(p.value));
+            
+            const qty = document.getElementById('quantity').value;
+            const pickup = document.querySelector('input[name="pickupMethod"]:checked');
+            const pDate = document.getElementById('pickupDate').value;
+            const pTime = document.getElementById('pickupTime').value;
 
-            try {
-                showLoadingSpinner(); // Show loading spinner
-                const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+            let msg = `【予約・注文フォーム】\n`;
+            msg += `お名前：${name}\n`;
+            msg += `電話番号：${phone}\n`;
+            msg += `ご依頼内容：${req.value}\n`;
+            msg += `----------------\n`;
+            msg += `【選択商品】\n`;
+            if(productList.length > 0) {
+                msg += productList.join('\n') + '\n';
+            } else {
+                msg += '（カテゴリのみ選択）\n';
+            }
+            msg += `\n【詳細・本数】\n${qty}\n`;
+            
+            if(pickup) {
+                msg += `----------------\n`;
+                msg += `受取方法：${pickup.value === 'はい' ? '施術時受取' : '商品のみ受取'}\n`;
+                if(pickup.value === 'いいえ') {
+                    if(!pDate || !pTime) {
+                         alert('受取日時を選択してください');
+                         return;
+                    }
+                    msg += `受取希望日：${pDate} ${pTime}\n`;
+                }
+            }
 
-                // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-                    return {
-                        start: new Date(event.startTime),
-                        end: new Date(event.endTime)
-                    };
+            // LIFF送信
+            if (!liff.isInClient()) {
+                alert('LINEアプリ内で開いてください。\n\n送信内容プレビュー:\n' + msg);
+            } else {
+                liff.sendMessages([{
+                    type: 'text',
+                    text: msg
+                }]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+                    console.error('送信エラー', err);
+                    alert('送信に失敗しました。');
                 });
-
-                // データをキャッシュに保存
-                availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
-
-                updateCalendar(data, businessDays);
-            } catch (error) {
-                console.error('Error fetching availability:', error);
-            } finally {
-                hideLoadingSpinner(); // Hide loading spinner
             }
-        }
-
-        function updateCalendar(availability, businessDays) {
-            const calendar = document.getElementById('calendar1');
-            const table = calendar.querySelector('table tbody');
-
-            const times = [
-                '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-                '12:00', '12:30', '13:00', '13:30',
-                '14:00', '14:30', '15:00', '15:30',
-                '16:00', '16:30', '17:00', '17:30',
-                '18:00', '18:30', '19:00', '19:30', '20:00'
-            ];
-
-            if (table.rows.length === 0) {
-                for (const time of times) {
-                    const row = document.createElement('tr');
-                    const timeCell = document.createElement('td');
-                    timeCell.textContent = time;
-                    row.appendChild(timeCell);
-
-                    for (let i = 0; i < 7; i++) {
-                        const cell = document.createElement('td');
-                        cell.addEventListener('click', () => selectDate(cell));
-                        row.appendChild(cell);
-                    }
-
-                    table.appendChild(row);
-                }
-            }
-
-            // テーブルのヘッダーを更新
-            updateCalendarHeader(currentDate);
-
-            // 各セルを空白にリセットし、クラスもリセット
-            for (let row of table.rows) {
-                for (let i = 1; i < row.cells.length; i++) {
-                    row.cells[i].textContent = '';
-                    row.cells[i].removeAttribute('data-date');
-                    row.cells[i].classList.remove('available', 'unavailable', 'selected');
-                }
-            }
-
-            // テーブルの内容を更新
-            for (let i = 0; i < 7; i++) {
-                const day = new Date(currentDate);
-                day.setDate(day.getDate() + i);
-
-                let businessEventTimes = []; // 営業日のイベント時間帯を記録する配列
-
-                availability.forEach(slot => {
-                    const eventStart = new Date(slot.startTime);
-                    const eventEnd = new Date(slot.endTime);
-                    if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
-                        businessEventTimes.push({ start: eventStart, end: eventEnd });
-                    }
-                });
-
-                for (let j = 0; j < times.length; j++) {
-                    const cell = table.rows[j].cells[i + 1];
-                    const slotStart = new Date(day);
-                    slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
-
-                    const slotEnd = new Date(slotStart);
-                    slotEnd.setMinutes(slotStart.getMinutes() + 30);
-
-                    const isBusinessDay = businessDays.some(businessDay => {
-                        const businessDayStart = new Date(businessDay.start);
-                        const businessDayEnd = new Date(businessDay.end);
-                        return slotStart >= businessDayStart && slotEnd <= businessDayEnd;
-                    });
-
-                    const isBusinessEventTime = businessEventTimes.some(event => {
-                        return slotStart < event.end && event.start < slotEnd;
-                    });
-
-                    const count = availability.reduce((acc, slot) => {
-                        const eventStart = new Date(slot.startTime);
-                        const eventEnd = new Date(slot.endTime);
-
-                        if (eventStart < slotEnd && slotStart < eventEnd && slot.title !== "営業日") {
-                            return acc + 1;
-                        }
-                        return acc;
-                    }, 0);
-
-                    // 営業日のイベント時間内に他のイベントがある場合
-                    if (isBusinessEventTime && count > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 営業日のイベント時間（他のイベントがない場合）
-                    else if (isBusinessEventTime) {
-                        cell.textContent = '◯';
-                        cell.classList.add('available');
-                    }
-                    // 営業日で、指定されている時間以外の時間は×
-                    else if (businessEventTimes.length > 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-
-                    // 12:00 - 15:00 を✕に設定（月曜日から金曜日のみ）
-                    if (
-                        (slotStart.getDay() >= 1 && slotStart.getDay() <= 5) && // 月曜日から金曜日
-                        (
-                            (slotStart.getHours() === 12 && slotStart.getMinutes() >= 30) || // 12:00以降
-                            (slotStart.getHours() === 13) || // 13:00台全て
-                            (slotStart.getHours() === 14 && slotStart.getMinutes() < 60)  // 14:00から14:59まで
-                        )
-                    ) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        cell.setAttribute('data-date', slotStart.toISOString());
-                        continue;
-                    }
-
-                    // 08:00 - 08:30 を✕に設定（月曜日から金曜日のみ）
-                    if (
-                        (slotStart.getDay() >= 1 && slotStart.getDay() <= 5) && // 月曜日から金曜日
-                        (
-                            (slotStart.getHours() === 8 && slotStart.getMinutes() < 30)  // 08:00から08:30まで
-                        )
-                    ) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        cell.setAttribute('data-date', slotStart.toISOString());
-                        continue;
-                    }
-
-
-                    // 12:00 - 13:59 を✕に設定（土曜日のみ）
-                    if (
-                        (slotStart.getDay() === 6) && // 土曜日のみ
-                        (
-                            (slotStart.getHours() === 12 && slotStart.getMinutes() >= 30) || // 12:00以降
-                            (slotStart.getHours() === 13 && slotStart.getMinutes() < 60)  // 13:00から13:59まで
-                        )
-                    ) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        cell.setAttribute('data-date', slotStart.toISOString());
-                        continue;
-                    }
-
-                    // 17:00 - 20:00 を✕に設定（土曜日のみ）
-                    if (
-                        (slotStart.getDay() === 6) && // 土曜日のみ
-                        (
-                            (slotStart.getHours() === 17 && slotStart.getMinutes() >= 30) || // 17:00以降
-                            (slotStart.getHours() === 18) || // 18:00台全て
-                            (slotStart.getHours() === 19) || // 19:00台全て
-                            (slotStart.getHours() === 20 && slotStart.getMinutes() === 0) // 20:00
-                        )
-                    ) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                        cell.setAttribute('data-date', slotStart.toISOString());
-                        continue;
-                    }
-
-                    // 日曜日で、営業日ではない場合
-                    else if (slotStart.getDay() === 0 && !isBusinessDay && businessEventTimes.length === 0) {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-                    // 営業日でかつ他のイベントがない場合
-                    else if (isBusinessDay && count === 0) {
-                        cell.textContent = '◯';
-                        cell.classList.add('available');
-                    }
-                    // それ以外の条件
-                    else if (count === 0) {
-                        cell.textContent = '◯';
-                        cell.classList.add('available');
-                    } else {
-                        cell.textContent = '✕';
-                        cell.classList.add('unavailable');
-                    }
-
-                    cell.setAttribute('data-date', slotStart.toISOString());
-                }
-
-                // ×と×の間のセル数が3未満の場合、その間のセルを×にする部分の後に以下を追加
-                for (let i = 0; i < 7; i++) {
-                    const twentyOClockRow = times.indexOf('19:30');
-                    const twentyOneOClockRow = times.indexOf('20:00');
-
-                    for (let j = twentyOClockRow; j < times.length; j++) {
-                        const cell = table.rows[j].cells[i + 1];
-                        const aboveCell = table.rows[twentyOClockRow].cells[i + 1];
-
-                        // 20:00のセルに×がある場合、21:00のセルも×にする
-                        if (aboveCell.textContent === '✕' && j >= twentyOneOClockRow) {
-                            cell.textContent = '✕';
-                            cell.classList.remove('available');
-                            cell.classList.add('unavailable');
-                        }
-                    }
-                }
-            }
-
-        }
-
-        function updateCalendarHeader(date) {
-            const headerRow = document.getElementById('calendar-header');
-            const headers = headerRow.querySelectorAll('th:not(:first-child)');
-
-            // サンプルの祝日データ（必要に応じて動的に取得も検討）
-            const holidays = [
-                '2025-02-11', // 建国記念の日
-                '2025-02-23', // 天皇誕生日
-                '2025-02-24', // 天皇誕生日 振替休日
-                '2025-03-20', // 春分の日
-                '2025-04-29', // 昭和の日
-                '2025-05-03', // 憲法記念日
-                '2025-05-04', // みどりの日
-                '2025-05-05', // こどもの日
-                '2025-05-06', // みどりの日 振替休日
-                '2025-07-21', // 海の日
-                '2025-08-11', // 山の日
-                '2025-09-15', // 敬老の日
-                '2025-09-23', // 秋分の日
-                '2025-10-13', // 体育の日
-                '2025-11-03', // 文化の日
-                '2025-11-23', // 勤労感謝の日
-                '2025-11-24', // 勤労感謝の日 振替休日
-                '2026-01-01', // 元日
-                '2026-01-12', // 成人の日
-                '2026-02-11', // 建国記念の日
-                '2026-02-23', // 天皇誕生日
-                '2026-03-20', // 春分の日
-                '2026-04-29', // 昭和の日
-                '2026-05-03', // 憲法記念日
-                '2026-05-04', // 憲法記念日 振替休日
-                '2026-05-05', // みどりの日
-                '2026-05-06', // こどもの日
-                '2026-07-20', // 海の日
-                '2026-08-11', // 山の日
-                '2026-09-21', // 敬老の日
-                '2026-09-22', // 国民の休日
-                '2026-09-23', // 秋分の日
-                '2026-10-12', // 体育の日
-                '2026-11-03', // 文化の日
-                '2026-11-23', // 勤労感謝の日
-                '2027-01-01', // 元日
-                '2027-01-11', // 成人の日
-                '2027-02-11', // 建国記念の日
-                '2027-02-23', // 天皇誕生日
-                '2027-03-20', // 春分の日
-                '2027-04-29', // 昭和の日
-                '2027-05-03', // 憲法記念日
-                '2027-05-04', // みどりの日
-                '2027-05-05', // こどもの日
-                '2027-07-19', // 海の日
-                '2027-08-11', // 山の日
-                '2027-09-20', // 敬老の日
-                '2027-09-23', // 秋分の日
-                '2027-10-11', // 体育の日
-                '2027-11-03', // 文化の日
-                '2027-11-23', // 勤労感謝の日
-                '2028-01-01', // 元日
-                '2028-01-10', // 成人の日
-                '2028-02-11', // 建国記念の日
-                '2028-02-23', // 天皇誕生日
-                '2028-03-20', // 春分の日
-                '2028-04-29', // 昭和の日
-                '2028-05-03', // 憲法記念日
-                '2028-05-04', // みどりの日
-                '2028-05-05', // こどもの日
-                '2028-07-17', // 海の日
-                '2028-08-11', // 山の日
-                '2028-09-18', // 敬老の日
-                '2028-09-22', // 秋分の日
-                '2028-10-09', // 体育の日
-                '2028-11-03', // 文化の日
-                '2028-11-23'  // 勤労感謝の日
-            ];
-
-            const startDate = new Date(date);
-            headers.forEach((th, index) => {
-                const day = new Date(startDate);
-                day.setDate(day.getDate() + index);
-
-                const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
-                const formattedDate = `${day.getFullYear()}-${(day.getMonth() + 1).toString().padStart(2, '0')}-${day.getDate().toString().padStart(2, '0')}`;
-                const dayString = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
-
-                th.innerHTML = dayString.replace('(', '<br>(');
-
-                // 祝日を赤色に変更（曜日判定ではなく完全一致判定）
-                if (holidays.includes(formattedDate)) {
-                    th.style.color = 'red';
-                } else if (day.getDay() === 0) { // 日曜日（赤）
-                    th.style.color = 'red';
-                } else if (day.getDay() === 6) { // 土曜日（青）
-                    th.style.color = 'blue';
-                } else {
-                    th.style.color = ''; // 通常色にリセット
-                }
-            });
-
-            // 現在の月を表示
-            const currentMonthElement = document.getElementById('currentMonth');
-            currentMonthElement.innerHTML = `<span class="year">${startDate.getFullYear()}年</span> <span class="month">${startDate.getMonth() + 1}月</span>`;
-
-        }
-
-        function nextmonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1); // 翌月に移動
-            currentDate.setDate(1); // 1日に設定
-            fetchAvailability(currentDate);
-        }
-
-        function previousmonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1); // 前月に移動
-            currentDate.setDate(1); // 1日に設定
-            fetchAvailability(currentDate);
-        }
-
-        function nextWeek() {
-            currentDate.setDate(currentDate.getDate() + 7);
-            fetchAvailability(currentDate);
-        }
-
-        function previousWeek() {
-            currentDate.setDate(currentDate.getDate() - 7);
-            fetchAvailability(currentDate);
-        }
-
-        function showLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-        }
-
-        function hideLoadingSpinner() {
-            document.getElementById('loadingSpinner').style.display = 'none';
         }
     </script>
 </body>
-
 </html>
