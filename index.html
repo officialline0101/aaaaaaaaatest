@@ -333,7 +333,7 @@
 
 <body>
     <div class="container">
-        <h1>ご予約フォーム</h1>
+        <h1>KOBAIカイロプラクティック<br>ご予約フォーム</h1>
 
         <div class="label">お名前<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="例）山田 花子" oninput="saveInput('name')">
@@ -473,7 +473,9 @@
 
         // --- 初期化処理 ---
         document.addEventListener('DOMContentLoaded', function () {
-            // liff.init({ liffId: '2005254357-zKma9BZk' }).catch(err => console.error(err));
+            liff.init({ liffId: '2005254357-zKma9BZk' })
+    .then(() => console.log("LIFF OK"))
+    .catch(err => console.error(err));
 
             const savedName = localStorage.getItem('name');
             const savedPhone = localStorage.getItem('phone');
@@ -671,14 +673,43 @@
         }
 
         // --- 送信 ---
-        function submitForm() {
-            if(!document.getElementById('name').value || !visitCountType || !selectedMenuData || !document.getElementById('date1').value) {
-                alert('必須項目を入力してください');
-                return;
-            }
-            // 第三希望は任意なのでチェック不要
-            alert('予約リクエストを送信しました！');
+async function submitForm() {
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+
+    const date1 = formatDateTime(document.getElementById('date1').value);
+    const date2 = formatDateTime(document.getElementById('date2').value);
+    const date3 = formatDateTime(document.getElementById('date3').value);
+
+    const visit = visitCountType === "first" ? "1回目"
+              : visitCountType === "repeat" ? "2回目以降"
+              : "未選択";
+
+    const menu = selectedMenuData ? selectedMenuData.name : "未選択";
+
+    const message =
+`【予約が入りました】
+お名前：${name}
+電話番号：${phone}
+来店回数：${visit}
+メニュー：${menu}
+
+第一希望：${date1}
+第二希望：${date2}
+第三希望：${date3}`;
+
+    // ▼ ここで LIFF から返信
+    await liff.sendMessages([
+        {
+            type: "text",
+            text: message
         }
+    ]);
+
+    alert("予約内容を送信しました！");
+    liff.closeWindow();
+}
+
     </script>
 </body>
 </html>
