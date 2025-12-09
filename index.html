@@ -7,20 +7,17 @@
     <title>サロン予約フォーム</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
-        /* --- カラーパレット設定 --- */
+        /* --- カラーパレット設定（SHA_M風） --- */
         :root {
-            --brand-color: #95c0ec;
-            --brand-dark: #6fa0d6;
-            --brand-light: #eaf4fd;
-            
-            --accent-color: #e6b422;
-            --bg-color: #f8fbfe;
-            --text-color: #444444;
+            --primary-color: #a71d2a; /* 深みのある赤（ボルドー） */
+            --accent-color: #c5a059;  /* シャンパンゴールド */
+            --bg-color: #ffffff;      /* 背景色：白 */
+            --text-color: #333333;    /* テキスト色 */
+            --gray-light: #f4f4f4;
             --white: #ffffff;
-            --gray-border: #dde2e8;
-            --optional-bg: #b0c4de; /* 任意ラベル用の色 */
         }
 
         body {
@@ -31,69 +28,80 @@
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding-top: 20px;
-            padding-bottom: 60px;
+            padding-top: 10px;
+            padding-bottom: 40px;
             color: var(--text-color);
             overflow-x: hidden;
         }
 
         .container {
             background-color: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(149, 192, 236, 0.2);
-            width: 94%;
+            width: 96%;
             max-width: 500px;
-            padding: 30px 20px;
+            padding: 25px;
             box-sizing: border-box;
             margin: 0 auto;
-            border-top: 6px solid var(--brand-color);
         }
 
         h1 {
-            color: var(--brand-dark);
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 30px 15px;
             text-align: center;
-            font-size: 22px;
-            font-weight: 700;
-            margin: 0 0 30px 0;
-            padding-bottom: 15px;
-            border-bottom: 2px dashed var(--brand-color);
+            margin: -25px -25px 30px -25px;
+            font-family: 'Noto Serif JP', serif;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        h1 .small-text {
+            display: block;
+            font-size: 13px;
+            color: #fcebeb;
+            margin-bottom: 8px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 400;
+            letter-spacing: 1px;
         }
 
         .label {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: var(--brand-dark);
-            font-size: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            font-family: 'Noto Serif JP', serif;
         }
-
+        
         .label::before {
             content: '';
             display: inline-block;
             width: 4px;
             height: 18px;
-            background-color: var(--brand-color);
+            background-color: var(--primary-color);
             margin-right: 8px;
-            border-radius: 2px;
         }
-        
-        /* 必須・任意マーク */
-        .required, .optional {
-            font-size: 10px;
-            margin-left: 8px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            vertical-align: middle;
+
+        .badge {
+            font-size: 11px;
+            margin-left: auto;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: normal;
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        .required {
+            background-color: var(--primary-color);
             color: var(--white);
         }
-
-        .required {
-            background-color: #ff6b6b;
-        }
-
         .optional {
-            background-color: var(--optional-bg);
+            background-color: #999;
+            color: var(--white);
         }
 
         input[type="text"],
@@ -101,9 +109,9 @@
         textarea {
             width: 100%;
             padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid var(--gray-border);
-            border-radius: 6px;
+            margin-bottom: 25px;
+            border: 1px solid #ccc;
+            border-radius: 0;
             box-sizing: border-box;
             font-size: 16px;
             background-color: #fafafa;
@@ -113,133 +121,50 @@
 
         input:focus,
         textarea:focus {
-            border-color: var(--brand-color);
+            border-color: var(--primary-color);
             background-color: var(--white);
             outline: none;
-            box-shadow: 0 0 0 2px var(--brand-light);
         }
 
-        .button-group {
+        .menu-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 25px;
         }
 
-        .selection-btn {
+        .menu-buttons button {
             flex: 1 1 45%;
-            padding: 12px 5px;
-            border: 1px solid var(--gray-border);
-            border-radius: 6px;
+            padding: 14px 10px;
+            border: 1px solid #ccc;
             background-color: var(--white);
             color: var(--text-color);
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
             transition: all 0.2s;
-            text-align: center;
+            position: relative;
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
-        .selection-btn:hover {
-            border-color: var(--brand-color);
-            background-color: var(--brand-light);
+        .menu-buttons button:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
-        .selection-btn.active {
-            background-color: var(--brand-color);
+        .menu-buttons button.active {
+            background-color: var(--primary-color);
             color: var(--white);
-            border-color: var(--brand-color);
-            box-shadow: 0 2px 6px rgba(149, 192, 236, 0.4);
-        }
-
-        .category-group .selection-btn {
-            padding: 15px;
-            font-size: 16px;
-            font-weight: bold;
-            border-bottom: 3px solid var(--gray-border);
+            border-color: var(--primary-color);
+            font-weight: 500;
         }
         
-        .category-group .selection-btn.active {
-            border-bottom: 3px solid var(--brand-dark);
-        }
-
-        .menu-container {
-            display: none;
-            background: var(--brand-light);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .menu-container.show {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .menu-list .selection-btn {
-            width: 100%;
-            text-align: left;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .menu-list .selection-btn::after {
-            content: '>';
-            font-size: 12px;
-            opacity: 0.5;
-        }
-
-        .menu-list .selection-btn.active::after {
-            color: white;
-            opacity: 1;
-        }
-
-        #detail-box {
-            display: none;
-            background-color: #fff;
-            border: 2px solid var(--brand-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 25px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #555;
-        }
-
-        #detail-box h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            color: var(--brand-dark);
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .price-tag {
-            font-weight: bold;
-            color: #d35400;
-            background: #fff8e1;
-            padding: 5px 10px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-top: 10px;
+        button.active {
+            outline: none;
         }
 
         .datetime-wrapper {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .placeholder {
@@ -258,207 +183,133 @@
             flex: 1;
             padding: 12px;
             font-size: 15px;
-            border: 1px solid var(--gray-border);
-            border-radius: 6px;
+            border: 1px solid #ccc;
             background-color: var(--white);
-            color: var(--text-color);
             cursor: pointer;
-            appearance: none; 
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2395c0ec%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px top 50%;
-            background-size: 12px auto;
+            border-radius: 0;
         }
-
+        
         #displayInfo {
             font-size: 14px;
-            border: 1px solid var(--gray-border);
-            border-radius: 8px;
-            padding: 15px;
-            background: #fdfdfd;
-            margin-bottom: 25px;
+            border: 1px solid #eee;
+            padding: 20px;
+            background: #fffcfc;
+            margin-bottom: 30px;
+            border-top: 3px solid var(--primary-color);
         }
 
         .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px dashed #eee;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 10px;
         }
         
-        .info-row:last-child { border-bottom: none; }
-        
-        .info-row p { margin: 0; line-height: 1.5; }
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 4px;
+            display: block;
+        }
 
         .submit-button {
             width: 100%;
             padding: 18px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            background: var(--brand-color);
+            background-color: var(--primary-color);
             color: var(--white);
             border: none;
-            border-radius: 50px;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(149, 192, 236, 0.4);
-            transition: transform 0.1s, box-shadow 0.3s;
+            letter-spacing: 2px;
+            transition: opacity 0.3s;
+            border-bottom: 4px solid #7a151f;
         }
 
         .submit-button:hover {
-            background: var(--brand-dark);
+            opacity: 0.9;
         }
-
+        
         .submit-button:active {
             transform: translateY(2px);
-            box-shadow: none;
+            border-bottom-width: 2px;
         }
-
-        .hidden { display: none !important; }
 
         @media (max-width: 600px) {
             .container {
                 width: 100%;
                 padding: 20px 15px;
                 box-shadow: none;
-                border-radius: 0;
-                border-top: none;
             }
-            h1 { font-size: 20px; }
-            .selection-btn { font-size: 13px; }
+            
+            h1 {
+                margin: -20px -15px 25px -15px;
+                font-size: 20px;
+            }
+            
+            .menu-buttons button {
+                padding: 12px 5px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>KOBAIカイロプラクティック<br>ご予約フォーム</h1>
+        <h1>
+            <span class="small-text">Reservation Form</span>
+            ご予約フォーム
+        </h1>
 
-        <div class="label">お名前<span class="required">必須</span></div>
-        <input type="text" id="name" placeholder="例）山田 花子" oninput="saveInput('name')">
+        <div class="label">お名前<span class="badge required">必須</span></div>
+        <input type="text" id="name" placeholder="例）山田 花子" oninput="handleInput('name')">
 
-        <div class="label">電話番号<span class="required">必須</span></div>
-        <input type="tel" id="phone" placeholder="例）090-1234-5678" oninput="saveInput('phone')">
+        <div class="label">電話番号<span class="badge optional">任意</span></div>
+        <input type="tel" id="phone" placeholder="例）090-1234-5678" oninput="handleInput('phone')">
 
-        <div class="label">ご来店回数<span class="required">必須</span></div>
-        <div class="button-group" id="visit-group">
-            <button type="button" class="selection-btn" id="firstVisit" onclick="selectVisit(this, 'first')">1回目</button>
-            <button type="button" class="selection-btn" id="repeatVisit" onclick="selectVisit(this, 'repeat')">2回目以降</button>
+        <div class="label">メニュー<span class="badge required">必須</span></div>
+        <div class="menu-buttons" id="menu-container">
+            <button type="button" onclick="selectMenu(this)">winback</button>
+            <button type="button" onclick="selectMenu(this)">ガリレオピーリング</button>
+            <button type="button" onclick="selectMenu(this)">GREEN PEEL</button>
+            <button type="button" onclick="selectMenu(this)">スキンケアwaxXXX</button>
+            <button type="button" onclick="selectMenu(this)">毛穴黒ずみ除去</button>
+            <button type="button" onclick="selectMenu(this)">脱毛</button>
         </div>
 
-        <div class="label" id="category-label">ご希望メニューカテゴリ<span class="required">必須</span></div>
-        <div class="button-group category-group">
-            <button type="button" class="selection-btn" onclick="selectCategory(this, 'chiro')">カイロプラクティック</button>
-            <button type="button" class="selection-btn" onclick="selectCategory(this, 'esthetic')">エステ</button>
-        </div>
-
-        <div id="menu-chiro" class="menu-container">
-            <div class="menu-list">
-                <button type="button" class="selection-btn" 
-                    onclick="selectMenu(this)" 
-                    data-name="AK カイロプラクティック" 
-                    data-price-text="初診: 5,000円 / 再来: 4,000円"
-                    data-details="神経の状態を良くするため、筋肉と骨の両方からアプローチするのが特徴です">
-                    AK カイロプラクティック
-                </button>
-
-                <button type="button" class="selection-btn" 
-                    onclick="selectMenu(this)" 
-                    data-name="佐藤式 リンパケア" 
-                    data-price-text="通常: 10,000円 / モニター: 5,000円"
-                    data-details="※モニター様はお写真をお撮りさせていただきます">
-                    佐藤式 リンパケア
-                </button>
-
-                <button type="button" class="selection-btn" 
-                    onclick="selectMenu(this)" 
-                    data-name="カイロリンパケアコース" 
-                    data-price-text="通常: 13,000円 / モニター: 8,000円"
-                    data-details="AKカイロ×佐藤式リンパのセットコース。<br>カイロ・リンパを同時にされたい方に。">
-                    カイロリンパケアコース
-                </button>
-            </div>
-        </div>
-
-        <div id="menu-esthetic" class="menu-container">
-            <div class="menu-list">
-                <button type="button" class="selection-btn" 
-                    onclick="selectMenu(this)" 
-                    data-name="エクスホリエーション(EX)" 
-                    data-price-text="料金: 5,500円"
-                    data-details="お顔の古い角質、角層のケアができ最後にオイルトリートメントで整えます。">
-                    エクスホリエーション(EX)
-                </button>
-
-                <button type="button" class="selection-btn hidden" id="oil-treatment-btn"
-                    onclick="selectMenu(this)" 
-                    data-name="オイルトリートメント" 
-                    data-price-text="料金: 2,200円"
-                    data-details="お肌に合ったオイルで優しくお肌のケア。<br>保湿と毛穴のケアができます。">
-                    オイルトリートメント
-                </button>
-
-                <button type="button" class="selection-btn" 
-                    onclick="selectMenu(this)" 
-                    data-name="ハーブ蒸し" 
-                    data-price-text="体験チケット: 4,400円 / 1回〜7,700円"
-                    data-details="回数券購入でお得に受けられます。">
-                    ハーブ蒸し
-                </button>
-
-                <button type="button" class="selection-btn" 
-                    onclick="selectMenu(this)" 
-                    data-name="水素吸引" 
-                    data-price-text="体験チケット: 2,200円 / 通常: 3,300円"
-                    data-details="疲労軽減や美肌に効果のある水素吸引。<br>細胞を活性化させるアンチエイジングにオススメです。">
-                    水素吸引
-                </button>
-            </div>
-        </div>
-
-        <div id="detail-box">
-            <h3 id="detail-title">メニュー名</h3>
-            <div id="detail-desc">説明文</div>
-            <div class="price-tag" id="detail-price">料金</div>
-        </div>
-
-        <div class="label" id="kibou1">第一希望日時<span class="required">必須</span></div>
+        <div class="label">第一希望日時<span class="badge required">必須</span></div>
         <div class="datetime-wrapper">
-            <span class="placeholder" id="placeholder1">▼ タップして日時を選択</span>
-            <input type="hidden" id="date1" name="date1">
+            <span class="placeholder" id="placeholder1">▼ 日時を選択してください</span>
+            <input type="hidden" id="date1">
             <div class="dt-grid">
                 <select id="date1_day" class="datetime-input"></select>
                 <select id="date1_time" class="datetime-input"></select>
             </div>
         </div>
 
-        <div class="label" id="kibou2">第二希望日時<span class="required">必須</span></div>
+        <div class="label">第二希望日時<span class="badge required">必須</span></div>
         <div class="datetime-wrapper">
-            <span class="placeholder" id="placeholder2">▼ タップして日時を選択</span>
-            <input type="hidden" id="date2" name="date2">
+            <span class="placeholder" id="placeholder2">▼ 日時を選択してください</span>
+            <input type="hidden" id="date2">
             <div class="dt-grid">
                 <select id="date2_day" class="datetime-input"></select>
                 <select id="date2_time" class="datetime-input"></select>
             </div>
         </div>
 
-        <div class="label" id="kibou3">第三希望日時<span class="optional">任意</span></div>
-        <div class="datetime-wrapper">
-            <span class="placeholder" id="placeholder3">▼ タップして日時を選択</span>
-            <input type="hidden" id="date3" name="date3">
-            <div class="dt-grid">
-                <select id="date3_day" class="datetime-input"></select>
-                <select id="date3_time" class="datetime-input"></select>
-            </div>
-        </div>
-
-        <div class="label">メッセージ・ご質問</div>
-        <textarea id="message" rows="3" placeholder="ご要望などがございましたらご記入ください"></textarea>
+        <div class="label">備考<span class="badge optional">任意</span></div>
+        <textarea id="message" rows="4" placeholder="ご要望やご質問がございましたらご記入ください" oninput="updateDisplayInfo()"></textarea>
 
         <div class="label">ご予約内容の確認</div>
         <div id="displayInfo">
-            <p style="text-align:center; color:#888;">入力内容がここに反映されます</p>
+            <p style="text-align:center; color:#888; font-size:12px;">入力内容がここに反映されます</p>
         </div>
 
         <button class="submit-button" onclick="submitForm()">予約を確定する</button>
@@ -466,197 +317,120 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        // --- 変数定義 ---
-        let visitCountType = ''; 
-        let selectedCategory = ''; 
-        let selectedMenuData = null; 
+        let selectedMenuItems = []; 
 
-        // --- 初期化処理 ---
         document.addEventListener('DOMContentLoaded', function () {
+            // LIFF初期化
             liff.init({ liffId: '2005254357-zKma9BZk' })
-    .then(() => console.log("LIFF OK"))
-    .catch(err => console.error(err));
-
-            const savedName = localStorage.getItem('name');
-            const savedPhone = localStorage.getItem('phone');
-            if (savedName) document.getElementById('name').value = savedName;
-            if (savedPhone) document.getElementById('phone').value = savedPhone;
-
-            // 日時選択の初期化（3つ分）
-            initPicker('date1');
-            initPicker('date2');
-            initPicker('date3');
-        });
-
-        // 入力保存
-        function saveInput(id) {
-            localStorage.setItem(id, document.getElementById(id).value);
-            updateDisplayInfo();
-        }
-
-        // --- 来店回数選択 ---
-        function selectVisit(btn, type) {
-            const group = btn.parentElement;
-            group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            visitCountType = type;
+                .then(() => console.log('LIFF init success'))
+                .catch((err) => console.log('LIFF init error', err));
             
-            // 2回目のみ表示制御
-            const oilBtn = document.getElementById('oil-treatment-btn');
-            if (type === 'repeat') {
-                oilBtn.classList.remove('hidden');
-            } else {
-                oilBtn.classList.add('hidden');
-                if (selectedMenuData && selectedMenuData.name === 'オイルトリートメント') {
-                    resetMenuSelection();
-                }
+            // 日付選択肢の生成
+            ['date1', 'date2'].forEach(id => initPicker(id));
+
+            // ★ データの復元処理 ★
+            const savedName = localStorage.getItem('sha_m_name');
+            const savedPhone = localStorage.getItem('sha_m_phone');
+
+            if (savedName) {
+                document.getElementById('name').value = savedName;
+            }
+            if (savedPhone) {
+                document.getElementById('phone').value = savedPhone;
             }
 
+            // 復元したデータを反映して表示更新
+            updateDisplayInfo();
+        });
+
+        // 入力を保存して表示を更新する関数
+        function handleInput(id) {
+            const value = document.getElementById(id).value;
+            // ローカルストレージに保存
+            localStorage.setItem('sha_m_' + id, value);
+            // 表示を更新
             updateDisplayInfo();
         }
 
-        // --- カテゴリ選択 ---
-        function selectCategory(btn, category) {
-            const group = btn.parentElement;
-            group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            selectedCategory = category;
-
-            document.getElementById('menu-chiro').classList.remove('show');
-            document.getElementById('menu-esthetic').classList.remove('show');
+        // メニュー選択ロジック
+        function selectMenu(button) {
+            const buttons = document.querySelectorAll('#menu-container button');
+            buttons.forEach(b => b.classList.remove('active'));
             
-            const targetId = category === 'chiro' ? 'menu-chiro' : 'menu-esthetic';
-            document.getElementById(targetId).classList.add('show');
-
-            resetMenuSelection();
-            updateDisplayInfo();
-        }
-
-        function resetMenuSelection() {
-            document.querySelectorAll('.menu-list button').forEach(b => b.classList.remove('active'));
-            document.getElementById('detail-box').style.display = 'none';
-            selectedMenuData = null;
-            updateDisplayInfo();
-        }
-
-        // --- メニュー選択 ---
-        function selectMenu(btn) {
-            document.querySelectorAll('.menu-list button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const name = btn.getAttribute('data-name');
-            const details = btn.getAttribute('data-details');
-            const priceText = btn.getAttribute('data-price-text');
-
-            selectedMenuData = { name: name, priceText: priceText };
-
-            const detailBox = document.getElementById('detail-box');
-            document.getElementById('detail-title').innerText = name;
-            document.getElementById('detail-desc').innerHTML = details;
-            document.getElementById('detail-price').innerText = priceText;
+            button.classList.add('active');
+            selectedMenuItems = [button.innerText];
             
-            detailBox.style.display = 'block';
-
             updateDisplayInfo();
         }
 
-        // --- 確認画面更新 ---
-function updateDisplayInfo() {
-    const name = document.getElementById('name').value || '未入力';
-    const visitText = visitCountType === 'first'
-        ? '初めて'
-        : (visitCountType === 'repeat' ? '2回目以降' : '未選択');
-    const menuText = selectedMenuData ? selectedMenuData.name : '未選択';
+        // 表示更新
+        function updateDisplayInfo() {
+            const name = document.getElementById('name').value || '未入力';
+            const phone = document.getElementById('phone').value || '未入力';
+            const menuText = selectedMenuItems.length > 0 ? selectedMenuItems.join(', ') : '未選択';
+            const remarks = document.getElementById('message').value || 'なし';
 
-    // hiddenの日時値
-    const d1Raw = document.getElementById('date1').value;
-    const d2Raw = document.getElementById('date2').value;
-    const d3Raw = document.getElementById('date3').value;
+            const d1 = formatDateTime(document.getElementById('date1').value);
+            const d2 = formatDateTime(document.getElementById('date2').value);
 
-    const d1 = formatDateTime(d1Raw);
-    const d2 = formatDateTime(d2Raw);
-    const d3 = formatDateTime(d3Raw);
-
-    // 第三希望があるときだけ表示
-    const thirdRow = d3Raw ? `
-        <div class="info-row">
-            <p><strong>【第三希望】</strong><br>${d3}</p>
-        </div>
-    ` : '';
-
-    const html = `
-        <div class="info-row">
-            <p><strong>【お名前】</strong><br>${name}</p>
-        </div>
-        <div class="info-row">
-            <p><strong>【来店回数】</strong><br>${visitText}</p>
-        </div>
-        <div class="info-row">
-            <p><strong>【メニュー】</strong><br>${menuText}</p>
-        </div>
-        <div class="info-row">
-            <p><strong>【第一希望】</strong><br>${d1}</p>
-        </div>
-        <div class="info-row">
-            <p><strong>【第二希望】</strong><br>${d2}</p>
-        </div>
-        ${thirdRow}
-    `;
-
-    document.getElementById('displayInfo').innerHTML = html;
-}
-
-        // --- 日時生成ロジック ---
-        function formatDateTime(val) {
-            if (!val) return '未選択';
-            const [d, t] = val.split('T');
-            if(!d || !t) return '未選択';
-            const [y, m, day] = d.split('-');
-            return `${parseInt(m)}/${parseInt(day)} ${t}`;
+            let html = `
+                <div class="info-row">
+                    <span class="info-label">お名前</span>
+                    ${escapeHtml(name)}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">電話番号</span>
+                    ${escapeHtml(phone)}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">メニュー</span>
+                    ${escapeHtml(menuText)}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">第一希望日時</span>
+                    ${d1}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">第二希望日時</span>
+                    ${d2}
+                </div>
+                <div class="info-row">
+                    <span class="info-label">備考</span>
+                    ${escapeHtml(remarks).replace(/\n/g, '<br>')}
+                </div>
+            `;
+            document.getElementById('displayInfo').innerHTML = html;
         }
+
+        // 日付生成ロジック
+        const JP_WD = ['日', '月', '火', '水', '木', '金', '土'];
+        const pad = n => String(n).padStart(2, '0');
 
         function initPicker(baseId) {
             const daySel = document.getElementById(`${baseId}_day`);
             const timeSel = document.getElementById(`${baseId}_time`);
             
-            // 日付：今日から30日分
-            daySel.innerHTML = '<option value="" disabled selected>日付</option>';
             const d = new Date();
-            const JP = ['日','月','火','水','木','金','土'];
-            
-            // 30日分の日付選択肢を作成
-            for(let i=0; i<30; i++) {
-                // 火曜日(2)は定休日なのでスキップ（選択肢に出さない）
-                if (d.getDay() === 2) {
-                    d.setDate(d.getDate()+1);
-                    continue;
-                }
-
+            daySel.innerHTML = '<option value="" disabled selected>日付</option>';
+            for (let i = 0; i < 60; i++) {
+                const wd = d.getDay();
                 const y = d.getFullYear();
-                const m = (d.getMonth()+1).toString().padStart(2,'0');
-                const dd = d.getDate().toString().padStart(2,'0');
-                const wd = JP[d.getDay()];
-                const val = `${y}-${m}-${dd}`;
-                const txt = `${m}/${dd}(${wd})`;
+                const m = pad(d.getMonth() + 1);
+                const day = pad(d.getDate());
+                const val = `${y}-${m}-${day}`;
+                const txt = `${m}/${day}（${JP_WD[wd]}）`;
                 const opt = document.createElement('option');
                 opt.value = val;
                 opt.textContent = txt;
                 daySel.appendChild(opt);
-                
-                // 次の日へ
-                d.setDate(d.getDate()+1);
+                d.setDate(d.getDate() + 1);
             }
 
-            // 時間：09:00 - 19:00
             timeSel.innerHTML = '<option value="" disabled selected>時間</option>';
-            for(let h=9; h<=19; h++) {
-                for(let m of [0, 30]) {
-                    // 19:30は含めない（19:00まで）
-                    if(h===19 && m===30) continue;
-                    
-                    const val = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+            for (let h = 10; h <= 19; h++) {
+                for (let m of [0, 30]) {
+                    if (h === 19 && m === 30) continue;
+                    const val = `${pad(h)}:${pad(m)}`;
                     const opt = document.createElement('option');
                     opt.value = val;
                     opt.textContent = val;
@@ -664,18 +438,19 @@ function updateDisplayInfo() {
                 }
             }
 
-            // イベントリスナ
             const updateHidden = () => {
-                const dv = daySel.value;
-                const tv = timeSel.value;
+                const day = daySel.value;
+                const time = timeSel.value;
                 const hidden = document.getElementById(baseId);
-                const ph = document.getElementById('placeholder' + baseId.slice(-1));
+                const ph = document.getElementById(`placeholder${baseId.slice(-1)}`);
                 
-                if(dv && tv) {
-                    hidden.value = `${dv}T${tv}`;
+                if (day && time) {
+                    hidden.value = `${day}T${time}`;
                     ph.style.display = 'none';
                 } else {
-                    hidden.value = '';
+                    hidden.value = "";
+                    ph.style.display = 'block';
+                    ph.textContent = day ? "▼ 時間を選択してください" : "▼ 日時を選択";
                 }
                 updateDisplayInfo();
             };
@@ -684,49 +459,68 @@ function updateDisplayInfo() {
             timeSel.addEventListener('change', updateHidden);
         }
 
-        // --- 送信 ---
-async function submitForm() {
-    const name = document.getElementById('name').value;
-    const phone = document.getElementById('phone').value;
-
-    const date1 = formatDateTime(document.getElementById('date1').value);
-    const date2 = formatDateTime(document.getElementById('date2').value);
-
-    // ★ 第三希望は「生の値」を先に取る
-    const rawDate3 = document.getElementById('date3').value;
-    const date3 = formatDateTime(rawDate3);
-
-    const visit = visitCountType === "first" ? "1回目"
-              : visitCountType === "repeat" ? "2回目以降"
-              : "未選択";
-
-    const menu = selectedMenuData ? selectedMenuData.name : "未選択";
-
-    // ★ 第三希望があるときだけ追加
-    const thirdLine = rawDate3 ? `\n《第三希望》${date3}` : "";
-
-    const message =
-`【ご予約内容】
-
-《お名前》${name}
-《電話番号》${phone}
-《来店回数》${visit}
-《メニュー》${menu}
-
-《第一希望》${date1}
-《第二希望》${date2}${thirdLine}`;
-
-    await liff.sendMessages([
-        {
-            type: "text",
-            text: message
+        function formatDateTime(val) {
+            if (!val) return '未選択';
+            const [date, time] = val.split('T');
+            const [y, m, d] = date.split('-');
+            return `${m}月${d}日 ${time}`;
         }
-    ]);
 
-    alert("予約内容を送信しました！");
-    liff.closeWindow();
-}
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>"']/g, function(match) {
+                const escape = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                };
+                return escape[match];
+            });
+        }
 
+        function submitForm() {
+            const name = document.getElementById('name').value;
+            const date1 = document.getElementById('date1').value;
+            const date2 = document.getElementById('date2').value;
+
+            if (!name) {
+                alert('お名前を入力してください');
+                return;
+            }
+            if (selectedMenuItems.length === 0) {
+                alert('メニューを選択してください');
+                return;
+            }
+            if (!date1) {
+                alert('第一希望日時を選択してください');
+                return;
+            }
+            if (!date2) {
+                alert('第二希望日時を選択してください');
+                return;
+            }
+
+            const msg = 
+                `【予約フォーム送信】\n` +
+                `お名前：${name}\n` +
+                `電話番号：${document.getElementById('phone').value || 'なし'}\n` +
+                `メニュー：${selectedMenuItems.join(', ')}\n` +
+                `第一希望：${formatDateTime(date1)}\n` +
+                `第二希望：${formatDateTime(date2)}\n` +
+                `備考：${document.getElementById('message').value || 'なし'}`;
+            
+            alert('以下の内容で予約を送信します（テスト）\n\n' + msg);
+            
+            // 実装用LIFF送信コード
+            if (liff.isLoggedIn()) {
+                liff.sendMessages([{ type: 'text', text: msg }])
+                    .then(() => { liff.closeWindow(); })
+                    .catch((err) => { window.alert('Error sending message: ' + err); });
+            }
+            
+        }
     </script>
 </body>
 </html>
