@@ -1,481 +1,683 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ママとも助産院 アンケートフォーム</title>
+    <title>サロン予約フォーム</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Zen+Maru+Gothic:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- カラーパレット設定 --- */
         :root {
-            /* おしゃれなカラーパレット定義 */
-            --main-bg: #f9f8f6; /* 生成り色 */
-            --card-bg: #ffffff;
-            --text-color: #5a524c; /* 真っ黒ではなく温かみのある焦げ茶 */
-            --accent-green: #8a9a5b; /* セージグリーン */
-            --accent-pink: #d8b4a0; /* ダスティピンク */
-            --input-bg: #fdfdfd;
-            --border-color: #e6e3de;
+            --brand-color: #95c0ec;
+            --brand-dark: #6fa0d6;
+            --brand-light: #eaf4fd;
+            
+            --accent-color: #e6b422;
+            --bg-color: #f8fbfe;
+            --text-color: #444444;
+            --white: #ffffff;
+            --gray-border: #dde2e8;
+            --optional-bg: #b0c4de; /* 任意ラベル用の色 */
         }
 
         body {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            background-color: var(--main-bg);
-            /* 背景にうっすらノイズ */
-            background-image: 
-                linear-gradient(var(--main-bg), var(--main-bg)),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
-            color: var(--text-color);
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 30px 15px;
-            line-height: 1.6;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            padding-top: 20px;
+            padding-bottom: 60px;
+            color: var(--text-color);
+            overflow-x: hidden;
         }
 
         .container {
-            background-color: var(--card-bg);
+            background-color: var(--white);
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(90, 82, 76, 0.05);
-            width: 100%;
-            max-width: 600px;
-            padding: 40px;
+            box-shadow: 0 4px 20px rgba(149, 192, 236, 0.2);
+            width: 94%;
+            max-width: 500px;
+            padding: 30px 20px;
             box-sizing: border-box;
-            border: 1px solid #fff;
-            animation: fadeIn 0.8s ease-out;
-            position: relative;
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: repeating-linear-gradient(
-                45deg,
-                var(--accent-green),
-                var(--accent-green) 10px,
-                #fff 10px,
-                #fff 20px
-            );
-            border-radius: 12px 12px 0 0;
-            opacity: 0.5;
+            margin: 0 auto;
+            border-top: 6px solid var(--brand-color);
         }
 
         h1 {
-            font-family: 'Shippori Mincho', serif;
-            color: var(--text-color);
+            color: var(--brand-dark);
             text-align: center;
-            font-size: 26px;
-            margin-bottom: 30px;
-            font-weight: 500;
-            letter-spacing: 0.1em;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 30px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--brand-color);
         }
 
-        h1 span {
-            display: block;
-            font-size: 13px;
-            color: var(--accent-green);
-            margin-top: 5px;
-            font-family: 'Zen Maru Gothic', sans-serif;
-            font-weight: 400;
-            letter-spacing: 0.2em;
-        }
-
-        .label-group {
-            margin-bottom: 28px;
-        }
-
-        label {
-            display: block;
+        .label {
+            display: flex;
+            align-items: center;
             margin-bottom: 10px;
-            font-weight: 500;
-            color: var(--text-color);
+            font-weight: 700;
+            color: var(--brand-dark);
             font-size: 15px;
-            letter-spacing: 0.05em;
         }
 
-        /* 必須・任意バッジ */
-        .badge {
-            font-size: 10px;
-            padding: 3px 8px;
-            border-radius: 20px;
-            margin-left: 10px;
-            vertical-align: middle;
-            letter-spacing: 0.05em;
-        }
-        .badge-required {
-            background-color: #fff;
-            border: 1px solid var(--accent-pink);
-            color: var(--accent-pink);
-        }
-        .badge-optional {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            color: #999;
-        }
-
-        /* 入力フィールド */
-        input[type="text"],
-        input[type="tel"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-            font-family: 'Zen Maru Gothic', sans-serif;
-            appearance: none; /* スマホでのデフォルトスタイルリセット */
+        .label::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background-color: var(--brand-color);
+            margin-right: 8px;
+            border-radius: 2px;
         }
         
-        /* Select矢印のカスタマイズ */
-        .select-wrapper {
-            position: relative;
+        /* 必須・任意マーク */
+        .required, .optional {
+            font-size: 10px;
+            margin-left: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            vertical-align: middle;
+            color: var(--white);
         }
-        .select-wrapper::after {
-            content: '\f078'; /* FontAwesome chevron-down */
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            color: #888;
-            pointer-events: none;
-            font-size: 12px;
+
+        .required {
+            background-color: #ff6b6b;
+        }
+
+        .optional {
+            background-color: var(--optional-bg);
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #fafafa;
+            transition: all 0.3s;
+            font-family: inherit;
         }
 
         input:focus,
-        select:focus,
         textarea:focus {
-            border-color: var(--accent-green);
-            background-color: #fff;
+            border-color: var(--brand-color);
+            background-color: var(--white);
             outline: none;
-            box-shadow: 0 4px 12px rgba(138, 154, 91, 0.1);
+            box-shadow: 0 0 0 2px var(--brand-light);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-            line-height: 1.8;
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
-        /* 選択ボタン（グリッドレイアウト） */
-        .select-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 2列 */
+        .selection-btn {
+            flex: 1 1 45%;
+            padding: 12px 5px;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            background-color: var(--white);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .selection-btn:hover {
+            border-color: var(--brand-color);
+            background-color: var(--brand-light);
+        }
+
+        .selection-btn.active {
+            background-color: var(--brand-color);
+            color: var(--white);
+            border-color: var(--brand-color);
+            box-shadow: 0 2px 6px rgba(149, 192, 236, 0.4);
+        }
+
+        .category-group .selection-btn {
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 3px solid var(--gray-border);
+        }
+        
+        .category-group .selection-btn.active {
+            border-bottom: 3px solid var(--brand-dark);
+        }
+
+        .menu-container {
+            display: none;
+            background: var(--brand-light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .menu-container.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-list .selection-btn {
+            width: 100%;
+            text-align: left;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .menu-list .selection-btn::after {
+            content: '>';
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .menu-list .selection-btn.active::after {
+            color: white;
+            opacity: 1;
+        }
+
+        #detail-box {
+            display: none;
+            background-color: #fff;
+            border: 2px solid var(--brand-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        #detail-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            color: var(--brand-dark);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .price-tag {
+            font-weight: bold;
+            color: #d35400;
+            background: #fff8e1;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .datetime-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .placeholder {
+            display: block;
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .dt-grid {
+            display: flex;
             gap: 10px;
         }
 
-        .select-grid button {
-            padding: 14px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #fff;
-            color: #888;
+        .datetime-input {
+            flex: 1;
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid var(--gray-border);
+            border-radius: 6px;
+            background-color: var(--white);
+            color: var(--text-color);
             cursor: pointer;
+            appearance: none; 
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2395c0ec%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 12px auto;
+        }
+
+        #displayInfo {
             font-size: 14px;
-            font-family: 'Zen Maru Gothic', sans-serif;
-            transition: all 0.3s;
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 15px;
+            background: #fdfdfd;
+            margin-bottom: 25px;
         }
 
-        .select-grid button:hover {
-            background-color: #fcfcfc;
-            border-color: #ccc;
-        }
-
-        .select-grid button.active {
-            background-color: var(--accent-green);
-            color: white;
-            border-color: var(--accent-green);
-            box-shadow: 0 4px 10px rgba(138, 154, 91, 0.3);
-        }
-
-        /* 動的フィールドのコンテナ */
-        .dynamic-field-container {
-            margin-top: 15px;
-            padding-left: 15px;
-            border-left: 3px solid var(--accent-green);
-            display: none; /* デフォルト非表示 */
-            animation: fadeIn 0.5s ease;
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
         }
         
-        .child-input-group {
-            margin-bottom: 15px;
-            animation: fadeIn 0.5s ease;
-        }
-        .child-input-group label {
-            font-size: 13px;
-            color: #888;
-        }
+        .info-row:last-child { border-bottom: none; }
+        
+        .info-row p { margin: 0; line-height: 1.5; }
 
-        /* 送信ボタン */
         .submit-button {
             width: 100%;
             padding: 18px;
+            font-size: 18px;
+            font-weight: bold;
+            background: var(--brand-color);
+            color: var(--white);
             border: none;
             border-radius: 50px;
-            background: linear-gradient(135deg, var(--accent-green), #758654);
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
             cursor: pointer;
-            margin-top: 30px;
-            letter-spacing: 0.15em;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-family: 'Zen Maru Gothic', sans-serif;
-            box-shadow: 0 4px 15px rgba(117, 134, 84, 0.3);
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(149, 192, 236, 0.4);
+            transition: transform 0.1s, box-shadow 0.3s;
         }
 
         .submit-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(117, 134, 84, 0.4);
+            background: var(--brand-dark);
         }
 
         .submit-button:active {
-            transform: translateY(0);
+            transform: translateY(2px);
+            box-shadow: none;
         }
 
-        /* スマホ向け調整 */
+        .hidden { display: none !important; }
+
         @media (max-width: 600px) {
             .container {
-                padding: 30px 20px;
+                width: 100%;
+                padding: 20px 15px;
                 box-shadow: none;
-            }
-            body {
-                padding: 0;
-                background-color: #fff;
-            }
-            .container::before {
-                display: none;
-            }
-            .container {
                 border-radius: 0;
+                border-top: none;
             }
-            .select-grid {
-                grid-template-columns: 1fr; /* スマホでは1列で見やすく */
-            }
+            h1 { font-size: 20px; }
+            .selection-btn { font-size: 13px; }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>ママとも助産院<br><span>Survey form</span></h1>
+        <h1>ご予約フォーム</h1>
 
-        <div class="label-group">
-            <label>①お子様の人数<span class="badge badge-required">必須</span></label>
-            <div class="select-wrapper">
-                <select id="child_count" onchange="updateChildInputs()">
-                    <option value="" disabled selected>選択してください</option>
-                    <option value="1">1人</option>
-                    <option value="2">2人</option>
-                    <option value="3">3人</option>
-                    <option value="4">4人</option>
-                    <option value="5">5人</option>
-                </select>
-            </div>
+        <div class="label">お名前<span class="required">必須</span></div>
+        <input type="text" id="name" placeholder="例）山田 花子" oninput="saveInput('name')">
 
-            <div id="children_birthdays_container" style="margin-top: 20px;">
-                </div>
+        <div class="label">電話番号<span class="required">必須</span></div>
+        <input type="tel" id="phone" placeholder="例）090-1234-5678" oninput="saveInput('phone')">
+
+        <div class="label">ご来店回数<span class="required">必須</span></div>
+        <div class="button-group" id="visit-group">
+            <button type="button" class="selection-btn" id="firstVisit" onclick="selectVisit(this, 'first')">1回目</button>
+            <button type="button" class="selection-btn" id="repeatVisit" onclick="selectVisit(this, 'repeat')">2回目以降</button>
         </div>
 
-        <hr style="border: 0; border-top: 1px dashed #e6e3de; margin: 30px 0;">
+        <div class="label" id="category-label">ご希望メニューカテゴリ<span class="required">必須</span></div>
+        <div class="button-group category-group">
+            <button type="button" class="selection-btn" onclick="selectCategory(this, 'chiro')">カイロプラクティック</button>
+            <button type="button" class="selection-btn" onclick="selectCategory(this, 'esthetic')">エステ</button>
+        </div>
 
-        <div class="label-group">
-            <label>②どこで当院を知りましたか？<span class="badge badge-required">必須</span></label>
-            <div class="select-grid">
-                <button type="button" onclick="selectSource(this, '知り合いからの紹介')">知り合いからの紹介</button>
-                <button type="button" onclick="selectSource(this, '病院からの紹介')">病院からの紹介</button>
-                <button type="button" onclick="selectSource(this, '行政からの紹介')">行政からの紹介</button>
-                <button type="button" onclick="selectSource(this, 'Googleマップで見つけた')">Googleマップ</button>
-                <button type="button" onclick="selectSource(this, 'ホームページを見た')">ホームページ</button>
-                <button type="button" onclick="selectSource(this, 'その他')">その他</button>
-            </div>
-            <input type="hidden" id="source_value">
+        <div id="menu-chiro" class="menu-container">
+            <div class="menu-list">
+                <button type="button" class="selection-btn" 
+                    onclick="selectMenu(this)" 
+                    data-name="AK カイロプラクティック" 
+                    data-price-text="初診: 5,000円 / 再来: 4,000円"
+                    data-details="神経の状態を良くするため、筋肉と骨の両方からアプローチするのが特徴です">
+                    AK カイロプラクティック
+                </button>
 
-            <div id="hospital_input_area" class="dynamic-field-container">
-                <label>病院名を教えてください<span class="badge badge-optional">任意</span></label>
-                <input type="text" id="hospital_name" placeholder="例：〇〇産婦人科">
-            </div>
+                <button type="button" class="selection-btn" 
+                    onclick="selectMenu(this)" 
+                    data-name="佐藤式 リンパケア" 
+                    data-price-text="通常: 10,000円 / モニター: 5,000円"
+                    data-details="※モニター様はお写真をお撮りさせていただきます">
+                    佐藤式 リンパケア
+                </button>
 
-            <div id="other_input_area" class="dynamic-field-container">
-                <label>何で知ったか教えてください<span class="badge badge-optional">任意</span></label>
-                <input type="text" id="other_detail" placeholder="詳細をご記入ください">
+                <button type="button" class="selection-btn" 
+                    onclick="selectMenu(this)" 
+                    data-name="カイロリンパケアコース" 
+                    data-price-text="通常: 13,000円 / モニター: 8,000円"
+                    data-details="AKカイロ×佐藤式リンパのセットコース。<br>カイロ・リンパを同時にされたい方に。">
+                    カイロリンパケアコース
+                </button>
             </div>
         </div>
 
-        <hr style="border: 0; border-top: 1px dashed #e6e3de; margin: 30px 0;">
+        <div id="menu-esthetic" class="menu-container">
+            <div class="menu-list">
+                <button type="button" class="selection-btn" 
+                    onclick="selectMenu(this)" 
+                    data-name="エクスホリエーション(EX)" 
+                    data-price-text="料金: 5,500円"
+                    data-details="お顔の古い角質、角層のケアができ最後にオイルトリートメントで整えます。">
+                    エクスホリエーション(EX)
+                </button>
 
-        <div class="label-group">
-            <label>③どのような配信が届くと嬉しいですか？<span class="badge badge-optional">任意</span></label>
-            <textarea id="desired_content" placeholder="例：産後のケア方法、離乳食のレシピなど"></textarea>
+                <button type="button" class="selection-btn hidden" id="oil-treatment-btn"
+                    onclick="selectMenu(this)" 
+                    data-name="オイルトリートメント" 
+                    data-price-text="料金: 2,200円"
+                    data-details="お肌に合ったオイルで優しくお肌のケア。<br>保湿と毛穴のケアができます。">
+                    オイルトリートメント
+                </button>
+
+                <button type="button" class="selection-btn" 
+                    onclick="selectMenu(this)" 
+                    data-name="ハーブ蒸し" 
+                    data-price-text="体験チケット: 4,400円 / 1回〜7,700円"
+                    data-details="回数券購入でお得に受けられます。">
+                    ハーブ蒸し
+                </button>
+
+                <button type="button" class="selection-btn" 
+                    onclick="selectMenu(this)" 
+                    data-name="水素吸引" 
+                    data-price-text="体験チケット: 2,200円 / 通常: 3,300円"
+                    data-details="疲労軽減や美肌に効果のある水素吸引。<br>細胞を活性化させるアンチエイジングにオススメです。">
+                    水素吸引
+                </button>
+            </div>
         </div>
 
-        <div class="label-group">
-            <label>④助産師に相談したい内容はありますか？<span class="badge badge-optional">任意</span></label>
-            <textarea id="consultation_content" placeholder="例：授乳のタイミングについて悩んでいます。"></textarea>
+        <div id="detail-box">
+            <h3 id="detail-title">メニュー名</h3>
+            <div id="detail-desc">説明文</div>
+            <div class="price-tag" id="detail-price">料金</div>
         </div>
 
-        <button class="submit-button" onclick="submitForm()">内容を送信する</button>
+        <div class="label" id="kibou1">第一希望日時<span class="required">必須</span></div>
+        <div class="datetime-wrapper">
+            <span class="placeholder" id="placeholder1">▼ タップして日時を選択</span>
+            <input type="hidden" id="date1" name="date1">
+            <div class="dt-grid">
+                <select id="date1_day" class="datetime-input"></select>
+                <select id="date1_time" class="datetime-input"></select>
+            </div>
+        </div>
+
+        <div class="label" id="kibou2">第二希望日時<span class="required">必須</span></div>
+        <div class="datetime-wrapper">
+            <span class="placeholder" id="placeholder2">▼ タップして日時を選択</span>
+            <input type="hidden" id="date2" name="date2">
+            <div class="dt-grid">
+                <select id="date2_day" class="datetime-input"></select>
+                <select id="date2_time" class="datetime-input"></select>
+            </div>
+        </div>
+
+        <div class="label" id="kibou3">第三希望日時<span class="optional">任意</span></div>
+        <div class="datetime-wrapper">
+            <span class="placeholder" id="placeholder3">▼ タップして日時を選択</span>
+            <input type="hidden" id="date3" name="date3">
+            <div class="dt-grid">
+                <select id="date3_day" class="datetime-input"></select>
+                <select id="date3_time" class="datetime-input"></select>
+            </div>
+        </div>
+
+        <div class="label">メッセージ・ご質問</div>
+        <textarea id="message" rows="3" placeholder="ご要望などがございましたらご記入ください"></textarea>
+
+        <div class="label">ご予約内容の確認</div>
+        <div id="displayInfo">
+            <p style="text-align:center; color:#888;">入力内容がここに反映されます</p>
+        </div>
+
+        <button class="submit-button" onclick="submitForm()">予約を確定する</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        // LIFF ID (既存のものを使用)
-        const MY_LIFF_ID = '2005254357-zKma9BZk';
+        // --- 変数定義 ---
+        let visitCountType = ''; 
+        let selectedCategory = ''; 
+        let selectedMenuData = null; 
 
+        // --- 初期化処理 ---
         document.addEventListener('DOMContentLoaded', function () {
-            liff.init({
-                liffId: MY_LIFF_ID
-            }).then(() => {
-                console.log('LIFF初期化成功');
-            }).catch((err) => {
-                console.error('LIFF初期化失敗', err);
-            });
+            // liff.init({ liffId: '2005254357-zKma9BZk' }).catch(err => console.error(err));
+
+            const savedName = localStorage.getItem('name');
+            const savedPhone = localStorage.getItem('phone');
+            if (savedName) document.getElementById('name').value = savedName;
+            if (savedPhone) document.getElementById('phone').value = savedPhone;
+
+            // 日時選択の初期化（3つ分）
+            initPicker('date1');
+            initPicker('date2');
+            initPicker('date3');
         });
 
-        // ①お子様の人数変更時の処理
-        function updateChildInputs() {
-            const count = parseInt(document.getElementById('child_count').value);
-            const container = document.getElementById('children_birthdays_container');
-            
-            // コンテナを一旦クリア
-            container.innerHTML = '';
-
-            if (!count) return;
-
-            // 人数分ループして入力欄を生成
-            for (let i = 1; i <= count; i++) {
-                const div = document.createElement('div');
-                div.className = 'child-input-group';
-                
-                // ラベルの文言調整（1人の場合は「お子様」、2人以上は「1人目」等の表記）
-                const labelText = (count === 1) ? 'お子様の生年月日' : `${i}人目の生年月日`;
-                
-                div.innerHTML = `
-                    <label>${labelText}<span class="badge badge-optional">任意</span></label>
-                    <input type="text" class="child-birthday" data-index="${i}" placeholder="例：2023年4月1日">
-                `;
-                container.appendChild(div);
-            }
+        // 入力保存
+        function saveInput(id) {
+            localStorage.setItem(id, document.getElementById(id).value);
+            updateDisplayInfo();
         }
 
-        // ②認知経路選択時の処理
-        function selectSource(element, value) {
-            // ボタンのアクティブ状態切り替え
-            const buttons = element.parentElement.querySelectorAll('button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+        // --- 来店回数選択 ---
+        function selectVisit(btn, type) {
+            const group = btn.parentElement;
+            group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            visitCountType = type;
             
-            // 値を保存
-            document.getElementById('source_value').value = value;
-
-            // 条件分岐表示の制御
-            const hospitalArea = document.getElementById('hospital_input_area');
-            const otherArea = document.getElementById('other_input_area');
-            const hospitalInput = document.getElementById('hospital_name');
-            const otherInput = document.getElementById('other_detail');
-
-            // 一旦全て非表示＆クリア
-            hospitalArea.style.display = 'none';
-            otherArea.style.display = 'none';
-
-            if (value === '病院からの紹介') {
-                hospitalArea.style.display = 'block';
-                hospitalInput.focus();
-            } else if (value === 'その他') {
-                otherArea.style.display = 'block';
-                otherInput.focus();
-            }
-        }
-
-        // 送信処理
-        function submitForm() {
-            // 値の取得
-            const childCount = document.getElementById('child_count').value;
-            const sourceValue = document.getElementById('source_value').value;
-            const desiredContent = document.getElementById('desired_content').value;
-            const consultationContent = document.getElementById('consultation_content').value;
-
-            // バリデーション（必須項目チェック）
-            if (!childCount) { alert('①お子様の人数を選択してください。'); return; }
-            if (!sourceValue) { alert('②当院を知ったきっかけを選択してください。'); return; }
-
-            // お子様の生年月日情報の収集
-            let childrenInfo = '';
-            const birthdayInputs = document.querySelectorAll('.child-birthday');
-            birthdayInputs.forEach(input => {
-                const index = input.getAttribute('data-index');
-                const val = input.value;
-                if (val) {
-                    // 1人のときは「お子様」、複数のときは「X人目」
-                    const label = (birthdayInputs.length === 1) ? 'お子様' : `${index}人目`;
-                    childrenInfo += `・${label}: ${val}\n`;
+            // 2回目のみ表示制御
+            const oilBtn = document.getElementById('oil-treatment-btn');
+            if (type === 'repeat') {
+                oilBtn.classList.remove('hidden');
+            } else {
+                oilBtn.classList.add('hidden');
+                if (selectedMenuData && selectedMenuData.name === 'オイルトリートメント') {
+                    resetMenuSelection();
                 }
-            });
-            if (!childrenInfo) childrenInfo = '（入力なし）';
-
-            // 認知経路の詳細情報の収集
-            let sourceDetail = sourceValue;
-            if (sourceValue === '病院からの紹介') {
-                const hName = document.getElementById('hospital_name').value;
-                if (hName) sourceDetail += `\n（病院名: ${hName}）`;
-            } else if (sourceValue === 'その他') {
-                const oDetail = document.getElementById('other_detail').value;
-                if (oDetail) sourceDetail += `\n（詳細: ${oDetail}）`;
             }
 
-            // 送信メッセージの作成
-            const messageText = `
-【ママとも助産院 アンケート回答】
+            updateDisplayInfo();
+        }
 
-①お子様の人数：${childCount}人
-${childrenInfo.trim()}
+        // --- カテゴリ選択 ---
+        function selectCategory(btn, category) {
+            const group = btn.parentElement;
+            group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
 
-②当院を知ったきっかけ
-${sourceDetail}
+            selectedCategory = category;
 
-③希望する配信内容
-${desiredContent || '（特になし）'}
+            document.getElementById('menu-chiro').classList.remove('show');
+            document.getElementById('menu-esthetic').classList.remove('show');
+            
+            const targetId = category === 'chiro' ? 'menu-chiro' : 'menu-esthetic';
+            document.getElementById(targetId).classList.add('show');
 
-④相談したい内容
-${consultationContent || '（特になし）'}
-`.trim();
+            resetMenuSelection();
+            updateDisplayInfo();
+        }
 
-            // LIFFで送信
-            if (!liff.isInClient()) {
-                alert('この機能はLINEアプリ内でのみ動作します。\n\n送信内容プレビュー:\n' + messageText);
+        function resetMenuSelection() {
+            document.querySelectorAll('.menu-list button').forEach(b => b.classList.remove('active'));
+            document.getElementById('detail-box').style.display = 'none';
+            selectedMenuData = null;
+            updateDisplayInfo();
+        }
+
+        // --- メニュー選択 ---
+        function selectMenu(btn) {
+            document.querySelectorAll('.menu-list button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const name = btn.getAttribute('data-name');
+            const details = btn.getAttribute('data-details');
+            const priceText = btn.getAttribute('data-price-text');
+
+            selectedMenuData = { name: name, priceText: priceText };
+
+            const detailBox = document.getElementById('detail-box');
+            document.getElementById('detail-title').innerText = name;
+            document.getElementById('detail-desc').innerHTML = details;
+            document.getElementById('detail-price').innerText = priceText;
+            
+            detailBox.style.display = 'block';
+
+            updateDisplayInfo();
+        }
+
+        // --- 確認画面更新 ---
+        function updateDisplayInfo() {
+            const name = document.getElementById('name').value || '未入力';
+            const visitText = visitCountType === 'first' ? '初めて' : (visitCountType === 'repeat' ? '2回目以降' : '未選択');
+            const menuText = selectedMenuData ? selectedMenuData.name : '未選択';
+            
+            // 日時
+            const d1 = formatDateTime(document.getElementById('date1').value);
+            const d2 = formatDateTime(document.getElementById('date2').value);
+            const d3 = formatDateTime(document.getElementById('date3').value);
+
+            const html = `
+                <div class="info-row">
+                    <p><strong>【お名前】</strong><br>${name}</p>
+                </div>
+                <div class="info-row">
+                    <p><strong>【来店回数】</strong><br>${visitText}</p>
+                </div>
+                <div class="info-row">
+                    <p><strong>【メニュー】</strong><br>${menuText}</p>
+                </div>
+                <div class="info-row">
+                    <p><strong>【第一希望】</strong><br>${d1}</p>
+                </div>
+                <div class="info-row">
+                    <p><strong>【第二希望】</strong><br>${d2}</p>
+                </div>
+                <div class="info-row">
+                    <p><strong>【第三希望】</strong><br>${d3}</p>
+                </div>
+            `;
+            document.getElementById('displayInfo').innerHTML = html;
+        }
+
+        // --- 日時生成ロジック ---
+        function formatDateTime(val) {
+            if (!val) return '未選択';
+            const [d, t] = val.split('T');
+            if(!d || !t) return '未選択';
+            const [y, m, day] = d.split('-');
+            return `${parseInt(m)}/${parseInt(day)} ${t}`;
+        }
+
+        function initPicker(baseId) {
+            const daySel = document.getElementById(`${baseId}_day`);
+            const timeSel = document.getElementById(`${baseId}_time`);
+            
+            // 日付：今日から30日分
+            daySel.innerHTML = '<option value="" disabled selected>日付</option>';
+            const d = new Date();
+            const JP = ['日','月','火','水','木','金','土'];
+            
+            // 30日分の日付選択肢を作成
+            for(let i=0; i<30; i++) {
+                // 火曜日(2)は定休日なのでスキップ（選択肢に出さない）
+                if (d.getDay() === 2) {
+                    d.setDate(d.getDate()+1);
+                    continue;
+                }
+
+                const y = d.getFullYear();
+                const m = (d.getMonth()+1).toString().padStart(2,'0');
+                const dd = d.getDate().toString().padStart(2,'0');
+                const wd = JP[d.getDay()];
+                const val = `${y}-${m}-${dd}`;
+                const txt = `${m}/${dd}(${wd})`;
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = txt;
+                daySel.appendChild(opt);
+                
+                // 次の日へ
+                d.setDate(d.getDate()+1);
+            }
+
+            // 時間：09:00 - 19:00
+            timeSel.innerHTML = '<option value="" disabled selected>時間</option>';
+            for(let h=9; h<=19; h++) {
+                for(let m of [0, 30]) {
+                    // 19:30は含めない（19:00まで）
+                    if(h===19 && m===30) continue;
+                    
+                    const val = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+                    const opt = document.createElement('option');
+                    opt.value = val;
+                    opt.textContent = val;
+                    timeSel.appendChild(opt);
+                }
+            }
+
+            // イベントリスナ
+            const updateHidden = () => {
+                const dv = daySel.value;
+                const tv = timeSel.value;
+                const hidden = document.getElementById(baseId);
+                const ph = document.getElementById('placeholder' + baseId.slice(-1));
+                
+                if(dv && tv) {
+                    hidden.value = `${dv}T${tv}`;
+                    ph.style.display = 'none';
+                } else {
+                    hidden.value = '';
+                }
+                updateDisplayInfo();
+            };
+
+            daySel.addEventListener('change', updateHidden);
+            timeSel.addEventListener('change', updateHidden);
+        }
+
+        // --- 送信 ---
+        function submitForm() {
+            if(!document.getElementById('name').value || !visitCountType || !selectedMenuData || !document.getElementById('date1').value) {
+                alert('必須項目を入力してください');
                 return;
             }
-
-            liff.sendMessages([{
-                type: 'text',
-                text: messageText
-            }]).then(() => {
-                alert('アンケートを送信しました。\nご協力ありがとうございます。');
-                liff.closeWindow();
-            }).catch((err) => {
-                console.error('送信エラー', err);
-                alert('送信に失敗しました。');
-            });
+            // 第三希望は任意なのでチェック不要
+            alert('予約リクエストを送信しました！');
         }
     </script>
 </body>
