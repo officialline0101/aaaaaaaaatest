@@ -563,38 +563,50 @@
         }
 
         // --- 確認画面更新 ---
-        function updateDisplayInfo() {
-            const name = document.getElementById('name').value || '未入力';
-            const visitText = visitCountType === 'first' ? '初めて' : (visitCountType === 'repeat' ? '2回目以降' : '未選択');
-            const menuText = selectedMenuData ? selectedMenuData.name : '未選択';
-            
-            // 日時
-            const d1 = formatDateTime(document.getElementById('date1').value);
-            const d2 = formatDateTime(document.getElementById('date2').value);
-            const d3 = formatDateTime(document.getElementById('date3').value);
+function updateDisplayInfo() {
+    const name = document.getElementById('name').value || '未入力';
+    const visitText = visitCountType === 'first'
+        ? '初めて'
+        : (visitCountType === 'repeat' ? '2回目以降' : '未選択');
+    const menuText = selectedMenuData ? selectedMenuData.name : '未選択';
 
-            const html = `
-                <div class="info-row">
-                    <p><strong>【お名前】</strong><br>${name}</p>
-                </div>
-                <div class="info-row">
-                    <p><strong>【来店回数】</strong><br>${visitText}</p>
-                </div>
-                <div class="info-row">
-                    <p><strong>【メニュー】</strong><br>${menuText}</p>
-                </div>
-                <div class="info-row">
-                    <p><strong>【第一希望】</strong><br>${d1}</p>
-                </div>
-                <div class="info-row">
-                    <p><strong>【第二希望】</strong><br>${d2}</p>
-                </div>
-                <div class="info-row">
-                    <p><strong>【第三希望】</strong><br>${d3}</p>
-                </div>
-            `;
-            document.getElementById('displayInfo').innerHTML = html;
-        }
+    // hiddenの日時値
+    const d1Raw = document.getElementById('date1').value;
+    const d2Raw = document.getElementById('date2').value;
+    const d3Raw = document.getElementById('date3').value;
+
+    const d1 = formatDateTime(d1Raw);
+    const d2 = formatDateTime(d2Raw);
+    const d3 = formatDateTime(d3Raw);
+
+    // 第三希望があるときだけ表示
+    const thirdRow = d3Raw ? `
+        <div class="info-row">
+            <p><strong>【第三希望】</strong><br>${d3}</p>
+        </div>
+    ` : '';
+
+    const html = `
+        <div class="info-row">
+            <p><strong>【お名前】</strong><br>${name}</p>
+        </div>
+        <div class="info-row">
+            <p><strong>【来店回数】</strong><br>${visitText}</p>
+        </div>
+        <div class="info-row">
+            <p><strong>【メニュー】</strong><br>${menuText}</p>
+        </div>
+        <div class="info-row">
+            <p><strong>【第一希望】</strong><br>${d1}</p>
+        </div>
+        <div class="info-row">
+            <p><strong>【第二希望】</strong><br>${d2}</p>
+        </div>
+        ${thirdRow}
+    `;
+
+    document.getElementById('displayInfo').innerHTML = html;
+}
 
         // --- 日時生成ロジック ---
         function formatDateTime(val) {
