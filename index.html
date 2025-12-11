@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>taki salon Reserve</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,11 +14,14 @@
             --main-bg: #1a1a1a;
             --text-color: #f5f5f5;
             --accent-gold: #c6a87c;
-            --overlay-dark: rgba(20, 20, 20, 0.75);
-            --glass-bg: rgba(40, 40, 40, 0.6);
-            --border-thin: 1px solid rgba(255, 255, 255, 0.2);
+            --overlay-dark: rgba(20, 20, 20, 0.85);
+            --glass-bg: rgba(40, 40, 40, 0.7);
             --font-jp: 'Zen Old Mincho', serif;
             --font-en: 'Cormorant Garamond', serif;
+        }
+
+        * {
+            box-sizing: border-box; /* 全要素のサイズ計算を統一 */
         }
 
         body {
@@ -30,14 +33,13 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            /* 背景画像：Unsplashから「花・ダーク・スパ」系の画像をランダム取得 */
             background: linear-gradient(var(--overlay-dark), var(--overlay-dark)),
                         url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover;
             letter-spacing: 0.05em;
         }
 
-        /* コンテナ：ガラスモーフィズム（すりガラス風） */
+        /* コンテナ：PC/スマホ共通 */
         .container {
             background-color: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -46,13 +48,12 @@
             border-radius: 4px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 600px; /* 少し幅を広げる */
+            max-width: 600px;
             padding: 40px 30px;
-            box-sizing: border-box;
             margin: 20px auto;
         }
 
-        /* ヘッダーデザイン */
+        /* ヘッダー */
         h1 {
             font-family: var(--font-en);
             font-weight: 300;
@@ -65,14 +66,13 @@
             text-transform: uppercase;
             position: relative;
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-                        url('https://images.unsplash.com/photo-1496062031456-07b8f162a322?q=80&w=1000&auto=format&fit=crop'); /* 薔薇の画像 */
+                        url('https://images.unsplash.com/photo-1496062031456-07b8f162a322?q=80&w=1000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             border-radius: 2px;
             box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
 
-        /* 画像のような十字ラインの装飾 */
         h1::after {
             content: "RESERVATION";
             display: block;
@@ -83,24 +83,19 @@
             opacity: 0.8;
         }
 
-        /* 項目ラベル */
+        /* ラベル */
         .label, .labelContent {
             font-family: var(--font-en);
             display: flex;
             align-items: center;
-            justify-content: center; /* 中央寄せ */
-            margin: 30px 0 15px 0;
-            padding: 0;
-            background: transparent;
+            justify-content: center;
+            margin: 30px 0 10px 0;
             color: var(--text-color);
             font-size: 20px;
             font-weight: 400;
             text-align: center;
-            text-indent: 0;
-            position: relative;
         }
         
-        /* ラベルの左右に細い線を入れる（画像のデザイン踏襲） */
         .label::before, .label::after,
         .labelContent::before, .labelContent::after {
             content: "";
@@ -110,19 +105,27 @@
             margin: 0 15px;
         }
 
-        /* 必須マーク */
+        /* サブラベル（日本語説明） */
+        .sub-label {
+            text-align: center;
+            font-size: 12px;
+            margin-bottom: 15px;
+            color: #aaa;
+            display: block;
+        }
+
         .required {
             background: transparent;
             color: var(--accent-gold);
             border: 1px solid var(--accent-gold);
             font-size: 10px;
-            padding: 2px 6px;
-            margin-left: 10px;
+            padding: 1px 5px;
+            margin-left: 8px;
             vertical-align: middle;
-            font-weight: normal;
+            border-radius: 2px;
         }
 
-        /* 入力フォーム */
+        /* フォーム入力 */
         input[type="text"],
         input[type="tel"],
         textarea {
@@ -134,92 +137,87 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 0;
             color: #fff;
-            font-size: 16px;
+            font-size: 16px; /* iOSでズームしないサイズ */
             font-family: var(--font-jp);
-            transition: all 0.4s ease;
+            transition: all 0.3s ease;
         }
 
-        input:focus,
-        textarea:focus {
-            background: rgba(255, 255, 255, 0.1);
+        input:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.15);
             border-bottom: 1px solid var(--accent-gold);
             outline: none;
-            box-shadow: none;
-        }
-        
-        input::placeholder, textarea::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-            font-weight: 300;
         }
 
-        /* ボタン共通スタイル（Ghost Button風） */
+        /* ボタン共通 */
         button {
             padding: 15px;
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             color: #fff;
             font-family: var(--font-jp);
             font-size: 15px;
             cursor: pointer;
-            transition: all 0.4s ease;
-            border-radius: 0; /* 角丸なしでシックに */
-            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            letter-spacing: 0.05em;
+            display: block;
         }
 
-        button:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-            background: rgba(198, 168, 124, 0.1);
-            transform: translateY(-2px);
+        button:active {
+            transform: scale(0.98);
         }
 
-        /* 選択状態（Active） */
+        /* アクティブ状態 */
         .visit-buttons button.active,
         .symptoms button.active,
         .menu-sections button.active,
         .irradiations button.active {
             background-color: var(--accent-gold);
             border-color: var(--accent-gold);
-            color: #1a1a1a; /* 文字色は黒で見やすく */
+            color: #1a1a1a;
             font-weight: 600;
-            outline: 2px solid rgba(255,255,255,0.2);
-            outline-offset: 2px;
         }
 
-        /* ボタングループのレイアウト */
-        .visit-buttons,
-        .symptoms,
-        .menu-sections,
-        .irradiations {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+        /* レイアウト: 来店回数（2列） */
+        .visit-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-bottom: 30px;
         }
 
-        /* メニューセクションボタンを少し目立たせる */
+        /* レイアウト: メニューセクション（グリッドレイアウト） */
+        .menu-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* 自動折り返し */
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
         .menu-sections button {
-            flex: 1 1 45%; /* 2列表示 */
-            min-width: 140px;
+            width: 100%; /* 親グリッドに合わせる */
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
+            height: 100%;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* メニュー項目ごとのハイライト背景（画像スタイルに変更） */
+        /* ハイライト（背景画像付き見出し） */
         .highlight-background {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                        url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop'); /* デフォルトの花画像 */
+                        url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            padding: 40px 20px;
-            border-radius: 2px;
-            margin: 30px 0 20px 0;
+            padding: 30px 15px;
+            text-align: center;
+            margin: 30px 0 15px 0;
             border: 1px solid rgba(255,255,255,0.1);
         }
-
-        /* 各メニューIDごとに背景画像を変える（CSSのみで対応） */
+        
+        /* 各メニュー背景 */
         #male .highlight-background { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop'); }
         #female .highlight-background { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?q=80&w=1000&auto=format&fit=crop'); }
         #eyebrows .highlight-background { background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=1000&auto=format&fit=crop'); }
@@ -228,30 +226,35 @@
 
         .highlight-text {
             font-family: var(--font-en);
-            font-size: 22px;
+            font-size: 20px;
             letter-spacing: 0.15em;
             border-top: 1px solid rgba(255,255,255,0.5);
             border-bottom: 1px solid rgba(255,255,255,0.5);
-            padding: 10px 0;
+            padding: 8px 0;
             display: inline-block;
         }
 
-        /* 症状/メニューボタンのリスト化 */
+        /* 施術メニューリスト */
+        .symptoms {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         .symptoms button {
-            width: 100%;
             text-align: left;
-            padding: 15px 20px;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .symptoms button::after {
             content: "+";
             font-size: 18px;
             font-weight: 300;
         }
-        
+
         .symptoms button.active::after {
             content: "✔";
         }
@@ -264,239 +267,276 @@
             padding: 15px;
             margin-bottom: 20px;
             font-size: 14px;
-            line-height: 1.8;
-            border-radius: 0 4px 4px 0;
+            line-height: 1.6;
         }
 
-        /* カレンダー */
+        /* ------ カレンダー（レスポンシブ対応の要） ------ */
         .calendar-container {
             background: rgba(30, 30, 30, 0.95);
-            padding: 20px;
+            padding: 15px 5px; /* 余白を詰める */
             border-radius: 4px;
             border: 1px solid rgba(255,255,255,0.1);
+            width: 100%;
+            overflow-x: hidden; /* 横スクロール禁止 */
         }
 
         .current-month {
             font-family: var(--font-en);
-            font-size: 24px;
+            font-size: 22px;
             color: var(--accent-gold);
-            background: transparent;
-            box-shadow: none;
-            position: relative;
-            transform: none;
-            left: auto;
+            text-align: center;
             display: block;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-        
-        .year { font-size: 14px; color: #aaa; display: block; margin-bottom: 5px; }
 
-        .calendar {
-            background-color: transparent;
-            border: none;
-            box-shadow: none;
+        .month-button-container, .week-button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 0 5px;
         }
-        
+
+        .month-button, .week-button {
+            font-size: 11px;
+            padding: 8px 12px;
+            width: auto;
+        }
+
         .calendar table {
+            width: 100%;
             border-collapse: separate;
-            border-spacing: 2px;
+            border-spacing: 1px;
+            table-layout: fixed; /* 均等割り付け */
         }
 
         .calendar th {
-            background-color: transparent;
             color: #ccc;
             font-weight: normal;
-            font-family: var(--font-en);
-            padding-bottom: 10px;
-            border: none;
+            font-size: 11px;
+            padding-bottom: 5px;
+            text-align: center;
+            vertical-align: bottom;
         }
-        
+
         .calendar td {
             background-color: #333;
             color: #fff;
-            border: none;
-            border-radius: 2px;
-            padding: 8px 2px;
+            padding: 10px 0; /* 高さを確保 */
             font-size: 12px;
-            transition: 0.2s;
+            text-align: center;
+            border-radius: 2px;
+            cursor: pointer;
         }
 
+        /* 時間列（左端） */
         .calendar td:first-child {
             background-color: transparent;
             font-family: var(--font-en);
             color: var(--accent-gold);
-            width: 15%;
-            font-size: 11px;
+            width: 35px; /* 固定幅 */
+            font-size: 10px;
             text-align: right;
-            padding-right: 10px;
+            padding-right: 5px;
             border-right: 1px solid rgba(255,255,255,0.1);
         }
 
-        .calendar td.available {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-        
-        .calendar td.available:hover {
-            background-color: var(--accent-gold);
-            color: #000;
-        }
-        
-        .calendar td.selected {
-            background-color: var(--accent-gold);
-            color: #000;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(198, 168, 124, 0.5);
-        }
-        
-        .calendar td.unavailable {
-            background-color: #222;
-            color: #444;
-            cursor: not-allowed;
-        }
-        
-        /* カレンダー操作ボタン */
-        .month-button, .week-button {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            font-size: 12px;
-            padding: 5px 15px;
-        }
-        
-        .month-button:hover, .week-button:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-            transform: none;
-            background: transparent;
-        }
+        /* カレンダーの状態色 */
+        .calendar td.available { background-color: rgba(255, 255, 255, 0.1); }
+        .calendar td.selected { background-color: var(--accent-gold); color: #000; font-weight: bold; }
+        .calendar td.unavailable { background-color: #222; color: #444; cursor: not-allowed; }
 
         /* 送信ボタン */
         .submit-button {
             background-color: var(--accent-gold);
             color: #1a1a1a;
             font-weight: 700;
-            border: none;
-            letter-spacing: 0.2em;
+            width: 100%;
             margin-top: 40px;
+            letter-spacing: 0.2em;
             box-shadow: 0 4px 15px rgba(198, 168, 124, 0.3);
         }
 
-        .submit-button:hover {
-            background-color: #d4b88f;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(198, 168, 124, 0.5);
-        }
-
-        /* 確認表示エリア */
+        /* 確認エリア */
         #displayInfo {
             background: rgba(255,255,255,0.05);
-            padding: 20px;
+            padding: 15px;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 5px 0;
+        }
+
         .info-row p {
-            margin: 10px 0;
-            font-size: 15px;
-            line-height: 1.6;
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+            flex: 1;
         }
-        
-        .info-row strong {
-            color: var(--accent-gold) !important;
-            font-weight: 500;
-        }
-        
-        /* 修正ボタン */
+
         .edit-button {
             background: transparent;
             border: 1px solid #ff6b6b;
             color: #ff6b6b;
-            font-size: 11px;
+            font-size: 10px;
+            padding: 4px 8px;
             width: auto;
-            padding: 5px 10px;
+            white-space: nowrap;
+            margin-left: 10px;
         }
-        
-        .edit-button:hover {
-            background: #ff6b6b;
-            color: #fff;
-        }
-        
+
         hr {
             border: 0;
             border-top: 1px solid rgba(255,255,255,0.1);
-            margin: 15px 0;
+            margin: 10px 0;
         }
 
-        /* 右端のナビ（追従） */
+        /* 右側固定ナビ */
         .side-nav {
-            background: transparent;
+            position: fixed;
             right: 10px;
-            width: 40px;
-            mix-blend-mode: difference; /* 背景とブレンドさせる */
+            top: 80%;
+            z-index: 999;
         }
-        
         .side-nav a {
+            background: rgba(255,255,255,0.1);
             color: #fff;
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 50%; /* 丸に変更 */
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
             width: 40px;
             height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(5px);
-        }
-        
-        .side-nav a span {
-            display: none; /* 矢印テキストは消してアイコンのみに */
+            text-decoration: none;
         }
 
-        /* ローディングスピナー */
+        /* ローディング */
         .loading-spinner {
-            background-color: rgba(0,0,0,0.8);
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 10;
         }
         .spinner {
+            width: 30px; height: 30px;
+            border: 3px solid rgba(255,255,255,0.3);
             border-top-color: var(--accent-gold);
-            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
         }
+        .loading-text { font-size: 12px; text-align: center; color: #fff; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* モバイル対応 */
+        /* ====== スマートフォン専用レスポンシブ設定 (Media Query) ====== */
         @media (max-width: 600px) {
             .container {
-                width: 95%;
-                padding: 25px 15px;
+                width: 95%; /* 横幅いっぱい */
+                padding: 25px 15px; /* 内側の余白を少し減らす */
+                margin: 10px auto;
             }
+
             h1 {
                 font-size: 28px;
+                padding: 40px 10px;
+            }
+
+            /* ラベル周りをコンパクトに */
+            .label { font-size: 18px; margin-top: 25px; }
+            .labelContent { font-size: 18px; margin-top: 25px; }
+
+            /* メニューボタン：スマホでは2列配置を維持しつつ文字サイズ調整 */
+            .menu-sections {
+                grid-template-columns: 1fr 1fr; /* 2列固定 */
+                gap: 8px;
             }
             .menu-sections button {
-                flex: 1 1 100%; /* スマホでは1列 */
+                padding: 10px 5px;
+                min-height: 55px;
+                font-size: 13px;
             }
+            .menu-sections button span {
+                font-size: 9px !important; /* 英字を小さく */
+            }
+
+            /* カレンダーのスマホ特化調整 */
+            .calendar table {
+                border-spacing: 1px;
+            }
+            .calendar th {
+                font-size: 10px; /* 曜日を小さく */
+                line-height: 1.2;
+            }
+            .calendar td {
+                padding: 12px 0; /* タップしやすいよう縦幅は維持 */
+                font-size: 12px; /* ◯✕は見やすく */
+            }
+            .calendar td:first-child {
+                width: 30px; /* 時間列をさらに細く */
+                font-size: 9px;
+                padding-right: 2px;
+            }
+
+            /* ボタン類 */
+            button {
+                padding: 12px; /* 少しパディングを減らす */
+            }
+            
+            .symptoms button {
+                padding: 12px 10px;
+                font-size: 14px;
+            }
+
+            /* モーダルやアラートなどが出た時用の余白確保 */
+            body {
+                padding-bottom: 50px;
+            }
+        }
+
+        /* さらに小さい画面（iPhone SEなど）対応 */
+        @media (max-width: 380px) {
+            .calendar th { font-size: 9px; }
+            .calendar td { font-size: 10px; padding: 8px 0; }
+            h1 { font-size: 24px; }
         }
     </style>
 </head>
 
 <body>
+    <div class="side-nav" id="sideNav">
+        <a href="#section-message">
+            <i class="fas fa-chevron-down" style="font-size: 14px;"></i>
+        </a>
+    </div>
 
     <div class="container">
         <h1>taki salon<br><span style="font-size: 0.5em; letter-spacing: 0.1em; display:block; margin-top:10px;">RESERVATION FORM</span></h1>
         
         <div class="label">Client Name</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:10px; color:#aaa;">お客様名<span class="required">必須</span></div>
+        <span class="sub-label">お客様名<span class="required">必須</span></span>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
 
         <div class="label">Phone Number</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:10px; color:#aaa;">電話番号<span class="required">必須</span></div>
+        <span class="sub-label">電話番号<span class="required">必須</span></span>
         <input type="tel" id="phone" placeholder="電話番号を入力してください" oninput="saveInput('phone')">
 
         <div class="label">Visit Count</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:10px; color:#aaa;">ご来店回数<span class="required">必須</span></div>
+        <span class="sub-label">ご来店回数<span class="required">必須</span></span>
         <div class="visit-buttons">
             <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
             <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
         </div>
 
         <div class="labelContent" id="course">MENU SELECT</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:15px; color:#aaa;">メニューをお選びください</div>
+        <span class="sub-label">メニューをお選びください</span>
         
         <div class="menu-sections">
             <button type="button" onclick="showMenu('male')">脱毛<br><span style="font-size:10px; color:#888;">MEN'S</span></button>
@@ -610,7 +650,7 @@
         </div>
 
         <div class="label">Date & Time</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:10px; color:#aaa;">希望日時<span class="required">必須</span></div>
+        <span class="sub-label">希望日時<span class="required">必須</span></span>
         
         <div class="calendar-container">
             <div class="current-month-container">
@@ -653,11 +693,11 @@
         </div>
 
         <div class="labelContent">MESSAGE</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:10px; color:#aaa;">ご質問・ご要望など</div>
+        <span class="sub-label">ご質問・ご要望など</span>
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="labelContent">CONFIRM</div>
-        <div style="text-align:center; font-size:12px; margin-bottom:10px; color:#aaa;">ご予約内容確認</div>
+        <span class="sub-label">ご予約内容確認</span>
         <div id="displayInfo"></div> <button class="submit-button" onclick="submitForm()" div id="section-message">BOOK NOW</button>
     </div>
 
