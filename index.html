@@ -348,6 +348,7 @@
             /* 角丸で柔らかい印象 */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             /* 少し立体感を追加 */
+            z-index: 2000; /* 最前面に表示 */
         }
 
         .spinner {
@@ -540,21 +541,21 @@
         }
 
         .edit-button {
-    background-color: #ff6b6b;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    white-space: nowrap; /* 改行を防ぐ */
-    width: 80px; /* 横幅を固定 */
-    text-align: center; /* テキストを中央揃え */
-}
+            background-color: #ff6b6b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            white-space: nowrap; /* 改行を防ぐ */
+            width: 80px; /* 横幅を固定 */
+            text-align: center; /* テキストを中央揃え */
+        }
 
-.edit-button:hover {
-    background-color: #ff4f4f;
-}
+        .edit-button:hover {
+            background-color: #ff4f4f;
+        }
 
 
         /* 100点の予約フォームCSS */
@@ -652,53 +653,52 @@
             /* 影も控えめに */
         }
 
-    /* ナビゲーションバー */
-    .sidebar {
-        position: fixed;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #1e1e2d;
-        padding: 10px;
-        border-radius: 10px 0 0 10px;
-        z-index: 1000;
-    }
+        /* ナビゲーションバー */
+        .sidebar {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1e1e2d;
+            padding: 10px;
+            border-radius: 10px 0 0 10px;
+            z-index: 1000;
+        }
 
-    .sidebar a {
-        display: block;
-        padding: 15px;
-        color: white;
-        text-decoration: none;
-        text-align: center;
-        font-size: 14px;
-        margin-bottom: 10px;
-        background: #ff9bcb;
-        border-radius: 5px;
-        transition: background 0.3s;
-    }
+        .sidebar a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 10px;
+            background: #ff9bcb;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
 
-    .sidebar a:hover {
-        background: #ff9bcb;
-    }
+        .sidebar a:hover {
+            background: #ff9bcb;
+        }
 
-    /* スクロール用のセクション */
-    .section {
-        padding: 50px 10px;
-        margin-top: 30px;
-    }
+        /* スクロール用のセクション */
+        .section {
+            padding: 50px 10px;
+            margin-top: 30px;
+        }
     </style>
 </head>
 
 <body>
-    <!-- 右側の追従ナビ -->
-    <div class="side-nav" id="sideNav">
+    <div class="side-nav" id="sideNav" style="display: none;">
         <a href="#section-message">
             <span>⇩</span>
             <i class="fas fa-comment"></i>
         </a>
     </div>
 
-    <div class="container">
+    <div class="container" id="mainContainer" style="display: none;">
         <h1>eyelash salon Mimi<br>予約フォーム</h1>
         <div class="label">お客様名<span class="required">必須</span></div>
         <input type="text" id="name" placeholder="お名前を入力してください" oninput="saveInput('name')">
@@ -775,12 +775,10 @@
 
         <div class="label">希望日時<span class="required">必須</span></div>
         <div class="calendar-container">
-            <!-- 月を独立して配置 -->
             <div class="current-month-container">
                 <span class="current-month" id="currentMonth">月</span>
             </div>
 
-            <!-- 月移動ボタンを週移動ボタンの上に配置 -->
             <div class="month-button-container">
                 <button class="month-button" onclick="previousmonth()">前月</button>
                 <button class="month-button" onclick="nextmonth()">翌月</button>
@@ -806,14 +804,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- カレンダーの内容がここに追加される -->
-                    </tbody>
+                        </tbody>
                 </table>
-            </div>
-
-            <div class="loading-spinner" id="loadingSpinner">
-                <div class="spinner"></div>
-                <div class="loading-text">読み込み中...</div>
             </div>
         </div>
 
@@ -821,19 +813,12 @@
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="label">ご予約内容</div>
-        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
+        <div id="displayInfo"></div> <button class="submit-button" onclick="submitForm()" id="submitBtn">予約を行う</button>
+    </div>
 
-<div class="label">ご予約内容</div>
-        <div id="displayInfo"></div> <div id="consentSection" style="display: none; margin: 20px 0; padding: 15px; background-color: #fff0f5; border: 2px solid #ff9bcb; border-radius: 8px;">
-            <div style="color: #d36a9d; font-weight: bold; font-size: 14px; text-align: left; line-height: 1.8; margin-bottom: 15px;">
-                ☑ 当日・直前キャンセルはご遠慮ください。<br>
-                ☑ キャンセルポリシーに同意します。
-            </div>
-            <button type="button" id="consentButton" onclick="handleConsent()" style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold;">
-                同意する
-            </button>
-        </div>
-        <button class="submit-button" onclick="submitForm()" id="submitBtn">予約を行う</button>
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <div class="loading-text">読み込み中...</div>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -843,16 +828,18 @@
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
-        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
-        let totalAmount = 0; // 合計金額を格納する変数
+        let irradiationsCount = ''; let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
+        
+        // ★ユーザーIDを保存する変数
+        let currentUserId = '';
 
-// ★追加：ユーザーIDを保存する変数
-        let currentUserId = ''; 
-
-        // ★変更：LIFF初期化と同時にユーザーIDを取得
+        // ★初期化処理：スピナーを表示してID取得へ
         document.addEventListener('DOMContentLoaded', function () {
+            // 画面読み込み開始と同時にスピナーを表示
+            showLoadingSpinner();
+
             liff.init({
                 liffId: '2005254357-zKma9BZk'
             }).then(() => {
@@ -879,7 +866,7 @@
             });
         });
 
-        // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
+        // 訪問回数ごとの時間設定
         let visitTimes = {
             '1回目': 0,
             '2回目以降': 0
@@ -887,12 +874,11 @@
 
         let selectedVisitTime = 0; // 訪問回数で選択された時間
 
-        // 訪問回数ごとの時間設定 (例：初めて=20分、2回目以降=15分)
         let irradiationsTimes = {
             '美白パック〈30分〉': 0
         };
 
-        let selectedirradiationsTime = 0; // 訪問回数で選択された時間
+        let selectedirradiationsTime = 0; 
 
         let menuTimes = {
             '【ご新規様】デザインキープラッシュ80本~100本': 90,
@@ -917,7 +903,6 @@
             'フェイシャルワックス': 60,
             '部分フェイシャルワックス': 30
         };
-
 
         let selectedMenuTime = 0;
 
@@ -1030,8 +1015,8 @@
         });
 
         function selectSymptom(button, treatmentId) {
-    // 選択された日時をリセット
-    selectedFullDate = '';
+            // 選択された日時をリセット
+            selectedFullDate = '';
 
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
@@ -1063,29 +1048,6 @@
             // カレンダーを更新するために取得する日付を渡す
             fetchAvailability(currentDate);
 
-
-            if (treatmentId === 'treatment1') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment2') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment3') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：120分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment4') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円<br>初診料：＋2,200円</strong></div>`;
-            } else if (treatmentId === 'treatment5') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：60分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：6,500円</strong></div>`;
-            } else if (treatmentId === 'treatment6') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：30分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：4,500円</strong></div>`;
-            } else if (treatmentId === 'treatment7') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：90分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：8,700円</strong></div>`;
-            } else if (treatmentId === 'treatment8') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else if (treatmentId === 'treatment9') {
-                treatmentText.innerHTML = `<div style="text-align: left;"><strong>所要時間：15分</strong><br>※症状によりお時間が前後する場合がございます</div><div style="text-align: right;"><strong>料金：1,700円</strong></div>`;
-            } else {
-                treatmentText.innerHTML = '';
-            }
-
             // 選択されたメニューの名前と価格を取得
             const symptomName = button.textContent;  // ボタンのテキストを取得
             selectedSymptom = [symptomName];  // 選択されたメニュー名を配列として保存
@@ -1096,8 +1058,8 @@
         }
 
         function selectirradiations(button) {
-    // 選択された日時をリセット
-    selectedFullDate = '';
+            // 選択された日時をリセット
+            selectedFullDate = '';
 
             // ボタンの選択状態を切り替える
             button.classList.toggle('active');
@@ -1138,8 +1100,8 @@
         }
 
         function selectVisit(element) {
-    // 選択された日時をリセット
-    selectedFullDate = '';
+            // 選択された日時をリセット
+            selectedFullDate = '';
 
             document.getElementById('firstVisit').classList.remove('active');
             document.getElementById('repeatVisit').classList.remove('active');
@@ -1214,51 +1176,51 @@
         }
 
         function submitForm() {
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        visitCount: visitCount,
-        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
-        irradiationsCount: irradiationsCount,
-        dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
-        message: document.getElementById('message').value.trim()
-    };
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                visitCount: visitCount,
+                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                irradiationsCount: irradiationsCount,
+                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+                message: document.getElementById('message').value.trim()
+            };
 
-    // フォームデータのチェック
-    if (!formData.name) {
-        alert('お名前を入力してください。');
-        return;
-    }
+            // フォームデータのチェック
+            if (!formData.name) {
+                alert('お名前を入力してください。');
+                return;
+            }
 
-    if (!formData.phone) {
-        alert('電話番号を入力してください。');
-        return;
-    }
+            if (!formData.phone) {
+                alert('電話番号を入力してください。');
+                return;
+            }
 
-    if (!formData.selectedSymptom) {
-        alert('メニューを選択してください。');
-        return;
-    }
+            if (!formData.selectedSymptom) {
+                alert('メニューを選択してください。');
+                return;
+            }
 
-    if (!formData.dates) {
-        alert('希望日時を選択してください。');
-        return;
-    }
+            if (!formData.dates) {
+                alert('希望日時を選択してください。');
+                return;
+            }
 
-    // LINEトークにメッセージを送信
-    liff.sendMessages([{
-        type: 'text',
-        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
-    }]).then(() => {
-        /* メッセージ送信成功時の処理 */
-        alert('当日キャンセルは無いようにお願いいたします。');
-        /* LIFFウィンドウを閉じる */
-        liff.closeWindow();
-    }).catch((err) => {
-        /* メッセージ送信失敗時の処理 */
-        console.error('メッセージの送信に失敗しました', err);
-    });
-}
+            // LINEトークにメッセージを送信
+            liff.sendMessages([{
+                type: 'text',
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+            }]).then(() => {
+                /* メッセージ送信成功時の処理 */
+                alert('当日キャンセルは無いようにお願いいたします。');
+                /* LIFFウィンドウを閉じる */
+                liff.closeWindow();
+            }).catch((err) => {
+                /* メッセージ送信失敗時の処理 */
+                console.error('メッセージの送信に失敗しました', err);
+            });
+        }
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
@@ -1266,31 +1228,35 @@
             return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
         }
 
-async function fetchAvailability(date) {
+        async function fetchAvailability(date) {
             const startTime = new Date(date);
             const endTime = new Date(date);
             endTime.setDate(endTime.getDate() + 7);
 
             const cacheKey = startTime.toISOString() + endTime.toISOString() + currentUserId;
 
-            // GASのURL (変更不要)
+            // GASのURL
             const baseUrl = 'https://script.google.com/macros/s/AKfycbySNDgemMce0TiqSFtZBPABQiRNo_Nf_DEx3s8We1GBUhWJnN2IalRhqSY32YbItXrg/exec';
             const url = `${baseUrl}?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}&userId=${currentUserId}`;
 
             try {
-                showLoadingSpinner();
+                // showLoadingSpinner(); // DOMContentLoadedで既に呼んでいるのでコメントアウト
+
                 const response = await fetch(url);
                 const data = await response.json();
 
-                // ★追加：リダイレクト指示があれば、即座にページを移動させる
+                // ★リダイレクト指示があれば、即座にページを移動させる
                 if (data.redirect && data.url) {
                     window.location.href = data.url; // 指定のURLへ移動
-                    return; // 処理終了
+                    return; // ★ここで処理終了（画面は真っ白のまま）
                 }
 
-                // --- 以下、通常ユーザー（カレンダー表示）の処理 ---
+                // ★通常ユーザーの場合：隠していたフォームを表示する
+                document.getElementById('mainContainer').style.display = 'block';
+                document.getElementById('sideNav').style.display = 'flex';
 
-                // データ形式の互換性チェック
+                // --- 以下、カレンダー表示処理 ---
+
                 let eventsData = [];
                 if (data.events) {
                     eventsData = data.events;
@@ -1308,18 +1274,10 @@ async function fetchAvailability(date) {
                 availabilityCache[cacheKey] = { availability: eventsData, businessDays: businessDays };
                 updateCalendar(eventsData, businessDays);
 
-                // もし「同意画面」が残っていたら隠す（念のため）
-                const consentSection = document.getElementById('consentSection');
-                if(consentSection) consentSection.style.display = 'none';
-                const submitBtn = document.getElementById('submitBtn');
-                if(submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.style.backgroundColor = '#ec87cb';
-                    submitBtn.innerText = '予約を行う';
-                }
-
             } catch (error) {
                 console.error('Error fetching availability:', error);
+                // エラー時は一応画面を表示（必要に応じて制御）
+                document.getElementById('mainContainer').style.display = 'block';
             } finally {
                 hideLoadingSpinner();
             }
@@ -1400,34 +1358,34 @@ async function fetchAvailability(date) {
                     let visitDuration = selectedVisitTime || 0;
                     let irradiationsDuration = selectedirradiationsTime || 0;
 
-// メニュー時間と訪問回数の時間を合計して、終了時間を設定
-slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
+                    // メニュー時間と訪問回数の時間を合計して、終了時間を設定
+                    slotEnd.setMinutes(slotStart.getMinutes() + menuDuration + visitDuration + irradiationsDuration);
 
-// 終了時間が翌日 (0時以降) になる場合は✕に設定
-if (slotEnd.getDate() !== slotStart.getDate()) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
+                    // 終了時間が翌日 (0時以降) になる場合は✕に設定
+                    if (slotEnd.getDate() !== slotStart.getDate()) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
 
-// 18時以降に終了する予約を不可にする (17:30は可)
-if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-} else if (slotEnd.getHours() > 18) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
+                    // 18時以降に終了する予約を不可にする (17:30は可)
+                    if (slotEnd.getHours() === 18 && slotEnd.getMinutes() > 0) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    } else if (slotEnd.getHours() > 18) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
 
-// ここで終了時間を使った条件処理を行う
-// 例えば、リアルタイムで既に過ぎた時間帯は×にする
-if (slotStart < now) {
-    cell.textContent = '✕';
-    cell.classList.add('unavailable');
-    continue;
-}
+                    // ここで終了時間を使った条件処理を行う
+                    // 例えば、リアルタイムで既に過ぎた時間帯は×にする
+                    if (slotStart < now) {
+                        cell.textContent = '✕';
+                        cell.classList.add('unavailable');
+                        continue;
+                    }
 
                     const isBusinessDay = businessDays.some(businessDay => {
                         const businessDayStart = new Date(businessDay.start);
@@ -1620,44 +1578,6 @@ if (slotStart < now) {
 
         function hideLoadingSpinner() {
             document.getElementById('loadingSpinner').style.display = 'none';
-        }
-
-// ★追加：制限ユーザー用の表示制御関数
-        function toggleRestrictedMode(isRestricted) {
-            const consentSection = document.getElementById('consentSection');
-            const submitBtn = document.getElementById('submitBtn');
-
-            if (isRestricted) {
-                // 制限ユーザーの場合
-                consentSection.style.display = 'block'; // 注意書きを表示
-                submitBtn.disabled = true;              // 予約ボタンを無効化
-                submitBtn.style.backgroundColor = '#ccc'; // グレーアウト
-                submitBtn.innerText = '同意が必要です';
-            } else {
-                // 通常ユーザーの場合（デフォルト）
-                consentSection.style.display = 'none';
-                submitBtn.disabled = false;
-                submitBtn.style.backgroundColor = '#ec87cb'; // 元の色に戻す
-                submitBtn.innerText = '予約を行う';
-            }
-        }
-
-        // ★追加：「同意する」ボタンを押したときの処理
-        function handleConsent() {
-            const consentButton = document.getElementById('consentButton');
-            const submitBtn = document.getElementById('submitBtn');
-
-            // 同意ボタンのデザイン変更
-            consentButton.style.backgroundColor = '#ff9bcb';
-            consentButton.innerText = '同意済み';
-            consentButton.disabled = true; // 2回押せないようにする
-
-            // 予約ボタンを有効化
-            submitBtn.disabled = false;
-            submitBtn.style.backgroundColor = '#ec87cb'; // ピンク色に戻す
-            submitBtn.innerText = '予約を行う';
-            
-            alert('確認いたしました。予約ボタンから予約へお進みください。');
         }
     </script>
 </body>
