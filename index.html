@@ -1272,33 +1272,32 @@ async function fetchAvailability(date) {
             endTime.setDate(endTime.getDate() + 7);
 
             const cacheKey = startTime.toISOString() + endTime.toISOString() + currentUserId;
-            
-            // API URL (あなたのGASのURLのままにしてください)
-            const baseUrl = 'https://script.google.com/macros/s/AKfycbymp1rFTigrtTDy_5mkieZqmNfqJ2uVxcixtMmLp6t9FPpu77PLIQjHmVl3m2bjm5aX/exec';
+
+            // GASのURL (変更不要)
+            const baseUrl = 'https://script.google.com/macros/s/AKfycbySNDgemMce0TiqSFtZBPABQiRNo_Nf_DEx3s8We1GBUhWJnN2IalRhqSY32YbItXrg/exec';
             const url = `${baseUrl}?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}&userId=${currentUserId}`;
 
             try {
                 showLoadingSpinner();
                 const response = await fetch(url);
-                const data = await response.json(); // ★ここでデータを受け取る
+                const data = await response.json();
 
-                // ★変更点：新しいGASのレスポンス形式に対応
+                // ★追加：リダイレクト指示があれば、即座にページを移動させる
+                if (data.redirect && data.url) {
+                    window.location.href = data.url; // 指定のURLへ移動
+                    return; // 処理終了
+                }
+
+                // --- 以下、通常ユーザー（カレンダー表示）の処理 ---
+
+                // データ形式の互換性チェック
                 let eventsData = [];
-                let isRestricted = false;
-
-                // 新形式 { events: [...], isRestricted: true/false } かどうかチェック
                 if (data.events) {
                     eventsData = data.events;
-                    isRestricted = data.isRestricted;
-                } else {
-                    // 旧形式（配列そのまま）の場合のフォールバック
+                } else if (Array.isArray(data)) {
                     eventsData = data;
                 }
-                
-                // ★ここで制限ユーザー用の表示切り替えを実行
-                toggleRestrictedMode(isRestricted);
 
-                // 営業日の情報を抽出
                 const businessDays = eventsData.filter(event => event.isBusinessDay).map(event => {
                     return {
                         start: new Date(event.startTime),
@@ -1306,10 +1305,19 @@ async function fetchAvailability(date) {
                     };
                 });
 
-                // データをキャッシュに保存
                 availabilityCache[cacheKey] = { availability: eventsData, businessDays: businessDays };
-
                 updateCalendar(eventsData, businessDays);
+
+                // もし「同意画面」が残っていたら隠す（念のため）
+                const consentSection = document.getElementById('consentSection');
+                if(consentSection) consentSection.style.display = 'none';
+                const submitBtn = document.getElementById('submitBtn');
+                if(submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.style.backgroundColor = '#ec87cb';
+                    submitBtn.innerText = '予約を行う';
+                }
+
             } catch (error) {
                 console.error('Error fetching availability:', error);
             } finally {
