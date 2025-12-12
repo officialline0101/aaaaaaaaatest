@@ -823,6 +823,18 @@
         <div class="label">ご予約内容</div>
         <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
 
+<div class="label">ご予約内容</div>
+        <div id="displayInfo"></div> <div id="consentSection" style="display: none; margin: 20px 0; padding: 15px; background-color: #fff0f5; border: 2px solid #ff9bcb; border-radius: 8px;">
+            <div style="color: #d36a9d; font-weight: bold; font-size: 14px; text-align: left; line-height: 1.8; margin-bottom: 15px;">
+                ☑ 当日・直前キャンセルはご遠慮ください。<br>
+                ☑ キャンセルポリシーに同意します。
+            </div>
+            <button type="button" id="consentButton" onclick="handleConsent()" style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold;">
+                同意する
+            </button>
+        </div>
+        <button class="submit-button" onclick="submitForm()" id="submitBtn">予約を行う</button>
+
         <button class="submit-button" onclick="submitForm()" div id="section-message">予約を行う</button>
     </div>
 
@@ -1256,34 +1268,40 @@
             return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
         }
 
-// --- 変更後 ---
-        async function fetchAvailability(date) {
+async function fetchAvailability(date) {
             const startTime = new Date(date);
             const endTime = new Date(date);
             endTime.setDate(endTime.getDate() + 7);
 
-            // キャッシュキーにユーザーIDも含める（ユーザーによって結果が違うため）
             const cacheKey = startTime.toISOString() + endTime.toISOString() + currentUserId;
-
-            // キャッシュを確認
-            if (availabilityCache[cacheKey]) {
-                console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
-                return;
-            }
-
-            // ★変更：URLに userId を追加
-            const baseUrl = 'https://script.google.com/macros/s/AKfycbxM-jV7wL9cytEh8BdoKGHtu3V_SPjqQ-xqJ-Zoa-x4qx5fXWn1Rk2-wRPq63DDGKm9/exec';
+            
+            // API URL (あなたのGASのURLのままにしてください)
+            const baseUrl = 'https://script.google.com/macros/s/AKfycbymp1rFTigrtTDy_5mkieZqmNfqJ2uVxcixtMmLp6t9FPpu77PLIQjHmVl3m2bjm5aX/exec';
             const url = `${baseUrl}?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}&userId=${currentUserId}`;
 
             try {
-                showLoadingSpinner(); // Show loading spinner
+                showLoadingSpinner();
                 const response = await fetch(url);
-                const data = await response.json();
-                console.log(data);
+                const data = await response.json(); // ★ここでデータを受け取る
+
+                // ★変更点：新しいGASのレスポンス形式に対応
+                let eventsData = [];
+                let isRestricted = false;
+
+                // 新形式 { events: [...], isRestricted: true/false } かどうかチェック
+                if (data.events) {
+                    eventsData = data.events;
+                    isRestricted = data.isRestricted;
+                } else {
+                    // 旧形式（配列そのまま）の場合のフォールバック
+                    eventsData = data;
+                }
+                
+                // ★ここで制限ユーザー用の表示切り替えを実行
+                toggleRestrictedMode(isRestricted);
 
                 // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
+                const businessDays = eventsData.filter(event => event.isBusinessDay).map(event => {
                     return {
                         start: new Date(event.startTime),
                         end: new Date(event.endTime)
@@ -1291,13 +1309,13 @@
                 });
 
                 // データをキャッシュに保存
-                availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
+                availabilityCache[cacheKey] = { availability: eventsData, businessDays: businessDays };
 
-                updateCalendar(data, businessDays);
+                updateCalendar(eventsData, businessDays);
             } catch (error) {
                 console.error('Error fetching availability:', error);
             } finally {
-                hideLoadingSpinner(); // Hide loading spinner
+                hideLoadingSpinner();
             }
         }
 
@@ -1596,6 +1614,44 @@ if (slotStart < now) {
 
         function hideLoadingSpinner() {
             document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+// ★追加：制限ユーザー用の表示制御関数
+        function toggleRestrictedMode(isRestricted) {
+            const consentSection = document.getElementById('consentSection');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (isRestricted) {
+                // 制限ユーザーの場合
+                consentSection.style.display = 'block'; // 注意書きを表示
+                submitBtn.disabled = true;              // 予約ボタンを無効化
+                submitBtn.style.backgroundColor = '#ccc'; // グレーアウト
+                submitBtn.innerText = '同意が必要です';
+            } else {
+                // 通常ユーザーの場合（デフォルト）
+                consentSection.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.style.backgroundColor = '#ec87cb'; // 元の色に戻す
+                submitBtn.innerText = '予約を行う';
+            }
+        }
+
+        // ★追加：「同意する」ボタンを押したときの処理
+        function handleConsent() {
+            const consentButton = document.getElementById('consentButton');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // 同意ボタンのデザイン変更
+            consentButton.style.backgroundColor = '#ff9bcb';
+            consentButton.innerText = '同意済み';
+            consentButton.disabled = true; // 2回押せないようにする
+
+            // 予約ボタンを有効化
+            submitBtn.disabled = false;
+            submitBtn.style.backgroundColor = '#ec87cb'; // ピンク色に戻す
+            submitBtn.innerText = '予約を行う';
+            
+            alert('確認いたしました。予約ボタンから予約へお進みください。');
         }
     </script>
 </body>
