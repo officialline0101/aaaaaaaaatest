@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>12月27日ご予約フォーム</title>
+    <title>12月27日予約フォーム</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
@@ -131,11 +131,18 @@
             color: #4a3b32;
             cursor: pointer;
             appearance: none;
-            /* 矢印アイコン */
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235d4037%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
             background-position: right 10px top 50%;
             background-size: 10px auto;
+        }
+        
+        /* 日付は固定なので少し色を変えて「変更不要」感を出す */
+        .datetime-input.fixed-date {
+            background-color: #f0f0f0;
+            color: #3e2b20;
+            pointer-events: none; /* クリック無効化（見た目だけselect） */
+            border-color: #e0e0e0;
         }
 
         /* --- 送信ボタン --- */
@@ -192,7 +199,7 @@
 <body>
 
     <div class="container">
-        <h1>12月27日ご予約フォーム</h1>
+        <h1>12月27日予約フォーム</h1>
         <div class="info-text">
             以下の項目にご入力の上、【送信】ボタンを押してください。
         </div>
@@ -206,7 +213,7 @@
         <div class="datetime-wrapper">
             <input type="hidden" id="date1">
             <div class="dt-grid">
-                <select id="date1_day" class="datetime-input"></select>
+                <select id="date1_day" class="datetime-input fixed-date"></select>
                 <select id="date1_time" class="datetime-input"></select>
             </div>
         </div>
@@ -215,7 +222,7 @@
         <div class="datetime-wrapper">
             <input type="hidden" id="date2">
             <div class="dt-grid">
-                <select id="date2_day" class="datetime-input"></select>
+                <select id="date2_day" class="datetime-input fixed-date"></select>
                 <select id="date2_time" class="datetime-input"></select>
             </div>
         </div>
@@ -224,7 +231,7 @@
         <div class="datetime-wrapper">
             <input type="hidden" id="date3">
             <div class="dt-grid">
-                <select id="date3_day" class="datetime-input"></select>
+                <select id="date3_day" class="datetime-input fixed-date"></select>
                 <select id="date3_time" class="datetime-input"></select>
             </div>
         </div>
@@ -237,7 +244,6 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
                 liffId: '2005254357-zKma9BZk' 
@@ -250,29 +256,26 @@
 
         const pad = n => String(n).padStart(2, '0');
 
-        // --- 日付固定ロジック (変更点) ---
+        // --- 日付固定ロジック (最初から選択済みに変更) ---
         function buildDateOptions(selectEl) {
-            selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
+            selectEl.innerHTML = ''; // 既存オプション(プレースホルダー等)をクリア
             
-            // 12月27日（土）のみ作成
             const value = "2025-12-27";
             const label = "12/27（土）";
             
             const opt = document.createElement('option');
             opt.value = value;
             opt.textContent = label;
+            opt.selected = true; // ★最初から選択状態にする
             selectEl.appendChild(opt);
         }
 
         // --- 時間生成ロジック (09:00〜18:00) ---
         function buildTimeOptions(selectEl) {
-            selectEl.innerHTML = '<option value="" disabled selected>時間</option>';
-            // 9:00 - 18:00 (30分刻み)
+            selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
             for (let h = 9; h <= 18; h++) {
                 for (let m of [0, 30]) {
-                    // 18:30は除く（18:00まで）
                     if(h === 18 && m === 30) continue; 
-
                     const val = `${pad(h)}:${pad(m)}`;
                     const opt = document.createElement('option');
                     opt.value = val;
@@ -288,6 +291,7 @@
             const time = document.getElementById(`${baseId}_time`).value;
             const hidden = document.getElementById(baseId);
 
+            // 日付と時間が両方揃ったら値をセット
             if(day && time) {
                 hidden.value = `${day}T${time}`;
             } else {
@@ -295,29 +299,29 @@
             }
         }
 
-        // ピッカー初期化関数
         function initPicker(baseId) {
             const daySel = document.getElementById(`${baseId}_day`);
             const timeSel = document.getElementById(`${baseId}_time`);
             buildDateOptions(daySel);
             buildTimeOptions(timeSel);
             
+            // 日付は固定で変更不可だが、念のためイベントは残す
             daySel.addEventListener('change', () => updateHidden(baseId));
+            
+            // 時間が変わったらhiddenを更新
             timeSel.addEventListener('change', () => updateHidden(baseId));
         }
 
-        // 各フィールドを初期化
+        // 初期化
         ['date1', 'date2', 'date3'].forEach(id => initPicker(id));
 
-        // 送信メッセージ用整形
+        // メッセージ整形
         function formatDateForMsg(isoString) {
             if (!isoString) return ''; 
             const [dPart, tPart] = isoString.split('T');
             const [year, month, day] = dPart.split('-');
-            // 曜日計算など不要で固定文字でもよいが、念のためDateオブジェクト経由
             const dateObj = new Date(year, month - 1, day);
             const wd = ['日', '月', '火', '水', '木', '金', '土'][dateObj.getDay()];
-            
             return `${month}/${day}(${wd}) ${tPart}`;
         }
 
@@ -330,14 +334,15 @@
             const worry = document.getElementById('worry').value;
 
             if (!name) { alert('「お名前」を入力してください。'); return; }
-            if (!date1Val) { alert('「第一希望日時」を日付・時間ともに入力してください。'); return; }
+            // 日付は入っているはずなので、実質時間の選択チェックになる
+            if (!date1Val) { alert('「第一希望日時」の時間を選択してください。'); return; }
             if (!worry) { alert('「悩まれてる内容」を入力してください。'); return; }
 
             const d1Str = formatDateForMsg(date1Val);
             const d2Str = formatDateForMsg(date2Val);
             const d3Str = formatDateForMsg(date3Val);
 
-            const msg = `【カウンセリングシート】\n` +
+            const msg = `【12月27日予約内容】\n` +
                         `\n[お名前]\n${name}` +
                         `\n\n[希望日時]\n` +
                         `① ${d1Str}\n` +
