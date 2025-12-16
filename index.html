@@ -3,365 +3,577 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>12月27日予約フォーム</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
+    <title>BONITA 商品取り置き依頼</title>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- 基本設定（プルメリアゴルフ風デザイン） --- */
+        /* * =========================================
+         * BONITA "100 Point" Design System
+         * =========================================
+         */
+        :root {
+            /* サイトから抽出したブランドカラー */
+            --color-main-yellow: #e4e058; /* 筆跡の明るいイエロー */
+            --color-accent-gold: #aaa134; /* テキストや強調のゴールド */
+            --color-text-dark: #4a4640;   /* 墨色に近いグレー（黒より柔らかい） */
+            --color-text-light: #888;
+            --color-bg-body: #fafcf6;     /* わずかに緑がかった白 */
+            --color-bg-paper: #ffffff;
+            
+            /* 手書き風の歪み（有機的な形状）を作る魔法の数値 */
+            --radius-organic: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        }
+
         body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: #3e2b20; /* ダークブラウン */
+            font-family: 'Zen Maru Gothic', sans-serif; /* 全体を丸ゴシックで柔らかく */
+            color: var(--color-text-dark);
+            background-color: var(--color-bg-body);
+            /* 和紙のような微細なノイズテクスチャをCSSグラデーションで生成 */
+            background-image: 
+                radial-gradient(#e6e6e6 15%, transparent 16%),
+                radial-gradient(#e6e6e6 15%, transparent 16%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            margin: 0;
+            padding: 20px 0 80px 0;
+            line-height: 1.8;
+            letter-spacing: 0.05em;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding-top: 20px;
-            padding-bottom: 40px;
-            color: #4a3b32;
         }
 
+        /* メインコンテナ */
         .container {
-            background-color: #fdfdfa; /* 明るいクリーム色 */
-            border-radius: 12px;
-            border: 1px solid #d4af37; /* ゴールド枠 */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            background-color: rgba(255, 255, 255, 0.95);
             width: 90%;
-            max-width: 600px;
-            padding: 30px 25px;
+            max-width: 500px;
+            padding: 40px 24px;
             box-sizing: border-box;
+            /* 影を落とさず、あえてフラットに浮かせることで清潔感を出す */
+            box-shadow: 0 10px 40px rgba(170, 161, 52, 0.15); 
+            border-radius: 20px; /* 全体は綺麗な角丸 */
             position: relative;
+            overflow: visible; /* 装飾をはみ出させる */
+            margin-top: 20px;
         }
 
-        /* --- 見出し --- */
+        /* 上部の黄色い筆跡あしらい（装飾） */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -10%;
+            width: 120%;
+            height: 140px;
+            background-color: var(--color-main-yellow);
+            opacity: 0.4;
+            transform: rotate(-3deg);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; /* 不規則な形 */
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ヘッダー周り */
         h1 {
-            background: linear-gradient(135deg, #c5a059, #f3d34b, #c5a059);
-            color: #3e2b20;
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            margin: -30px -25px 30px -25px;
-            font-size: 24px;
-            font-family: 'Noto Serif JP', serif;
+            font-family: 'Shippori Mincho', serif;
             font-weight: 700;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            letter-spacing: 1px;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+            color: var(--color-text-dark);
+            text-shadow: 2px 2px 0px #fff; /* 背景に馴染ませる */
         }
 
-        h1::before, h1::after {
-            content: '✿';
-            color: #fff;
-            margin: 0 10px;
-            font-size: 0.8em;
-            vertical-align: middle;
+        h1 .sub-title {
+            display: block;
+            font-size: 11px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            color: var(--color-accent-gold);
+            margin-bottom: 5px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
         }
 
-        /* --- ラベルと必須マーク --- */
+        /* 導入テキスト */
+        .intro-text {
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--color-text-dark);
+            background: #fff;
+            padding: 15px;
+            border: 1px dashed var(--color-accent-gold); /* 縫い目のような線 */
+            border-radius: 12px;
+        }
+
+        /* セクションラベル */
         .label {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            font-weight: 700;
-            font-size: 16px;
-            color: #5d4037;
-            border-left: 5px solid #d4af37;
-            padding-left: 10px;
+            color: var(--color-text-dark);
+            /* マーカー風の下線 */
+            background: linear-gradient(transparent 70%, rgba(228, 224, 88, 0.5) 70%);
+            display: inline-block;
+            padding: 0 5px;
         }
 
-        .required-badge {
-            background-color: #d32f2f;
-            color: white;
-            font-size: 11px;
+        /* 必須・任意バッジ */
+        .badge {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 10px;
             padding: 3px 8px;
-            border-radius: 4px;
-            margin-left: 8px;
+            border-radius: 10px;
+            margin-left: 10px;
             vertical-align: middle;
-            white-space: nowrap;
+            font-weight: bold;
+            letter-spacing: 0;
+            background: #fff;
+            border: 1px solid currentColor;
         }
+        .badge-req { color: #d85c5c; border-color: #d85c5c; }
+        .badge-opt { color: #aaa; border-color: #ccc; }
 
-        /* --- 入力フォーム基本 --- */
+        /* 入力フォーム（下線スタイルでエレガントに） */
         input[type="text"],
         input[type="tel"],
         textarea {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
+            padding: 12px 5px;
+            border: none;
+            border-bottom: 1px solid #ccc; /* 下線のみ */
+            background: transparent;
             font-size: 16px;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            border-radius: 0;
             transition: all 0.3s;
-            background-color: #fff;
-            font-family: inherit;
-            margin-bottom: 10px;
+            box-sizing: border-box;
+            color: var(--color-text-dark);
         }
 
         input:focus,
-        textarea:focus,
-        select:focus {
-            border-color: #d4af37;
-            background-color: #fffff8;
+        textarea:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+            border-bottom: 2px solid var(--color-accent-gold);
+            background-color: rgba(228, 224, 88, 0.05);
         }
 
         textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        /* --- 日時選択用スタイル --- */
-        .datetime-wrapper {
-            margin-bottom: 20px;
-        }
-        
-        .dt-grid {
-            display: flex;
-            gap: 10px;
-        }
-
-        .datetime-input {
-            flex: 1;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            border: 1px solid #eee; /* テキストエリアだけは薄い枠線あり */
+            border-radius: 8px;
+            padding: 10px;
             background-color: #fff;
-            color: #4a3b32;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235d4037%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px top 50%;
-            background-size: 10px auto;
-        }
-        
-        /* 日付は固定なので少し色を変えて「変更不要」感を出す */
-        .datetime-input.fixed-date {
-            background-color: #f0f0f0;
-            color: #3e2b20;
-            pointer-events: none; /* クリック無効化（見た目だけselect） */
-            border-color: #e0e0e0;
+            margin-top: 5px;
         }
 
-        /* --- 送信ボタン --- */
+        /* 選択ボタングループ（有機的な形状） */
+        .selection-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .selection-group button {
+            flex: 1 1 45%; /* 2列配置 */
+            padding: 16px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            color: var(--color-text-dark);
+            font-family: 'Zen Maru Gothic', sans-serif;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            /* ここがポイント：手書き風のわずかな歪みを与える */
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        }
+
+        .selection-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .selection-group button.active {
+            background-color: var(--color-main-yellow); /* BONITAイエロー */
+            border-color: var(--color-main-yellow);
+            color: var(--color-text-dark);
+            font-weight: 700;
+            /* 押した感じの表現 */
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+            transform: scale(0.98);
+        }
+
+        /* サブメニューのスタイル調整 */
+        .sub-menu-content {
+            margin-top: 20px;
+            padding: 20px 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px dashed var(--color-accent-gold); /* 縫い目線 */
+            border-radius: 12px;
+        }
+        
+        .sub-group button {
+            padding: 10px;
+            font-size: 13px;
+            border-radius: 20px; /* シンプルな丸み */
+            background-color: #fcfcfc;
+        }
+        .sub-group button.active {
+            background-color: var(--color-accent-gold);
+            color: #fff;
+            border-color: var(--color-accent-gold);
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* 送信ボタン（筆塗り背景風） */
+        .submit-wrapper {
+            margin-top: 50px;
+            text-align: center;
+        }
+        
         .submit-button {
             width: 100%;
             padding: 18px;
-            border: none;
-            border-radius: 50px;
-            background: linear-gradient(to bottom, #2ecc71, #218c54);
+            background-color: var(--color-text-dark);
             color: #fff;
-            font-size: 20px;
-            font-weight: bold;
+            font-family: 'Shippori Mincho', serif;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
             cursor: pointer;
-            margin-top: 30px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 0 #1e6e42, 0 5px 10px rgba(0,0,0,0.2);
-        }
-
-        .submit-button:hover {
-            background: linear-gradient(to bottom, #35d679, #27a060);
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #1e6e42, 0 3px 6px rgba(0,0,0,0.2);
+            /* 手書き風の歪み */
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            /* 影をイエローで表現してアクセントに */
+            box-shadow: 4px 5px 0px var(--color-main-yellow);
+            transition: all 0.2s;
+            letter-spacing: 0.1em;
         }
 
         .submit-button:active {
-            transform: translateY(4px);
-            box-shadow: none;
+            transform: translate(2px, 3px);
+            box-shadow: 1px 1px 0px var(--color-main-yellow);
         }
 
-        .info-text {
-            font-size: 14px;
-            color: #5d4037;
-            background-color: #f9f2e7;
-            padding: 15px;
-            border-left: 4px solid #d4af37;
-            border-radius: 4px;
-            margin-bottom: 25px;
-            line-height: 1.8;
+        /* 隠し要素アニメーション */
+        .hidden-section {
+            display: none;
+        }
+        .active-section {
+            display: block;
+            animation: slideDown 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 600px) {
+        /* サイドナビ（フローティングアクションボタン風） */
+        .side-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--color-accent-gold);
+            width: 55px;
+            height: 55px;
+            border-radius: 50%; /* 完全な円 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(170, 161, 52, 0.4);
+            z-index: 999;
+            transition: transform 0.3s;
+            border: 2px solid #fff;
+        }
+        .side-nav a {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+        }
+        .side-nav i { font-size: 20px; margin-bottom: 2px; }
+        .side-nav:active { transform: scale(0.9); }
+
+        /* レスポンシブ調整 */
+        @media (max-width: 480px) {
             .container {
-                width: 95%;
-                padding: 20px 15px;
+                width: 92%;
+                padding: 30px 20px;
             }
-            h1 {
-                font-size: 20px;
-                margin: -20px -15px 25px -15px;
+            .selection-group button {
+                flex: 1 1 100%; /* スマホでは1列にして間違いを防ぐ */
+                padding: 15px;
+            }
+            /* サブメニューは2列維持 */
+            .sub-group button {
+                flex: 1 1 45%;
+            }
+            .submit-button {
+                font-size: 16px;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="side-nav">
+        <a href="#section-submit">
+            <i class="fas fa-paper-plane"></i>
+            <span>送信</span>
+        </a>
+    </div>
 
     <div class="container">
-        <h1>12月27日予約フォーム</h1>
-        <div class="info-text">
-            以下の項目にご入力の上、【送信】ボタンを押してください。
-        </div>
-
-        <div class="label">お名前<span class="required-badge">必須</span></div>
-        <input type="text" id="name" placeholder="例：ゴルフ 太郎">
-
-        <div class="label">希望日時（第三希望まで）<span class="required-badge">必須</span></div>
+        <h1>
+            <span class="sub-title">BONITA Wax,Flash & Nail</span>
+            商品取り置き依頼
+        </h1>
         
-        <div style="margin-bottom:5px; font-weight:bold; font-size:14px;">第一希望</div>
-        <div class="datetime-wrapper">
-            <input type="hidden" id="date1">
-            <div class="dt-grid">
-                <select id="date1_day" class="datetime-input fixed-date"></select>
-                <select id="date1_time" class="datetime-input"></select>
+        <div class="intro-text">
+            ご希望の商品を選択し、送信ボタンを押してください。<br>
+            在庫を確認後、スタッフよりご連絡いたします。
+        </div>
+
+        <div class="label">01. お名前 <span class="badge badge-req">必須</span></div>
+        <input type="text" id="userName" placeholder="例：山田 花子">
+
+        <div class="label">02. お電話番号 <span class="badge badge-req">必須</span></div>
+        <input type="tel" id="userPhone" placeholder="例：090-1234-5678">
+
+        <div class="label">03. 商品のご購入履歴 <span class="badge badge-req">必須</span></div>
+        <div class="selection-group" id="historyGroup">
+            <button type="button" onclick="selectHistory(this, 'Yes')">購入したことがある</button>
+            <button type="button" onclick="selectHistory(this, 'No')">初めて購入する</button>
+        </div>
+
+        <div id="historyDetailArea" class="hidden-section">
+            <div style="font-size:12px; margin-top:10px; color:#888;">以前購入した商品名（わかる場合）</div>
+            <textarea id="pastProductName" rows="2" placeholder=""></textarea>
+        </div>
+
+        <div class="label">04. 購入希望商品 <span class="badge badge-req">必須</span></div>
+        <div class="selection-group" id="categoryGroup">
+            <button type="button" onclick="selectCategory(this, 'femcare')">フェムケア</button>
+            <button type="button" onclick="selectCategory(this, 'nail')">ネイル</button>
+            <button type="button" onclick="selectCategory(this, 'enzyme')">酵素ドリンク</button>
+            <button type="button" onclick="selectCategory(this, 'aroma')">アロマ</button>
+            <button type="button" onclick="selectCategory(this, 'v3')">V3シリーズ</button>
+            <button type="button" onclick="selectCategory(this, 'cosmetics')">基礎化粧品</button>
+        </div>
+
+        <div id="subProductArea" class="hidden-section">
+            <div style="font-size:12px; text-align:center; color:#666; margin-bottom:10px;">
+                ▼ 詳細を選択してください <span class="badge badge-opt">任意</span>
+            </div>
+
+            <div id="sub-femcare" class="sub-menu-content" style="display:none;">
+                <div class="selection-group sub-group">
+                    <button type="button" onclick="selectSubItem(this)">エメールソア</button>
+                    <button type="button" onclick="selectSubItem(this)">スキンハプティック</button>
+                    <button type="button" onclick="selectSubItem(this)">マスキングオイル</button>
+                    <button type="button" onclick="selectSubItem(this)">ジェルソープ</button>
+                </div>
+            </div>
+
+            <div id="sub-nail" class="sub-menu-content" style="display:none;">
+                <div class="selection-group sub-group">
+                    <button type="button" onclick="selectSubItem(this)">フラワーオイル</button>
+                    <button type="button" onclick="selectSubItem(this)">ccオイル</button>
+                </div>
+            </div>
+
+            <div id="sub-enzyme" class="sub-menu-content" style="display:none;">
+                <div class="selection-group sub-group">
+                    <button type="button" onclick="selectSubItem(this)">ベリー</button>
+                    <button type="button" onclick="selectSubItem(this)">アセロラ</button>
+                    <button type="button" onclick="selectSubItem(this)">ストロベリー</button>
+                </div>
+            </div>
+
+            <div id="sub-aroma" class="sub-menu-content" style="display:none;">
+                <div class="selection-group sub-group">
+                    <button type="button" onclick="selectSubItem(this)">万能アロマバーム</button>
+                    <button type="button" onclick="selectSubItem(this)">ブリーズミスト</button>
+                </div>
+            </div>
+
+            <div id="sub-v3" class="sub-menu-content" style="display:none;">
+                <div class="selection-group sub-group">
+                    <button type="button" onclick="selectSubItem(this)">V3ファンデ(黒)</button>
+                    <button type="button" onclick="selectSubItem(this)">ブリリアント</button>
+                    <button type="button" onclick="selectSubItem(this)">vosパック</button>
+                </div>
+            </div>
+
+            <div id="sub-cosmetics" class="sub-menu-content" style="display:none;">
+                <div class="selection-group sub-group">
+                    <button type="button" onclick="selectSubItem(this)">クレンジング</button>
+                    <button type="button" onclick="selectSubItem(this)">ソープ</button>
+                    <button type="button" onclick="selectSubItem(this)">ウォーター</button>
+                    <button type="button" onclick="selectSubItem(this)">ジェル</button>
+                    <button type="button" onclick="selectSubItem(this)">日焼け止め</button>
+                    <button type="button" onclick="selectSubItem(this)">ラッシュセラム</button>
+                </div>
             </div>
         </div>
 
-        <div style="margin-bottom:5px; font-weight:bold; font-size:14px;">第二希望</div>
-        <div class="datetime-wrapper">
-            <input type="hidden" id="date2">
-            <div class="dt-grid">
-                <select id="date2_day" class="datetime-input fixed-date"></select>
-                <select id="date2_time" class="datetime-input"></select>
-            </div>
+        <div class="label">05. 受取希望日時 <span class="badge badge-req">必須</span></div>
+        <div class="selection-group" id="pickupGroup">
+            <button type="button" onclick="selectPickup(this, 'visit')">次回の施術日に受け取る</button>
+            <button type="button" onclick="selectPickup(this, 'designate')">日時を指定して受け取る</button>
         </div>
 
-        <div style="margin-bottom:5px; font-weight:bold; font-size:14px;">第三希望</div>
-        <div class="datetime-wrapper">
-            <input type="hidden" id="date3">
-            <div class="dt-grid">
-                <select id="date3_day" class="datetime-input fixed-date"></select>
-                <select id="date3_time" class="datetime-input"></select>
-            </div>
+        <div id="pickupDetailArea" class="hidden-section">
+            <div style="font-size:12px; margin-top:10px; color:#888;">希望日時をご記入ください</div>
+            <textarea id="pickupDateText" rows="2" placeholder="例：12月20日の14時頃"></textarea>
         </div>
 
-        <div class="label">悩まれてる内容<span class="required-badge">必須</span></div>
-        <textarea id="worry" placeholder="例：最近スライスが直らなくて困っている。アプローチの距離感が掴めない、など。"></textarea>
-
-        <button class="submit-button" onclick="submitForm()">送信</button>
+        <div class="submit-wrapper">
+            <button class="submit-button" onclick="submitForm()" id="section-submit">取り置きを依頼する</button>
+        </div>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
+        // --- ロジック部分は変更なし ---
+        let historyVal = '';
+        let categoryVal = '';
+        let subItemVal = '';
+        let pickupVal = '';
+
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk' 
+                liffId: '2005254357-zKma9BZk'
             }).then(() => {
-                console.log('LIFF初期化成功');
+                console.log('LIFF initialized');
             }).catch((err) => {
-                console.error('LIFF初期化失敗', err);
+                console.error('LIFF init failed', err);
             });
         });
 
-        const pad = n => String(n).padStart(2, '0');
-
-        // --- 日付固定ロジック (最初から選択済みに変更) ---
-        function buildDateOptions(selectEl) {
-            selectEl.innerHTML = ''; // 既存オプション(プレースホルダー等)をクリア
+        function selectHistory(element, val) {
+            const buttons = document.querySelectorAll('#historyGroup button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
             
-            const value = "2025-12-27";
-            const label = "12/27（土）";
-            
-            const opt = document.createElement('option');
-            opt.value = value;
-            opt.textContent = label;
-            opt.selected = true; // ★最初から選択状態にする
-            selectEl.appendChild(opt);
-        }
-
-        // --- 時間生成ロジック (09:00〜18:00) ---
-        function buildTimeOptions(selectEl) {
-            selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
-            for (let h = 9; h <= 18; h++) {
-                for (let m of [0, 30]) {
-                    if(h === 18 && m === 30) continue; 
-                    const val = `${pad(h)}:${pad(m)}`;
-                    const opt = document.createElement('option');
-                    opt.value = val;
-                    opt.textContent = val;
-                    selectEl.appendChild(opt);
-                }
-            }
-        }
-
-        // 隠しフィールド更新
-        function updateHidden(baseId) {
-            const day = document.getElementById(`${baseId}_day`).value;
-            const time = document.getElementById(`${baseId}_time`).value;
-            const hidden = document.getElementById(baseId);
-
-            // 日付と時間が両方揃ったら値をセット
-            if(day && time) {
-                hidden.value = `${day}T${time}`;
+            historyVal = element.innerText;
+            const detailArea = document.getElementById('historyDetailArea');
+            if (val === 'Yes') {
+                detailArea.style.display = 'block';
+                detailArea.classList.add('active-section');
             } else {
-                hidden.value = "";
+                detailArea.style.display = 'none';
+                document.getElementById('pastProductName').value = '';
             }
         }
 
-        function initPicker(baseId) {
-            const daySel = document.getElementById(`${baseId}_day`);
-            const timeSel = document.getElementById(`${baseId}_time`);
-            buildDateOptions(daySel);
-            buildTimeOptions(timeSel);
-            
-            // 日付は固定で変更不可だが、念のためイベントは残す
-            daySel.addEventListener('change', () => updateHidden(baseId));
-            
-            // 時間が変わったらhiddenを更新
-            timeSel.addEventListener('change', () => updateHidden(baseId));
+        function selectCategory(element, categoryId) {
+            const buttons = document.querySelectorAll('#categoryGroup button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            categoryVal = element.innerText;
+            subItemVal = '';
+
+            const subArea = document.getElementById('subProductArea');
+            subArea.style.display = 'block';
+            subArea.classList.add('active-section');
+
+            const subContents = document.querySelectorAll('.sub-menu-content');
+            subContents.forEach(content => content.style.display = 'none');
+
+            const targetContent = document.getElementById('sub-' + categoryId);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+            }
+
+            const subButtons = document.querySelectorAll('.sub-group button');
+            subButtons.forEach(btn => btn.classList.remove('active'));
         }
 
-        // 初期化
-        ['date1', 'date2', 'date3'].forEach(id => initPicker(id));
-
-        // メッセージ整形
-        function formatDateForMsg(isoString) {
-            if (!isoString) return ''; 
-            const [dPart, tPart] = isoString.split('T');
-            const [year, month, day] = dPart.split('-');
-            const dateObj = new Date(year, month - 1, day);
-            const wd = ['日', '月', '火', '水', '木', '金', '土'][dateObj.getDay()];
-            return `${month}/${day}(${wd}) ${tPart}`;
+        function selectSubItem(element) {
+            const parent = element.parentElement;
+            const buttons = parent.querySelectorAll('button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            subItemVal = element.innerText;
         }
 
-        // 送信処理
+        function selectPickup(element, val) {
+            const buttons = document.querySelectorAll('#pickupGroup button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+
+            pickupVal = element.innerText;
+            const detailArea = document.getElementById('pickupDetailArea');
+            if (val === 'designate') {
+                detailArea.style.display = 'block';
+                detailArea.classList.add('active-section');
+            } else {
+                detailArea.style.display = 'none';
+                document.getElementById('pickupDateText').value = '';
+            }
+        }
+
         function submitForm() {
-            const name = document.getElementById('name').value;
-            const date1Val = document.getElementById('date1').value;
-            const date2Val = document.getElementById('date2').value;
-            const date3Val = document.getElementById('date3').value;
-            const worry = document.getElementById('worry').value;
+            const name = document.getElementById('userName').value;
+            const phone = document.getElementById('userPhone').value;
+            const pastProduct = document.getElementById('pastProductName').value;
+            const pickupDateText = document.getElementById('pickupDateText').value;
 
-            if (!name) { alert('「お名前」を入力してください。'); return; }
-            // 日付は入っているはずなので、実質時間の選択チェックになる
-            if (!date1Val) { alert('「第一希望日時」の時間を選択してください。'); return; }
-            if (!worry) { alert('「悩まれてる内容」を入力してください。'); return; }
+            if (!name) { alert('お名前を入力してください。'); return; }
+            if (!phone) { alert('お電話番号を入力してください。'); return; }
+            if (!historyVal) { alert('購入履歴の有無を選択してください。'); return; }
+            if (!categoryVal) { alert('購入希望商品を選択してください。'); return; }
+            if (!pickupVal) { alert('受け取り希望日時を選択してください。'); return; }
 
-            const d1Str = formatDateForMsg(date1Val);
-            const d2Str = formatDateForMsg(date2Val);
-            const d3Str = formatDateForMsg(date3Val);
+            let messageText = `≪商品取り置き依頼≫\n(12月24日まで)\n\n`;
+            messageText += `【お名前】\n${name}\n\n`;
+            messageText += `【電話番号】\n${phone}\n\n`;
+            
+            messageText += `【購入履歴】\n${historyVal}`;
+            if (historyVal === '購入したことがある' && pastProduct) {
+                messageText += `\n(詳細: ${pastProduct})`;
+            }
+            messageText += `\n\n`;
 
-            const msg = `【12月27日予約内容】\n` +
-                        `\n[お名前]\n${name}` +
-                        `\n\n[希望日時]\n` +
-                        `① ${d1Str}\n` +
-                        `② ${d2Str || 'なし'}\n` +
-                        `③ ${d3Str || 'なし'}` +
-                        `\n\n[悩まれてる内容]\n${worry}`;
+            messageText += `【希望商品】\n${categoryVal}\n`;
+            if (subItemVal) {
+                messageText += `(詳細: ${subItemVal})\n`;
+            }
+            
+            messageText += `\n【受取希望】\n${pickupVal}`;
+            if (pickupVal === '日時を指定して受け取る' && pickupDateText) {
+                messageText += `\n(希望日: ${pickupDateText})`;
+            }
 
             if (!liff.isInClient()) {
-                alert('LINEアプリ外のため送信できませんが、以下の内容で作成されました:\n\n' + msg);
+                alert('LINEアプリ外のため送信できませんが、以下の内容で作成されました:\n\n' + messageText);
             } else {
                 liff.sendMessages([{
                     type: 'text',
-                    text: msg
+                    text: messageText
                 }]).then(() => {
-                    alert('送信しました。スタッフからの連絡をお待ちください。');
+                    alert('取り置き依頼を送信しました。');
                     liff.closeWindow();
                 }).catch((err) => {
                     console.error('送信エラー', err);
-                    alert('送信に失敗しました。');
+                    alert('送信に失敗しました。\nLINEアプリから開いているか確認してください。');
                 });
             }
         }
