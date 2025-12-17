@@ -194,6 +194,8 @@
             background-color: var(--white);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             display: none;
+            /* 追加：読み込み中にスタイルを操作するためのトランジション */
+            transition: opacity 0.3s;
         }
 
         .calendar-header {
@@ -244,9 +246,16 @@
             cursor: pointer;
             font-weight: bold;
         }
+        
+        /* ボタンが無効化されたときのスタイル */
+        .month-button:disabled,
+        .week-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
-        .month-button:hover,
-        .week-button:hover {
+        .month-button:hover:not(:disabled),
+        .week-button:hover:not(:disabled) {
             background-color: #e0e0e0;
         }
 
@@ -845,12 +854,12 @@
         </div>
 
         <div class="symptoms" id="menu-repeat" style="display:none;">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="0">肩こり・腰痛整体.</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="0">スポーツ整体.</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="0">頭痛・めまい・不眠整体.</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="0">日常生活・スポーツによる<br>お怪我の治療.</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="0">QUICK骨盤整体.</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="0">交通事故によるお怪我の治療.</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="0">肩こり・腰痛整体.</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="0">スポーツ整体.</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="0">頭痛・めまい・不眠整体.</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment10')" data-price="0">日常生活・スポーツによる<br>お怪我の治療.</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment11')" data-price="0">QUICK骨盤整体.</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment12')" data-price="0">交通事故によるお怪我の治療.</button>
         </div>
 
         <div id="treatment-text"></div>
@@ -916,6 +925,8 @@
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
+// ★追加：ここにキーワードをまとめておく
+    const businessKeywords = ['営業日', '営業時間', '空き'];
         let visitCount = '';
         let selectedMenu = '';
         let selectedSymptom = [];  // 配列として定義
@@ -925,6 +936,9 @@
         let irradiationsCount = ''; let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
+        
+        // ▼ 追加：選択された日付のISO文字列を保持する変数
+        let selectedDateISO = '';
 
         // ▼ 追加：前回メニューの適用中かどうか判定するフラグ
         let isApplyingPreviousSelection = false;
@@ -1401,29 +1415,90 @@
             } else if (treatmentId === 'treatment7') {
                 content = createContent(
                     selectedMenuLabel,
-                    '90分',
-                    '8,700円',
+                    '約45分',
+                    '0円',
                     false,
-                    '・しっかりケアしたい方向けのロングコースです。<br>' +
-                    '・シェービング＋マッサージでリラックスしたい方に。'
+                    '【こんな方におすすめ】<br>' +
+                    'マッサージをしても、ストレッチをしても良くならない<br>' +
+                    '肩こり・腰痛に困っている。<br>' +
+                    'そんなお悩みを抱えた方にオススメです。<br>' +
+                    'なぜ肩が凝るのか？なぜ腰が痛いのか？を知りたい方<br>' +
+                    '毎日、辛さを気にするのはもう嫌だ！<br>' +
+                    '清々しい気持ちで毎日を過ごしたい！<br>' +
+                    'という方はご相談ください。<br>' +
+                    '通院頻度の目安は1ヶ月3〜4回'
                 );
             } else if (treatmentId === 'treatment8') {
                 content = createContent(
                     selectedMenuLabel,
-                    '15分',
-                    '1,700円',
+                    '約45分',
+                    '0円',
                     false,
-                    '・短時間で受けられるリラックスマッサージです。<br>' +
-                    '・他メニューとの組み合わせにもおすすめです。'
+                    '【こんな方におすすめ】<br>' +
+                    '試合前の身体の調整をして万全の状態で臨みたい！<br>' +
+                    'セレクションの前に体調を整えたい！<br>' +
+                    'パフォーマンスをアップしたい！<br>' +
+                    '各競技の特性に合わせた施術をいたします。<br>' +
+                    '生涯スポーツを楽しみたい方<br>' +
+                    'アスリートの方<br>' +
+                    '学生でスポーツを頑張っている方<br>' +
+                    '動ける体を手に入れる事ができます！<br>' +
+                    '通院頻度の目安は1ヶ月2〜3回'
                 );
             } else if (treatmentId === 'treatment9') {
                 content = createContent(
                     selectedMenuLabel,
-                    '15分',
-                    '1,700円',
+                    '約60分',
+                    '0円',
                     false,
-                    '・基本のマッサージコースです。<br>' +
-                    '・首・肩まわりのコリが気になる方に。'
+                    '【こんな方におすすめ】<br>' +
+                    'もみほぐしても整体でも薬を飲んでも良くならない頭痛<br>' +
+                    '病院では原因がわからないめまい、寝れない、お腹の不調<br>' +
+                    'など、不安になってしまいますよね。<br>' +
+                    'まずは、お悩みを聞かせてください。<br>' +
+                    'お子様でも施術を受けることができます。<br>' +
+                    '学校に行けない、病院の先生の言うとおりに薬を飲んでいるけれど<br>' +
+                    '症状が変わらないと言うお子様の相談も受けています。<br>' +
+                    '通院頻度の目安は1ヶ月2〜3回'
+                );
+            } else if (treatmentId === 'treatment10') {
+                content = createContent(
+                    selectedMenuLabel,
+                    '約30分',
+                    '0円',
+                    false,
+                    '不慮の事態に体がついていかずにケガをする場合が多いです。<br>' +
+                    'もみほぐしたりはせず、関節や筋肉を緩め血行を良くすることにより損傷部位の早期回復を促します。<br>' +
+                    '場合によりテーピング、固定具の作成、包帯などによる固定をします。'
+                );
+            } else if (treatmentId === 'treatment11') {
+                content = createContent(
+                    selectedMenuLabel,
+                    '約15分',
+                    '0円',
+                    false,
+                    '【こんな方におすすめ】<br>' +
+                    '今すぐスッキリしたい！<br>' +
+                    '時間がないけどチョットでもいいから楽になりたい！<br>' +
+                    'という方にオススメです！<br>' +
+                    'リラクゼーション（もみほぐし）はリラックスできるけど体はよくならない<br>' +
+                    '整体を受けたいけれど、一回の料金が気になって通うことに躊躇してしまう<br>' +
+                    'そんなお悩みを解決するために<br>' +
+                    'リラクゼーション＋治療を可能にした、新しい施術方法です！<br>' +
+                    'マッサージと骨盤矯正をします。<br>' +
+                    'たくさん施術を受けたい（月に８回以上）という方に<br>' +
+                    'お得なサブスクもご用意しております！<br>' +
+                    '通院頻度の目安は1ヶ月に6回〜'
+                );
+            } else if (treatmentId === 'treatment12') {
+                content = createContent(
+                    selectedMenuLabel,
+                    '約30分',
+                    '0円',
+                    false,
+                    '接骨院では、自賠責保険、任意保険を使用した交通事故の施術が認められています。<br>' +
+                    '症状や痛みは、事故直後に現れてくるとは限りません。<br>' +
+                    'レントゲン検査では「異常なし」でも、つらい症状が長く続いている方は、後遺症が残らないように早期の施術をお勧めします。'
                 );
             } else {
                 content = '';
@@ -1615,6 +1690,9 @@
             const selectedDay = cell.getAttribute('data-date'); // ISO形式の日付
             const selectedTime = cell.parentElement.firstChild.textContent; // 時間
             const date = new Date(selectedDay);
+            
+            // ▼ 追加：ISO文字列を保持（ページ切り替え後の復元用）
+            selectedDateISO = selectedDay;
 
             // 日付部分を「○○年○○月○○日 ○○:○○」形式に変換
             selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
@@ -1697,11 +1775,16 @@
             // キャッシュを確認
             if (availabilityCache[cacheKey]) {
                 console.log('Using cached data');
-                updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+                showLoadingSpinner(); // キャッシュ使用時も一瞬ローディングを出して操作ブロック
+                // UI反映を少し遅らせてローディング感演出（必要なら）
+                setTimeout(() => {
+                   updateCalendar(availabilityCache[cacheKey].availability, availabilityCache[cacheKey].businessDays);
+                   hideLoadingSpinner();
+                }, 200);
                 return;
             }
 
-            const url = 'https://script.google.com/macros/s/AKfycbwCxnJaxGZ46c3TnnesuZcD_zuxuVoSHoDHo5MxkRzChcK5vZDwBs4HstzkXO-KLyuDYA/exec' +
+            const url = 'https://script.google.com/macros/s/AKfycbzQtOXqhTTbtYcYM4j6aBRrDeK09-zOGkJwjKCuGmbF4XEbzMEtj8MVaqfbwPnPOgnm/exec' +
                 `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
 
             try {
@@ -1711,12 +1794,15 @@
                 console.log(data);
 
                 // 営業日の情報を抽出
-                const businessDays = data.filter(event => event.summary === "営業日").map(event => {
-                    return {
-                        start: new Date(event.startTime),
-                        end: new Date(event.endTime)
-                    };
-                });
+const businessDays = data.filter(event => {
+    // タイトルが存在し、かつキーワードのいずれかを含んでいる場合
+    return event.title && businessKeywords.some(keyword => event.title.includes(keyword));
+}).map(event => {
+    return {
+        start: new Date(event.startTime),
+        end: new Date(event.endTime)
+    };
+});
 
                 // データをキャッシュに保存
                 availabilityCache[cacheKey] = { availability: data, businessDays: businessDays };
@@ -1788,9 +1874,9 @@
                 availability.forEach(slot => {
                     const eventStart = new Date(slot.startTime);
                     const eventEnd = new Date(slot.endTime);
-                    if (slot.title && slot.title.includes("営業日") && eventStart.toDateString() === day.toDateString()) {
-                        businessEventTimes.push({ start: eventStart, end: eventEnd });
-                    }
+if (slot.title && businessKeywords.some(keyword => slot.title.includes(keyword)) && eventStart.toDateString() === day.toDateString()) {
+    businessEventTimes.push({ start: eventStart, end: eventEnd });
+}
                 });
 
                 // --- 時間ごとのループ ---
@@ -1808,13 +1894,7 @@
 
                     // セルに日付データをセット
                     cell.setAttribute('data-date', slotStart.toISOString());
-
-                    // 曜日、時、分を取得（判定用）
-                    const dayOfWeek = slotStart.getDay(); // 0:日, 1:月... 3:水... 6:土
-                    const hour = slotStart.getHours();
-                    const min = slotStart.getMinutes();
-
-
+                    
                     // ============================================
                     // 判定ロジック（優先順位順）
                     // ============================================
@@ -1822,67 +1902,53 @@
                     // 【条件1】過去の日時、または日付をまたぐ予約 ➡ ✕
                     if (slotStart < now || slotEnd.getDate() !== slotStart.getDate()) {
                         setUnavailable(cell);
-                        continue;
                     }
-
                     // 【条件2】（最優先）既に他の予約が入っているか？ ➡ ✕
-                    const isBooked = availability.some(slot => {
-                        if (slot.title && slot.title.includes("営業日")) return false;
+                    else if (availability.some(slot => {
+                        if (slot.title && businessKeywords.some(keyword => slot.title.includes(keyword))) return false;
                         const eventStart = new Date(slot.startTime);
                         const eventEnd = new Date(slot.endTime);
                         return slotStart < eventEnd && slotEnd > eventStart;
-                    });
-
-                    if (isBooked) {
+                    })) {
                         setUnavailable(cell);
-                        continue;
                     }
-
                     // 【条件3】（優先度高）カレンダーに「営業日」と入っているか？ ➡ 〇
                     // 予約がなく「営業日」枠内なら、以下の定休日ルールを無視して〇にする
-                    const isInsideBusinessEvent = businessEventTimes.some(event => {
+                    else if (businessEventTimes.some(event => {
                         return slotStart >= event.start && slotStart < event.end;
-                    });
-
-                    if (isInsideBusinessEvent) {
+                    })) {
                         setAvailable(cell);
-                        continue;
                     }
-
-
                     // 【条件4】デフォルトの制限ルール（営業日指定がない場合に適用）
-
                     // 4-A. 日曜日(0) と 水曜日(3) は休み ➡ ✕
-                    if (dayOfWeek === 0 || dayOfWeek === 3) {
+                    else if (day.getDay() === 0 || day.getDay() === 3) {
                         setUnavailable(cell);
-                        continue;
                     }
-
                     // 4-B. お昼休み (12:45 〜 14:59 開始の枠) は予約不可 ➡ ✕
-                    // 12時台は45分以降NG、13時台全NG、14時台全NG
-                    if (
-                        (hour === 12 && min >= 45) ||
-                        (hour === 13) ||
-                        (hour === 14)
+                    else if (
+                        (slotStart.getHours() === 12 && slotStart.getMinutes() >= 45) ||
+                        (slotStart.getHours() === 13) ||
+                        (slotStart.getHours() === 14)
                     ) {
                         setUnavailable(cell);
-                        continue;
                     }
-
                     // 4-C. 土曜日(6) は 18:01 〜 20:00 の時間帯は予約不可 ➡ ✕
-                    // 18:00ジャスト開始はOK、18:01以降(18:15〜)はNG
-                    if (dayOfWeek === 6) {
-                        if (
-                            (hour === 18 && min >= 1) ||
-                            (hour >= 19)
-                        ) {
-                            setUnavailable(cell);
-                            continue;
-                        }
+                    else if (day.getDay() === 6 && (
+                        (slotStart.getHours() === 18 && slotStart.getMinutes() >= 1) ||
+                        (slotStart.getHours() >= 19)
+                    )) {
+                        setUnavailable(cell);
+                    }
+                    // 【条件5】すべてのNG条件をクリア ➡ 〇
+                    else {
+                        setAvailable(cell);
                     }
 
-                    // 【条件5】すべてのNG条件をクリア ➡ 〇
-                    setAvailable(cell);
+                    // ▼ 追加：以前選択していた日付であれば、強制的に選択状態にする
+                    // (setUnavailableの後ろに書くことで、満席に見えても「選択中」であることを優先表示)
+                    if (selectedDateISO && slotStart.toISOString() === selectedDateISO) {
+                          cell.classList.add('selected');
+                    }
                 }
             }
         }
@@ -2027,10 +2093,28 @@
 
         function showLoadingSpinner() {
             document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // ▼ 修正・強化：カレンダーを半透明にし、操作を完全にブロック
+            const calendar = document.getElementById('calendar1');
+            calendar.style.pointerEvents = 'none';
+            calendar.style.opacity = '0.5'; 
+
+            // ▼ 追加：ボタンも無効化して連打を防止
+            const buttons = document.querySelectorAll('.month-button, .week-button');
+            buttons.forEach(btn => btn.disabled = true);
         }
 
         function hideLoadingSpinner() {
             document.getElementById('loadingSpinner').style.display = 'none';
+            
+            // ▼ 修正・強化：ブロックを解除し、透明度を戻す
+            const calendar = document.getElementById('calendar1');
+            calendar.style.pointerEvents = 'auto';
+            calendar.style.opacity = '1';
+
+            // ▼ 追加：ボタンの無効化を解除
+            const buttons = document.querySelectorAll('.month-button, .week-button');
+            buttons.forEach(btn => btn.disabled = false);
         }
     </script>
 </body>
