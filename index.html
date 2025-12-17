@@ -9,18 +9,28 @@
     <style>
         /* --- カラー・基本設定 --- */
         :root {
-            /* メインカラー: ダークネイビー */
-            --primary-color: #1b2a4e;
-            /* アクセント: シャンパンゴールド */
-            --accent-color: #c5a059;
-            /* 背景色: 薄いグレー */
-            --bg-color: #f4f6f9;
-            /* テキスト色 */
+            /* メインカラー: 優しい黄色 (少し濃いめのマスタードイエローで視認性を確保) */
+            /* 元: #1b2a4e (Navy) */
+            --primary-color: #f0c645;
+
+            /* アクセント: 優しい水色 */
+            /* 元: #c5a059 (Gold) */
+            --accent-color: #7dcbf5;
+
+            /* テキスト色（メイン背景上の文字色）: こげ茶色 (黄色背景でも読みやすく) */
+            --text-on-primary: #5d4a35;
+
+            /* 背景色: 薄いクリーム色 */
+            --bg-color: #fffef9;
+
+            /* テキスト色: 通常の黒に近いグレー */
             --text-color: #333333;
+
             /* 白 */
             --white: #ffffff;
+            
             /* 必須バッジ背景 */
-            --required-bg: #ff4c4c;
+            --required-bg: #ff6b6b;
         }
 
         * {
@@ -45,7 +55,7 @@
         .container {
             background-color: var(--white);
             border-radius: 4px;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05); /* 影を少し薄く */
             width: 96%;
             max-width: 500px;
             padding: 25px;
@@ -56,7 +66,7 @@
         /* --- 見出し (H1) --- */
         h1 {
             background: var(--primary-color);
-            color: var(--white);
+            color: var(--text-on-primary); /* 黄色背景なので濃い文字に変更 */
             padding: 20px 15px;
             margin: -25px -25px 30px -25px;
             font-size: 22px;
@@ -75,7 +85,7 @@
             padding: 8px 15px;
             font-weight: 700;
             background-color: transparent;
-            color: var(--primary-color);
+            color: var(--text-color); /* 黄色だと読みにくいため通常色に変更 */
             font-size: 16px;
             border-bottom: 2px solid var(--primary-color);
             border-left: 6px solid var(--accent-color);
@@ -161,8 +171,8 @@
         .symptoms button:hover,
         .menu-sections button:hover,
         .irradiations button:hover {
-            border-color: var(--accent-color);
-            background-color: #fffcf5;
+            border-color: var(--primary-color);
+            background-color: #fffdf5;
         }
 
         /* 選択（アクティブ）時 */
@@ -171,9 +181,9 @@
         .menu-sections button.active,
         .irradiations button.active {
             background-color: var(--primary-color);
-            color: var(--white);
+            color: var(--text-on-primary); /* 黄色背景用文字色 */
             border-color: var(--primary-color);
-            box-shadow: 0 2px 8px rgba(27, 42, 78, 0.3);
+            box-shadow: 0 2px 8px rgba(240, 198, 69, 0.4);
             outline: none;
         }
 
@@ -215,7 +225,7 @@
         /* カレンダーヘッダー（月表示部分） */
         .calendar-header {
             background-color: var(--primary-color);
-            color: var(--white);
+            color: var(--text-on-primary); /* 黄色背景用文字色 */
             padding: 15px;
             display: flex;
             justify-content: space-between;
@@ -224,7 +234,7 @@
 
         /* 操作ボタンエリア */
         .calendar-controls {
-            background-color: #f4f6f9;
+            background-color: #fdfdfd;
             padding: 10px;
             display: flex;
             flex-direction: column;
@@ -249,7 +259,7 @@
         .week-button {
             padding: 6px 16px;
             background-color: var(--white);
-            color: var(--primary-color);
+            color: var(--text-color); /* 視認性のため通常色 */
             border: 1px solid var(--primary-color);
             border-radius: 20px;
             font-size: 12px;
@@ -260,8 +270,8 @@
 
         .month-button:hover,
         .week-button:hover {
-            background-color: var(--white);
-            color: var(--primary-color);
+            background-color: var(--primary-color);
+            color: var(--text-on-primary);
         }
 
         /* --- カレンダー (〇✕視認性重視版) --- */
@@ -275,7 +285,7 @@
         /* カレンダーヘッダー（月表示）の調整 */
         .calendar-header {
             background: var(--primary-color);
-            color: var(--white);
+            color: var(--text-on-primary); /* 黄色背景用文字色 */
             padding: 15px 12px;
             /* 上下の余白を少し増やす */
             border-radius: 6px 6px 0 0;
@@ -297,8 +307,8 @@
             /* 程よい太さ */
             letter-spacing: 0.15em;
             /* 文字の間隔を広げて高級感を演出 */
-            border-bottom: 2px solid var(--accent-color);
-            /* アクセントカラーの下線 */
+            border-bottom: 2px solid var(--white);
+            /* 白色の下線で優しく */
             padding-bottom: 4px;
             /* 文字と下線の距離 */
             margin-bottom: -2px;
@@ -309,7 +319,7 @@
         .calendar-controls {
             background-color: #fff;
             padding: 10px;
-            border: 1px solid #696969;
+            border: 1px solid #888;
             border-top: none;
             display: flex;
             justify-content: space-between;
@@ -345,8 +355,8 @@
             gap: 15px;
             padding: 8px 10px;
             background: #fff;
-            border-left: 1px solid #696969;
-            border-right: 1px solid #696969;
+            border-left: 1px solid #888;
+            border-right: 1px solid #888;
             font-size: 12px;
         }
 
@@ -365,7 +375,7 @@
 
         .marker-ok {
             background-color: #fff;
-            border: 1px solid var(--accent-color);
+            border: 1px solid var(--primary-color);
             position: relative;
         }
 
@@ -376,7 +386,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 10px;
-            color: var(--accent-color);
+            color: var(--primary-color);
             line-height: 1;
         }
 
@@ -392,7 +402,7 @@
         .calendar {
             width: 100%;
             overflow-x: auto;
-            background: #696969;
+            background: #888;
             border-top: none;
             border-radius: 0 0 6px 6px;
         }
@@ -410,8 +420,8 @@
             font-weight: bold;
             padding: 8px 0;
             font-size: 12px;
-            border-bottom: 2px solid #696969;
-            border-right: 1px solid #696969;
+            border-bottom: 2px solid #888;
+            border-right: 1px solid #888;
         }
 
         /* 最初の列（時間軸）の調整 */
@@ -428,7 +438,7 @@
         .calendar td {
             padding: 10px 0;
             text-align: center;
-            border: 1px solid #696969;
+            border: 1px solid #888;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
@@ -441,7 +451,7 @@
         /* --- 予約可能 (〇) のデザイン --- */
         .calendar td {
             background-color: #fff;
-            color: var(--primary-color);
+            color: #ff0909;
             /* 〇の色 */
             font-weight: bold;
         }
@@ -454,9 +464,9 @@
 
         /* ホバー時 */
         .calendar td:not(.unavailable):not(:first-child):hover {
-            background-color: #fffbe6;
+            background-color: #fffcf0;
             /* 薄い黄色 */
-            border: 1px solid var(--accent-color);
+            border: 1px solid var(--primary-color);
         }
 
         /* --- 予約不可 (✕) のデザイン（暗く強調） --- */
@@ -479,11 +489,11 @@
         /* --- 選択中 のデザイン --- */
         .calendar td.selected {
             background-color: var(--primary-color) !important;
-            color: var(--white) !important;
+            color: var(--text-on-primary) !important; /* 黄色背景用文字色 */
             border: 1px solid var(--primary-color);
             position: relative;
             z-index: 5;
-            box-shadow: 0 0 0 2px rgba(27, 42, 78, 0.3);
+            box-shadow: 0 0 0 2px rgba(240, 75, 69, 0.4);
         }
 
         /* 選択中のセルにはチェックマークなどを出す場合 */
@@ -513,7 +523,7 @@
             width: 60px;
             height: 60px;
             border: 5px solid rgba(255, 255, 255, 0.2);
-            border-top-color: #00d1ff;
+            border-top-color: var(--accent-color);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             margin: 0 auto;
@@ -566,8 +576,8 @@
         .c-date-label {
             font-size: 11px;
             font-weight: bold;
-            color: var(--accent-color);
-            background: #fffcf0;
+            color: var(--text-color);
+            background: #eef8ff; /* 薄い水色 */
             padding: 2px 8px;
             border-radius: 4px;
             border: 1px solid var(--accent-color);
@@ -608,7 +618,7 @@
 
         /* --- 追加：メニューエリア --- */
         .c-menu-area {
-            background-color: #f9f9f9;
+            background-color: #fffdf5; /* 薄い黄色 */
             padding: 10px 12px;
             border-radius: 4px;
             margin-bottom: 10px;
@@ -626,7 +636,7 @@
         .c-menu-val {
             font-size: 14px;
             font-weight: bold;
-            color: var(--primary-color);
+            color: #444; /* 文字色変更 */
             line-height: 1.4;
         }
 
@@ -649,7 +659,7 @@
         .c-price-val {
             font-size: 22px;
             font-weight: 800;
-            color: var(--primary-color);
+            color: #e6b422; /* ゴールド系黄色 */
             line-height: 1;
         }
 
@@ -679,15 +689,15 @@
             padding: 18px;
             font-size: 18px;
             font-weight: bold;
-            background: linear-gradient(135deg, var(--primary-color), #2c3e50);
-            color: var(--white);
+            background: linear-gradient(135deg, var(--primary-color), #e3b04b);
+            color: var(--text-on-primary); /* 黄色背景用文字色 */
             border: none;
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(27, 42, 78, 0.3);
+            box-shadow: 0 4px 10px rgba(240, 198, 69, 0.3);
             transition: transform 0.1s, box-shadow 0.3s;
-            border-bottom: 4px solid var(--accent-color);
+            border-bottom: 4px solid #dbaa30; /* 少し濃い黄色 */
         }
 
         .submit-button:active {
@@ -710,7 +720,7 @@
             border-radius: 8px 0 0 8px;
             z-index: 1000;
             width: 40px;
-            box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .side-nav a {
@@ -718,7 +728,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--accent-color);
+            color: var(--text-on-primary); /* 文字色変更 */
             text-decoration: none;
             font-size: 10px;
             margin: 0;
@@ -785,7 +795,7 @@
             /* 内側の余白は個別に設定 */
             border-radius: 8px;
             /* 枠線を廃止し、影を強めにして浮かび上がらせる */
-            box-shadow: 0 10px 25px rgba(27, 42, 78, 0.25);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
             border: 1px solid rgba(0, 0, 0, 0.05);
             border-top: 5px solid var(--accent-color);
             /* 上部にアクセントカラー */
@@ -816,7 +826,7 @@
 
         #treatment-text .treatment-close:hover {
             background-color: var(--primary-color);
-            color: var(--white);
+            color: var(--text-on-primary);
         }
 
         /* コンテンツのレイアウト */
@@ -833,13 +843,14 @@
             align-items: center;
             font-size: 14px;
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--text-color); /* 通常色に変更 */
             border-bottom: 1px dashed #eee;
             padding-bottom: 8px;
         }
 
         .t-icon {
             margin-right: 6px;
+            color: var(--primary-color); /* アイコンを黄色に */
         }
 
         /* 料金表示エリア（一番目立たせる） */
@@ -859,7 +870,7 @@
         .t-price-val {
             font-size: 24px;
             font-weight: 800;
-            color: var(--accent-color);
+            color: #e6b422; /* ゴールド */
             /* 金色で強調 */
             line-height: 1;
             letter-spacing: 0.05em;
@@ -876,7 +887,7 @@
         .t-note {
             font-size: 11px;
             color: #888;
-            background-color: #f4f6f9;
+            background-color: #fffef9;
             padding: 8px;
             border-radius: 4px;
             line-height: 1.4;
@@ -895,7 +906,7 @@
             align-items: center;
             font-size: 15px;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--text-color); /* 通常色に変更 */
             padding-bottom: 6px;
             border-bottom: 1px solid #eee;
         }
@@ -941,7 +952,6 @@
 </head>
 
 <body>
-    <!-- 右側の追従ナビ -->
     <div class="side-nav" id="sideNav">
         <a href="#section-message">
             <span>⇩</span>
@@ -952,7 +962,6 @@
     <div class="container">
         <h1>東川口やす接骨院<br>予約フォーム
         </h1>
-        <!-- 追加するボタン -->
         <div class="repeat-booking-wrapper">
             <button type="button" id="repeatBookingButton" onclick="applyPreviousSelection()">
                 🔁 前回と同じメニューで予約する
@@ -975,12 +984,12 @@
         <div class="label" id="course">メニューをお選びください<span class="required">必須</span></div>
         <div class="info-text">※メニューを選択すると<br>空き状況のカレンダーが表示されます</div>
         <div class="symptoms">
-            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">肩こり・腰痛整体</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">スポーツ整体</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">頭痛・めまい・不眠整体</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">日常生活・スポーツによる<br>お怪我の治療</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">QUICK骨盤整体</button>
-            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="2200">交通事故によるお怪我の治療</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="0">肩こり・腰痛整体</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="0">スポーツ整体</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="0">頭痛・めまい・不眠整体</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="0">日常生活・スポーツによる<br>お怪我の治療</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="0">QUICK骨盤整体</button>
+            <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="0">交通事故によるお怪我の治療</button>
         </div>
 
         <div id="treatment-text"></div>
@@ -1041,9 +1050,7 @@
         <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
 
         <div class="labeltyuuou">ご予約内容</div>
-        <div id="displayInfo"></div> <!-- ここに選択された情報を表示します -->
-
-        <button class="submit-button" onclick="submitForm()" div id="section-message">予約を行う</button>
+        <div id="displayInfo"></div> <button class="submit-button" onclick="submitForm()" div id="section-message">予約を行う</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
@@ -1054,8 +1061,7 @@
         let selectedFullDate = '';
         let currentDate = new Date();
         let availabilityCache = {};
-        let irradiationsCount = ''; <!-- 選択された症状を格納する変数 -->
-        let totalAmount = 0; // 合計金額を格納する変数
+        let irradiationsCount = ''; let totalAmount = 0; // 合計金額を格納する変数
         let menuPrice = 0; // メニューの価格
         let optionsPrice = 0; // オプションの合計価格
 
@@ -1348,7 +1354,7 @@ function updateDisplayInfo() {
             note = "※症状によりお時間が前後する場合がございます"
         ) => {
             const initialFeeHtml = hasInitialFee
-                ? '<div class="t-price-sub">初診料：＋2,200円</div>'
+                ? '<div class="t-price-sub">初診料：＋0円</div>'
                 : '';
 
             const detailHtml = detail
@@ -1446,44 +1452,67 @@ function updateDisplayInfo() {
             if (treatmentId === 'treatment1') {
                 content = createContent(
                     selectedMenuLabel,
-                    '90分',
-                    '6,500円',
+                    '約60分',
+                    '0円',
                     true,
-                    '・和装に合わせたシェービングとスキンケアを中心に行います。<br>' +
-                    '・うなじ〜フェイスラインまでしっかり整え、写真映えするお肌へ仕上げます。'
+                    '【こんな方におすすめ】<br>' +
+                    'マッサージをしても、ストレッチをしても良くならない<br>' +
+                    '肩こり・腰痛に困っている。<br>' +
+                    'そんなお悩みを抱えた方にオススメです。<br>' +
+                    'なぜ肩が凝るのか？なぜ腰が痛いのか？を知りたい方<br>' +
+                    '毎日、辛さを気にするのはもう嫌だ！<br>' +
+                    '清々しい気持ちで毎日を過ごしたい！<br>' +
+                    'という方はご相談ください。<br>' +
+                    '通院頻度の目安は1ヶ月3〜4回'
                 );
             } else if (treatmentId === 'treatment2') {
                 content = createContent(
                     selectedMenuLabel,
-                    '60分',
-                    '4,500円',
+                    '約60分',
+                    '0円',
                     true,
-                    '・洋装向けのベーシックなブライダルケアコースです。<br>' +
-                    '・お顔〜首元を中心に、くすみケアと保湿を行います。'
+                    '【こんな方におすすめ】<br>' +
+                    '試合前の身体の調整をして万全の状態で臨みたい！<br>' +
+                    'セレクションの前に体調を整えたい！<br>' +
+                    'パフォーマンスをアップしたい！<br>' +
+                    '各競技の特性に合わせた施術をいたします。<br>' +
+                    '生涯スポーツを楽しみたい方<br>' +
+                    'アスリートの方<br>' +
+                    '学生でスポーツを頑張っている方<br>' +
+                    '動ける体を手に入れる事ができます！<br>' +
+                    '通院頻度の目安は1ヶ月2〜3回'
                 );
             } else if (treatmentId === 'treatment3') {
                 content = createContent(
                     selectedMenuLabel,
-                    '120分',
-                    '8,700円',
+                    '約75分',
+                    '0円',
                     true,
-                    '・フェイシャル・デコルテ・背中までしっかりケアするフルコースです。<br>' +
-                    '・挙式前のスペシャルケアとしておすすめです。'
+                    '【こんな方におすすめ】<br>' +
+                    'もみほぐしても整体でも薬を飲んでも良くならない頭痛<br>' +
+                    '病院では原因がわからないめまい、寝れない、お腹の不調<br>' +
+                    'など、不安になってしまいますよね。<br>' +
+                    'まずは、お悩みを聞かせてください。<br>' +
+                    'お子様でも施術を受けることができます。<br>' +
+                    '学校に行けない、病院の先生の言うとおりに薬を飲んでいるけれど<br>' +
+                    '症状が変わらないと言うお子様の相談も受けています。<br>' +
+                    '通院頻度の目安は1ヶ月2〜3回'
                 );
             } else if (treatmentId === 'treatment4') {
                 content = createContent(
                     selectedMenuLabel,
-                    '30分',
-                    '1,700円',
+                    '約45分',
+                    '0円',
                     true,
-                    '・洋装向けのポイントケアコースです。<br>' +
-                    '・短時間で気になる部分だけ整えたい方に。'
+                    '不慮の事態に体がついていかずにケガをする場合が多いです。<br>' +
+                    'もみほぐしたりはせず、関節や筋肉を緩め血行を良くすることにより損傷部位の早期回復を促します。<br>' +
+                    '場合によりテーピング、固定具の作成、包帯などによる固定をします。'
                 );
             } else if (treatmentId === 'treatment5') {
                 content = createContent(
                     selectedMenuLabel,
-                    '30分',
-                    '2,200円',
+                    '約30分',
+                    '0円',
                     false,
                     '【こんな方におすすめ】<br>' +
                     '今すぐスッキリしたい！<br>' +
@@ -1501,8 +1530,8 @@ function updateDisplayInfo() {
             } else if (treatmentId === 'treatment6') {
                 content = createContent(
                     selectedMenuLabel,
-                    '30分',
-                    '4,500円',
+                    '約45分',
+                    '0円',
                     false,
                     '接骨院では、自賠責保険、任意保険を使用した交通事故の施術が認められています。<br>' +
                     '症状や痛みは、事故直後に現れてくるとは限りません。<br>' +
