@@ -25,7 +25,7 @@
             background-color: #fdfdfd;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 98%;
+            width: 96%;
             max-width: 500px;
             padding: 25px;
             box-sizing: border-box;
@@ -71,7 +71,7 @@
             border-bottom: 2px solid black;
         }
 
-        /* 必須マーク */
+        /* 必須・任意マーク */
         .required {
             color: #ffffff;
             font-weight: lighter;
@@ -82,6 +82,10 @@
             padding: 0 5px;
             border-radius: 3px;
             margin-right: 5px;
+        }
+        
+        .optional {
+            background-color: #888; /* 任意はグレー */
         }
 
         /* --- 入力フォーム --- */
@@ -135,7 +139,7 @@
             border-color: #000;
         }
 
-        /* --- 日時選択エリア（移植部分） --- */
+        /* --- 日時選択エリア --- */
         .datetime-wrapper {
             position: relative;
             margin-bottom: 25px;
@@ -156,7 +160,6 @@
             color: #333;
             cursor: pointer;
             appearance: none;
-            /* 下矢印アイコン */
             background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
             background-position: right 10px top 50%;
@@ -310,7 +313,7 @@
                 <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">単色カラーorラメグラデーションオフ別途 (90分)</button>
                 <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">マグネットジェルオフ別途 (90分)</button>
                 <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">フレンチorグラデーション オフ別途 (90分)</button>
-                <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">定額ベーシックジェル 単色シンプルアート2～4本 (120分)</button>
+                <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">定額ベーシックジェル<br>単色シンプルアート2～4本 (120分)</button>
                 <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">定額ジェル 単色シンプルアート4本～8本 (120分)</button>
                 <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">定額ジェル アート6本グラデーションorフレンチ込み (120分)</button>
                 <button type="button" onclick="selectSymptom(this)" data-category="ハンドジェル">定額ジェル (120分)</button>
@@ -383,7 +386,7 @@
             </div>
         </div>
 
-        <div class="label" id="kibou3">第三希望日時<span class="required">必須</span></div>
+        <div class="label" id="kibou3">第三希望日時<span class="required optional">任意</span></div>
         <div class="datetime-wrapper">
             <span class="placeholder" id="placeholder3">▼ タップして日時を選択</span>
             <input type="hidden" id="date3" name="date3">
@@ -406,8 +409,8 @@
     <script>
         let visitCount = '';
         let offStatus = '';
-        let selectedMenu = '';
-        let selectedSymptom = [];
+        let selectedMenu = ''; // カテゴリー（タブ）名
+        let selectedSymptom = []; // 選択されたメニューリスト
         let irradiationsCount = '';
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -419,7 +422,7 @@
                 console.log('LIFF初期化失敗', err);
             });
             
-            // 日付生成
+            // 日時生成
             ['date1', 'date2', 'date3'].forEach(id => initPicker(id));
             
             // 保存データ復元
@@ -429,10 +432,11 @@
             if (savedPhone) document.getElementById('phone').value = savedPhone;
         });
 
-        // --- 日時生成ロジック ---
+        // --- 日時生成ロジック (曜日別時間対応) ---
         const JP_WD = ['日', '月', '火', '水', '木', '金', '土'];
         const pad = n => String(n).padStart(2, '0');
 
+        // 日付の選択肢を生成
         function buildDateOptions(selectEl, days = 60) {
             const d = new Date();
             selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
@@ -441,7 +445,7 @@
                 const y = d.getFullYear();
                 const m = pad(d.getMonth() + 1);
                 const day = pad(d.getDate());
-                const value = `${y}-${m}-${day}`;
+                const value = `${y}-${m}-${day}`; // valueはYYYY-MM-DD
                 const label = `${m}/${day}（${JP_WD[wd]}）`;
                 
                 const opt = document.createElement('option');
@@ -452,19 +456,61 @@
             }
         }
 
-        function buildTimeOptions(selectEl) {
-            selectEl.innerHTML = '<option value="" disabled selected>時間</option>';
-            // 9:00 - 20:00 (30分刻み)
-            for (let h = 9; h <= 20; h++) {
+        // 時間の選択肢を生成 (日付変更時に呼ばれる)
+        function updateTimeOptions(baseId) {
+            const daySel = document.getElementById(`${baseId}_day`);
+            const timeSel = document.getElementById(`${baseId}_time`);
+            const selectedDateStr = daySel.value;
+            
+            // 現在選択されている時間を保持（再構築後も可能なら維持するため）
+            const currentSelectedTime = timeSel.value;
+
+            // 一旦クリア
+            timeSel.innerHTML = '<option value="" disabled selected>時間</option>';
+
+            if (!selectedDateStr) return;
+
+            const dateObj = new Date(selectedDateStr);
+            const dayOfWeek = dateObj.getDay(); // 0:日, 1:月 ... 6:土
+
+            // 営業時間設定
+            let startHour = 9; // 平日デフォルト
+            if (dayOfWeek === 0 || dayOfWeek === 6) { // 土日は10時開始
+                startHour = 10;
+            }
+            const endHour = 19; // 終了は一律19時
+
+            // 時間選択肢生成 (30分刻み)
+            for (let h = startHour; h <= endHour; h++) {
                 for (let m of [0, 30]) {
-                    if(h===20 && m===30) continue; 
+                    // 終了時間(19:00)以降は表示しない (19:30はNG)
+                    if (h === endHour && m === 30) continue;
+
                     const val = `${pad(h)}:${pad(m)}`;
                     const opt = document.createElement('option');
                     opt.value = val;
                     opt.textContent = val;
-                    selectEl.appendChild(opt);
+                    timeSel.appendChild(opt);
                 }
             }
+
+            // 前の選択時間が新しい範囲内にあれば再選択、なければリセット
+            // (optionタグのvalueと一致するか確認)
+            let isValid = false;
+            for (let opt of timeSel.options) {
+                if (opt.value === currentSelectedTime) {
+                    isValid = true;
+                    break;
+                }
+            }
+            if (isValid) {
+                timeSel.value = currentSelectedTime;
+            } else {
+                timeSel.value = ""; // リセット
+            }
+            
+            // 表示更新
+            updateHiddenAndPlaceholder(baseId);
         }
 
         function updateHiddenAndPlaceholder(baseId) {
@@ -487,10 +533,13 @@
         function initPicker(baseId) {
             const daySel = document.getElementById(`${baseId}_day`);
             const timeSel = document.getElementById(`${baseId}_time`);
-            buildDateOptions(daySel);
-            buildTimeOptions(timeSel);
             
-            daySel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
+            buildDateOptions(daySel);
+            // 時間は初期状態では空（日付未選択のため）
+            timeSel.innerHTML = '<option value="" disabled selected>時間</option>';
+            
+            // 日付変更時に時間を再構築
+            daySel.addEventListener('change', () => updateTimeOptions(baseId));
             timeSel.addEventListener('change', () => updateHiddenAndPlaceholder(baseId));
         }
 
@@ -579,24 +628,27 @@
             updateDisplayInfo();
         }
 
+        // ★修正点: メニュー切り替え時にリセットしない
         function showMenu(menu) {
+            // 現在のカテゴリーボタンをアクティブ化
             let selectedButton = document.querySelector(`.menu-sections button[onclick="showMenu('${menu}')"]`);
             if (selectedButton) {
                 selectedMenu = selectedButton.innerText;
             }
             document.querySelectorAll('.menu-sections button').forEach(button => button.classList.remove('active'));
-            document.querySelectorAll('.menu-section').forEach(section => section.classList.remove('active'));
             if (selectedButton) selectedButton.classList.add('active');
+
+            // セクションの表示切り替え（内容は消さない）
+            document.querySelectorAll('.menu-section').forEach(section => section.classList.remove('active'));
             document.getElementById(menu).classList.add('active');
             
-            // リセット
-            selectedSymptom = [];
-            irradiationsCount = '';
-            document.querySelectorAll('.symptoms button').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.irradiations button').forEach(b => b.classList.remove('active'));
+            // 下部の選択済みリスト表示更新 (カテゴリー切り替え時も常に表示)
             const disp = document.getElementById("selected-menus-display");
-            disp.style.display = 'none';
-            disp.innerHTML = '';
+            if(selectedSymptom.length > 0) {
+                disp.style.display = 'block';
+            } else {
+                disp.style.display = 'none';
+            }
             updateDisplayInfo();
         }
 
@@ -615,6 +667,7 @@
         function removeSymptom(button) {
             const category = button.getAttribute('data-category');
             const name = button.getAttribute('data-name');
+            // すべてのタブ内のボタンから探して非アクティブ化
             const srcBtn = [...document.querySelectorAll('.symptoms button')].find(
                 b => b.textContent === name && b.getAttribute('data-category') === category
             );
@@ -623,6 +676,7 @@
         }
 
         function updateSymptomList() {
+            // 全カテゴリーのアクティブボタンを集計
             const updatedSelectedButtons = document.querySelectorAll('.symptoms button.active');
             selectedSymptom = [];
             
@@ -672,18 +726,21 @@
             if (!offStatus) return alert('オフの有無を選択してください。');
             if (!selectedSymptom || selectedSymptom.length === 0) return alert('メニューを選択してください。');
             if (!date1) return alert('第一希望日時を選択してください。');
+            // 第二希望は必須のまま（ご指示になかったため）。必要なら外します。
+            if (!date2) return alert('第二希望日時を選択してください。');
+            // 第三希望の必須チェックは削除しました
 
             const selectedSymptomText = selectedSymptom.map(item => `${item.name}`).join(',');
             const irradiationsText = irradiationsCount || 'なし';
             
             // 日時整形
             const d1Text = date1;
-            const d2Text = date2 || 'なし';
+            const d2Text = date2;
             const d3Text = date3 || 'なし';
 
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${name}\n電話番号：${phone}\nご来店回数：${visitCount}\nオフの有無：${offStatus}\nメニュー：${selectedSymptomText}\nオプション：${irradiationsText}\n\n第一希望：${d1Text}\n第二希望：${d2Text}\n第三希望：${d3Text}\n\nメッセージ：${message}`
+                text: `【予約フォーム】\nお名前：${name}\n電話番号：${phone}\nご来店回数：${visitCount}\n\nオフの有無：${offStatus}\nメニュー\n${selectedSymptomText}\nオプション\n${irradiationsText}\n\n第一希望：${d1Text}\n第二希望：${d2Text}\n第三希望：${d3Text}\n\nメッセージ：${message}`
             }]).then(() => {
                 alert('予約内容を送信しました。');
                 liff.closeWindow();
