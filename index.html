@@ -711,7 +711,19 @@
             updateDisplayInfo();
         }
 
-// --- 送信処理 ---
+// ▼▼▼ 追加: 日時フォーマット変換用関数 ▼▼▼
+        function formatDateToJP(dateStr) {
+            if (!dateStr) return '';
+            // "YYYY-MM-DD HH:mm" の形式で入ってくる値を分解して整形
+            const parts = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2})$/);
+            if (parts) {
+                return `${parts[1]}年${parts[2]}月${parts[3]}日 ${parts[4]}時${parts[5]}分`;
+            }
+            return dateStr; // マッチしない場合はそのまま返す
+        }
+        // ▲▲▲ 追加ここまで ▲▲▲
+
+        // --- 送信処理 ---
         function submitForm() {
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
@@ -728,19 +740,15 @@
             if (!date1) return alert('第一希望日時を選択してください。');
             if (!date2) return alert('第二希望日時を選択してください。');
 
-            // ▼▼▼ 修正箇所ここから ▼▼▼
-            // メニューを「・」付きの改行区切りにする
+            // メニューリストの整形
             const selectedSymptomText = selectedSymptom.map(item => `・${item.name}`).join('\n');
-            
-            // オプションも同様に見やすくしたい場合は以下のように変更可能です（任意）
-            // 現状はカンマ区切りのままにしていますが、必要であればここも修正してください。
             const irradiationsText = irradiationsCount ? irradiationsCount : 'なし';
-            // ▲▲▲ 修正箇所ここまで ▲▲▲
             
-            // 日時整形
-            const d1Text = date1;
-            const d2Text = date2;
-            const d3Text = date3 || 'なし';
+            // ▼▼▼ 修正: 日時を日本語形式に変換 ▼▼▼
+            const d1Text = formatDateToJP(date1);
+            const d2Text = formatDateToJP(date2);
+            const d3Text = date3 ? formatDateToJP(date3) : 'なし';
+            // ▲▲▲ 修正ここまで ▲▲▲
 
             liff.sendMessages([{
                 type: 'text',
