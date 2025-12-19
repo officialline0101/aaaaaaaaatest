@@ -711,7 +711,7 @@
             updateDisplayInfo();
         }
 
-        // --- 送信処理 ---
+// --- 送信処理 ---
         function submitForm() {
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
@@ -726,12 +726,16 @@
             if (!offStatus) return alert('オフの有無を選択してください。');
             if (!selectedSymptom || selectedSymptom.length === 0) return alert('メニューを選択してください。');
             if (!date1) return alert('第一希望日時を選択してください。');
-            // 第二希望は必須のまま（ご指示になかったため）。必要なら外します。
             if (!date2) return alert('第二希望日時を選択してください。');
-            // 第三希望の必須チェックは削除しました
 
-            const selectedSymptomText = selectedSymptom.map(item => `${item.name}`).join(',');
-            const irradiationsText = irradiationsCount || 'なし';
+            // ▼▼▼ 修正箇所ここから ▼▼▼
+            // メニューを「・」付きの改行区切りにする
+            const selectedSymptomText = selectedSymptom.map(item => `・${item.name}`).join('\n');
+            
+            // オプションも同様に見やすくしたい場合は以下のように変更可能です（任意）
+            // 現状はカンマ区切りのままにしていますが、必要であればここも修正してください。
+            const irradiationsText = irradiationsCount ? irradiationsCount : 'なし';
+            // ▲▲▲ 修正箇所ここまで ▲▲▲
             
             // 日時整形
             const d1Text = date1;
@@ -740,7 +744,7 @@
 
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${name}\n電話番号：${phone}\nご来店回数：${visitCount}\n\nオフの有無：${offStatus}\nメニュー\n${selectedSymptomText}\nオプション\n${irradiationsText}\n\n第一希望：${d1Text}\n第二希望：${d2Text}\n第三希望：${d3Text}\n\nメッセージ：${message}`
+                text: `【ご予約内容】\n\n《お名前》${name}\n《電話番号》${phone}\n《ご来店回数》${visitCount}\n\n《オフの有無》${offStatus}\n\n《メニュー》\n${selectedSymptomText}\n\n《オプション》\n${irradiationsText}\n\n《第一希望》\n${d1Text}\n《第二希望》\n${d2Text}\n《第三希望》\n${d3Text}\n\n《メッセージ》${message}`
             }]).then(() => {
                 alert('予約内容を送信しました。');
                 liff.closeWindow();
