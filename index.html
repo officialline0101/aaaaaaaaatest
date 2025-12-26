@@ -819,7 +819,7 @@
           '全身オイルリンパ×チネイザン（75分）': 90,
           '貼るだけWINBACK施術（部位別20分）': 30,
           'WINBACK施術': 30,
-          'ヨガ': 70,                                
+          'ヨガ（60分）': 70,                                
           'TRXサスペンショントレーニング': 50,
           'WINBACK×TRXセットコース（60分）': 90,
           'おがくず酵素風呂温浴＋メディカルチネイザン': 120,
@@ -1207,22 +1207,32 @@ function showMenu(menu) {
             updateDisplayInfo();
         }
 
-        function selectDate(cell) {
+function selectDate(cell) {
+            // 選択不可のセルなら何もしない
             if (cell.classList.contains('unavailable')) {
                 return; 
             }
 
+            // 他のセルの選択状態を解除
             const cells = document.querySelectorAll('.calendar td');
             cells.forEach(td => td.classList.remove('selected'));
 
+            // クリックされたセルを選択状態にする
             cell.classList.add('selected');
 
-            const selectedDay = cell.getAttribute('data-date'); 
-            const selectedTime = cell.parentElement.firstChild.textContent; 
-            const date = new Date(selectedDay);
+            // data-date属性から正確な日時を取得（ここには15:20が入っています）
+            const selectedDayISO = cell.getAttribute('data-date'); 
+            const date = new Date(selectedDayISO);
 
-            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+            // ▼▼▼ 修正箇所：左端の列ではなく、Dateオブジェクトから直接時間を取得する ▼▼▼
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const correctTime = `${hours}:${minutes}`; // これで 15:20 になります
 
+            // 表示用のフォーマット作成
+            selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${correctTime}`;
+
+            // 確認画面の更新
             updateDisplayInfo();
         }
 
@@ -1318,6 +1328,10 @@ function updateCalendar(availability, businessDays) {
             const calendar = document.getElementById('calendar1');
             const table = calendar.querySelector('table tbody');
 
+            // 所要時間の計算
+            let duration = (selectedMenuTime || 0) + (selectedVisitTime || 0) + (selectedirradiationsTime || 0);
+            if (duration === 0) duration = 10; 
+
             const times = [
                 '10:00', '10:30', '11:00', '11:30',
                 '12:00', '12:30', '13:00', '13:30',
@@ -1369,32 +1383,23 @@ function updateCalendar(availability, businessDays) {
             const limitDate = new Date(checkToday.getFullYear(), checkToday.getMonth() + monthsToAdd, 1);
             limitDate.setHours(0, 0, 0, 0);
 
-
             // ▼▼▼ メインループ処理 ▼▼▼
             for (let i = 0; i < 7; i++) {
                 const day = new Date(currentDate);
                 day.setDate(day.getDate() + i);
 
-                // その日の「営業日」イベントを取得
+                // その日の営業日ルール
                 const todayBusinessRules = businessDays.filter(b => {
                     const bStart = new Date(b.start);
                     return bStart.toDateString() === day.toDateString();
                 });
                 
-                // ★修正点1：営業日設定がない場合は「true（営業日）」とみなすフラグ
-                // ただし、火曜日（day.getDay() === 2）は定休日なので、営業日設定がないなら休みとする
                 let isBusinessDayOpen = true; 
                 if (todayBusinessRules.length === 0) {
-                    // 営業日設定がない場合
-                    if (day.getDay() === 2) {
-                        isBusinessDayOpen = false; // 火曜はデフォルト休み
-                    }
-                } else {
-                    // 営業日設定がある場合、ここはtrueにしておき、後で時間の包含チェックを行う
-                    isBusinessDayOpen = true;
+                    if (day.getDay() === 2) isBusinessDayOpen = false; // 火曜定休
                 }
 
-                // その日の予約済みイベントを取得
+                // その日の予約済みイベント
                 const dayEvents = availability.filter(slot => {
                     const eStart = new Date(slot.startTime);
                     return eStart.toDateString() === day.toDateString() && slot.title !== "営業日";
@@ -1407,11 +1412,7 @@ function updateCalendar(availability, businessDays) {
                     const slotStart = new Date(day);
                     slotStart.setHours(parseInt(times[j].split(':')[0]), parseInt(times[j].split(':')[1]), 0, 0);
 
-                    // 施術所要時間
-                    let duration = (selectedMenuTime || 0) + (selectedVisitTime || 0) + (selectedirradiationsTime || 0);
-                    if (duration === 0) duration = 10; 
-
-                    // 1. 基本的なNG判定（過去日付、予約期限外）
+                    // 1. 基本的なNG判定
                     const nowPlus24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
                     if (slotStart < nowPlus24Hours || slotStart >= limitDate) {
                         cell.textContent = '✕';
@@ -1419,7 +1420,7 @@ function updateCalendar(availability, businessDays) {
                         continue;
                     }
 
-                    // 独自ルール（特定の時間のNGなど）
+                    // 独自ルール
                     if (
                         (slotStart.getDay() === 5 && slotStart.getHours() === 10 && slotStart.getMinutes() < 30) ||
                         (slotStart.getHours() === 16 && slotStart.getMinutes() >= 30) ||
@@ -1430,7 +1431,7 @@ function updateCalendar(availability, businessDays) {
                         continue;
                     }
                     
-                    // 営業日判定（火曜定休などでそもそも休みの場合）
+                    // 営業日判定
                     if (!isBusinessDayOpen) {
                         cell.textContent = '✕';
                         cell.classList.add('unavailable');
@@ -1438,29 +1439,24 @@ function updateCalendar(availability, businessDays) {
                     }
 
                     // 2. 重複チェックロジック
-                    let standardEnd = new Date(slotStart.getTime() + duration * 60000);
+                    let standardEnd = new Date(slotStart.getTime() + duration * 60000); 
 
-                    // 既存予約との競合チェック
                     const conflictingEvents = dayEvents.filter(event => {
                         const eStart = new Date(event.startTime);
                         const eEnd = new Date(event.endTime);
                         return eStart < standardEnd && slotStart < eEnd;
                     });
 
-                    // ▼▼ A. 競合なし（通常通り空いている）場合 ▼▼
+                    // A. 競合なし（通常通り予約可能）
                     if (conflictingEvents.length === 0) {
-                        // ★修正点2：営業日イベントがある場合のみ、枠内チェックを行う
                         let isInBusinessHours = true;
-                        
                         if (todayBusinessRules.length > 0) {
-                            // 営業日設定があるなら、その範囲内かチェック
                             isInBusinessHours = todayBusinessRules.some(biz => {
                                 const bStart = new Date(biz.start);
                                 const bEnd = new Date(biz.end);
                                 return slotStart >= bStart && standardEnd <= bEnd;
                             });
                         }
-                        // ※営業日設定がない(length==0)場合は、isInBusinessHoursはtrueのまま通過
 
                         if (isInBusinessHours) {
                             cell.innerHTML = '◯';
@@ -1471,49 +1467,103 @@ function updateCalendar(availability, businessDays) {
                             cell.classList.add('unavailable');
                         }
                     } 
-                    // ▼▼ B. 競合あり（通常なら✕）だが、食い込み（ズレ込み）判定 ▼▼
+                    // B. 競合あり（ズレ込み判定 & 前倒し判定）
                     else {
-                        let maxEndTime = new Date(0);
+                        let validOptionFound = false;
+
+                        // --- 【追加ロジック】前倒し（Gap Fill）計算 ---
+                        // 次の予約開始時間から所要時間を引いて、その時間が空いているか確認する
+                        // 例: 15:50予約あり、所要時間60分 → 14:50開始なら入るか？
+                        
+                        // 競合しているイベントの中で「最も早い開始時間」を見つける
+                        let minConflictStart = new Date(8640000000000000); // 遠い未来
                         conflictingEvents.forEach(e => {
-                            const eEnd = new Date(e.endTime);
-                            if (eEnd > maxEndTime) maxEndTime = eEnd;
+                            const eStart = new Date(e.startTime);
+                            if (eStart < minConflictStart) minConflictStart = eStart;
                         });
 
-                        const adjustedStart = maxEndTime;
-                        const adjustedEnd = new Date(adjustedStart.getTime() + duration * 60000);
-                        const nextSlotTime = new Date(slotStart.getTime() + 30 * 60000);
-                        
-                        // 条件1: 次の枠(30分後)を超えない範囲か
-                        if (adjustedStart < nextSlotTime) {
-                            // 条件2: ダブルブッキングチェック
-                            const doubleConflict = dayEvents.some(event => {
+                        // 逆算した開始時間
+                        const backwardStart = new Date(minConflictStart.getTime() - duration * 60000);
+                        const backwardEnd = minConflictStart; // 終了時間は次の予約の開始時間
+
+                        // 逆算した時間が、現在のスロット時間より極端に前でないか確認（例: 15:00の枠なのに13:00を表示しないように、30分前まで許容）
+                        const previousSlotLimit = new Date(slotStart.getTime() - 30 * 60000);
+
+                        if (backwardStart >= nowPlus24Hours && backwardStart >= previousSlotLimit) {
+                             // この「逆算した時間」が他の予約と被っていないか再チェック
+                            const doubleConflictBackward = dayEvents.some(event => {
                                 const eStart = new Date(event.startTime);
                                 const eEnd = new Date(event.endTime);
-                                return eStart < adjustedEnd && adjustedStart < eEnd;
+                                return eStart < backwardEnd && backwardStart < eEnd;
                             });
 
-                            // 条件3: 営業時間内チェック（★修正点3）
-                            let isInBusinessHoursAdjusted = true;
+                            // 営業日内チェック
+                            let isInBusinessHoursBackward = true;
                             if (todayBusinessRules.length > 0) {
-                                isInBusinessHoursAdjusted = todayBusinessRules.some(biz => {
+                                isInBusinessHoursBackward = todayBusinessRules.some(biz => {
                                     const bStart = new Date(biz.start);
                                     const bEnd = new Date(biz.end);
-                                    return adjustedStart >= bStart && adjustedEnd <= bEnd;
+                                    return backwardStart >= bStart && backwardEnd <= bEnd;
                                 });
                             }
 
-                            if (!doubleConflict && isInBusinessHoursAdjusted) {
-                                const startHour = adjustedStart.getHours();
-                                const startMin = adjustedStart.getMinutes().toString().padStart(2, '0');
+                            if (!doubleConflictBackward && isInBusinessHoursBackward) {
+                                const startHour = backwardStart.getHours();
+                                const startMin = backwardStart.getMinutes().toString().padStart(2, '0');
                                 
                                 cell.innerHTML = `◯<span class="adjusted-time">${startHour}:${startMin}〜</span>`;
                                 cell.classList.add('available');
-                                cell.setAttribute('data-date', adjustedStart.toISOString());
-                            } else {
-                                cell.textContent = '✕';
-                                cell.classList.add('unavailable');
+                                cell.setAttribute('data-date', backwardStart.toISOString());
+                                validOptionFound = true;
                             }
-                        } else {
+                        }
+
+                        // --- 既存ロジック：後ろ倒し（Adjusted Start）計算 ---
+                        // 前倒しが見つからなかった場合、または前倒しよりも「後ろ倒し」の方がスロット時間に近い場合はこちらを採用しても良いが
+                        // ここでは「前倒し」で見つかればそれを優先表示し、なければ既存の「後ろ倒し」を試すフローにします。
+                        
+                        if (!validOptionFound) {
+                            let maxEndTime = new Date(0);
+                            conflictingEvents.forEach(e => {
+                                const eEnd = new Date(e.endTime);
+                                if (eEnd > maxEndTime) maxEndTime = eEnd;
+                            });
+
+                            const adjustedStart = maxEndTime;
+                            const adjustedEnd = new Date(adjustedStart.getTime() + duration * 60000);
+                            const nextSlotTime = new Date(slotStart.getTime() + 30 * 60000);
+                            
+                            // 次の枠までの間に開始できるか
+                            if (adjustedStart < nextSlotTime) {
+                                const doubleConflict = dayEvents.some(event => {
+                                    const eStart = new Date(event.startTime);
+                                    const eEnd = new Date(event.endTime);
+                                    return eStart < adjustedEnd && adjustedStart < eEnd;
+                                });
+
+                                let isInBusinessHoursAdjusted = true;
+                                if (todayBusinessRules.length > 0) {
+                                    isInBusinessHoursAdjusted = todayBusinessRules.some(biz => {
+                                        const bStart = new Date(biz.start);
+                                        const bEnd = new Date(biz.end);
+                                        return adjustedStart >= bStart && adjustedEnd <= bEnd;
+                                    });
+                                }
+
+                                if (!doubleConflict && isInBusinessHoursAdjusted) {
+                                    const startHour = adjustedStart.getHours();
+                                    const startMin = adjustedStart.getMinutes().toString().padStart(2, '0');
+                                    
+                                    cell.innerHTML = `◯<span class="adjusted-time">${startHour}:${startMin}〜</span>`;
+                                    cell.classList.add('available');
+                                    cell.setAttribute('data-date', adjustedStart.toISOString());
+                                    validOptionFound = true;
+                                }
+                            }
+                        }
+
+                        // どちらもダメなら✕
+                        if (!validOptionFound) {
                             cell.textContent = '✕';
                             cell.classList.add('unavailable');
                         }
