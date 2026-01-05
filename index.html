@@ -1425,42 +1425,39 @@
         }
 
 function submitForm() {
-            // 現在表示されている（activeな）メニューセクションのIDを取得
+            // ▼▼▼ 追加機能：オフ必須チェック ▼▼▼
             const activeSection = document.querySelector('.menu-section.active');
             let isOffSelected = false;
-
-            // 必須チェックを行いたいセクションのIDリスト
-            // male: ハンド, female: フット, handfemale: ハンド＆フット
+            // 必須チェックを行いたいセクションのID
             const targetSections = ['male', 'female', 'handfemale'];
 
             if (activeSection && targetSections.includes(activeSection.id)) {
-                // activeなセクションの中で、data-category="off" のボタンが active になっているか探す
+                // activeなセクションの中で、data-category="off" のボタンが active か確認
                 const activeOffBtn = activeSection.querySelector('button[data-category="off"].active');
                 if (activeOffBtn) {
                     isOffSelected = true;
                 }
 
-                // オフが選択されていなければアラートを出して中断
                 if (!isOffSelected) {
                     alert('「◆オフ◆ 必須」の項目を選択してください。');
-                    
-                    // ユーザーに分かりやすいよう、オフの場所へスクロール（任意）
+                    // 該当箇所へスクロール
                     const offLabels = activeSection.querySelectorAll('.highlight-texthissu');
                     if(offLabels.length > 0) {
                         offLabels[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
-                    return; // 処理をここで止める
+                    return; 
                 }
             }
+            // ▲▲▲ 追加機能終了 ▲▲▲
 
             const formData = {
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
                 visitCount: visitCount,
                 selectedMenu: selectedMenu,
-                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null, // 空の選択肢をチェック
+                selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
                 irradiationsCount: irradiationsCount,
-                dates: selectedFullDate ? [selectedFullDate] : null, // 空チェック
+                dates: selectedFullDate ? [selectedFullDate] : null,
                 message: document.getElementById('message').value.trim()
             };
 
@@ -1485,10 +1482,19 @@ function submitForm() {
                 return;
             }
 
+            // ▼▼▼ 修正箇所：オプション有無での文字列作成 ▼▼▼
+            // オプションがある場合だけ ",オプション名" を追加する
+            let menuString = formData.selectedSymptom;
+            if (formData.irradiationsCount) {
+                menuString += `,${formData.irradiationsCount}`;
+            }
+            // ▲▲▲ 修正箇所終了 ▲▲▲
+
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${formData.selectedSymptom},${formData.irradiationsCount}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+                // メニュー： の部分を ${menuString} に変更しました
+                text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${menuString}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
                 alert('当日キャンセルは無いようにお願いいたします。');
