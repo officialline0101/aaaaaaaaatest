@@ -539,14 +539,6 @@
             </div>
         </div>
 
-        <div id="baindLabel1" class="input-group" style="display:none; margin-top:20px;">
-            <input type="text" id="venue" placeholder=" " oninput="saveInput('venue')">
-            <label>会場名 <span class="required">*</span></label>
-        </div>
-        <div id="baindButtons1" style="display:none;"></div> <div id="baindLabel2" class="input-group" style="display:none;">
-             <input type="text" id="weddingDate" placeholder="例）2025年10月10日" oninput="saveInput('weddingDate')">
-            <label>ご婚礼日 <span class="required">*</span></label>
-        </div>
         <div id="baindButtons2" style="display:none;"></div> <div class="section-label">希望日時 <span class="required">*</span></div>
         <div class="calendar-container">
             <div class="current-month" id="currentMonth">2025年 1月</div>
@@ -727,8 +719,6 @@
             document.querySelectorAll('.symptoms button, .irradiations button').forEach(b => b.classList.remove('active'));
             
             // 会場・日時入力のリセット
-            document.getElementById('venue').value = '';
-            document.getElementById('weddingDate').value = '';
             document.getElementById('baindLabel1').style.display = 'none';
             document.getElementById('baindLabel2').style.display = 'none';
 
@@ -1052,8 +1042,6 @@ if (isToday) {
             const formData = {
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
-                venue: document.getElementById('venue').value.trim(),
-                weddingDate: document.getElementById('weddingDate').value.trim(),
                 selectedMenu: selectedMenu,
                 selectedSymptom: selectedSymptom.length > 0 ? selectedSymptom : null,
                 irradiationsCount: irradiationsCount,
@@ -1067,7 +1055,7 @@ if (isToday) {
             if (!formData.dates) { alert('希望日時を選択してください。'); return; }
 
             const symptomNames = formData.selectedSymptom.map(s => s.name).join(',');
-            const text = `【NARA予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース：${formData.selectedMenu}\nメニュー：${symptomNames}\nオプション：${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}\n会場：${formData.venue}\n挙式日：${formData.weddingDate}\nメッセージ：${formData.message}`;
+            const text = `【NARA予約フォーム】\n≪GIGI VERDE NARA≫\nお名前：${formData.name}\n電話番号：${formData.phone}\nコース：${formData.selectedMenu}\nメニュー：${symptomNames}\nオプション：${formData.irradiationsCount}\n希望日時：\n${formData.dates[0]}\nメッセージ：${formData.message}`;
 
             liff.sendMessages([{ type: 'text', text: text }])
             .then(() => {
