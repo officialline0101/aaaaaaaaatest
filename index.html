@@ -1425,14 +1425,18 @@
         }
 
 function submitForm() {
-            // ▼▼▼ 追加機能：オフ必須チェック ▼▼▼
+            // ▼▼▼ 連打防止用：ボタン要素を取得 ▼▼▼
+            const submitBtn = document.querySelector('.submit-button');
+            
+            // 既に処理中（disabled）なら何もしない
+            if (submitBtn.disabled) return;
+
+            // ▼▼▼ オフ必須チェック ▼▼▼
             const activeSection = document.querySelector('.menu-section.active');
             let isOffSelected = false;
-            // 必須チェックを行いたいセクションのID
             const targetSections = ['male', 'female', 'handfemale'];
 
             if (activeSection && targetSections.includes(activeSection.id)) {
-                // activeなセクションの中で、data-category="off" のボタンが active か確認
                 const activeOffBtn = activeSection.querySelector('button[data-category="off"].active');
                 if (activeOffBtn) {
                     isOffSelected = true;
@@ -1440,7 +1444,6 @@ function submitForm() {
 
                 if (!isOffSelected) {
                     alert('「◆オフ◆ 必須」の項目を選択してください。');
-                    // 該当箇所へスクロール
                     const offLabels = activeSection.querySelectorAll('.highlight-texthissu');
                     if(offLabels.length > 0) {
                         offLabels[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1448,7 +1451,7 @@ function submitForm() {
                     return; 
                 }
             }
-            // ▲▲▲ 追加機能終了 ▲▲▲
+            // ▲▲▲ オフ必須チェック終了 ▲▲▲
 
             const formData = {
                 name: document.getElementById('name').value.trim(),
@@ -1482,18 +1485,20 @@ function submitForm() {
                 return;
             }
 
-            // ▼▼▼ 修正箇所：オプション有無での文字列作成 ▼▼▼
-            // オプションがある場合だけ ",オプション名" を追加する
+            // ▼▼▼ 連打防止実行：すべてのチェックを通ったらボタンを無効化 ▼▼▼
+            submitBtn.disabled = true;
+            submitBtn.textContent = '送信中...'; 
+            submitBtn.style.backgroundColor = '#cccccc'; // ボタンの色をグレーにして「押せない感」を出す
+
+            // オプション有無での文字列作成
             let menuString = formData.selectedSymptom;
             if (formData.irradiationsCount) {
                 menuString += `,${formData.irradiationsCount}`;
             }
-            // ▲▲▲ 修正箇所終了 ▲▲▲
 
             // LINEトークにメッセージを送信
             liff.sendMessages([{
                 type: 'text',
-                // メニュー： の部分を ${menuString} に変更しました
                 text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nコース：${formData.selectedMenu}\nメニュー：${menuString}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
             }]).then(() => {
                 /* メッセージ送信成功時の処理 */
@@ -1503,6 +1508,12 @@ function submitForm() {
             }).catch((err) => {
                 /* メッセージ送信失敗時の処理 */
                 console.error('メッセージの送信に失敗しました', err);
+                
+                // ▼▼▼ エラー時はボタンを復活させる ▼▼▼
+                submitBtn.disabled = false;
+                submitBtn.textContent = '予約を行う';
+                submitBtn.style.backgroundColor = '#ff4c4c'; // 元の色に戻す
+                alert('送信に失敗しました。もう一度お試しください。');
             });
         }
 
