@@ -1424,7 +1424,35 @@
             updateDisplayInfo();
         }
 
-        function submitForm() {
+function submitForm() {
+            // 現在表示されている（activeな）メニューセクションのIDを取得
+            const activeSection = document.querySelector('.menu-section.active');
+            let isOffSelected = false;
+
+            // 必須チェックを行いたいセクションのIDリスト
+            // male: ハンド, female: フット, handfemale: ハンド＆フット
+            const targetSections = ['male', 'female', 'handfemale'];
+
+            if (activeSection && targetSections.includes(activeSection.id)) {
+                // activeなセクションの中で、data-category="off" のボタンが active になっているか探す
+                const activeOffBtn = activeSection.querySelector('button[data-category="off"].active');
+                if (activeOffBtn) {
+                    isOffSelected = true;
+                }
+
+                // オフが選択されていなければアラートを出して中断
+                if (!isOffSelected) {
+                    alert('「◆オフ◆ 必須」の項目を選択してください。');
+                    
+                    // ユーザーに分かりやすいよう、オフの場所へスクロール（任意）
+                    const offLabels = activeSection.querySelectorAll('.highlight-texthissu');
+                    if(offLabels.length > 0) {
+                        offLabels[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return; // 処理をここで止める
+                }
+            }
+
             const formData = {
                 name: document.getElementById('name').value.trim(),
                 phone: document.getElementById('phone').value.trim(),
