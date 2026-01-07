@@ -62,13 +62,13 @@
         /* --------------------------------------------------
            ロゴ画像
            -------------------------------------------------- */
-.logo-image {
+        .logo-image {
             display: block;
             max-width: 200px; /* 最大幅を制限 */
             width: 100%;
             height: auto;
             margin: 0 auto 20px auto; /* 中央揃えと下の余白 */
-            transform: translateX(-5px); /* ★ここを追加：左に2pxずらす */
+            transform: translateX(-5px); /* 左に微調整 */
         }
 
         /* --------------------------------------------------
@@ -377,7 +377,7 @@
             border-radius: 50px; /* カプセル型 */
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
             margin-top: 20px;
             letter-spacing: 0.05em;
         }
@@ -389,6 +389,15 @@
 
         .submit-button:active {
             transform: translateY(1px);
+        }
+
+        /* 連打防止用の無効化スタイル */
+        .submit-button:disabled {
+            background: #cccccc; /* グレー */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
         }
 
         /* --------------------------------------------------
@@ -544,7 +553,7 @@
         </div>
 
         <div class="label" id="floor-label">所在階<span class="required">必須</span></div>
-        <input type="number" id="floor" placeholder="例：2" oninput="saveInput('floor')">
+        <input type="text" id="floor" placeholder="例：2 (または 2階)" oninput="saveInput('floor')">
 
         <div class="label" id="elevator-label">エレベーター有無<span class="required">必須</span></div>
         <div class="elevator-buttons">
@@ -588,7 +597,7 @@
         <div class="labeltyuuou">ご入力内容の確認</div>
         <div id="displayInfo"></div>
 
-        <button class="submit-button" onclick="submitForm()" id="section-message">
+        <button class="submit-button" onclick="submitForm()" id="submitBtn">
             <i class="fas fa-paper-plane"></i> 予約・見積を送信する
         </button>
     </div>
@@ -805,6 +814,13 @@
             const d2 = formatDateTime(document.getElementById('date2').value);
             const d3 = formatDateTime(document.getElementById('date3').value);
 
+            // 修正点1: 階数表示ロジック（「2階」と入力されても「2階階」にならないようにする）
+            let floorDisplay = '<span style="color:#ccc">未入力</span>';
+            if (floor) {
+                // 入力値に「階」が含まれていればそのまま、なければ「階」を足す
+                floorDisplay = floor.includes('階') ? floor : floor + '階';
+            }
+
             const displayDiv = document.getElementById('displayInfo');
             displayDiv.innerHTML = `
                 <div class="info-row">
@@ -824,7 +840,7 @@
                 <div class="info-row">
                     <div>
                         <strong>【所在階】</strong>
-                        <p>${floor ? floor + '階' : '<span style="color:#ccc">未入力</span>'}</p>
+                        <p>${floorDisplay}</p>
                     </div>
                     <button class="edit-button" onclick="scrollToElement('floor-label')">修正</button>
                 </div>
@@ -870,6 +886,11 @@
         // 送信処理
         // ---------------------------------------------------------
         function submitForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // 修正点2: ボタンが無効化されている場合は処理を中断（連打防止）
+            if (submitBtn.disabled) return;
+
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const floor = document.getElementById('floor').value.trim();
@@ -887,6 +908,13 @@
             if (!elevatorStatus) return alert('エレベーターの有無を選択してください。');
             if (!date1) return alert('第1希望日を選択してください。');
 
+            // 修正点2: バリデーション通過後、ボタンを無効化して連打を防ぐ
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 送信中...';
+
+            // 階数の整形（送信テキスト用）
+            const floorText = floor.includes('階') ? floor : floor + '階';
+
             // 送信テキスト作成
             const textToSend = 
 `【サクラ急送 予約・見積依頼】
@@ -900,7 +928,7 @@ ${phone}
 ${selectedItems.join('\n')}
 
 《所在階》
-${floor}階
+${floorText}
 
 《エレベーター》
 ${elevatorStatus}
@@ -916,6 +944,9 @@ ${message}`;
             // LINE送信
             if (!liff.isInClient()) {
                 alert('LINEアプリ内から開いてください。\n\n送信内容イメージ：\n' + textToSend);
+                // テスト用にボタンを戻す
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 予約・見積を送信する';
                 return;
             }
 
@@ -928,6 +959,9 @@ ${message}`;
             }).catch((err) => {
                 console.error('送信エラー', err);
                 alert('送信に失敗しました。');
+                // エラー時はボタンを再度有効化する
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 予約・見積を送信する';
             });
         }
     </script>
