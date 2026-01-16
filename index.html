@@ -1,427 +1,696 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina Spaces | Modern Business Interiors</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        /* 独自のスクロールバー */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>予約フォーム</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif; background-color: #f7f7f7;
+      display: flex; justify-content: center; align-items: flex-start;
+      height: 100vh; margin: 0; padding-top: 20px; overflow-x: hidden;
+    }
+    .container {
+      background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 95%; max-width: 500px; padding: 20px; box-sizing: border-box; margin: 0 auto;
+    }
+    h1 { text-align: center; margin-bottom: 20px; font-size: 24px; }
+    .label { display: block; margin-bottom: 10px; padding: 10px; font-weight: bold; background-color: #505050; color: #fff; border-radius: 4px; text-align: center; }
+    input[type="text"], input[type="tel"], textarea {
+      width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
 
-        /* フェードインアニメーション用 */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .visit-buttons, .symptoms, .menu-sections, .irradiations { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    .visit-buttons button, .symptoms button, .menu-sections button, .irradiations button {
+      flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f7f7f7; cursor: pointer; box-sizing: border-box; text-align: center; white-space: nowrap;
+    }
+    .visit-buttons button.active, .symptoms button.active, .menu-sections button.active, .irradiations button.active { background-color: #444; color: #fff; }
 
-        /* 画像ホバー時のズーム効果 */
-        .img-container {
-            overflow: hidden;
-        }
-        .img-zoom {
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .group:hover .img-zoom {
-            transform: scale(1.05);
-        }
-    </style>
+    .date-inputs input[type="datetime-local"] {
+      width: calc(100% - 22px); padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
+
+    .submit-button { width: 100%; padding: 15px; border: none; border-radius: 4px; background-color: #111; color: #fff; font-size: 18px; cursor: pointer; }
+
+    .calendar-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px; position: relative; width: 100%; }
+    .calendar { flex: 1; background-color: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.1); overflow: hidden; width: 100%; }
+    .calendar table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .calendar th, .calendar td {
+      font-size: 12.5px; text-align: center; padding: 5px; cursor: pointer; vertical-align: top; width: auto; box-sizing: border-box; border: 1px solid #1a1a1a;
+    }
+    .calendar th { background-color: #f7f7f7; }
+    .calendar td:hover { background-color: #ddd; }
+    .calendar td.selected { background-color: #3e3f41; color: #fff; }
+
+    .week-button-container, .month-button-container {
+      display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px;
+    }
+    .week-button, .month-button {
+      padding: 10px 20px; background-color: #fff; color: #222; border: 1px solid #000; border-radius: 4px;
+      cursor: pointer; transition: background-color .3s ease, transform .2s ease; transform-origin: center center;
+    }
+    .week-button:hover, .month-button:hover { background-color: #fff; transform: scale(1.15); }
+    .week-button:active, .month-button:active { transform: scale(0.95); }
+    .week-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .current-month { font-size: 16px; font-weight: 300; color: #3e3f41; margin-top: 20px; display: inline-block; }
+
+    .loading-spinner {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      display: none; text-align: center; background-color: rgba(0,0,0,0.6);
+      padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .spinner { width: 60px; height: 60px; border: 5px solid rgba(255,255,255,0.2); border-top-color: #00d1ff; border-radius: 50%; animation: spin .7s linear infinite; margin-left: 12px; }
+    .loading-text { margin-top: 20px; font-size: 15px; font-weight: bold; color: #fff; letter-spacing: 1px; text-align: center; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .available { color: red; }
+    .unavailable { background-color: #d3d3d3; }
+
+    .menu-section { display: none; }
+    .menu-section.active { display: block; }
+
+    #repairLabel, #repairButtons { display: none; }
+
+    #treatment-text { background-color: #eef9f5; padding: 10px; border-radius: 4px; margin-top: 20px; }
+
+    .highlight-background { background-color: #f9f9d6; padding: 10px; border-radius: 10px; margin-bottom: 15px; margin-top: 10px; text-align: center; }
+    .highlight-text { display:block; font-weight:bold; text-align:center; }
+    .red-circle { color: red; }
+    .bold-cross { font-weight: bold; }
+
+    .info-text {
+      margin-top: 20px; margin-bottom: 10px; font-size: 13px; color: #000;
+      line-height: 1.5; text-align: center; word-wrap: break-word; background-color: #eef9f5;
+      padding: 10px; border-radius: 4px;
+    }
+    @media (max-width: 768px) {
+      .info-text { font-size: 11.5px; margin-top: 10px; line-height: 2.0; }
+    }
+
+    .symptoms, .options { display: block; }
+    .symptoms button, .options button {
+      display: block; width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; background-color: #f7f7f7; cursor: pointer; box-sizing: border-box; text-align: center; white-space: nowrap;
+    }
+    .symptoms button.active, .options button.active { background-color: #444; color: #fff; }
+
+    .highlight-background { cursor: pointer; background-color: #505050; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 18px; display: flex; justify-content: center; align-items: center; position: relative; }
+    .symptoms, .options { display: block; }
+    .highlight-text { font-weight: bold; display: inline-block; color: #fff; }
+
+    .warn-red { color: #c00; margin-bottom: 8px; font-size: 13px; text-align: left; }
+  </style>
 </head>
-<body class="bg-white text-slate-800">
+<body>
+  <div class="container">
+    <h1>nail salon sana<br />予約フォーム</h1>
 
-    <!-- ナビゲーション -->
-    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-                    <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-                        <i data-lucide="layers" class="w-5 h-5"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-slate-900">Lumina Spaces</span>
-                </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#" class="text-sm font-medium text-slate-900 hover:text-blue-600 transition-colors">ホーム</a>
-                        <a href="#concept" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">コンセプト</a>
-                        <a href="#gallery" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">ギャラリー</a>
-                        <a href="#features" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">設備</a>
-                        <a href="#contact" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 rounded-full hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20">お問い合わせ</a>
-                    </div>
-                </div>
-                <!-- モバイルメニューボタン -->
-                <div class="-mr-2 flex md:hidden">
-                    <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-900 hover:bg-slate-50 focus:outline-none">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <div class="warn-red">※17：00以降のご予約はチャットにてご相談ください。</div>
 
-    <!-- ヒーローセクション -->
-    <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-            <div class="max-w-3xl fade-up">
-                <h1 class="text-4xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.15] mb-6">
-                    知性と創造性を刺激する、<br>
-                    次世代のビジネス空間。
-                </h1>
-                <p class="text-lg text-slate-600 mb-10 leading-relaxed max-w-2xl">
-                    洗練されたデザインと機能性が融合した、Lumina Spaces。
-                    信頼と革新が生まれる場所として、企業のポテンシャルを最大限に引き出します。
-                </p>
-                <div class="flex flex-wrap gap-4">
-                    <a href="#gallery" class="px-8 py-4 text-base font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-colors shadow-xl shadow-blue-600/20 flex items-center gap-2">
-                        スペースを見る <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                    </a>
-                    <a href="#contact" class="px-8 py-4 text-base font-semibold text-slate-700 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors">
-                        資料請求
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 装飾的な背景画像（ぼかし） -->
-        <div class="absolute top-0 right-0 -z-10 w-3/4 h-full bg-gradient-to-l from-slate-50 to-white"></div>
-        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000" alt="Modern Office" class="absolute top-0 right-0 -z-20 w-2/3 h-full object-cover opacity-10 mask-image-linear">
-    </header>
+    <div class="label">お客様名※必須</div>
+    <input type="text" id="name" placeholder="お名前を入力してください" />
 
-    <!-- コンセプトセクション -->
-    <section id="concept" class="py-24 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div class="relative fade-up">
-                    <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-slate-200/50">
-                        <img src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1200" alt="Meeting Room" class="w-full h-full object-cover">
-                    </div>
-                    <!-- フローティングカード -->
-                    <div class="absolute -bottom-8 -right-8 bg-white p-6 rounded-2xl shadow-xl hidden lg:block max-w-xs">
-                        <div class="flex items-center gap-4 mb-3">
-                            <div class="p-3 bg-blue-50 rounded-full text-blue-600">
-                                <i data-lucide="shield-check" class="w-6 h-6"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900">セキュリティ完備</h3>
-                                <p class="text-xs text-slate-500">24時間365日の監視体制</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="fade-up delay-100">
-                    <h2 class="text-3xl font-bold text-slate-900 mb-6">「信頼」をデザインする</h2>
-                    <p class="text-slate-600 leading-loose mb-8">
-                        ビジネスにおける空間は、単なる物理的な場所ではありません。それは企業のアイデンティティを表現し、訪れる人々に無言のメッセージを伝えます。<br><br>
-                        私たちは、GoogleやMetaのような世界的企業が採用する「バイオフィリックデザイン」や「アクティビティ・ベースド・ワーキング」の概念を取り入れ、開放的でありながら、集中とリラックスが共存する空間を構築しました。
-                    </p>
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-3 text-slate-700">
-                            <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-600"></i>
-                            自然光を最大限に取り入れた設計
-                        </li>
-                        <li class="flex items-center gap-3 text-slate-700">
-                            <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-600"></i>
-                            人間工学に基づいたプレミアム家具
-                        </li>
-                        <li class="flex items-center gap-3 text-slate-700">
-                            <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-600"></i>
-                            高度な防音設計のプライベートブース
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="label">電話番号※必須</div>
+    <input type="tel" id="phone" placeholder="電話番号を入力してください" />
 
-    <!-- ギャラリーセクション（メイン） -->
-    <section id="gallery" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center mb-16 fade-up">
-                <span class="text-blue-600 font-semibold tracking-wider text-sm uppercase mb-2 block">Interior Showcase</span>
-                <h2 class="text-3xl lg:text-4xl font-bold text-slate-900">空間ギャラリー</h2>
-                <p class="mt-4 text-slate-500 max-w-2xl mx-auto">
-                    細部までこだわり抜いたインテリアデザインをご覧ください。
-                </p>
-            </div>
-
-            <!-- JSで動的に画像を生成するグリッド -->
-            <div id="image-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- JavaScriptでここに画像カードが挿入されます -->
-            </div>
-
-            <div class="mt-16 text-center">
-                <button id="load-more" class="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 rounded-full text-slate-600 font-medium hover:bg-slate-50 hover:border-slate-300 transition-all">
-                    もっと見る <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- 特徴・設備セクション -->
-    <section id="features" class="py-24 bg-slate-900 text-white">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                <div class="fade-up group cursor-pointer">
-                    <div class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-500">
-                        <i data-lucide="wifi" class="w-7 h-7 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">高速ネットワーク</h3>
-                    <p class="text-slate-400 leading-relaxed">
-                        ビジネスグレードの専用回線とWi-Fi 6環境を完備。オンライン会議もストレスなく進行できます。
-                    </p>
-                </div>
-                <div class="fade-up delay-100 group cursor-pointer">
-                    <div class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-500">
-                        <i data-lucide="coffee" class="w-7 h-7 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">プレミアムラウンジ</h3>
-                    <p class="text-slate-400 leading-relaxed">
-                        バリスタ品質のコーヒーマシンを備えたラウンジエリア。カジュアルな打ち合わせやリフレッシュに。
-                    </p>
-                </div>
-                <div class="fade-up delay-200 group cursor-pointer">
-                    <div class="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-500">
-                        <i data-lucide="monitor" class="w-7 h-7 text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-3">最新鋭の会議システム</h3>
-                    <p class="text-slate-400 leading-relaxed">
-                        大型4Kモニターと高品質な音響設備を備えた会議室。プレゼンテーションの質を高めます。
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- フッター -->
-    <footer class="bg-slate-50 border-t border-slate-200 pt-16 pb-8" id="contact">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-                <div class="col-span-1 lg:col-span-1">
-                    <div class="flex items-center gap-2 mb-6">
-                        <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white">
-                            <i data-lucide="layers" class="w-5 h-5"></i>
-                        </div>
-                        <span class="font-bold text-xl text-slate-900">Lumina Spaces</span>
-                    </div>
-                    <p class="text-slate-500 text-sm leading-relaxed">
-                        ビジネスの成長を加速させる、<br>プレミアムなワークスペース。
-                    </p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-900 mb-4">Location</h4>
-                    <p class="text-slate-500 text-sm mb-2">〒100-0005</p>
-                    <p class="text-slate-500 text-sm">東京都千代田区丸の内1-1-1<br>ルミナタワー 25F</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-900 mb-4">Contact</h4>
-                    <p class="text-slate-500 text-sm mb-2">03-1234-5678</p>
-                    <p class="text-slate-500 text-sm">hello@luminaspaces.jp</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-slate-900 mb-4">Follow Us</h4>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-600 transition-colors">
-                            <i data-lucide="twitter" class="w-5 h-5"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-600 transition-colors">
-                            <i data-lucide="instagram" class="w-5 h-5"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-600 transition-colors">
-                            <i data-lucide="linkedin" class="w-5 h-5"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-slate-200 pt-8 text-center">
-                <p class="text-slate-400 text-xs">&copy; 2024 Lumina Spaces Inc. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- ライトボックスモーダル -->
-    <div id="lightbox" class="fixed inset-0 z-[60] bg-slate-950/90 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
-        <button id="lightbox-close" class="absolute top-6 right-6 text-white/70 hover:text-white transition-colors">
-            <i data-lucide="x" class="w-10 h-10"></i>
-        </button>
-        <img id="lightbox-img" src="" alt="Full view" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300">
+    <div class="label">ご来店回数※必須</div>
+    <div class="visit-buttons">
+      <button type="button" id="firstVisit" onclick="selectVisit(this)">1回目</button>
+      <button type="button" id="repeatVisit" onclick="selectVisit(this)">2回目以降</button>
     </div>
 
-    <script>
-        // Lucideアイコンの初期化
-        lucide.createIcons();
+    <div class="label">メニューをお選びください</div>
+    <div class="info-text">※メニューを選択すると空き状況のカレンダーが表示されます</div>
+    <div class="menu-sections">
+      <button type="button" onclick="showMenu('gelnails')">ジェルネイル</button>
+      <button type="button" onclick="showMenu('Flatrategel')">定額ジェルネイルコース</button>
+      <button type="button" onclick="showMenu('geloff')">ジェルオフ</button>
+      <button type="button" onclick="showMenu('nailcare')">ネイルケア</button>
+      <button type="button" onclick="showMenu('footcare')">フットケア</button>
+      <button type="button" onclick="showMenu('footgelnails')">フットジェルネイル</button>
+      <button type="button" onclick="showMenu('Flatfootgelnails')">定額フットジェルネイルコース</button>
+    </div>
 
-        // 信頼感を醸成するための高品質な画像データセット（Unsplash）
-        const images = [
-            {
-                url: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1600",
-                category: "Lobby",
-                title: "メインロビー",
-                desc: "開放的なエントランスでお客様をお迎えします。"
-            },
-            {
-                url: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=1600",
-                category: "Meeting",
-                title: "エグゼクティブ会議室",
-                desc: "重要な意思決定のための静謐な空間。"
-            },
-            {
-                url: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=1600",
-                category: "Workspace",
-                title: "オープンワークスペース",
-                desc: "コミュニケーションを促進するフリーアドレスエリア。"
-            },
-            {
-                url: "https://images.unsplash.com/photo-1504384308090-c54be3855091?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1504384308090-c54be3855091?auto=format&fit=crop&q=80&w=1600",
-                category: "Lounge",
-                title: "リラクゼーションラウンジ",
-                desc: "アイデアを整理するための上質な休息空間。"
-            },
-            {
-                url: "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=1600",
-                category: "Focus",
-                title: "個室ブース",
-                desc: "集中作業に特化した防音個室。"
-            },
-            {
-                url: "https://images.unsplash.com/photo-1517502884422-41e1709d7aa9?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1517502884422-41e1709d7aa9?auto=format&fit=crop&q=80&w=1600",
-                category: "Cafe",
-                title: "カフェエリア",
-                desc: "社内コミュニケーションのハブとなるカフェ。"
-            },
-             {
-                url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1600",
-                category: "Meeting",
-                title: "ブレインストーミングルーム",
-                desc: "ホワイトボード完備のクリエイティブスペース。"
-            },
-            {
-                url: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=1600",
-                category: "Hallway",
-                title: "コリドー",
-                desc: "アートが飾られた洗練された通路。"
-            },
-             {
-                url: "https://images.unsplash.com/photo-1497215842964-222b430dc0a8?auto=format&fit=crop&q=80&w=800",
-                fullUrl: "https://images.unsplash.com/photo-1497215842964-222b430dc0a8?auto=format&fit=crop&q=80&w=1600",
-                category: "Detail",
-                title: "グリーンインテリア",
-                desc: "空気を浄化し、安らぎを与える植栽。"
-            }
-        ];
+    <div id="gelnails" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆ジェルネイル◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">ワンカラーオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">ワンカラーオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">ラメグラデーションオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">ラメグラデーションオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">フレンチ (クリアベース)オフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment4')" data-price="15000">フレンチ (クリアベース)オフ有り</button>
+      </div>
+    </div>
 
-        // グリッドに画像を生成する関数
-        const gridContainer = document.getElementById('image-grid');
-        
-        images.forEach((img, index) => {
-            const card = document.createElement('div');
-            card.className = `group fade-up relative overflow-hidden rounded-2xl bg-slate-100 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300`;
-            card.style.transitionDelay = `${index * 50}ms`;
-            
-            // レイアウトにリズムをつけるため、特定の要素を大きくする（MD以上で）
-            if (index === 0 || index === 4) {
-                 card.classList.add('md:col-span-2');
-            }
+    <div id="Flatrategel" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆定額ジェルネイルコース◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">ブロンズコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">ブロンズコースオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">シルバーコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">シルバーコースオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">ゴールドコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment7')" data-price="15000">ゴールドコースオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">プラチナコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">プラチナコースオフ有り</button>
+      </div>
+    </div>
 
-            card.innerHTML = `
-                <div class="img-container aspect-[4/3] md:aspect-auto md:h-80 w-full">
-                    <img src="${img.url}" alt="${img.title}" class="img-zoom w-full h-full object-cover">
-                </div>
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
-                    <span class="text-blue-300 text-xs font-semibold tracking-wider uppercase mb-1">${img.category}</span>
-                    <h3 class="text-white font-bold text-lg">${img.title}</h3>
-                    <p class="text-slate-200 text-sm mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">${img.desc}</p>
-                </div>
-            `;
-            
-            // クリックイベント（ライトボックス）
-            card.addEventListener('click', () => openLightbox(img.fullUrl));
-            gridContainer.appendChild(card);
+    <div id="geloff" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆ジェルオフ◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">当店オフ</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">他店オフ※ ソフトジェルのみとなります</button>
+      </div>
+    </div>
+
+    <div id="nailcare" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆ネイルケア◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment1')" data-price="15000">ネイルケア</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">ハンドケア</button>
+      </div>
+    </div>
+
+    <div id="footcare" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆フットケア◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">角質除去</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">角質除去ケア</button>
+      </div>
+    </div>
+
+    <div id="footgelnails" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆フットジェルネイル◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">ワンカラーオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">ワンカラーオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment5')" data-price="15000">フレンチ (クリアベース)オフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment6')" data-price="15000">フレンチ (クリアベース)オフ有り</button>
+      </div>
+    </div>
+
+    <div id="Flatfootgelnails" class="menu-section">
+      <div class="highlight-background"><span class="highlight-text">◆定額フットジェルネイルコース◆</span></div>
+      <div class="symptoms">
+        <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">ブロンズコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ブロンズコースオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">シルバーコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">シルバーコースオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">ゴールドコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">ゴールドコースオフ有り</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment8')" data-price="15000">プラチナコースオフ無し</button>
+        <button type="button" onclick="selectSymptom(this, 'treatment9')" data-price="15000">プラチナコースオフ有り</button>
+      </div>
+    </div>
+
+    <div class="label">希望日時<br />（メニュー選択後に選択ください）</div>
+    <div class="calendar-container">
+      <div class="week-button-container">
+        <button class="week-button" onclick="previousWeek()">前の週<br />←</button>
+        <span class="current-month" id="currentMonth">月</span>
+        <button class="week-button" onclick="nextWeek()">次の週<br />→</button>
+      </div>
+      <div id="calendar1" class="calendar">
+        <table>
+          <thead>
+          <tr id="calendar-header">
+            <th>時間</th>
+            <th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <div class="loading-text">読み込み中...</div>
+      </div>
+    </div>
+
+    <div class="label">メッセージ<br />（質問等お気軽にご記入ください）</div>
+    <div class="info-text">特殊・持ち込み・デザイン・立体アートなど<br />追加したい場合要相談<br />備考欄にご気軽にご連絡下さい♪</div>
+    <textarea id="message" rows="4" placeholder="メッセージを入力してください"></textarea>
+
+    <div class="label">ご予約内容</div>
+    <div id="displayInfo"></div>
+
+    <button class="submit-button" onclick="submitForm()">予約を行う</button>
+  </div>
+
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+  <script>
+    // ------- 状態管理 -------
+    let visitCount = '';
+    let selectedSymptom = []; // 常に配列で管理
+    let selectedFullDate = '';
+    let currentDate = new Date();
+    let availabilityCache = {};
+    let irradiationsCount = '';
+    let totalAmount = 0;
+    let menuPrice = 0;
+    let optionsPrice = 0;
+
+    // 連打対策
+    let inflightController = null;
+    let latestRequestId = 0;
+    let isLoading = false;
+    function setNavDisabled(disabled) {
+      document.querySelectorAll('.week-button').forEach(btn => btn.disabled = disabled);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      liff.init({ liffId: '2006926518-GrvNoXem' })
+          .then(() => { console.log('LIFF初期化成功'); })
+          .catch((err) => { console.log('LIFF初期化失敗', err); });
+
+      fetchAvailability(new Date(currentDate)); // ← viewStart を明示
+    });
+
+    let visitTimes = {'1回目': 0,'2回目以降': 0};
+    let selectedVisitTime = 0;
+
+    let irradiationsTimes = {'美白パック〈30分〉': 0};
+    let selectedirradiationsTime = 0;
+
+    let menuTimes = {
+      'ワンカラーオフ無し': 0,'ワンカラーオフ有り': 120,'ラメグラデーションオフ無し': 90,'ラメグラデーションオフ有り': 120,
+      'フレンチ (クリアベース)オフ無し': 120,'フレンチ (クリアベース)オフ有り': 120,
+      'ブロンズコースオフ無し': 90,'ブロンズコースオフ有り': 150,'シルバーコースオフ無し': 120,'シルバーコースオフ有り': 150,
+      'ゴールドコースオフ無し': 150,'ゴールドコースオフ有り': 180,'プラチナコースオフ無し': 180,'プラチナコースオフ有り': 210,
+      '当店オフ': 60,'他店オフ※ ソフトジェルのみとなります': 90,
+      'ネイルケア': 60,'ハンドケア': 90,'角質除去': 90,'角質除去ケア': 120
+    };
+    let selectedMenuTime = 0;
+
+    // ローカル保存
+    function saveInput(id) {
+      const value = document.getElementById(id).value;
+      localStorage.setItem(id, value);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const savedName = localStorage.getItem('name');
+      const savedPhone = localStorage.getItem('phone');
+      if (savedName) document.getElementById('name').value = savedName;
+      if (savedPhone) document.getElementById('phone').value = savedPhone;
+    });
+
+    function updateDisplayInfo() {
+      const name = document.getElementById('name').value;
+      const visitCountText = visitCount ? `・<span style="color:red;"><strong>ご来店回数</strong></span>：${visitCount}` : '・来店回数が未選択です';
+      const selectedSymptomText = selectedSymptom.length > 0 ? `<span style="color:red;"><strong>【メニュー】</strong></span><br>${selectedSymptom.join('<br>')}` : '・メニューが未選択です';
+      const irradiationsText = irradiationsCount ? `<span style="color:red;"><strong>【オプション】</strong></span><br>${irradiationsCount.split(', ').join('<br>')}` : '・オプション無し';
+
+      let totalMinutes = selectedMenuTime + selectedirradiationsTime + selectedVisitTime;
+      let hours = Math.floor(totalMinutes / 60);
+      let minutes = totalMinutes % 60;
+      let totalTimeText = `・<span style="color:red;"><strong>所要時間</strong></span>：${hours > 0 ? hours + '時間' : ''}${minutes}分`;
+      const totalAmountText = `・<span style="color:red;"><strong>合計金額</strong></span>：¥${menuPrice + optionsPrice}`;
+      const selectedDateText = selectedFullDate ? `・<span style="color:red;"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
+
+      document.getElementById('displayInfo').innerHTML = `
+        <p>・<span style="color:red;"><strong>お名前</strong></span>：${name}</p>
+        <hr><p>${visitCountText}</p><hr><p>${selectedSymptomText}</p><hr><p>${selectedDateText}</p><hr>
+      `;
+    }
+
+    document.getElementById('name').addEventListener('input', updateDisplayInfo);
+    document.querySelectorAll('.visit-buttons button').forEach(button => { button.addEventListener('click', updateDisplayInfo); });
+    document.querySelectorAll('.symptoms button').forEach(button => { button.addEventListener('click', updateDisplayInfo); });
+    document.querySelectorAll('.irradiations button').forEach(button => { button.addEventListener('click', updateDisplayInfo); });
+
+    document.querySelectorAll('.symptoms button').forEach(button => {
+      button.addEventListener('click', () => {
+        const calendarContainer = document.querySelector('.calendar-container');
+        if (document.querySelectorAll('.symptoms button.active').length > 0) {
+          calendarContainer.style.display = 'block';
+        } else {
+          calendarContainer.style.display = 'none';
+        }
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('.calendar-container').style.display = 'none';
+    });
+
+    document.querySelectorAll('.calendar td').forEach(cell => {
+      cell.addEventListener('click', () => { selectDate(cell); updateDisplayInfo(); });
+    });
+
+    function selectSymptom(button, treatmentId) {
+      selectedFullDate = '';
+      // 単一選択
+      document.querySelectorAll(`#${button.closest('.menu-section').id} .symptoms button`).forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      const selectedMenu = button.textContent;
+      selectedMenuTime = menuTimes[selectedMenu] || 0;
+      selectedSymptom = [selectedMenu];
+      menuPrice = parseInt(button.getAttribute('data-price'), 10) || 0;
+
+      const treatmentText = document.getElementById('treatment-text');
+      if (treatmentText) treatmentText.innerHTML = '';
+
+      fetchAvailability(new Date(currentDate));
+      updateDisplayInfo();
+    }
+
+    function selectirradiations(button) {
+      selectedFullDate = '';
+      button.classList.toggle('active');
+
+      const selectedButtons = document.querySelectorAll('.irradiations button.active');
+      const selectedIrradiations = Array.from(selectedButtons).map(btn => btn.innerText);
+      irradiationsCount = selectedIrradiations.join(', ');
+
+      optionsPrice = 0;
+      let totalirradiationsTime = 0;
+      selectedButtons.forEach(btn => {
+        const price = parseInt(btn.getAttribute('data-price'), 10);
+        optionsPrice += price;
+        const irradiationName = btn.innerText;
+        const irradiationTime = irradiationsTimes[irradiationName] || 0;
+        totalirradiationsTime += irradiationTime;
+      });
+      selectedirradiationsTime = totalirradiationsTime;
+      fetchAvailability(new Date(currentDate));
+      updateDisplayInfo();
+    }
+
+    function updateTotalAmount() { totalAmount = menuPrice + optionsPrice; updateDisplayInfo(); }
+
+    function selectVisit(element) {
+      selectedFullDate = '';
+      document.getElementById('firstVisit').classList.remove('active');
+      document.getElementById('repeatVisit').classList.remove('active');
+      element.classList.add('active');
+      visitCount = element.innerText;
+      selectedVisitTime = visitTimes[visitCount];
+      fetchAvailability(new Date(currentDate));
+    }
+
+    function showMenu(menu) {
+      document.querySelectorAll('.menu-sections button').forEach(button => button.classList.remove('active'));
+      document.querySelectorAll('.menu-section').forEach(section => {
+        section.classList.remove('active');
+        section.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+      });
+
+      document.querySelectorAll('.menu-sections button').forEach(button => {
+        if (button.getAttribute('onclick') === `showMenu('${menu}')`) button.classList.add('active');
+      });
+      document.getElementById(menu).classList.add('active');
+
+      selectedSymptom = []; irradiationsCount = ''; menuPrice = 0; optionsPrice = 0; totalAmount = 0;
+      updateDisplayInfo();
+    }
+
+    function selectDate(cell) {
+      if (cell.classList.contains('unavailable')) return;
+
+      const cells = document.querySelectorAll('.calendar td');
+      cells.forEach(td => td.classList.remove('selected'));
+      cell.classList.add('selected');
+
+      const selectedDay = cell.getAttribute('data-date');
+      const selectedTime = cell.parentElement.firstChild.textContent;
+      const date = new Date(selectedDay);
+      selectedFullDate = `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${selectedTime}`;
+      updateDisplayInfo();
+    }
+
+    function submitForm() {
+      const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        visitCount: visitCount,
+        selectedSymptom: selectedSymptom && selectedSymptom.length > 0 ? selectedSymptom : null,
+        irradiationsCount: irradiationsCount,
+        dates: selectedFullDate ? [selectedFullDate] : null,
+        message: document.getElementById('message').value.trim()
+      };
+
+      if (!formData.name) { alert('お名前を入力してください。'); return; }
+      if (!formData.phone) { alert('電話番号を入力してください。'); return; }
+      if (!formData.selectedSymptom) { alert('メニューを選択してください。'); return; }
+      if (!formData.dates) { alert('希望日時を選択してください。'); return; }
+
+      liff.sendMessages([{
+        type: 'text',
+        text: `【予約フォーム】\nお名前：${formData.name}\n電話番号：${formData.phone}\nご来店回数：${formData.visitCount}\nメニュー：${formData.selectedSymptom}\n希望日時：\n ${formData.dates[0]}\nメッセージ：${formData.message}`
+      }]).then(() => {
+        alert('当日キャンセルは無いようにお願いいたします。');
+        liff.closeWindow();
+      }).catch((err) => {
+        console.error('メッセージの送信に失敗しました', err);
+      });
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      return `${date.getFullYear()}年${('0' + (date.getMonth() + 1)).slice(-2)}月${('0' + date.getDate()).slice(-2)}日 ${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+    }
+
+    // ------- 連打に強い取得処理 -------
+    async function fetchAvailability(viewStartDate) {
+      if (inflightController) inflightController.abort();
+      inflightController = new AbortController();
+
+      const requestId = ++latestRequestId;
+
+      const startTime = new Date(viewStartDate);
+      const endTime = new Date(viewStartDate);
+      endTime.setDate(endTime.getDate() + 7);
+
+      const cacheKey = startTime.toISOString() + endTime.toISOString();
+      try {
+        isLoading = true;
+        setNavDisabled(true);
+        showLoadingSpinner();
+
+        if (availabilityCache[cacheKey]) {
+          if (requestId === latestRequestId) {
+            const { availability, businessDays } = availabilityCache[cacheKey];
+            updateCalendar(availability, businessDays, viewStartDate);
+          }
+          return;
+        }
+
+        const url = 'https://script.google.com/macros/s/AKfycbzgesmVv83Oy7jRS_DoiYgk8NqB50jD7NzUGGmjHoAxnaKwBVDbRzjFIbm5sIvJJbHA/exec' +
+          `?startTime=${startTime.toISOString()}&endTime=${endTime.toISOString()}`;
+
+        const response = await fetch(url, { signal: inflightController.signal });
+        const data = await response.json();
+
+        const businessDays = data
+          .filter(event => event.summary === "営業日")
+          .map(event => ({ start: new Date(event.startTime), end: new Date(event.endTime) }));
+
+        availabilityCache[cacheKey] = { availability: data, businessDays };
+
+        if (requestId === latestRequestId) {
+          updateCalendar(data, businessDays, viewStartDate);
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('Error fetching availability:', error);
+        }
+      } finally {
+        if (requestId === latestRequestId) {
+          isLoading = false;
+          setNavDisabled(false);
+          hideLoadingSpinner();
+        }
+      }
+    }
+
+    function updateCalendar(availability, businessDays, viewDate) {
+      const calendar = document.getElementById('calendar1');
+      const table = calendar.querySelector('table tbody');
+
+      const times = ['09:30', '10:00', '13:30', '14:00'];
+
+      if (table.rows.length === 0) {
+        for (const time of times) {
+          const row = document.createElement('tr');
+          const timeCell = document.createElement('td');
+          timeCell.textContent = time;
+          row.appendChild(timeCell);
+
+          for (let i = 0; i < 7; i++) {
+            const cell = document.createElement('td');
+            cell.addEventListener('click', () => selectDate(cell));
+            row.appendChild(cell);
+          }
+          table.appendChild(row);
+        }
+      }
+
+      updateCalendarHeader(viewDate);
+
+      // セル初期化
+      for (let row of table.rows) {
+        for (let i = 1; i < row.cells.length; i++) {
+          row.cells[i].textContent = '';
+          row.cells[i].removeAttribute('data-date');
+          row.cells[i].classList.remove('available', 'unavailable', 'selected');
+        }
+      }
+
+      const now = new Date();
+      const oneMonthLater = new Date();
+      oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+
+      for (let i = 0; i < 7; i++) {
+        const day = new Date(viewDate);
+        day.setDate(day.getDate() + i);
+
+        // 1か月後以降は✕
+        if (day > oneMonthLater) {
+          for (let r = 0; r < times.length; r++) {
+            const cell = table.rows[r].cells[i + 1];
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+          }
+          continue;
+        }
+
+        // 当日の「営業日」イベント帯を抽出
+        let businessEventTimes = [];
+        availability.forEach(slot => {
+          const eventStart = new Date(slot.startTime);
+          const eventEnd = new Date(slot.endTime);
+          if (eventStart.toDateString() === day.toDateString() && slot.title === "営業日") {
+            businessEventTimes.push({ start: eventStart, end: eventEnd });
+          }
         });
 
-        // Intersection Observer for Animation
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
+        // AM/PM表示窓
+// その日に10:00開始の予約があるか（営業日イベントは除外）
+const hasTenBooking = availability.some(evt => {
+  if (evt.title === "営業日") return false;
+  const s = new Date(evt.startTime);
+  return s.toDateString() === day.toDateString() &&
+         s.getHours() === 10 && s.getMinutes() === 0;
+});
+
+        const amStart = new Date(day); amStart.setHours(9, 30, 0, 0);
+        const amEnd   = new Date(day); amEnd.setHours(13, 30, 0, 0);
+        const pmStart = new Date(day); pmStart.setHours(13, 30, 0, 0);
+        const pmEnd   = new Date(day); pmEnd.setHours(17, 0, 0, 0);
+
+        const hasBusinessDefinition = businessEventTimes.length > 0;
+        const isInBusiness = (st, en) => businessEventTimes.some(b => st >= b.start && en <= b.end);
+
+        // その日の既存予約（営業日以外）でAM/PM窓に重なるものがあるか
+        const hasBookingIn = (winStart, winEnd) => {
+          return availability.some(evt => {
+            if (evt.title === "営業日") return false;
+            const s = new Date(evt.startTime), e = new Date(evt.endTime);
+            return s < winEnd && winStart < e; // 重なり
+          });
         };
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
+        const amHasBooking = hasBookingIn(amStart, amEnd);
+        const pmHasBooking = hasBookingIn(pmStart, pmEnd);
 
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        // 23時間前ルール
+        let limitTime = new Date(now);
+        limitTime.setHours(now.getHours() + 23);
 
-        // Lightbox Logic
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxClose = document.getElementById('lightbox-close');
+for (let r = 0; r < times.length; r++) {
+  const t = times[r];
+  const cell = table.rows[r].cells[i + 1];
 
-        function openLightbox(url) {
-            lightboxImg.src = url;
-            lightbox.classList.remove('hidden');
-            // Force reflow
-            void lightbox.offsetWidth;
-            lightbox.classList.remove('opacity-0');
-            lightboxImg.classList.remove('scale-95');
-            lightboxImg.classList.add('scale-100');
-            document.body.style.overflow = 'hidden';
+  const slotStart = new Date(day);
+  const [hh, mm] = t.split(':');
+  slotStart.setHours(parseInt(hh, 10), parseInt(mm, 10), 0, 0);
+
+  // ★ 10:00予約が入っている日は、13:30は強制的に✕
+  if (t === '13:30' && hasTenBooking) {
+    cell.textContent = '✕';
+    cell.classList.add('unavailable');
+    cell.removeAttribute('data-date');
+    continue;
+  }
+
+          const duration = (selectedMenuTime || 10) + (selectedVisitTime || 0) + (selectedirradiationsTime || 0);
+          const slotEnd = new Date(slotStart); slotEnd.setMinutes(slotEnd.getMinutes() + duration);
+
+          // 23時間以内は✕
+          if (slotStart < limitTime) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+          }
+
+          // 翌日跨ぎは✕
+          if (slotEnd.getDate() !== slotStart.getDate()) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            continue;
+          }
+
+          const isAM = (t === '09:30' || t === '10:00');
+          const withinDefaultWindow = isAM
+            ? (slotStart >= amStart && slotEnd <= amEnd)
+            : (slotStart >= pmStart && slotEnd <= pmEnd);
+
+          // 営業時間内チェック
+          const businessOK = hasBusinessDefinition ? isInBusiness(slotStart, slotEnd) : withinDefaultWindow;
+
+          // 相互排他（AM/PMどちらかが埋まったらもう片方も✕）
+          const windowHasBooking = isAM ? amHasBooking : pmHasBooking;
+
+          // 日曜で営業日定義が無い日はクローズ
+          const sundayClosed = (day.getDay() === 0) && !hasBusinessDefinition;
+
+          if (!businessOK || windowHasBooking || sundayClosed) {
+            cell.textContent = '✕';
+            cell.classList.add('unavailable');
+            cell.removeAttribute('data-date');
+          } else {
+            cell.textContent = '◯';
+            cell.classList.add('available');
+            cell.setAttribute('data-date', slotStart.toISOString());
+          }
         }
+      }
+    }
 
-        function closeLightbox() {
-            lightbox.classList.add('opacity-0');
-            lightboxImg.classList.remove('scale-100');
-            lightboxImg.classList.add('scale-95');
-            setTimeout(() => {
-                lightbox.classList.add('hidden');
-                lightboxImg.src = '';
-                document.body.style.overflow = 'auto';
-            }, 300);
-        }
+    function updateCalendarHeader(viewDate) {
+      const headerRow = document.getElementById('calendar-header');
+      const headers = headerRow.querySelectorAll('th:not(:first-child)');
 
-        lightboxClose.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) closeLightbox();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
-        });
+      const startDate = new Date(viewDate);
+      headers.forEach((th, index) => {
+        const day = new Date(startDate);
+        day.setDate(day.getDate() + index);
+        const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+        const dayString = `${day.getDate()}(${dayOfWeek[day.getDay()]})`;
+        th.innerHTML = dayString.replace('(', '<br>(');
+      });
 
-    </script>
+      const currentMonthElement = document.getElementById('currentMonth');
+      currentMonthElement.textContent = `${startDate.getFullYear()}年 ${startDate.getMonth() + 1}月`;
+    }
+
+    function nextWeek() {
+      if (isLoading) { latestRequestId++; } // 連打時でも最後だけを残す
+      currentDate.setDate(currentDate.getDate() + 7);
+      fetchAvailability(new Date(currentDate));
+    }
+    function previousWeek() {
+      if (isLoading) { latestRequestId++; }
+      currentDate.setDate(currentDate.getDate() - 7);
+      fetchAvailability(new Date(currentDate));
+    }
+
+    function showLoadingSpinner() { document.getElementById('loadingSpinner').style.display = 'block'; }
+    function hideLoadingSpinner() { document.getElementById('loadingSpinner').style.display = 'none'; }
+  </script>
 </body>
 </html>
