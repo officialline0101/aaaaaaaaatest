@@ -228,7 +228,7 @@
             box-shadow: 0 4px 10px rgba(147, 118, 224, 0.3);
         }
 
-        /* 詳細情報カード（料金削除に伴いデザイン調整） */
+        /* 詳細情報カード */
         .menu-detail-card {
             background-color: var(--primary-light);
             border-radius: 16px;
@@ -253,7 +253,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px; /* 下部マージン調整 */
+            margin-bottom: 5px; 
             font-size: 14px;
         }
 
@@ -272,11 +272,11 @@
             color: var(--text-main);
         }
 
-/* ハイライト（メニュー名） */
+        /* ハイライト（メニュー名） */
         .highlight-background {
             text-align: center;
             margin-bottom: 15px;
-            margin-top: 20px; /* ★ここを追加しました */
+            margin-top: 20px;
             font-weight: bold;
             color: var(--primary-dark);
             font-size: 15px;
@@ -355,12 +355,13 @@
             border-top: 1px solid #f9f9f9;
             cursor: pointer;
             position: relative;
+            z-index: 1;
         }
 
         /* 選択時のデザイン */
         .calendar td.selected {
             background-color: transparent !important;
-            color: var(--primary-color) !important;
+            color: #ffffff !important;
             font-weight: bold;
         }
         
@@ -370,13 +371,18 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 32px;
-            height: 32px;
-            background-color: var(--primary-light);
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
+            width: 85%;
+            height: 85%;
+            background-color: var(--primary-color);
+            border-radius: 8px;
             z-index: -1;
-            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(147, 118, 224, 0.4);
+            animation: popIn 0.2s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
         
         .available { color: var(--primary-color); font-weight: bold; }
@@ -483,6 +489,8 @@
                     <div class="info-text">（ケアトリートメント・スタイリング込）<br>所要時間：180分</div>
                     <button type="button" onclick="selectSymptom(this, 'treatment2')" data-price="15000">カラーorヘアマニキュア<br>＋<br>カット<br>＋<br>システムトリートメント</button>
                     <div class="info-text">（ケアトリートメント・スタイリング込）<br>所要時間：210分</div>
+                    <button type="button" onclick="selectSymptom(this, 'treatment3')" data-price="15000">カット<br>＋<br>質感再整カラー</button>
+                    <div class="info-text">所要時間：210分</div>
                 </div>
             </div>
 
@@ -644,7 +652,7 @@
         let optionsPrice = 0; 
 
         document.addEventListener('DOMContentLoaded', function () {
-            liff.init({ liffId: '1657779242-vBradyog' })
+            liff.init({ liffId: '2005254357-zKma9BZk' })
                 .then(() => { console.log('LIFF初期化成功'); })
                 .catch((err) => { console.log('LIFF初期化失敗', err); });
 
@@ -659,6 +667,7 @@
         let menuTimes = {
             'カラーorヘアマニキュア＋カット': 180,
             'カラーorヘアマニキュア＋カット＋システムトリートメント': 210,
+            'カット＋質感再整カラー': 210, // ▼ 追加
             'カラーフル＋システムトリートメント': 180,
             'カラーリタッチ＋システムトリートメント': 150,
             '質感再整カラーリタッチ': 150,
@@ -706,7 +715,6 @@
 
             const selectedDateText = selectedFullDate ? `・<span style="color:var(--primary-color);"><strong>希望日時</strong></span>：${selectedFullDate}` : '・日時が未選択です';
 
-            // ▼▼▼ 修正箇所：所要時間と合計金額を削除 ▼▼▼
             document.getElementById('displayInfo').innerHTML = `
                 <div style="font-size:14px; line-height:1.8; color:#555;">
                     <p>・<span style="color:var(--primary-color);"><strong>お名前</strong></span>：${name}</p>
@@ -724,9 +732,8 @@
         document.querySelectorAll('.visit-buttons button').forEach(button => button.addEventListener('click', updateDisplayInfo));
         document.querySelectorAll('.symptoms button').forEach(button => button.addEventListener('click', updateDisplayInfo));
 
-        // ▼▼▼ 修正箇所：料金項目を削除したカード生成関数 ▼▼▼
+        // 料金項目を削除したカード生成関数
         function createDetailCard(time, price, initialFee, note, isInitialFee = true) {
-            // price等は使用しない
             return `
             <div class="menu-detail-card">
                 <div class="detail-row">
@@ -759,7 +766,6 @@
 
             const treatmentText = document.getElementById('treatment-text');
             
-            // 隠れているinfo-textから情報を取得してカードを生成する処理
             let html = '';
             
             if (button.classList.contains('active')) {
