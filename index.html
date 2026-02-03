@@ -1,464 +1,378 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>予約希望フォーム</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>問い合わせフォーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+JP:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
-        /* --- デザイン設定（プルメリアゴルフ風） --- */
+        :root {
+            --primary-color: #322a25;
+            --accent-color: #88705a;
+            --bg-color: #fcfaf8;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0d8d0;
+            --error-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+
         body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: #3e2b20;
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding-top: 20px;
-            padding-bottom: 40px;
-            color: #4a3b32;
         }
 
         .container {
-            background-color: #fdfdfa;
-            border-radius: 12px;
-            border: 1px solid #d4af37;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 600px;
-            padding: 30px 25px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 95%;
+            max-width: 500px;
+            padding: 30px 20px;
             box-sizing: border-box;
-            position: relative;
         }
 
         h1 {
-            background: linear-gradient(135deg, #c5a059, #f3d34b, #c5a059);
-            color: #3e2b20;
-            padding: 15px;
-            border-radius: 6px;
             text-align: center;
-            margin: -30px -25px 30px -25px;
+            margin-bottom: 30px;
             font-size: 24px;
-            font-family: 'Noto Serif JP', serif;
-            font-weight: 700;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            letter-spacing: 1px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            display: inline-block;
+            width: 100%;
         }
 
-        h1::before, h1::after {
-            content: '✿';
-            color: #fff;
-            margin: 0 10px;
-            font-size: 0.8em;
+        .form-section {
+            margin-bottom: 25px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--primary-color);
+        }
+
+        .required::after {
+            content: "必須";
+            background-color: var(--error-color);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
             vertical-align: middle;
         }
 
-        .label {
-            display: flex;
-            align-items: center;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .optional::after {
+            content: "任意";
+            background-color: #999;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             font-size: 16px;
-            color: #5d4037;
-            border-left: 5px solid #d4af37;
-            padding-left: 10px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #fff;
         }
 
-        .required-badge {
-            background-color: #d32f2f;
-            color: white;
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-left: 8px;
-            vertical-align: middle;
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(136, 112, 90, 0.1);
         }
 
-        .optional-badge {
-            background-color: #8d6e63;
-            color: white;
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-left: 8px;
-            vertical-align: middle;
-        }
-
-        /* --- 選択ボタン群 --- */
-        .selection-group {
-            display: flex;
-            flex-wrap: wrap;
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 10px;
         }
 
-        .selection-group button {
-            flex: 1 1 45%;
-            padding: 15px 5px;
-            border: 1px solid #d4af37;
-            border-radius: 6px;
+        .choice-button {
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
             background-color: #fff;
-            color: #5d4037;
             cursor: pointer;
+            text-align: center;
             font-size: 15px;
-            font-weight: bold;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            color: var(--text-color);
         }
 
-        .selection-group button.active {
-            background-color: #d4af37;
+        .choice-button:hover {
+            background-color: #f8f5f2;
+            border-color: var(--accent-color);
+        }
+
+        .choice-button.active {
+            background-color: var(--primary-color);
             color: #fff;
-            border-color: #d4af37;
-            transform: scale(1.02);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-        }
-        
-        .selection-group button.active::after {
-            content: ' ✔';
+            border-color: var(--primary-color);
+            font-weight: 600;
         }
 
-        /* --- 日時選択プルダウン --- */
-        .dt-grid {
-            display: flex;
-            gap: 8px;
+        .notice-box {
+            background-color: #fdf8f4;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
         }
 
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 16px;
-            background-color: #fff;
-            font-family: inherit;
-            color: #333;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
+        .warning-box {
+            background-color: #fff5f5;
+            border-left: 4px solid var(--error-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            border-radius: 0 8px 8px 0;
         }
 
-        select:focus {
-            border-color: #d4af37;
-            background-color: #fffff8;
-            outline: none;
+        .phone-link {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--error-color);
+            text-align: center;
+            margin: 10px 0;
+            text-decoration: none;
         }
 
-        .time-disabled {
-            opacity: 0.5;
-            pointer-events: none;
-            background-color: #eee;
-        }
-
-        /* --- 送信ボタン --- */
         .submit-button {
             width: 100%;
             padding: 18px;
             border: none;
-            border-radius: 50px;
-            background: linear-gradient(to bottom, #2ecc71, #218c54);
+            border-radius: 12px;
+            background-color: var(--primary-color);
             color: #fff;
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 40px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 0 #1e6e42, 0 5px 10px rgba(0,0,0,0.2);
-        }
-
-        .submit-button:hover {
-            background: linear-gradient(to bottom, #35d679, #27a060);
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #1e6e42, 0 3px 6px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(50, 42, 37, 0.2);
         }
 
         .submit-button:active {
-            transform: translateY(4px);
-            box-shadow: none;
+            transform: scale(0.98);
         }
 
-        .info-text {
-            font-size: 14px;
-            color: #5d4037;
-            background-color: #f9f2e7;
-            padding: 15px;
-            border-left: 4px solid #d4af37;
-            border-radius: 4px;
-            margin-bottom: 25px;
-            line-height: 1.8;
+        .hidden {
+            display: none;
+        }
+
+        .staff-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
     </style>
 </head>
 
 <body>
-
     <div class="container">
-        <h1>予約希望フォーム</h1>
-        <div class="info-text">
-            ご希望のお部屋と日時を選択して送信してください。<br>
-            ※土日祝は23時台までご予約可能です。
+        <h1>問い合わせフォーム</h1>
+
+        <!-- ①名前 -->
+        <div class="form-section">
+            <label class="required" for="name">お名前</label>
+            <input type="text" id="name" placeholder="例：山田 花子">
         </div>
 
-        <div class="label">初回利用ですか？<span class="required-badge">必須</span></div>
-        <div class="selection-group" id="first-time-group">
-            <button type="button" onclick="selectSingle(this, 'first-time-group')">はい</button>
-            <button type="button" onclick="selectSingle(this, 'first-time-group')">いいえ</button>
+        <!-- ②問い合わせ内容選択 -->
+        <div class="form-section">
+            <label class="required">問い合わせ内容を選択してください</label>
+            <div class="button-group" id="queryTypeGroup">
+                <button type="button" class="choice-button" onclick="selectQueryType(this, 'repair')">お直し</button>
+                <button type="button" class="choice-button"
+                    onclick="selectQueryType(this, 'consultation')">持ち込みデザインの相談</button>
+                <button type="button" class="choice-button"
+                    onclick="selectQueryType(this, 'cancel')">当日キャンセル・変更について</button>
+            </div>
         </div>
 
-        <div class="label">◈ ご希望のお部屋<span class="required-badge">必須</span></div>
-        <div class="selection-group" id="room-group">
-            <button type="button" onclick="selectSingle(this, 'room-group')">GOLFZONルーム</button>
-            <button type="button" onclick="selectSingle(this, 'room-group')">GPROルーム</button>
+        <!-- ③-1 お直し選択時の項目 -->
+        <div id="section-repair" class="hidden">
+            <div class="form-section">
+                <label class="required">❶ 施術担当者名</label>
+                <div class="staff-grid" id="staffGroup">
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Ayaka</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Mizuki</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Hanaka</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Runa</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Manami</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Sae</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Moena</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Natsumi</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Saya</button>
+                    <button type="button" class="choice-button" onclick="selectStaff(this)">Miki</button>
+                </div>
+            </div>
+            <div class="form-section">
+                <label class="required">❷ お直しの詳細をお書きください</label>
+                <textarea id="repair-detail" rows="4" placeholder="詳細を入力してください"></textarea>
+            </div>
         </div>
 
-        <div class="label">◈ 第1希望<span class="required-badge">必須</span></div>
-        <div class="dt-grid">
-            <select id="date1_day"></select>
-            <select id="date1_time"></select>
+        <!-- ③-2 持ち込みデザイン相談時の項目 -->
+        <div id="section-consultation" class="hidden">
+            <div class="form-section">
+                <label class="optional">❶ デザインの詳細をお書きください</label>
+                <textarea id="design-detail" rows="4" placeholder="具体的なデザインの希望などがあればご記入ください"></textarea>
+            </div>
+            <div class="notice-box">
+                ※お写真などは、チャット欄に直接お送りください。<br>
+                ※使用する商材によっては、完全再現が難しい場合がございます。
+            </div>
         </div>
 
-        <div class="label">◈ 第2希望<span class="optional-badge">任意</span></div>
-        <div class="dt-grid">
-            <select id="date2_day"></select>
-            <select id="date2_time"></select>
+        <!-- ③-3 当日キャンセル・変更についての項目 -->
+        <div id="section-cancel" class="hidden">
+            <div class="warning-box">
+                当日のキャンセル・変更はお電話でお願いいたします。<br><br>
+                【電話番号】<br>
+                <a href="tel:0112527807" class="phone-link">011-252-7807</a><br>
+                ※連絡あった場合は当日キャンセル料として次回1100円頂戴いたします。<br>
+                ※無断キャンセルは施術料金の100％をいただき次回からご予約をしていただけなくなります。
+            </div>
         </div>
 
-        <div class="label">◈ 第3希望<span class="optional-badge">任意</span></div>
-        <div class="dt-grid">
-            <select id="date3_day"></select>
-            <select id="date3_time"></select>
-        </div>
-
-        <button class="submit-button" onclick="submitForm()">予約リクエストを送信</button>
+        <button class="submit-button" onclick="submitForm()">送信する</button>
     </div>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script>
-        // --- 祝日判定ロジック（2025〜2099年対応） ---
-        const JapaneseHolidays = {
-            cache: {},
-            getHolidays: function(year) {
-                if (this.cache[year]) return this.cache[year];
-                let holidays = new Set();
-                const add = (m, d) => holidays.add(`${year}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
-                // 固定祝日
-                [[1,1], [2,11], [2,23], [4,29], [5,3], [5,4], [5,5], [8,11], [11,3], [11,23]].forEach(d => add(d[0], d[1]));
-                // ハッピーマンデー
-                [[1,2], [7,3], [9,3], [10,2]].forEach(([m, n]) => {
-                    let d = new Date(year, m-1, 1);
-                    while(d.getDay() !== 1) d.setDate(d.getDate() + 1);
-                    d.setDate(d.getDate() + (n-1)*7);
-                    add(m, d.getDate());
-                });
-                // 春分・秋分
-                const vernal = Math.floor(20.8431 + 0.242194 * (year - 1980) - Math.floor((year - 1980) / 4));
-                const autumnal = Math.floor(23.2488 + 0.242194 * (year - 1980) - Math.floor((year - 1980) / 4));
-                add(3, vernal);
-                add(9, autumnal);
-                // 振替休日・国民の休日
-                let sorted = Array.from(holidays).sort();
-                let fullHolidays = new Set(sorted);
-                let d = new Date(year, 0, 1);
-                while (d.getFullYear() === year) {
-                    const y = d.getFullYear();
-                    const m = d.getMonth() + 1;
-                    const date = d.getDate();
-                    const ymd = `${y}-${String(m).padStart(2,'0')}-${String(date).padStart(2,'0')}`;
-                    const wd = d.getDay();
-                    if (wd === 0 && fullHolidays.has(ymd)) {
-                        let nextD = new Date(d);
-                        nextD.setDate(nextD.getDate() + 1);
-                        while (true) {
-                            const nextYmd = `${nextD.getFullYear()}-${String(nextD.getMonth()+1).padStart(2,'0')}-${String(nextD.getDate()).padStart(2,'0')}`;
-                            if (!fullHolidays.has(nextYmd)) { fullHolidays.add(nextYmd); break; }
-                            nextD.setDate(nextD.getDate() + 1);
-                        }
-                    }
-                    if (!fullHolidays.has(ymd) && wd !== 0) {
-                        let prevD = new Date(d); prevD.setDate(d.getDate() - 1);
-                        let nextD = new Date(d); nextD.setDate(d.getDate() + 1);
-                        const prevYmd = `${prevD.getFullYear()}-${String(prevD.getMonth()+1).padStart(2,'0')}-${String(prevD.getDate()).padStart(2,'0')}`;
-                        const nextYmd = `${nextD.getFullYear()}-${String(nextD.getMonth()+1).padStart(2,'0')}-${String(nextD.getDate()).padStart(2,'0')}`;
-                        if (fullHolidays.has(prevYmd) && fullHolidays.has(nextYmd)) fullHolidays.add(ymd);
-                    }
-                    d.setDate(d.getDate() + 1);
-                }
-                this.cache[year] = fullHolidays;
-                return fullHolidays;
-            },
-            isHoliday: function(dateStr) {
-                if (!dateStr) return false;
-                const year = parseInt(dateStr.split('-')[0]);
-                return this.getHolidays(year).has(dateStr);
-            }
-        };
+        let selectedQueryType = '';
+        let selectedStaff = '';
 
-        // --- LIFF初期化 & ロジック ---
+        // LIFF初期化
         document.addEventListener('DOMContentLoaded', function () {
             liff.init({
-                liffId: '2005254357-zKma9BZk' 
-            }).then(() => console.log('LIFF init success')).catch(err => console.error(err));
-
-            // 日時生成
-            ['date1', 'date2', 'date3'].forEach(id => initPicker(id, 60));
-
-            // ローカルストレージから復元
-            restoreSelection('first-time-group');
-            restoreSelection('room-group');
+                liffId: '2005254357-zKma9BZk'
+            }).then(() => {
+                console.log('LIFF初期化成功');
+            }).catch((err) => {
+                console.error('LIFF初期化失敗', err);
+            });
         });
 
-        // 単一選択 & 保存処理
-        function selectSingle(element, groupId) {
-            const container = document.getElementById(groupId);
-            const buttons = container.querySelectorAll('button');
+        // 問い合わせ内容選択時の処理
+        function selectQueryType(element, type) {
+            // ボタンの活性状態切り替え
+            const buttons = document.querySelectorAll('#queryTypeGroup .choice-button');
             buttons.forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
+            selectedQueryType = element.innerText;
 
-            // ローカルストレージへ保存
-            localStorage.setItem(groupId, element.innerText);
+            // 各セクションの表示切り替え
+            document.getElementById('section-repair').classList.add('hidden');
+            document.getElementById('section-consultation').classList.add('hidden');
+            document.getElementById('section-cancel').classList.add('hidden');
+
+            document.getElementById('section-' + type).classList.remove('hidden');
         }
 
-        // 復元処理
-        function restoreSelection(groupId) {
-            const savedValue = localStorage.getItem(groupId);
-            if (savedValue) {
-                const container = document.getElementById(groupId);
-                const buttons = container.querySelectorAll('button');
-                buttons.forEach(btn => {
-                    if (btn.innerText === savedValue) {
-                        btn.classList.add('active');
-                    }
-                });
-            }
+        // スタッフ選択時の処理
+        function selectStaff(element) {
+            const buttons = document.querySelectorAll('#staffGroup .choice-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            selectedStaff = element.innerText;
         }
 
-        function getSelectedText(groupId) {
-            const container = document.getElementById(groupId);
-            const activeButton = container.querySelector('button.active');
-            return activeButton ? activeButton.innerText : '';
-        }
-
-        /* --- 日時生成関数群 --- */
-        const JP_WD = ['日', '月', '火', '水', '木', '金', '土'];
-        const pad = n => String(n).padStart(2, '0');
-
-        function buildDateOptions(selectEl, days) {
-            const d = new Date();
-            selectEl.innerHTML = '<option value="" disabled selected>日付を選択</option>';
-            for (let i = 0; i < days; i++) {
-                const y = d.getFullYear();
-                const m = pad(d.getMonth() + 1);
-                const day = pad(d.getDate());
-                const dateStr = `${y}-${m}-${day}`;
-                const wd = d.getDay();
-                const isHol = JapaneseHolidays.isHoliday(dateStr);
-                const wdLabel = isHol ? '祝' : JP_WD[wd];
-                
-                const opt = document.createElement('option');
-                opt.value = dateStr;
-                opt.textContent = `${m}/${day}（${wdLabel}）`;
-                if (wd === 0 || wd === 6 || isHol) opt.style.color = '#d32f2f';
-                selectEl.appendChild(opt);
-                d.setDate(d.getDate() + 1);
-            }
-        }
-
-        function buildTimeOptions(selectEl, dateStr) {
-            selectEl.innerHTML = '<option value="" disabled selected>時間を選択</option>';
-            if (!dateStr) return;
-            const date = new Date(dateStr);
-            const day = date.getDay();
-            const isWeekend = (day === 0 || day === 6);
-            const isHol = JapaneseHolidays.isHoliday(dateStr);
-            const endHour = (isWeekend || isHol) ? 23 : 18;
-            
-            for (let h = 10; h <= endHour; h++) {
-                const hh = pad(h);
-                const val = `${hh}:00~${hh}:50`;
-                const opt = document.createElement('option');
-                opt.value = val;
-                opt.textContent = val;
-                selectEl.appendChild(opt);
-            }
-        }
-
-        function initPicker(baseId, dateDays = 60) {
-            const daySel = document.getElementById(`${baseId}_day`);
-            const timeSel = document.getElementById(`${baseId}_time`);
-            buildDateOptions(daySel, dateDays);
-            timeSel.classList.add('time-disabled');
-            daySel.addEventListener('change', () => {
-                if (daySel.value) {
-                    buildTimeOptions(timeSel, daySel.value);
-                    timeSel.classList.remove('time-disabled');
-                } else {
-                    timeSel.innerHTML = '';
-                    timeSel.classList.add('time-disabled');
-                }
-            });
-        }
-
-        // 送信処理
         function submitForm() {
-            const firstTime = getSelectedText('first-time-group');
-            const room = getSelectedText('room-group');
-            
-            const d1_day = document.getElementById('date1_day').value;
-            const d1_time = document.getElementById('date1_time').value;
-            const d2_day = document.getElementById('date2_day').value;
-            const d2_time = document.getElementById('date2_time').value;
-            const d3_day = document.getElementById('date3_day').value;
-            const d3_time = document.getElementById('date3_time').value;
+            const name = document.getElementById('name').value.trim();
+            const repairDetail = document.getElementById('repair-detail').value.trim();
+            const designDetail = document.getElementById('design-detail').value.trim();
 
-            if (!firstTime) { alert('「初回利用ですか？」を選択してください。'); return; }
-            if (!room) { alert('「ご希望のお部屋」を選択してください。'); return; }
-            if (!d1_day || !d1_time) { alert('「第1希望日時」を入力してください。'); return; }
-
-            const golfzonMark = room.includes('GOLFZON') ? '○' : '  ';
-            const gproMark = room.includes('GPRO') ? '○' : '  ';
-            const formatDate = (dateStr) => {
-                if(!dateStr) return '';
-                const parts = dateStr.split('-');
-                return `${Number(parts[1])}月${Number(parts[2])}日`;
-            };
-
-            let msg = `【予約希望】\n` +
-                      `[初回利用] ${firstTime}\n\n` +
-                      
-                      `◈ ご希望のお部屋\n` +
-                      `  GOLFZONルーム  〘 ${golfzonMark} 〙\n` +
-                      `  GPROルーム         〘 ${gproMark} 〙\n\n` +
-
-                      `◈ 第1希望\n` +
-                      `      ${formatDate(d1_day)}${d1_time}\n`;
-
-            if (d2_day && d2_time) {
-                msg += `◈ 第2希望\n` +
-                       `      ${formatDate(d2_day)}${d2_time}\n`;
+            // バリデーション
+            if (!name) {
+                alert('お名前を入力してください。');
+                return;
             }
-            if (d3_day && d3_time) {
-                msg += `◈ 第3希望\n` +
-                       `      ${formatDate(d3_day)}${d3_time}\n`;
+            if (!selectedQueryType) {
+                alert('問い合わせ内容を選択してください。');
+                return;
             }
 
-            if (!liff.isInClient()) {
-                alert('LINEアプリ外のため送信できませんが、以下の内容で作成されました:\n\n' + msg);
-            } else {
-                liff.sendMessages([{ type: 'text', text: msg }])
-                    .then(() => {
-                        alert('予約リクエストを送信しました。');
-                        liff.closeWindow();
-                    })
-                    .catch((err) => {
-                        console.error('送信エラー', err);
-                        alert('送信に失敗しました。');
-                    });
+            let messageText = `【問い合わせフォーム】\n`;
+            messageText += `お名前：${name}\n`;
+            messageText += `内容：${selectedQueryType}\n`;
+
+            if (selectedQueryType === "お直し") {
+                if (!selectedStaff) {
+                    alert('施術担当者名を選択してください。');
+                    return;
+                }
+                if (!repairDetail) {
+                    alert('お直しの詳細を入力してください。');
+                    return;
+                }
+                messageText += `\n担当者名：${selectedStaff}\n`;
+                messageText += `詳細：${repairDetail}`;
+            } else if (selectedQueryType === "持ち込みデザインの相談") {
+                messageText += `\nデザイン詳細：${designDetail || '未記載'}\n`;
+                messageText += `※写真はチャット欄に送信`;
+            } else if (selectedQueryType === "当日キャンセル・変更について") {
+                messageText += `\n※当日キャンセルの電話連絡を案内済み`;
             }
+
+            // LINEトークに送信
+            liff.sendMessages([{
+                type: 'text',
+                text: messageText
+            }]).then(() => {
+                alert('お問い合わせありがとうございます。メッセージを送信しました。');
+                liff.closeWindow();
+            }).catch((err) => {
+                console.error('送信失敗', err);
+                alert('メッセージの送信に失敗しました。');
+            });
         }
     </script>
 </body>
+
 </html>
